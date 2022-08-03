@@ -1,244 +1,33 @@
-<!doctype html><html lang=zh-cn dir=content/zh-cn>
-<head>
-<meta charset=utf-8>
-<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
-<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
-<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
-<title> Redis data persistent - 路无止境！ </title>
-<meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云">
-<meta name=author content="Etaon">
-<meta property="og:title" content="Redis data persistent">
-<meta property="og:site_name" content="路无止境！">
-<meta property="og:image" content="/img/author.jpg">
-<meta name=title content="Redis data persistent - 路无止境！">
-<meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。">
-<link rel="shortcut icon" href=/img/favicon.ico>
-<link rel=apple-touch-icon href=/img/apple-touch-icon.png>
-<link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png>
-<link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css>
-<link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet>
-<link href=/css/main.css rel=stylesheet type=text/css>
-<link href=/css/syntax.css rel=stylesheet type=text/css>
-</head>
-<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
-<div class="container one-collumn sidebar-position-left page-home">
-<div class=headband></div>
-<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
-<div class=header-inner> <div class=site-brand-container>
-<div class=site-nav-toggle>
-<div class=toggle role=button style=opacity:1;top:0>
+<!doctype html><html lang=zh-cn dir=content/zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=content-security-policy content="upgrade-insecure-requests"><title>Redis data persistent - 路无止境！</title><meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云"><meta name=author content="Etaon"><meta property="og:title" content="Redis data persistent"><meta property="og:site_name" content="路无止境！"><meta property="og:image" content="/img/author.jpg"><meta name=title content="Redis data persistent - 路无止境！"><meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。"><link rel="shortcut icon" href=/img/favicon.ico><link rel=apple-touch-icon href=/img/apple-touch-icon.png><link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png><link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css><link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet><link href=/css/main.css rel=stylesheet type=text/css><link href=/css/syntax.css rel=stylesheet type=text/css></head><body itemscope itemtype=http://schema.org/WebPage lang=zh-hans><div class="container one-collumn sidebar-position-left page-home"><div class=headband></div><header id=header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle role=button style=opacity:1;top:0><span class=toggle-line></span>
 <span class=toggle-line></span>
-<span class=toggle-line></span>
-<span class=toggle-line></span>
-</div>
-</div>
-<div class=site-meta>
-<div class=multi-lang-switch>
-<i class="fa fa-fw fa-language" style=margin-right:5px></i>
-<a class=lang-link id=zh-cn href=#>中文</a>
-</div>
-<div class=custom-logo-site-title>
-<a href=/ class=brand rel=start>
-<span class=logo-line-before><i></i></span>
+<span class=toggle-line></span></div></div><div class=site-meta><div class=multi-lang-switch><i class="fa fa-fw fa-language" style=margin-right:5px></i>
+<a class=lang-link id=zh-cn href=#>中文</a></div><div class=custom-logo-site-title><a href=/ class=brand rel=start><span class=logo-line-before><i></i></span>
 <span class=site-title>路无止境！</span>
-<span class=logo-line-after><i></i></span>
-</a>
-</div>
-<p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p>
-</div>
-<div class=site-nav-right>
-<div class="toggle popup-trigger" style=opacity:1;top:0>
-<i class="fa fa-search fa-fw fa-lg"></i>
-</div>
-</div>
-</div>
-<nav class=site-nav>
-<ul id=menu class=menu>
-<li class=menu-item>
-<a href=/ rel=section>
-<i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页
-</a>
-</li>
-<li class=menu-item>
-<a href=/post rel=section>
-<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档
-</a>
-</li>
-<li class=menu-item>
-<a href=/about.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于我
-</a>
-</li>
-<li class=menu-item>
-<a href=/404.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益404
-</a>
-</li>
-<li class="menu-item menu-item-search">
-<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> 搜索</a>
-</li>
-</ul>
-<div class=site-search>
-<div class="popup search-popup local-search-popup">
-<div class="local-search-header clearfix">
-<span class=search-icon><i class="fa fa-search"></i> </span>
-<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
-<div class=local-search-input-wrapper>
-<input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
-</div>
-</div>
-<div id=local-search-result></div>
-</div>
-</div>
-</nav>
-</div>
-</header>
-<main id=main class=main>
-<div class=main-inner>
-<div class=content-wrap>
-<div id=content class=content>
-<section id=posts class=posts-expand>
-<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
-<header class=post-header>
-<h1 class=post-title itemprop="name headline" style=font-weight:700>
-<a class=post-title-link href=https://www.etaon.link/2021/11/12/redis-dataPersistent.html itemprop=url>
-Redis data persistent
-</a>
-</h1>
-</header>
-<div class=post-body itemprop=articleBody>
-<h2 id=概念>概念</h2>
-<p>利用永久性存储介质将数据进行保存，在特定的时间将保存的数据进行恢复的工作机制称为持久化。</p>
-<p>两种方法：
-RDB和AOF：</p>
-<ul>
-<li>RDB-将当前数据状态进行保存，快照形式，存储数据结果，存储格式简单，关注点在<strong>数据</strong></li>
-<li>AOF将数据的操作过程进行保存，日志形式，存储操作过程，存储格式复杂，关注点在数据的<strong>操作过程</strong></li>
-</ul>
-<h2 id=rdb>RDB</h2>
-<h3 id=启动方式>启动方式</h3>
-<table>
-<thead>
-<tr>
-<th>方式</th>
-<th>save</th>
-<th>bgsave</th>
-<th>save配置</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>读写</td>
-<td>同步</td>
-<td>异步</td>
-<td>同bgsave</td>
-</tr>
-<tr>
-<td>阻塞用户指令</td>
-<td>是</td>
-<td>否</td>
-<td></td>
-</tr>
-<tr>
-<td>额外需要内存</td>
-<td>否</td>
-<td>是</td>
-<td></td>
-</tr>
-<tr>
-<td>需要新进程</td>
-<td>否</td>
-<td>是</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<h4 id=save>save</h4>
-<ul>
-<li>执行一次即保存一次</li>
-<li>保存文件：dump.rdb，可在redis.conf中通过dbfilename dump-6379.rdb修改</li>
-<li>单线程插入save，执行完以后再执行后续redis命令；有可能阻塞当前Redis服务</li>
-<li>其他参数</li>
-</ul>
-<blockquote>
-<ul>
-<li>rdbcompression yes/no：设置存储至本地数据库时是否压缩数据，默认为 yes，采用 LZF 压缩</li>
-<li>rdbchecksum yes/no：设置是否进行RDB文件格式校验，默认为yes</li>
-</ul>
-</blockquote>
-<h4 id=bgsave>bgsave</h4>
-<ul>
-<li>启动后台保存操作，但不是立即执行</li>
-<li>推荐方式</li>
-<li>stop-writes-on-bgsave-error yes/no：：后台存储过程中如果出现错误现象，是否停止保存操作，默认开启
+<span class=logo-line-after><i></i></span></a></div><p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p></div><div class=site-nav-right><div class="toggle popup-trigger" style=opacity:1;top:0><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class=site-nav><ul id=menu class=menu><li class=menu-item><a href=/ rel=section><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class=menu-item><a href=/post rel=section><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class=menu-item><a href=/about.html rel=section><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于我</a></li><li class=menu-item><a href=/404.html rel=section><i class="menu-item-icon fa fa-fw fa-heartbeat"></i><br>公益404</a></li><li class="menu-item menu-item-search"><a href=javascript:; class=popup-trigger><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class=site-search><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class=search-icon><i class="fa fa-search"></i></span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span><div class=local-search-input-wrapper><input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off></div></div><div id=local-search-result></div></div></div></nav></div></header><main id=main class=main><div class=main-inner><div class=content-wrap><div id=content class=content><section id=posts class=posts-expand><article class="post post-type-normal" itemscope itemtype=http://schema.org/Article><header class=post-header><h1 class=post-title itemprop="name headline" style=font-weight:700><a class=post-title-link href=https://www.etaon.top/2021/11/12/redis-dataPersistent.html itemprop=url>Redis data persistent</a></h1></header><div class=post-body itemprop=articleBody><h2 id=概念>概念</h2><p>利用永久性存储介质将数据进行保存，在特定的时间将保存的数据进行恢复的工作机制称为持久化。</p><p>两种方法：
+RDB和AOF：</p><ul><li>RDB-将当前数据状态进行保存，快照形式，存储数据结果，存储格式简单，关注点在<strong>数据</strong></li><li>AOF将数据的操作过程进行保存，日志形式，存储操作过程，存储格式复杂，关注点在数据的<strong>操作过程</strong></li></ul><h2 id=rdb>RDB</h2><h3 id=启动方式>启动方式</h3><table><thead><tr><th>方式</th><th>save</th><th>bgsave</th><th>save配置</th></tr></thead><tbody><tr><td>读写</td><td>同步</td><td>异步</td><td>同bgsave</td></tr><tr><td>阻塞用户指令</td><td>是</td><td>否</td><td></td></tr><tr><td>额外需要内存</td><td>否</td><td>是</td><td></td></tr><tr><td>需要新进程</td><td>否</td><td>是</td><td></td></tr></tbody></table><h4 id=save>save</h4><ul><li>执行一次即保存一次</li><li>保存文件：dump.rdb，可在redis.conf中通过dbfilename dump-6379.rdb修改</li><li>单线程插入save，执行完以后再执行后续redis命令；有可能阻塞当前Redis服务</li><li>其他参数</li></ul><blockquote><ul><li>rdbcompression yes/no：设置存储至本地数据库时是否压缩数据，默认为 yes，采用 LZF 压缩</li><li>rdbchecksum yes/no：设置是否进行RDB文件格式校验，默认为yes</li></ul></blockquote><h4 id=bgsave>bgsave</h4><ul><li>启动后台保存操作，但不是立即执行</li><li>推荐方式</li><li>stop-writes-on-bgsave-error yes/no：：后台存储过程中如果出现错误现象，是否停止保存操作，默认开启
 <img src=https://img-blog.csdnimg.cn/5623e885db334178b937e073439eda9d.png alt=在这里插入图片描述>
 <img src="https://img-blog.csdnimg.cn/16ceaa776eec49b9a10f6115b78744d2.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述>
 新进程：10352
-会提示完成</li>
-</ul>
-<h4 id=save文件配置>save文件配置</h4>
-<ul>
-<li>save second changes：限定<strong>时间范围内</strong>key的<strong>变化数量</strong>达到指定数量即进行持久化</li>
-<li>对数据产生影响的才有可能执行</li>
-<li>执行的是bgsave操作</li>
-<li>根据业务情况设置，设置不当有可能灾难后果</li>
-</ul>
-<p>配置10秒之内发生两个数据更改操作便RDB</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@worker-02 conf]# vim redis-6379.conf
-port 6379
-daemonize yes
-dir /root/redis-6.0.6/data
-logfile &#34;6379.log&#34;
-protected-mode no
-dbfilename dump-6379.rdb
-rdbcompression yes
-rdbchecksum yes
-save 10 2
-</code></pre></div><p><img src=https://img-blog.csdnimg.cn/1b7aa165060e4532bde68569f847084b.png alt=在这里插入图片描述>
-<img src=https://img-blog.csdnimg.cn/8f036bc96e7946a98cf841c949dee3d0.png alt=在这里插入图片描述></p>
-<h3 id=其他>其他</h3>
-<ul>
-<li>RDB是全量复制</li>
-<li>debug reload：重启并RDB</li>
-<li>shutdown save：关闭前bgsave</li>
-</ul>
-<h3 id=rdb优缺点>RDB优缺点</h3>
-<ul>
-<li>优点
+会提示完成</li></ul><h4 id=save文件配置>save文件配置</h4><ul><li>save second changes：限定<strong>时间范围内</strong>key的<strong>变化数量</strong>达到指定数量即进行持久化</li><li>对数据产生影响的才有可能执行</li><li>执行的是bgsave操作</li><li>根据业务情况设置，设置不当有可能灾难后果</li></ul><p>配置10秒之内发生两个数据更改操作便RDB</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[root@worker-02 conf]# vim redis-6379.conf
+</span></span><span style=display:flex><span>port 6379
+</span></span><span style=display:flex><span>daemonize yes
+</span></span><span style=display:flex><span>dir /root/redis-6.0.6/data
+</span></span><span style=display:flex><span>logfile &#34;6379.log&#34;
+</span></span><span style=display:flex><span>protected-mode no
+</span></span><span style=display:flex><span>dbfilename dump-6379.rdb
+</span></span><span style=display:flex><span>rdbcompression yes
+</span></span><span style=display:flex><span>rdbchecksum yes
+</span></span><span style=display:flex><span>save 10 2
+</span></span></code></pre></div><p><img src=https://img-blog.csdnimg.cn/1b7aa165060e4532bde68569f847084b.png alt=在这里插入图片描述>
+<img src=https://img-blog.csdnimg.cn/8f036bc96e7946a98cf841c949dee3d0.png alt=在这里插入图片描述></p><h3 id=其他>其他</h3><ul><li>RDB是全量复制</li><li>debug reload：重启并RDB</li><li>shutdown save：关闭前bgsave</li></ul><h3 id=rdb优缺点>RDB优缺点</h3><ul><li>优点
  RDB是一个紧凑压缩的二进制文件，存储效率较高
  RDB内部存储的是redis在某个时间点的数据快照，非常适合用于数据备份，全量复制等场景
  RDB恢复数据的速度要比AOF快很多
- 应用：服务器中每X小时执行bgsave备份，并将RDB文件拷贝到远程机器中，用于灾难恢复。</li>
-<li>缺点
+ 应用：服务器中每X小时执行bgsave备份，并将RDB文件拷贝到远程机器中，用于灾难恢复。</li><li>缺点
  无法做到实时持久化，具有较大的可能性丢失数据
  bgsave指令每次运行要执行fork操作创建子进程，要牺牲掉一些性能并多使用内存
- Redis的众多版本中未进行RDB文件格式的版本统一，有可能出现早期各版本服务之间数据格式无法兼容现象，现在的文件格式版本9，兼容低版本<a href=https://github.com/sripathikrishnan/redis-rdb-tools/blob/master/docs/RDB_Version_History.textile>https://github.com/sripathikrishnan/redis-rdb-tools/blob/master/docs/RDB_Version_History.textile</a></li>
-</ul>
-<h2 id=aof>AOF</h2>
-<ul>
-<li>AOF：(append only file)持久化，可实时持久化</li>
-<li>以独立日志的方式记录每次写命令，恢复时再重新执行AOF文件中命令</li>
-<li>解决了数据持久化的实时性</li>
-<li>目前是Redis持久化的<strong>主流方式</strong></li>
-<li>AOF写命令刷新缓存区</li>
-</ul>
-<h3 id=策略>策略</h3>
-<ul>
-<li>always ：每次数据改变即记录到aof文件，性能低，零误差</li>
-<li>everysec：每秒一次，宕机丢失最多1s内容</li>
-<li>no：交给操作系统控制，对Redis来说整体不可控</li>
-</ul>
-<h3 id=配置方法>配置方法</h3>
-<p>conf文件配置</p>
-<ol>
-<li>appendonly yes|no 是否开启</li>
-<li>appendfsync always|everysec|no 配置策略</li>
-<li>文件默认：appendonly.aof，文件名修改appendfilename filename</li>
-</ol>
-<blockquote>
-<p>[root@worker-02 conf]# vim redis-6379.conf</p>
-<blockquote>
-<p>port 6379
+ Redis的众多版本中未进行RDB文件格式的版本统一，有可能出现早期各版本服务之间数据格式无法兼容现象，现在的文件格式版本9，兼容低版本<a href=https://github.com/sripathikrishnan/redis-rdb-tools/blob/master/docs/RDB_Version_History.textile>https://github.com/sripathikrishnan/redis-rdb-tools/blob/master/docs/RDB_Version_History.textile</a></li></ul><h2 id=aof>AOF</h2><ul><li>AOF：(append only file)持久化，可实时持久化</li><li>以独立日志的方式记录每次写命令，恢复时再重新执行AOF文件中命令</li><li>解决了数据持久化的实时性</li><li>目前是Redis持久化的<strong>主流方式</strong></li><li>AOF写命令刷新缓存区</li></ul><h3 id=策略>策略</h3><ul><li>always ：每次数据改变即记录到aof文件，性能低，零误差</li><li>everysec：每秒一次，宕机丢失最多1s内容</li><li>no：交给操作系统控制，对Redis来说整体不可控</li></ul><h3 id=配置方法>配置方法</h3><p>conf文件配置</p><ol><li>appendonly yes|no 是否开启</li><li>appendfsync always|everysec|no 配置策略</li><li>文件默认：appendonly.aof，文件名修改appendfilename filename</li></ol><blockquote><p>[root@worker-02 conf]# vim redis-6379.conf</p><blockquote><p>port 6379
 daemonize yes
 dir /root/redis-6.0.6/data
 logfile &ldquo;6379.log&rdquo;
@@ -249,38 +38,21 @@ rdbchecksum yes
 save 10 2
 databases 24
 <code>appendonly yes</code>
-<code>appendfsync always</code></p>
-</blockquote>
-</blockquote>
-<p>重启后Redis增加文件appendonly.aof，初始化大小为0</p>
-<blockquote>
-<p>[root@worker-02 data]# ll
+<code>appendfsync always</code></p></blockquote></blockquote><p>重启后Redis增加文件appendonly.aof，初始化大小为0</p><blockquote><p>[root@worker-02 data]# ll
 total 12
 -rw-r&ndash;r&ndash;. 1 root root 4867 Nov 10 22:54 6379.log
 -rw-r&ndash;r&ndash;. 1 root root 0 Nov 10 22:54 <code>appendonly.aof</code>
--rw-r&ndash;r&ndash;. 1 root root 111 Nov 10 00:56 dump-6379.rdb</p>
-</blockquote>
-<p>增加key</p>
-<blockquote>
-<p>192.168.21.12:6379> ping
+-rw-r&ndash;r&ndash;. 1 root root 111 Nov 10 00:56 dump-6379.rdb</p></blockquote><p>增加key</p><blockquote><p>192.168.21.12:6379> ping
 PONG
 192.168.21.12:6379> SELECT 1
 OK
 192.168.21.12:6379[1]> set ccie 8466
 OK
-192.168.21.12:6379[1]> set name dewals</p>
-</blockquote>
-<p>文件大小改变</p>
-<blockquote>
-<p>[root@worker-02 data]# ll
+192.168.21.12:6379[1]> set name dewals</p></blockquote><p>文件大小改变</p><blockquote><p>[root@worker-02 data]# ll
 total 16
 -rw-r&ndash;r&ndash;. 1 root root 5217 Nov 10 22:56 6379.log
 -rw-r&ndash;r&ndash;. 1 root root <code>91</code> Nov 10 22:56 <code>appendonly.aof</code>
--rw-r&ndash;r&ndash;. 1 root root 119 Nov 10 22:56 dump-6379.rdb</p>
-</blockquote>
-<p>查看文件内容</p>
-<blockquote>
-<p>[root@worker-02 data]# cat appendonly.aof
+-rw-r&ndash;r&ndash;. 1 root root 119 Nov 10 22:56 dump-6379.rdb</p></blockquote><p>查看文件内容</p><blockquote><p>[root@worker-02 data]# cat appendonly.aof
 *2
 $6
 SELECT
@@ -299,56 +71,18 @@ set
 $4
 name
 $6
-dewals</p>
-</blockquote>
-<h3 id=aof缓冲区同步文件策略>AOF缓冲区同步文件策略</h3>
-<p>由参数appendfsync控制，系统调用write和fsync
-说明：</p>
-<ul>
-<li>write操作-会触发延迟写（delayed write）机制，Linux在内核提供页缓冲区用来提高硬盘IO性能。write操作在写入系统缓冲区后直接返回。同步硬盘操作依赖于系统调度机制，列如：缓冲区页空间写满或达到特定时间周期。同步文件之前，如果此时系统故障宕机，缓冲区内数据将丢失。</li>
-<li>fsync-针对单个文件操作（比如AOF文件），做强制硬盘同步，fsync将阻塞直到
-写入硬盘完成后返回，保证了数据持久化。</li>
-</ul>
-<p>除了write、fsync、Linx还提供了sync、fdatasync操作</p>
-<h3 id=aof重写>AOF重写</h3>
-<p>随着命令不断写入AOF，文件会越来越大，为了解决这个问题，Redis引入了AOF重写机制压缩文件体积。AOF文件重写是将对同一个数据的若干个条命令执行结果转化成最终结果数据对应的指令进行记录。</p>
-<h4 id=aof重写规则>AOF重写规则</h4>
-<ul>
-<li>进程内已超时的数据不再写入文件</li>
-<li>忽略无效指令，重写时使用进程内数据直接生成，AOF文件只保留最终数据的写入命令</li>
-<li>对同一数据的多条写命令合并为一条命令</li>
-</ul>
-<h4 id=aof重写方式>AOF重写方式</h4>
-<ul>
-<li>手动重写</li>
-</ul>
-<blockquote>
-<ul>
-<li><strong>bgrewriteaof</strong>
-<img src="https://img-blog.csdnimg.cn/005a79f7ccd04591ba6a8e3311b8cbf7.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></li>
-</ul>
-</blockquote>
-<p>测试：</p>
-<ol>
-<li>配置conf文件
-<img src=https://img-blog.csdnimg.cn/31019e8f80a746e8a2c775348255be81.png alt=在这里插入图片描述></li>
-<li>重启Redis Server，可以看到data目录下的新appendonly.aof文件，初始化大小为0</li>
-</ol>
-<blockquote>
-<p>[root@worker-02 data]# kill -s 9 23662
+dewals</p></blockquote><h3 id=aof缓冲区同步文件策略>AOF缓冲区同步文件策略</h3><p>由参数appendfsync控制，系统调用write和fsync
+说明：</p><ul><li>write操作-会触发延迟写（delayed write）机制，Linux在内核提供页缓冲区用来提高硬盘IO性能。write操作在写入系统缓冲区后直接返回。同步硬盘操作依赖于系统调度机制，列如：缓冲区页空间写满或达到特定时间周期。同步文件之前，如果此时系统故障宕机，缓冲区内数据将丢失。</li><li>fsync-针对单个文件操作（比如AOF文件），做强制硬盘同步，fsync将阻塞直到
+写入硬盘完成后返回，保证了数据持久化。</li></ul><p>除了write、fsync、Linx还提供了sync、fdatasync操作</p><h3 id=aof重写>AOF重写</h3><p>随着命令不断写入AOF，文件会越来越大，为了解决这个问题，Redis引入了AOF重写机制压缩文件体积。AOF文件重写是将对同一个数据的若干个条命令执行结果转化成最终结果数据对应的指令进行记录。</p><h4 id=aof重写规则>AOF重写规则</h4><ul><li>进程内已超时的数据不再写入文件</li><li>忽略无效指令，重写时使用进程内数据直接生成，AOF文件只保留最终数据的写入命令</li><li>对同一数据的多条写命令合并为一条命令</li></ul><h4 id=aof重写方式>AOF重写方式</h4><ul><li>手动重写</li></ul><blockquote><ul><li><strong>bgrewriteaof</strong>
+<img src="https://img-blog.csdnimg.cn/005a79f7ccd04591ba6a8e3311b8cbf7.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></li></ul></blockquote><p>测试：</p><ol><li>配置conf文件
+<img src=https://img-blog.csdnimg.cn/31019e8f80a746e8a2c775348255be81.png alt=在这里插入图片描述></li><li>重启Redis Server，可以看到data目录下的新appendonly.aof文件，初始化大小为0</li></ol><blockquote><p>[root@worker-02 data]# kill -s 9 23662
 [root@worker-02 data]# ../src/redis-server ../conf/redis-6379.conf
 [root@worker-02 data]# ll
 total 20
 -rw-r&ndash;r&ndash;. 1 root root 9235 Nov 11 17:27 6379.log
 <code>-rw-r--r--. 1 root root 0 Nov 11 17:27 appendonly-6379.aof</code>
 -rw-r&ndash;r&ndash;. 1 root root 132 Nov 11 17:18 appendonly.aof
--rw-r&ndash;r&ndash;. 1 root root 92 Nov 11 17:18 dump-6379.rdb</p>
-</blockquote>
-<ol start=3>
-<li>在Client写数据</li>
-</ol>
-<blockquote>
-<p>192.168.21.12:6379> ping
+-rw-r&ndash;r&ndash;. 1 root root 92 Nov 11 17:18 dump-6379.rdb</p></blockquote><ol start=3><li>在Client写数据</li></ol><blockquote><p>192.168.21.12:6379> ping
 PONG
 192.168.21.12:6379> lpush list01 apple
 (integer) 1
@@ -365,42 +99,18 @@ OK
 192.168.21.12:6379> set name candy
 OK
 192.168.21.12:6379> set name binary
-OK</p>
-</blockquote>
-<ol start=4>
-<li>观察.aof文件变化</li>
-</ol>
-<blockquote>
-<p>[root@worker-02 data]# ll
+OK</p></blockquote><ol start=4><li>观察.aof文件变化</li></ol><blockquote><p>[root@worker-02 data]# ll
 total 24
 -rw-r&ndash;r&ndash;. 1 root root 9235 Nov 11 17:27 6379.log
 -rw-r&ndash;r&ndash;. 1 root root <code>274</code> Nov 11 17:33 appendonly-6379.aof
 -rw-r&ndash;r&ndash;. 1 root root 132 Nov 11 17:18 appendonly.aof
--rw-r&ndash;r&ndash;. 1 root root 92 Nov 11 17:18 dump-6379.rdb</p>
-</blockquote>
-<ol start=5>
-<li>运行手动重写</li>
-</ol>
-<blockquote>
-<p>192.168.21.12:6379> BGREWRITEAOF
-Background append only file rewriting started</p>
-</blockquote>
-<ol start=6>
-<li>再次查看.aof文件变化</li>
-</ol>
-<blockquote>
-<p>[root@worker-02 data]# ll
+-rw-r&ndash;r&ndash;. 1 root root 92 Nov 11 17:18 dump-6379.rdb</p></blockquote><ol start=5><li>运行手动重写</li></ol><blockquote><p>192.168.21.12:6379> BGREWRITEAOF
+Background append only file rewriting started</p></blockquote><ol start=6><li>再次查看.aof文件变化</li></ol><blockquote><p>[root@worker-02 data]# ll
 total 24
 -rw-r&ndash;r&ndash;. 1 root root 10807 Nov 12 01:02 6379.log
 -rw-r&ndash;r&ndash;. 1 root root <code>158</code> Nov 12 01:02 appendonly-6379.aof
 -rw-r&ndash;r&ndash;. 1 root root 132 Nov 11 17:18 appendonly.aof
--rw-r&ndash;r&ndash;. 1 root root 92 Nov 11 17:18 dump-6379.rdb</p>
-</blockquote>
-<ol start=7>
-<li>.aof</li>
-</ol>
-<blockquote>
-<p>REDIS0009ú redis-ver^E6.0.6ú
+-rw-r&ndash;r&ndash;. 1 root root 92 Nov 11 17:18 dump-6379.rdb</p></blockquote><ol start=7><li>.aof</li></ol><blockquote><p>REDIS0009ú redis-ver^E6.0.6ú
 redis-bitsÀ@ú^EctimeÂ&Å&lt;8d>aú^Hused-memÂ¸F^M^@ú^Laof-preambleÀ^Aþ^@û^B^@^@^Dname^Ecandy^N^Flist01^A%%^@^@^@^]^@^@^@^D^@^@^Eapple^G^Cboy^E^Ecisco^G^Edangoÿÿ:&lt;87>Ò¡ÿ«&lt;9c>¥*2^M
 $6^M
 SELECT^M
@@ -412,295 +122,37 @@ set^M
 $4^M
 name^M
 $7^M
-binnary^M</p>
-</blockquote>
-<ul>
-<li>自动重写</li>
-</ul>
-<blockquote>
-<ul>
-<li>方法1：<strong>auto-aof-rewrite-min-size <em>size</em></strong>
-上面的size相对比的是info persistence中的aof_current_size参数，当aof_current_size到达auto-aof-rewrite-min-size 时，进行自动重写</li>
-</ul>
-</blockquote>
-<blockquote>
-<ul>
-<li>方法2：<strong>auto-aof-rewrite-percentage <em>percentage</em></strong>
-其中的percentage对比为info persistence中的aof_base_size参数，触发条件</li>
-</ul>
-<blockquote>
-<p><img src=https://img-blog.csdnimg.cn/690f5ffac03f4a2da7250d7ec5421d38.png alt=在这里插入图片描述></p>
-</blockquote>
-</blockquote>
-<h4 id=aof工作流程>AOF工作流程</h4>
-<p><img src="https://img-blog.csdnimg.cn/78625936dab44d58a02c3908dba773b0.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述>
-最终生成新的.aof文件，删除临时aof文件。</p>
-<h2 id=rdb-vs-aof>RDB vs AOF</h2>
-<table>
-<thead>
-<tr>
-<th>方式</th>
-<th>RDB</th>
-<th>AOF</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>占用存储空间</td>
-<td>较大，数据级：压缩</td>
-<td>大，指令级：重写</td>
-</tr>
-<tr>
-<td>存储速度</td>
-<td>慢</td>
-<td>快</td>
-</tr>
-<tr>
-<td>恢复速度</td>
-<td>快</td>
-<td>慢</td>
-</tr>
-<tr>
-<td>数据安全性</td>
-<td>会丢数据</td>
-<td>依靠策略</td>
-</tr>
-<tr>
-<td>内存资源消耗</td>
-<td>高</td>
-<td>低</td>
-</tr>
-<tr>
-<td>启动优先级</td>
-<td>低</td>
-<td>高</td>
-</tr>
-</tbody>
-</table>
-<h3 id=rdb与aof的选择>RDB与AOF的选择</h3>
-<ul>
-<li>数据非常敏感，AOF，即便是everysec，数据丢失0-1s</li>
-<li>现阶段数据有效，RDB</li>
-<li>追求快速恢复，如灾难恢复，RDB</li>
-<li>可以同时使用</li>
-</ul>
-</div>
-<footer class=post-footer>
-<div id=wcomments></div>
-</footer>
-</article>
-</section>
-</div>
-</div>
-<div class=sidebar-toggle>
-<div class=sidebar-toggle-line-wrap>
-<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+binnary^M</p></blockquote><ul><li>自动重写</li></ul><blockquote><ul><li>方法1：<strong>auto-aof-rewrite-min-size <em>size</em></strong>
+上面的size相对比的是info persistence中的aof_current_size参数，当aof_current_size到达auto-aof-rewrite-min-size 时，进行自动重写</li></ul></blockquote><blockquote><ul><li>方法2：<strong>auto-aof-rewrite-percentage <em>percentage</em></strong>
+其中的percentage对比为info persistence中的aof_base_size参数，触发条件</li></ul><blockquote><p><img src=https://img-blog.csdnimg.cn/690f5ffac03f4a2da7250d7ec5421d38.png alt=在这里插入图片描述></p></blockquote></blockquote><h4 id=aof工作流程>AOF工作流程</h4><p><img src="https://img-blog.csdnimg.cn/78625936dab44d58a02c3908dba773b0.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述>
+最终生成新的.aof文件，删除临时aof文件。</p><h2 id=rdb-vs-aof>RDB vs AOF</h2><table><thead><tr><th>方式</th><th>RDB</th><th>AOF</th></tr></thead><tbody><tr><td>占用存储空间</td><td>较大，数据级：压缩</td><td>大，指令级：重写</td></tr><tr><td>存储速度</td><td>慢</td><td>快</td></tr><tr><td>恢复速度</td><td>快</td><td>慢</td></tr><tr><td>数据安全性</td><td>会丢数据</td><td>依靠策略</td></tr><tr><td>内存资源消耗</td><td>高</td><td>低</td></tr><tr><td>启动优先级</td><td>低</td><td>高</td></tr></tbody></table><h3 id=rdb与aof的选择>RDB与AOF的选择</h3><ul><li>数据非常敏感，AOF，即便是everysec，数据丢失0-1s</li><li>现阶段数据有效，RDB</li><li>追求快速恢复，如灾难恢复，RDB</li><li>可以同时使用</li></ul></div><footer class=post-footer><div id=wcomments></div></footer></article></section></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
 <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-</div>
-</div>
-<aside id=sidebar class=sidebar>
-<div class=sidebar-inner>
-<ul class="sidebar-nav motion-element">
-<li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>
-文章目录
-</li>
-<li class=sidebar-nav-overview data-target=site-overview>
-站点概览
-</li>
-</ul>
-<section class="site-overview sidebar-panel">
-<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
-<img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon>
-<p class=site-author-name itemprop=name>Etaon</p>
-<p class="site-description motion-element" itemprop=description>
-Kepp Going!
-</p>
-</div>
-<nav class="site-state motion-element">
-<div class="site-state-item site-state-posts">
-<a href=/post/>
-<span class=site-state-item-count>61</span>
-<span class=site-state-item-name>日志</span>
-</a>
-</div>
-<div class="site-state-item site-state-categories">
-<a href=/categories/>
-<span class=site-state-item-count>13</span>
-<span class=site-state-item-name>分类</span>
-</a>
-</div>
-<div class="site-state-item site-state-tags">
-<a href=/tags/>
-<span class=site-state-item-count>34</span>
-<span class=site-state-item-name>标签</span>
-</a>
-</div>
-</nav>
-<div class="links-of-author motion-element">
-<span class=links-of-author-item>
-<a href=https://github.com/etaon target=_blank title=GitHub>
-<i class="fa fa-fw fa-github"></i>
-GitHub
-</a>
-</span>
-<span class=links-of-author-item>
-<a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN>
-<i class="fa fa-fw fa-CSDN"></i>
-CSDN
-</a>
-</span>
-</div>
-<div class="links-of-blogroll motion-element links-of-blogroll-inline">
-<div class=links-of-blogroll-title>
-<i class="fa fa-fw fa-globe"></i>
-友情链接
-</div>
-<ul class=links-of-blogroll-list>
-<li class=links-of-blogroll-item>
-<a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a>
-</li>
-</ul>
-</div>
-<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
-<div class=tagcloud-of-blogroll-title>
-<i class="fa fa-fw fa-tags"></i>
-标签云
-</div>
-<ul class=tagcloud-of-blogroll-list>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mysql>Mysql</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/aws>Aws</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/dql>Dql</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/hadoop>Hadoop</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/redis>Redis</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/cicd>Cicd</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/git>Git</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/istio>Istio</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mongodb>Mongodb</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/azure>Azure</a>
-</li>
-</ul>
-</div>
-</section>
-<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-<div class=post-toc>
-<div class=post-toc-content><nav id=TableOfContents>
-<ul>
-<li><a href=#概念>概念</a></li>
-<li><a href=#rdb>RDB</a>
-<ul>
-<li><a href=#启动方式>启动方式</a></li>
-<li><a href=#其他>其他</a></li>
-<li><a href=#rdb优缺点>RDB优缺点</a></li>
-</ul>
-</li>
-<li><a href=#aof>AOF</a>
-<ul>
-<li><a href=#策略>策略</a></li>
-<li><a href=#配置方法>配置方法</a></li>
-<li><a href=#aof缓冲区同步文件策略>AOF缓冲区同步文件策略</a></li>
-<li><a href=#aof重写>AOF重写</a></li>
-</ul>
-</li>
-<li><a href=#rdb-vs-aof>RDB vs AOF</a>
-<ul>
-<li><a href=#rdb与aof的选择>RDB与AOF的选择</a></li>
-</ul>
-</li>
-</ul>
-</nav></div>
-</div>
-</section>
-</div>
-</aside>
-</div>
-</main>
-<footer id=footer class=footer>
-<div class=footer-inner>
-<div class=copyright>
-<span class=copyright-year>
-&copy; 2010 - 2022
-</span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id=sidebar class=sidebar><div class=sidebar-inner><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>文章目录</li><li class=sidebar-nav-overview data-target=site-overview>站点概览</li></ul><section class="site-overview sidebar-panel"><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon><p class=site-author-name itemprop=name>Etaon</p><p class="site-description motion-element" itemprop=description>Kepp Going!</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=/post/><span class=site-state-item-count>61</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>13</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>34</span>
+<span class=site-state-item-name>标签</span></a></div></nav><div class="links-of-author motion-element"><span class=links-of-author-item><a href=https://github.com/etaon target=_blank title=GitHub><i class="fa fa-fw fa-github"></i>
+GitHub</a></span>
+<span class=links-of-author-item><a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN><i class="fa fa-fw fa-CSDN"></i>
+CSDN</a></span></div><div class="links-of-blogroll motion-element links-of-blogroll-inline"><div class=links-of-blogroll-title><i class="fa fa-fw fa-globe"></i>
+友情链接</div><ul class=links-of-blogroll-list><li class=links-of-blogroll-item><a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a></li><li class=links-of-blogroll-item><a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a></li><li class=links-of-blogroll-item><a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a></li><li class=links-of-blogroll-item><a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a></li></ul></div><div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline"><div class=tagcloud-of-blogroll-title><i class="fa fa-fw fa-tags"></i>
+标签云</div><ul class=tagcloud-of-blogroll-list><li class=tagcloud-of-blogroll-item><a href=/tags/mysql>Mysql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/aws>Aws</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/dql>Dql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/hadoop>Hadoop</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/redis>Redis</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/cicd>Cicd</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/git>Git</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/istio>Istio</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/mongodb>Mongodb</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/azure>Azure</a></li></ul></div></section><section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active"><div class=post-toc><div class=post-toc-content><nav id=TableOfContents><ul><li><a href=#概念>概念</a></li><li><a href=#rdb>RDB</a><ul><li><a href=#启动方式>启动方式</a></li><li><a href=#其他>其他</a></li><li><a href=#rdb优缺点>RDB优缺点</a></li></ul></li><li><a href=#aof>AOF</a><ul><li><a href=#策略>策略</a></li><li><a href=#配置方法>配置方法</a></li><li><a href=#aof缓冲区同步文件策略>AOF缓冲区同步文件策略</a></li><li><a href=#aof重写>AOF重写</a></li></ul></li><li><a href=#rdb-vs-aof>RDB vs AOF</a><ul><li><a href=#rdb与aof的选择>RDB与AOF的选择</a></li></ul></li></ul></nav></div></div></section></div></aside></div></main><footer id=footer class=footer><div class=footer-inner><div class=copyright><span class=copyright-year>&copy; 2010 - 2022</span>
 <span class=with-love><i class="fa fa-heart"></i></span>
-<span class=copyright-author>路无止境！</span>
-</div>
-<div class=powered-info>
-<span class=powered-by>
-Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.91.2</a>
-</span>
+<span class=copyright-author>路无止境！</span></div><div class=powered-info><span class=powered-by>Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.101.0</a></span>
 <span class=separator-line>/</span>
-<span class=theme-info>
-Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
-</a>
-</span>
-</div>
-<div class=vistor-info>
-<script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
-<span class=site-uv>
-<i class="fa fa-user"></i>
-<span class=busuanzi-value id=busuanzi_value_site_uv></span>
-</span>
+<span class=theme-info>Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank>NexT</a></span></div><div class=vistor-info><script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<span class=site-uv><i class="fa fa-user"></i>
+<span class=busuanzi-value id=busuanzi_value_site_uv></span></span>
 <span class=separator-line>/</span>
-<span class=site-pv>
-<i class="fa fa-eye"></i>
-<span class=busuanzi-value id=busuanzi_value_site_pv></span>
-</span>
-</div>
-<div class=license-info>
-<span class=storage-info>
-Storage by
-<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a>
-</span>
+<span class=site-pv><i class="fa fa-eye"></i>
+<span class=busuanzi-value id=busuanzi_value_site_pv></span></span></div><div class=license-info><span class=storage-info>Storage by
+<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a></span>
 <span class=separator-line>/</span>
-<span class=license-num>
-<a href target=_blank></a>
-</span>
-</div>
-</div>
-</footer>
-<div class=back-to-top>
-<i class="fa fa-arrow-up"></i>
-<span id=scrollpercent><span>0</span>%</span>
-</div>
-</div>
-<script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
+<span class=license-num><a href target=_blank></a></span></div></div></footer><div class=back-to-top><i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span></div></div><script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
 <script type=text/javascript src=/js/search.js></script>
 <script type=text/javascript src=/js/affix.js></script>
 <script type=text/javascript src=/js/scrollspy.js></script>
-<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.main').css('padding-bottom'),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}}),$(document).on('affixed.bs.affix',function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var b=$('.header-inner').height()+10,c,d,a,e;$('#sidebar').css({'margin-top':b}).show(),c=parseInt($('#sidebar').css('margin-top')),d=parseInt($('.sidebar-inner').css('height')),a=c+d,e=$('.content-wrap').height(),e<a&&$('.content-wrap').css('min-height',a),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
-<script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
-<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
-<script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+'//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js',function(){new Waline({el:'#wcomments',visitor:!0,avatar:'wavatar',avatarCDN:'https://sdn.geekzu.org/avatar/',avatarForce:!1,wordLimit:'200',placeholder:' 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ',requiredFields:['nick','mail'],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$('#wcomments').html('抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。')})</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type=text/javascript>function detectIE(){var e=window.navigator.userAgent,t=e.indexOf("MSIE "),n=e.indexOf("Trident/"),s=e.indexOf("Edge/");return t>0||n>0||s>0?-1:1}function getCntViewHeight(){var t=$("#content").height(),e=$(window).height(),n=t>e?t-e:$(document).height()-e;return n}function getScrollbarWidth(){var e=$("<div />").addClass("scrollbar-measure").prependTo("body"),t=e[0],n=t.offsetWidth-t.clientWidth;return e.remove(),n}function registerBackTop(){var t=50,e=$(".back-to-top");$(window).on("scroll",function(){e.toggleClass("back-to-top-on",window.pageYOffset>t);var s=$(window).scrollTop(),o=getCntViewHeight(),i=s/o,n=Math.round(i*100),a=n>100?100:n;$("#scrollpercent>span").html(a)}),e.on("click",function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var e=".post-toc",s=$(e),t=".active-current";s.on("activate.bs.scrollspy",function(){var t=$(e+" .active").last();n(),t.addClass("active-current")}).on("clear.bs.scrollspy",n),$("body").scrollspy({target:e});function n(){$(e+" "+t).removeClass(t.substring(1))}}function initAffix(){var e=$(".header-inner").height(),t=parseInt($(".main").css("padding-bottom"),10),n=e+10;$(".sidebar-inner").affix({offset:{top:n,bottom:t}}),$(document).on("affixed.bs.affix",function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){$(window).on("resize",function(){e&&clearTimeout(e),e=setTimeout(function(){var e=document.body.clientHeight-100;updateTOCHeight(e)},0)}),updateTOCHeight(document.body.clientHeight-100);var e,t=getScrollbarWidth();$(".post-toc").css("width","calc(100% + "+t+"px)")}function updateTOCHeight(e){e=e||"auto",$(".post-toc").css("max-height",e)}$(function(){var e,t,n,s,o=$(".header-inner").height()+10;$("#sidebar").css({"margin-top":o}).show(),t=parseInt($("#sidebar").css("margin-top")),n=parseInt($(".sidebar-inner").css("height")),e=t+n,s=$(".content-wrap").height(),s<e&&$(".content-wrap").css("min-height",e),$(".site-nav-toggle").on("click",function(){var e=$(".site-nav"),o=$(".toggle"),t="site-nav-on",i="toggle-close",n=e.hasClass(t),a=n?"slideUp":"slideDown",s=n?"removeClass":"addClass";e.stop()[a]("normal",function(){e[s](t),o[s](i)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$(".sidebar-nav-toc").click(function(){$(this).addClass("sidebar-nav-active"),$(this).next().removeClass("sidebar-nav-active"),$("."+$(this).next().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)}),$(".sidebar-nav-overview").click(function(){$(this).addClass("sidebar-nav-active"),$(this).prev().removeClass("sidebar-nav-active"),$("."+$(this).prev().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)})})</script><script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$(".post-body").viewer()})</script><script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+"//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js",function(){new Waline({el:"#wcomments",visitor:!0,avatar:"wavatar",avatarCDN:"https://sdn.geekzu.org/avatar/",avatarForce:!1,wordLimit:"200",placeholder:" 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ",requiredFields:["nick","mail"],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$("#wcomments").html("抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。")})</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
 <script type=text/javascript src="//s7.addthis.com/js/300/addthis_widget.js#pubid=Your%20AddthisId"></script>
-<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
-</body>
-</html>
+<script>(function(){var t,e=document.createElement("script"),n=window.location.protocol.split(":")[0];n==="https"?e.src="https://zz.bdstatic.com/linksubmit/push.js":e.src="http://push.zhanzhang.baidu.com/push.js",t=document.getElementsByTagName("script")[0],t.parentNode.insertBefore(e,t)})()</script></body></html>

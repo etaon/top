@@ -1,334 +1,76 @@
-<!doctype html><html lang=zh-cn dir=content/zh-cn>
-<head>
-<meta charset=utf-8>
-<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
-<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
-<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
-<title> DNS & BIND - 路无止境！ </title>
-<meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云">
-<meta name=author content="Etaon">
-<meta property="og:title" content="DNS & BIND">
-<meta property="og:site_name" content="路无止境！">
-<meta property="og:image" content="/img/author.jpg">
-<meta name=title content="DNS & BIND - 路无止境！">
-<meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。">
-<link rel="shortcut icon" href=/img/favicon.ico>
-<link rel=apple-touch-icon href=/img/apple-touch-icon.png>
-<link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png>
-<link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css>
-<link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet>
-<link href=/css/main.css rel=stylesheet type=text/css>
-<link href=/css/syntax.css rel=stylesheet type=text/css>
-</head>
-<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
-<div class="container one-collumn sidebar-position-left page-home">
-<div class=headband></div>
-<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
-<div class=header-inner> <div class=site-brand-container>
-<div class=site-nav-toggle>
-<div class=toggle role=button style=opacity:1;top:0>
+<!doctype html><html lang=zh-cn dir=content/zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=content-security-policy content="upgrade-insecure-requests"><title>DNS & BIND - 路无止境！</title><meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云"><meta name=author content="Etaon"><meta property="og:title" content="DNS & BIND"><meta property="og:site_name" content="路无止境！"><meta property="og:image" content="/img/author.jpg"><meta name=title content="DNS & BIND - 路无止境！"><meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。"><link rel="shortcut icon" href=/img/favicon.ico><link rel=apple-touch-icon href=/img/apple-touch-icon.png><link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png><link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css><link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet><link href=/css/main.css rel=stylesheet type=text/css><link href=/css/syntax.css rel=stylesheet type=text/css></head><body itemscope itemtype=http://schema.org/WebPage lang=zh-hans><div class="container one-collumn sidebar-position-left page-home"><div class=headband></div><header id=header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle role=button style=opacity:1;top:0><span class=toggle-line></span>
 <span class=toggle-line></span>
-<span class=toggle-line></span>
-<span class=toggle-line></span>
-</div>
-</div>
-<div class=site-meta>
-<div class=multi-lang-switch>
-<i class="fa fa-fw fa-language" style=margin-right:5px></i>
-<a class=lang-link id=zh-cn href=#>中文</a>
-</div>
-<div class=custom-logo-site-title>
-<a href=/ class=brand rel=start>
-<span class=logo-line-before><i></i></span>
+<span class=toggle-line></span></div></div><div class=site-meta><div class=multi-lang-switch><i class="fa fa-fw fa-language" style=margin-right:5px></i>
+<a class=lang-link id=zh-cn href=#>中文</a></div><div class=custom-logo-site-title><a href=/ class=brand rel=start><span class=logo-line-before><i></i></span>
 <span class=site-title>路无止境！</span>
-<span class=logo-line-after><i></i></span>
-</a>
-</div>
-<p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p>
-</div>
-<div class=site-nav-right>
-<div class="toggle popup-trigger" style=opacity:1;top:0>
-<i class="fa fa-search fa-fw fa-lg"></i>
-</div>
-</div>
-</div>
-<nav class=site-nav>
-<ul id=menu class=menu>
-<li class=menu-item>
-<a href=/ rel=section>
-<i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页
-</a>
-</li>
-<li class=menu-item>
-<a href=/post rel=section>
-<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档
-</a>
-</li>
-<li class=menu-item>
-<a href=/about.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于我
-</a>
-</li>
-<li class=menu-item>
-<a href=/404.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益404
-</a>
-</li>
-<li class="menu-item menu-item-search">
-<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> 搜索</a>
-</li>
-</ul>
-<div class=site-search>
-<div class="popup search-popup local-search-popup">
-<div class="local-search-header clearfix">
-<span class=search-icon><i class="fa fa-search"></i> </span>
-<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
-<div class=local-search-input-wrapper>
-<input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
-</div>
-</div>
-<div id=local-search-result></div>
-</div>
-</div>
-</nav>
-</div>
-</header>
-<main id=main class=main>
-<div class=main-inner>
-<div class=content-wrap>
-<div id=content class=content>
-<section id=posts class=posts-expand>
-<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
-<header class=post-header>
-<h1 class=post-title itemprop="name headline" style=font-weight:700>
-<a class=post-title-link href=https://www.etaon.link/2021/12/26/dns-bind.html itemprop=url>
-DNS & BIND
-</a>
-</h1>
-</header>
-<div class=post-body itemprop=articleBody>
-<h1 id=dns>DNS</h1>
-<p>DNS是一个用来把名称解析为IP地址的协议，它是标准TCP/IP协议簇的一部分，是几个能提供名称解析功能的协议中的一个，其他的协议包括NIS和LDAP。
-DNS与这些协议的不同之处在于它<strong>只做名称解析</strong>这一件事，NIS和LDAP还能做其他解析操作，例如对网络用户和组账户的解析。</p>
-<p>DNS也是名称解析的行业标准，被因特网上绝大多数系统所采用。
-DNS客户端配置非常简单，如linux只需要在本地名为／etc/resolv.conf的文件里指定要使用的DNS服务器的地址即可：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#666>[</span>root@worker-03 ~<span style=color:#666>]</span><span style=color:#080;font-style:italic>#cat/etc/resolv.conf</span>
-nameserver 172.16.21.2
-</code></pre></div><h2 id=icann><strong>ICANN</strong></h2>
-<p>全世界域名的最高管理机构，是一个叫做 <a href=https://www.icann.org/>ICANN</a> （Internet Corporation for Assigned Names and Numbers）的组织。它的总部在美国加州。</p>
-<p>它原来是美国商务部下面的一个非盈利机构。2016年，美国政府宣布，ICANN 不再隶属于商务部，成为一个自我管理的独立机构。</p>
-<p>ICANN 负责管理全世界域名系统的运作。它的一项主要工作，就是规定顶级域名（top level domain，简写为 TLD）。</p>
-<p>顶级域名有1000多个，ICANN 自己不会去管理这些顶级域名，每个顶级域名下面都有许多批发商。</p>
-<p>ICANN 的政策是，每个顶级域名都找一个托管商，该域名的所有事项都由托管商负责。ICANN 只与托管商联系，这样管理起来就容易多了。举例来说，<code>.cn</code>域名的托管商就是<a href=https://www.cnnic.net.cn/>中国互联网络信息中心</a>（CNNIC），它决定了<code>.cn</code>域名的各种政策。</p>
-<p>目前，世界最大的顶级域名托管商是美国的 <a href=https://www.verisign.com/>Verisign</a> 公司。</p>
-<h2 id=根域名及根服务器><strong>根域名及根服务器</strong></h2>
-<p>由于 ICANN 管理着所有的顶级域名，所以它是最高一级的域名节点，被称为根域名（root domain）。在有些场合，<code>www.example.com</code>被写成<code>www.example.com.</code>，即最后还会多出一个点。这个点就是根域名。</p>
-<p>DNS 域名解析服务采用了类似目录树的层次结构来记录域名与 IP 地址之间的对应关系，从而形成了一个分布式的数据库系统
-<img src="https://img-blog.csdnimg.cn/42f312ef29174844b853e68e9f84e5a4.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p>
-<p>理论上，所有域名查询都必须先查询根域名，因为只有根域名才能告诉你，某个顶级域名由哪台服务器管理。ICANN 维护着一张列表，里面记载着顶级域名和对应的托管商。</p>
-<p>比如，要访问<code>www.example.com</code>，就必须先询问 ICANN 的根域名列表，它会告诉我<code>.com</code>域名由 Verisign 托管，必须去找 Verisign，它会告诉我<code>example.com</code>服务器在哪里。</p>
-<h3 id=dns-根域名服务器>DNS 根域名服务器</h3>
-<p>保存 DNS 根区文件的服务器，就叫做 DNS 根域名服务器（root name server）。</p>
-<p>由于早期的 DNS 查询结果是一个512字节的 UDP 数据包。这个包最多可以容纳13个服务器的地址，因此就规定全世界有13个根域名服务器，编号从<code>a.root-servers.net</code>一直到<code>m.root-servers.net</code>。分布在世界各地，其管理单位、具体的地理位置，以及 IP 地址如表</p>
-<table>
-<thead>
-<tr>
-<th>名称</th>
-<th>管理单位</th>
-<th>地理位置</th>
-<th>IP 地址</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>A</td>
-<td>INTERNIC.NET</td>
-<td>美国弗吉尼亚州</td>
-<td>198.41.0.4</td>
-</tr>
-<tr>
-<td>B</td>
-<td>美国信息科学研究所</td>
-<td>美国加利福尼亚州</td>
-<td>128.9.0.107</td>
-</tr>
-<tr>
-<td>C</td>
-<td>PSINet 公司</td>
-<td>美国弗吉尼亚州</td>
-<td>192.33.4.12</td>
-</tr>
-<tr>
-<td>D</td>
-<td>马里兰大学</td>
-<td>美国马里兰州</td>
-<td>128.8.10.90</td>
-</tr>
-<tr>
-<td>E</td>
-<td>美国航空航天管理局</td>
-<td>美国加利福尼亚州</td>
-<td>192.203.230.10</td>
-</tr>
-<tr>
-<td>F</td>
-<td>因特网软件联盟</td>
-<td>美国加利福尼亚州</td>
-<td>192.5.5.241</td>
-</tr>
-<tr>
-<td>G</td>
-<td>美国国防部网络信息中心</td>
-<td>美国弗吉尼亚州</td>
-<td>192.112.36.4</td>
-</tr>
-<tr>
-<td>H</td>
-<td>美国陆军研究所</td>
-<td>美国马里兰州</td>
-<td>128.63.2.53</td>
-</tr>
-<tr>
-<td>I</td>
-<td>Autonomica 公司</td>
-<td>瑞典斯德哥尔摩</td>
-<td>192.36.148.17</td>
-</tr>
-<tr>
-<td>J</td>
-<td>VeriSign 公司</td>
-<td>美国弗吉尼亚州</td>
-<td>192.58.128.30</td>
-</tr>
-<tr>
-<td>K</td>
-<td>RIPE NCC</td>
-<td>英国伦敦</td>
-<td>193.0.14.129</td>
-</tr>
-<tr>
-<td>L</td>
-<td>IANA</td>
-<td>美国弗吉尼亚州</td>
-<td>199.7.83.42</td>
-</tr>
-<tr>
-<td>M</td>
-<td>WIDE Project</td>
-<td>日本东京</td>
-<td>202.12.27.33</td>
-</tr>
-</tbody>
-</table>
-<ul>
-<li>注：DNS服务器会保存根服务器的信息，Bind系统默认保存在/var/named/named.ca</li>
-</ul>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#666>[</span>root@worker-03 ~<span style=color:#666>]</span><span style=color:#080;font-style:italic>#  cat /var/named/named.ca</span>
-
-; &lt;&lt;&gt;&gt; DiG 9.11.3-RedHat-9.11.3-3.fc27 &lt;&lt;&gt;&gt; +bufsize<span style=color:#666>=</span><span style=color:#666>1200</span> +norec @a.root-servers.net
-; <span style=color:#666>(</span><span style=color:#666>2</span> servers found<span style=color:#666>)</span>
-;; global options: +cmd
-;; Got answer:
-;; -&gt;&gt;HEADER<span style=color:#b44>&lt;&lt;- opco</span>de: QUERY, status: NOERROR, id: <span style=color:#666>46900</span>
-;; flags: qr aa; QUERY: 1, ANSWER: 13, AUTHORITY: 0, ADDITIONAL: <span style=color:#666>27</span>
-
-;; OPT PSEUDOSECTION:
-; EDNS: version: 0, flags:; udp: <span style=color:#666>1472</span>
-;; QUESTION SECTION:
-;.                              IN      NS
-
-;; ANSWER SECTION:
-.                       <span style=color:#666>518400</span>  IN      NS      a.root-servers.net.
-.                       <span style=color:#666>518400</span>  IN      NS      b.root-servers.net.
-.                       <span style=color:#666>518400</span>  IN      NS      c.root-servers.net.
-.                       <span style=color:#666>518400</span>  IN      NS      d.root-servers.net.
-.                       <span style=color:#666>518400</span>  IN      NS      e.root-servers.net.
-.                       <span style=color:#666>518400</span>  IN      NS      f.root-servers.net.
-.                       <span style=color:#666>518400</span>  IN      NS      g.root-servers.net.
-.                       <span style=color:#666>518400</span>  IN      NS      h.root-servers.net.
-.                       <span style=color:#666>518400</span>  IN      NS      i.root-servers.net.
-.                       <span style=color:#666>518400</span>  IN      NS      j.root-servers.net.
-.                       <span style=color:#666>518400</span>  IN      NS      k.root-servers.net.
-.                       <span style=color:#666>518400</span>  IN      NS      l.root-servers.net.
-.                       <span style=color:#666>518400</span>  IN      NS      m.root-servers.net.
-
-;; ADDITIONAL SECTION:
-a.root-servers.net.     <span style=color:#666>518400</span>  IN      A       198.41.0.4
-b.root-servers.net.     <span style=color:#666>518400</span>  IN      A       199.9.14.201
-c.root-servers.net.     <span style=color:#666>518400</span>  IN      A       192.33.4.12
-d.root-servers.net.     <span style=color:#666>518400</span>  IN      A       199.7.91.13
-e.root-servers.net.     <span style=color:#666>518400</span>  IN      A       192.203.230.10
-f.root-servers.net.     <span style=color:#666>518400</span>  IN      A       192.5.5.241
-g.root-servers.net.     <span style=color:#666>518400</span>  IN      A       192.112.36.4
-h.root-servers.net.     <span style=color:#666>518400</span>  IN      A       198.97.190.53
-i.root-servers.net.     <span style=color:#666>518400</span>  IN      A       192.36.148.17
-j.root-servers.net.     <span style=color:#666>518400</span>  IN      A       192.58.128.30
-k.root-servers.net.     <span style=color:#666>518400</span>  IN      A       193.0.14.129
-l.root-servers.net.     <span style=color:#666>518400</span>  IN      A       199.7.83.42
-m.root-servers.net.     <span style=color:#666>518400</span>  IN      A       202.12.27.33
-a.root-servers.net.     <span style=color:#666>518400</span>  IN      AAAA    2001:503:ba3e::2:30
-b.root-servers.net.     <span style=color:#666>518400</span>  IN      AAAA    2001:500:200::b
-c.root-servers.net.     <span style=color:#666>518400</span>  IN      AAAA    2001:500:2::c
-d.root-servers.net.     <span style=color:#666>518400</span>  IN      AAAA    2001:500:2d::d
-e.root-servers.net.     <span style=color:#666>518400</span>  IN      AAAA    2001:500:a8::e
-f.root-servers.net.     <span style=color:#666>518400</span>  IN      AAAA    2001:500:2f::f
-g.root-servers.net.     <span style=color:#666>518400</span>  IN      AAAA    2001:500:12::d0d
-h.root-servers.net.     <span style=color:#666>518400</span>  IN      AAAA    2001:500:1::53
-i.root-servers.net.     <span style=color:#666>518400</span>  IN      AAAA    2001:7fe::53
-j.root-servers.net.     <span style=color:#666>518400</span>  IN      AAAA    2001:503:c27::2:30
-k.root-servers.net.     <span style=color:#666>518400</span>  IN      AAAA    2001:7fd::1
-l.root-servers.net.     <span style=color:#666>518400</span>  IN      AAAA    2001:500:9f::42
-m.root-servers.net.     <span style=color:#666>518400</span>  IN      AAAA    2001:dc3::35
-
-;; Query time: <span style=color:#666>24</span> msec
-;; SERVER: 198.41.0.4#53<span style=color:#666>(</span>198.41.0.4<span style=color:#666>)</span>
-;; WHEN: Thu Apr <span style=color:#666>05</span> 15:57:34 CEST <span style=color:#666>2018</span>
-;; MSG SIZE  rcvd: <span style=color:#666>811</span>
-</code></pre></div><blockquote>
-<p>美国军方控制的：</p>
-<ul>
-<li>U.S. DOD Network Information Center（G根）</li>
-<li>U.S. Army Research Lab（H根）</li>
-</ul>
-</blockquote>
-<blockquote>
-<p>企业控制的：</p>
-<ul>
-<li>Verisign （A根、J根）</li>
-<li>Cogent Communications（C根）</li>
-<li>Netnod（I根）</li>
-</ul>
-</blockquote>
-<blockquote>
-<p>高校控制的：</p>
-<ul>
-<li>USC（B根）</li>
-<li>University of Maryland（D根）</li>
-</ul>
-</blockquote>
-<blockquote>
-<p>政府组织控制的：</p>
-<ul>
-<li>NASA Ames Research Center（E根）</li>
-</ul>
-</blockquote>
-<blockquote>
-<p>其他组织控制的：</p>
-<ul>
-<li>Internet Systems Consortium, Inc.（F根）</li>
-<li>RIPE NCC（G根）</li>
-<li>ICANN（L根）</li>
-<li>日本WIDE组织（K根）</li>
-</ul>
-</blockquote>
-<p>这13台根域名服务器由12个组织独立运营。其中，Verisign 公司管理两台根域名服务器：A 和 J。每家公司为了保证根域名服务器的可用性，会部署多个节点，比如单单 Verisign 一家公司就部署了104台根域名服务器（2016年1月数据）。</p>
-<p>所以，根域名服务器其实<a href=https://www.icann.org/news/blog/there-are-not-13-root-servers>不止13台</a>。据统计，截止2021年12月，全世界共有 1478 台根域名服务器。可以在 <a href=http://root-servers.org>http://root-servers.org</a> 这个网站查到所有根域名服务器的信息。</p>
-<h3 id=dns根区>DNS根区</h3>
-<p>根域名列表的正式名称是 <a href=https://en.wikipedia.org/wiki/DNS_root_zone>DNS 根区</a>（DNS root zone），ICANN 官网可以<a href=https://www.iana.org/domains/root/files>查看</a>这个<a href=https://www.internic.net/domain/root.zone>根区文件</a>。</p>
-<p>该文件保存所有顶级域名的托管信息，所以非常大，超过2MB。</p>
-<p>举例来说，顶级域名<code>.com</code>可以查到13个域名服务器。</p>
-<blockquote>
-<p>com. 172800 IN NS a.gtld-servers.net.
+<span class=logo-line-after><i></i></span></a></div><p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p></div><div class=site-nav-right><div class="toggle popup-trigger" style=opacity:1;top:0><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class=site-nav><ul id=menu class=menu><li class=menu-item><a href=/ rel=section><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class=menu-item><a href=/post rel=section><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class=menu-item><a href=/about.html rel=section><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于我</a></li><li class=menu-item><a href=/404.html rel=section><i class="menu-item-icon fa fa-fw fa-heartbeat"></i><br>公益404</a></li><li class="menu-item menu-item-search"><a href=javascript:; class=popup-trigger><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class=site-search><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class=search-icon><i class="fa fa-search"></i></span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span><div class=local-search-input-wrapper><input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off></div></div><div id=local-search-result></div></div></div></nav></div></header><main id=main class=main><div class=main-inner><div class=content-wrap><div id=content class=content><section id=posts class=posts-expand><article class="post post-type-normal" itemscope itemtype=http://schema.org/Article><header class=post-header><h1 class=post-title itemprop="name headline" style=font-weight:700><a class=post-title-link href=https://www.etaon.top/2021/12/26/dns-bind.html itemprop=url>DNS & BIND</a></h1></header><div class=post-body itemprop=articleBody><h1 id=dns>DNS</h1><p>DNS是一个用来把名称解析为IP地址的协议，它是标准TCP/IP协议簇的一部分，是几个能提供名称解析功能的协议中的一个，其他的协议包括NIS和LDAP。
+DNS与这些协议的不同之处在于它<strong>只做名称解析</strong>这一件事，NIS和LDAP还能做其他解析操作，例如对网络用户和组账户的解析。</p><p>DNS也是名称解析的行业标准，被因特网上绝大多数系统所采用。
+DNS客户端配置非常简单，如linux只需要在本地名为／etc/resolv.conf的文件里指定要使用的DNS服务器的地址即可：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:#666>[</span>root@worker-03 ~<span style=color:#666>]</span><span style=color:#080;font-style:italic>#cat/etc/resolv.conf</span>
+</span></span><span style=display:flex><span>nameserver 172.16.21.2
+</span></span></code></pre></div><h2 id=icann><strong>ICANN</strong></h2><p>全世界域名的最高管理机构，是一个叫做 <a href=https://www.icann.org/>ICANN</a> （Internet Corporation for Assigned Names and Numbers）的组织。它的总部在美国加州。</p><p>它原来是美国商务部下面的一个非盈利机构。2016年，美国政府宣布，ICANN 不再隶属于商务部，成为一个自我管理的独立机构。</p><p>ICANN 负责管理全世界域名系统的运作。它的一项主要工作，就是规定顶级域名（top level domain，简写为 TLD）。</p><p>顶级域名有1000多个，ICANN 自己不会去管理这些顶级域名，每个顶级域名下面都有许多批发商。</p><p>ICANN 的政策是，每个顶级域名都找一个托管商，该域名的所有事项都由托管商负责。ICANN 只与托管商联系，这样管理起来就容易多了。举例来说，<code>.cn</code>域名的托管商就是<a href=https://www.cnnic.net.cn/>中国互联网络信息中心</a>（CNNIC），它决定了<code>.cn</code>域名的各种政策。</p><p>目前，世界最大的顶级域名托管商是美国的 <a href=https://www.verisign.com/>Verisign</a> 公司。</p><h2 id=根域名及根服务器><strong>根域名及根服务器</strong></h2><p>由于 ICANN 管理着所有的顶级域名，所以它是最高一级的域名节点，被称为根域名（root domain）。在有些场合，<code>www.example.com</code>被写成<code>www.example.com.</code>，即最后还会多出一个点。这个点就是根域名。</p><p>DNS 域名解析服务采用了类似目录树的层次结构来记录域名与 IP 地址之间的对应关系，从而形成了一个分布式的数据库系统
+<img src="https://img-blog.csdnimg.cn/42f312ef29174844b853e68e9f84e5a4.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p><p>理论上，所有域名查询都必须先查询根域名，因为只有根域名才能告诉你，某个顶级域名由哪台服务器管理。ICANN 维护着一张列表，里面记载着顶级域名和对应的托管商。</p><p>比如，要访问<code>www.example.com</code>，就必须先询问 ICANN 的根域名列表，它会告诉我<code>.com</code>域名由 Verisign 托管，必须去找 Verisign，它会告诉我<code>example.com</code>服务器在哪里。</p><h3 id=dns-根域名服务器>DNS 根域名服务器</h3><p>保存 DNS 根区文件的服务器，就叫做 DNS 根域名服务器（root name server）。</p><p>由于早期的 DNS 查询结果是一个512字节的 UDP 数据包。这个包最多可以容纳13个服务器的地址，因此就规定全世界有13个根域名服务器，编号从<code>a.root-servers.net</code>一直到<code>m.root-servers.net</code>。分布在世界各地，其管理单位、具体的地理位置，以及 IP 地址如表</p><table><thead><tr><th>名称</th><th>管理单位</th><th>地理位置</th><th>IP 地址</th></tr></thead><tbody><tr><td>A</td><td>INTERNIC.NET</td><td>美国弗吉尼亚州</td><td>198.41.0.4</td></tr><tr><td>B</td><td>美国信息科学研究所</td><td>美国加利福尼亚州</td><td>128.9.0.107</td></tr><tr><td>C</td><td>PSINet 公司</td><td>美国弗吉尼亚州</td><td>192.33.4.12</td></tr><tr><td>D</td><td>马里兰大学</td><td>美国马里兰州</td><td>128.8.10.90</td></tr><tr><td>E</td><td>美国航空航天管理局</td><td>美国加利福尼亚州</td><td>192.203.230.10</td></tr><tr><td>F</td><td>因特网软件联盟</td><td>美国加利福尼亚州</td><td>192.5.5.241</td></tr><tr><td>G</td><td>美国国防部网络信息中心</td><td>美国弗吉尼亚州</td><td>192.112.36.4</td></tr><tr><td>H</td><td>美国陆军研究所</td><td>美国马里兰州</td><td>128.63.2.53</td></tr><tr><td>I</td><td>Autonomica 公司</td><td>瑞典斯德哥尔摩</td><td>192.36.148.17</td></tr><tr><td>J</td><td>VeriSign 公司</td><td>美国弗吉尼亚州</td><td>192.58.128.30</td></tr><tr><td>K</td><td>RIPE NCC</td><td>英国伦敦</td><td>193.0.14.129</td></tr><tr><td>L</td><td>IANA</td><td>美国弗吉尼亚州</td><td>199.7.83.42</td></tr><tr><td>M</td><td>WIDE Project</td><td>日本东京</td><td>202.12.27.33</td></tr></tbody></table><ul><li>注：DNS服务器会保存根服务器的信息，Bind系统默认保存在/var/named/named.ca</li></ul><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:#666>[</span>root@worker-03 ~<span style=color:#666>]</span><span style=color:#080;font-style:italic>#  cat /var/named/named.ca</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>; &lt;&lt;&gt;&gt; DiG 9.11.3-RedHat-9.11.3-3.fc27 &lt;&lt;&gt;&gt; +bufsize<span style=color:#666>=</span><span style=color:#666>1200</span> +norec @a.root-servers.net
+</span></span><span style=display:flex><span>; <span style=color:#666>(</span><span style=color:#666>2</span> servers found<span style=color:#666>)</span>
+</span></span><span style=display:flex><span>;; global options: +cmd
+</span></span><span style=display:flex><span>;; Got answer:
+</span></span><span style=display:flex><span>;; -&gt;&gt;HEADER<span style=color:#b44>&lt;&lt;- opco</span>de: QUERY, status: NOERROR, id: <span style=color:#666>46900</span>
+</span></span><span style=display:flex><span>;; flags: qr aa; QUERY: 1, ANSWER: 13, AUTHORITY: 0, ADDITIONAL: <span style=color:#666>27</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>;; OPT PSEUDOSECTION:
+</span></span><span style=display:flex><span>; EDNS: version: 0, flags:; udp: <span style=color:#666>1472</span>
+</span></span><span style=display:flex><span>;; QUESTION SECTION:
+</span></span><span style=display:flex><span>;.                              IN      NS
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>;; ANSWER SECTION:
+</span></span><span style=display:flex><span>.                       <span style=color:#666>518400</span>  IN      NS      a.root-servers.net.
+</span></span><span style=display:flex><span>.                       <span style=color:#666>518400</span>  IN      NS      b.root-servers.net.
+</span></span><span style=display:flex><span>.                       <span style=color:#666>518400</span>  IN      NS      c.root-servers.net.
+</span></span><span style=display:flex><span>.                       <span style=color:#666>518400</span>  IN      NS      d.root-servers.net.
+</span></span><span style=display:flex><span>.                       <span style=color:#666>518400</span>  IN      NS      e.root-servers.net.
+</span></span><span style=display:flex><span>.                       <span style=color:#666>518400</span>  IN      NS      f.root-servers.net.
+</span></span><span style=display:flex><span>.                       <span style=color:#666>518400</span>  IN      NS      g.root-servers.net.
+</span></span><span style=display:flex><span>.                       <span style=color:#666>518400</span>  IN      NS      h.root-servers.net.
+</span></span><span style=display:flex><span>.                       <span style=color:#666>518400</span>  IN      NS      i.root-servers.net.
+</span></span><span style=display:flex><span>.                       <span style=color:#666>518400</span>  IN      NS      j.root-servers.net.
+</span></span><span style=display:flex><span>.                       <span style=color:#666>518400</span>  IN      NS      k.root-servers.net.
+</span></span><span style=display:flex><span>.                       <span style=color:#666>518400</span>  IN      NS      l.root-servers.net.
+</span></span><span style=display:flex><span>.                       <span style=color:#666>518400</span>  IN      NS      m.root-servers.net.
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>;; ADDITIONAL SECTION:
+</span></span><span style=display:flex><span>a.root-servers.net.     <span style=color:#666>518400</span>  IN      A       198.41.0.4
+</span></span><span style=display:flex><span>b.root-servers.net.     <span style=color:#666>518400</span>  IN      A       199.9.14.201
+</span></span><span style=display:flex><span>c.root-servers.net.     <span style=color:#666>518400</span>  IN      A       192.33.4.12
+</span></span><span style=display:flex><span>d.root-servers.net.     <span style=color:#666>518400</span>  IN      A       199.7.91.13
+</span></span><span style=display:flex><span>e.root-servers.net.     <span style=color:#666>518400</span>  IN      A       192.203.230.10
+</span></span><span style=display:flex><span>f.root-servers.net.     <span style=color:#666>518400</span>  IN      A       192.5.5.241
+</span></span><span style=display:flex><span>g.root-servers.net.     <span style=color:#666>518400</span>  IN      A       192.112.36.4
+</span></span><span style=display:flex><span>h.root-servers.net.     <span style=color:#666>518400</span>  IN      A       198.97.190.53
+</span></span><span style=display:flex><span>i.root-servers.net.     <span style=color:#666>518400</span>  IN      A       192.36.148.17
+</span></span><span style=display:flex><span>j.root-servers.net.     <span style=color:#666>518400</span>  IN      A       192.58.128.30
+</span></span><span style=display:flex><span>k.root-servers.net.     <span style=color:#666>518400</span>  IN      A       193.0.14.129
+</span></span><span style=display:flex><span>l.root-servers.net.     <span style=color:#666>518400</span>  IN      A       199.7.83.42
+</span></span><span style=display:flex><span>m.root-servers.net.     <span style=color:#666>518400</span>  IN      A       202.12.27.33
+</span></span><span style=display:flex><span>a.root-servers.net.     <span style=color:#666>518400</span>  IN      AAAA    2001:503:ba3e::2:30
+</span></span><span style=display:flex><span>b.root-servers.net.     <span style=color:#666>518400</span>  IN      AAAA    2001:500:200::b
+</span></span><span style=display:flex><span>c.root-servers.net.     <span style=color:#666>518400</span>  IN      AAAA    2001:500:2::c
+</span></span><span style=display:flex><span>d.root-servers.net.     <span style=color:#666>518400</span>  IN      AAAA    2001:500:2d::d
+</span></span><span style=display:flex><span>e.root-servers.net.     <span style=color:#666>518400</span>  IN      AAAA    2001:500:a8::e
+</span></span><span style=display:flex><span>f.root-servers.net.     <span style=color:#666>518400</span>  IN      AAAA    2001:500:2f::f
+</span></span><span style=display:flex><span>g.root-servers.net.     <span style=color:#666>518400</span>  IN      AAAA    2001:500:12::d0d
+</span></span><span style=display:flex><span>h.root-servers.net.     <span style=color:#666>518400</span>  IN      AAAA    2001:500:1::53
+</span></span><span style=display:flex><span>i.root-servers.net.     <span style=color:#666>518400</span>  IN      AAAA    2001:7fe::53
+</span></span><span style=display:flex><span>j.root-servers.net.     <span style=color:#666>518400</span>  IN      AAAA    2001:503:c27::2:30
+</span></span><span style=display:flex><span>k.root-servers.net.     <span style=color:#666>518400</span>  IN      AAAA    2001:7fd::1
+</span></span><span style=display:flex><span>l.root-servers.net.     <span style=color:#666>518400</span>  IN      AAAA    2001:500:9f::42
+</span></span><span style=display:flex><span>m.root-servers.net.     <span style=color:#666>518400</span>  IN      AAAA    2001:dc3::35
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>;; Query time: <span style=color:#666>24</span> msec
+</span></span><span style=display:flex><span>;; SERVER: 198.41.0.4#53<span style=color:#666>(</span>198.41.0.4<span style=color:#666>)</span>
+</span></span><span style=display:flex><span>;; WHEN: Thu Apr <span style=color:#666>05</span> 15:57:34 CEST <span style=color:#666>2018</span>
+</span></span><span style=display:flex><span>;; MSG SIZE  rcvd: <span style=color:#666>811</span>
+</span></span></code></pre></div><blockquote><p>美国军方控制的：</p><ul><li>U.S. DOD Network Information Center（G根）</li><li>U.S. Army Research Lab（H根）</li></ul></blockquote><blockquote><p>企业控制的：</p><ul><li>Verisign （A根、J根）</li><li>Cogent Communications（C根）</li><li>Netnod（I根）</li></ul></blockquote><blockquote><p>高校控制的：</p><ul><li>USC（B根）</li><li>University of Maryland（D根）</li></ul></blockquote><blockquote><p>政府组织控制的：</p><ul><li>NASA Ames Research Center（E根）</li></ul></blockquote><blockquote><p>其他组织控制的：</p><ul><li>Internet Systems Consortium, Inc.（F根）</li><li>RIPE NCC（G根）</li><li>ICANN（L根）</li><li>日本WIDE组织（K根）</li></ul></blockquote><p>这13台根域名服务器由12个组织独立运营。其中，Verisign 公司管理两台根域名服务器：A 和 J。每家公司为了保证根域名服务器的可用性，会部署多个节点，比如单单 Verisign 一家公司就部署了104台根域名服务器（2016年1月数据）。</p><p>所以，根域名服务器其实<a href=https://www.icann.org/news/blog/there-are-not-13-root-servers>不止13台</a>。据统计，截止2021年12月，全世界共有 1478 台根域名服务器。可以在 <a href=http://root-servers.org>http://root-servers.org</a> 这个网站查到所有根域名服务器的信息。</p><h3 id=dns根区>DNS根区</h3><p>根域名列表的正式名称是 <a href=https://en.wikipedia.org/wiki/DNS_root_zone>DNS 根区</a>（DNS root zone），ICANN 官网可以<a href=https://www.iana.org/domains/root/files>查看</a>这个<a href=https://www.internic.net/domain/root.zone>根区文件</a>。</p><p>该文件保存所有顶级域名的托管信息，所以非常大，超过2MB。</p><p>举例来说，顶级域名<code>.com</code>可以查到13个域名服务器。</p><blockquote><p>com. 172800 IN NS a.gtld-servers.net.
 com. 172800 IN NS b.gtld-servers.net.
 com. 172800 IN NS c.gtld-servers.net.
 com. 172800 IN NS d.gtld-servers.net.
@@ -340,242 +82,181 @@ com. 172800 IN NS i.gtld-servers.net.
 com. 172800 IN NS j.gtld-servers.net.
 com. 172800 IN NS k.gtld-servers.net.
 com. 172800 IN NS l.gtld-servers.net.
-com. 172800 IN NS m.gtld-servers.net.</p>
-</blockquote>
-<p><img src="https://img-blog.csdnimg.cn/726e0bdfc2a64b05bedb468893e50ae5.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p>
-<h2 id=dns查询>DNS查询</h2>
-<p>DNS 域名解析服务采用分布式的数据结构来存放海量的“区域数据”信息，在执行用户发起的域名查询请求时，具有递归查询和迭代查询两种方式。</p>
-<ul>
-<li>递归查询，是指 DNS 服务器在收到用户发起的请求时，必须向用户返回一个准确的查询结果。如果 DNS 服务器本地没有存储与之对应的信息，则该服务器需要询问其他服务器，并将返回的查询结果提交给用户。</li>
-<li>迭代查询，DNS 服务器在收到用户发起的请求时，并不直接回复查询结果，而是告诉另一台 DNS 服务器的地址，用户再向这台 DNS 服务器提交请求，这样依次反复，直到返回查询结果</li>
-</ul>
-<p>在一般情况下，当用户向配置指定的 DNS 服务器发起对某个域名的查询请求（这里以www.cisco.com为例），其查询流程大致如图</p>
-<p><img src="https://img-blog.csdnimg.cn/3eef7d23537c47e9bbcfec477e42f18d.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p>
-<h1 id=bind>Bind</h1>
-<p><a href=https://www.isc.org/bind/>BIND 9</a></p>
-<p>现在使用最为广泛的DNS服务器软件是BIND（Berkeley Internet Name Domain），最早由伯克利大学的一名学生编写，现在最新的版本是9，有ISC（Internet Systems Consortium）编写和维护。BIND支持先今绝大多数的操作系统（Linux，UNIX，Mac，Windows），BIND服务的名称称之named。DNS默认使用UDP、TCP协议，使用端口为53（domain），953（mdc，远程控制使用）。</p>
-<h2 id=bind-chroot>Bind-chroot</h2>
-<p>BIND服务器通常从因特网可直接访问。只要有一个通过因特网可以直接访问的系统，安全就成了一个大问题。这些安全问题包括有人破坏了服务器上的数据（有时称为数据投毒）和黑客控制了暴露的服务器进程，允许被劫持的服务器未经授权访问其他系统文件。</p>
-<p>named进程在处理传人的DN查询时与网连接起交互。任何时候，只要一个进程是通过网络可访问的，那么这个进程就有可能受到动击。在这种攻击中，远程系统上的用户控制本地服务器上的进程。一旦这个用户有了提制权，他们就可以访问本地系统，包括查看或修改文件。</p>
-<p>当被劫持的进程是以非root身份运行时，虽然危害是有限的。但是，像／etc/passwd这样
-的系统核心文件。系统上的每个用户，包括named用户，都能查看／etc/passwd文件的内容，因为每个用户都有这个文件的读取权限。</p>
-<p>chroot jail的目的是限制对系统文件的访问。named进程被放入jail，在那里它只能看到和BIND相关的配置。这是通过将BIND的配置文件放到特定的子目录中并启动named进程实现，这样文件系统的根看起来就是前面提到的子目录（chroot代表 change root，就好像是更改这个进程的文件系统根路径）。</p>
-<p>bind-chroot本质上是使用chroot方式给bind软件换了个“根”，这“根”在/var/named/chroot下，把yum安装的bind-chroot在/etc下的产生的配置文件硬链接到/var/named/chroot/etc下。配置起来就跟BIND9没什么区别。
-yum查看bind-chroot的info</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#666>[</span>root@worker-03 ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># yum info bind-chroot</span>
-Loaded plugins: fastestmirror, langpacks
-Loading mirror speeds from cached hostfile
- * base: mirrors.nju.edu.cn
- * centos-sclo-rh: mirrors.nju.edu.cn
- * centos-sclo-sclo: mirrors.nju.edu.cn
- * epel: mirror.sjtu.edu.cn
- * extras: mirrors.nju.edu.cn
- * updates: mirrors.nju.edu.cn
-Installed Packages
-Name        : bind-chroot
-Arch        : x86_64
-Epoch       : <span style=color:#666>32</span>
-Version     : 9.11.4
-Release     : 26.P2.el7_9.8
-Size        : 4.7 k
-Repo        : installed
-From repo   : updates
-Summary     : A chroot runtime environment <span style=color:#a2f;font-weight:700>for</span> the ISC BIND DNS server, named<span style=color:#666>(</span>8<span style=color:#666>)</span>
-URL         : http://www.isc.org/products/BIND/
-License     : MPLv2.0
-Description : This package contains a tree of files which can be used as a
-            : chroot<span style=color:#666>(</span>2<span style=color:#666>)</span> jail <span style=color:#a2f;font-weight:700>for</span> the named<span style=color:#666>(</span>8<span style=color:#666>)</span> program from the BIND package.
-            : Based on the code from Jan <span style=color:#b44>&#34;Yenya&#34;</span> Kasprzak &lt;kas@fi.muni.cz&gt;
-</code></pre></div><p>可以看到此安装包是为Bind安装包加了chroot 的jail。</p>
-<h2 id=bindbind-chroot安装>Bind(Bind-chroot)安装</h2>
-<p>在CentOS 7下可以用yum直接安装</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#666>[</span>root@worker-03 ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># yum install bind-chroot</span>
-Loaded plugins: langpacks
-base-openlogic                                                                                                                                                   | 3.1 kB  00:00:00
-extras-openlogic                                                                                                                                                 | 2.5 kB  00:00:00
-updates-openlogic                                                                                                                                                | 2.6 kB  00:00:00
-base                                                                                                                                                             | 3.6 kB  00:00:00
-extras                                                                                                                                                           | 2.9 kB  00:00:00
-openlogic                                                                                                                                                        | 2.9 kB  00:00:00
-updates                                                                                                                                                          | 2.9 kB  00:00:00
-updates-openlogic/7/x86_64/primary_db                                                                                                                            |  <span style=color:#666>13</span> MB  00:00:00
-Resolving Dependencies
---&gt; Running transaction check
----&gt; Package bind-chroot.x86_64 32:9.11.4-26.P2.el7_9.8 will be installed
---&gt; Processing Dependency: bind<span style=color:#666>(</span>x86-64<span style=color:#666>)</span> <span style=color:#666>=</span> 32:9.11.4-26.P2.el7_9.8 <span style=color:#a2f;font-weight:700>for</span> package: 32:bind-chroot-9.11.4-26.P2.el7_9.8.x86_64
---&gt; Running transaction check
----&gt; Package bind.x86_64 32:9.11.4-26.P2.el7_9.8 will be installed
---&gt; Processing Dependency: python-ply <span style=color:#a2f;font-weight:700>for</span> package: 32:bind-9.11.4-26.P2.el7_9.8.x86_64
---&gt; Running transaction check
----&gt; Package python-ply.noarch 0:3.4-11.el7 will be installed
---&gt; Finished Dependency Resolution
-
-Dependencies <span style=color:#b8860b>Resolved</span>
-
-<span style=color:#666>========================================================================================================================================================================================</span>
- Package                                  Arch                                Version                                              Repository                                      <span style=color:#b8860b>Size</span>
-<span style=color:#666>========================================================================================================================================================================================</span>
-Installing:
- bind-chroot                              x86_64                              32:9.11.4-26.P2.el7_9.8                              updates-openlogic                               <span style=color:#666>93</span> k
-Installing <span style=color:#a2f;font-weight:700>for</span> dependencies:
- <span style=color:#a2f>bind</span>                                     x86_64                              32:9.11.4-26.P2.el7_9.8                              updates-openlogic                              2.3 M
- python-ply                               noarch                              3.4-11.el7                                           base-openlogic                                 <span style=color:#666>123</span> k
-
-Transaction <span style=color:#b8860b>Summary</span>
-<span style=color:#666>========================================================================================================================================================================================</span>
-Install  <span style=color:#666>1</span> Package <span style=color:#666>(</span>+2 Dependent packages<span style=color:#666>)</span>
-
-Total download size: 2.5 M
-Installed size: 5.9 M
-Is this ok <span style=color:#666>[</span>y/d/N<span style=color:#666>]</span>: y
-Downloading packages:
-<span style=color:#666>(</span>1/3<span style=color:#666>)</span>: bind-chroot-9.11.4-26.P2.el7_9.8.x86_64.rpm                                                                                                               |  <span style=color:#666>93</span> kB  00:00:00
-<span style=color:#666>(</span>2/3<span style=color:#666>)</span>: python-ply-3.4-11.el7.noarch.rpm                                                                                                                          | <span style=color:#666>123</span> kB  00:00:00
-<span style=color:#666>(</span>3/3<span style=color:#666>)</span>: bind-9.11.4-26.P2.el7_9.8.x86_64.rpm                                                                                                                      | 2.3 MB  00:00:00
-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-Total                                                                                                                                                   3.2 MB/s | 2.5 MB  00:00:00
-Running transaction check
-Running transaction <span style=color:#a2f>test</span>
-Transaction <span style=color:#a2f>test</span> succeeded
-Running transaction
-  Installing : python-ply-3.4-11.el7.noarch                                                                                                                                         1/3
-  Installing : 32:bind-9.11.4-26.P2.el7_9.8.x86_64                                                                                                                                  2/3
-/var/tmp/rpm-tmp.Tw26pc: line 90:  <span style=color:#666>2937</span> Done                    /bin/echo -e <span style=color:#b44>&#34;</span><span style=color:#b8860b>$semanage_import</span><span style=color:#b44>&#34;</span>
-      <span style=color:#666>2938</span> Killed                  | /usr/sbin/semanage import -S <span style=color:#b44>&#34;</span><span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>_policytype</span><span style=color:#b68;font-weight:700>}</span><span style=color:#b44>&#34;</span>
-  Installing : 32:bind-chroot-9.11.4-26.P2.el7_9.8.x86_64                                                                                                                           3/3
-  Verifying  : 32:bind-9.11.4-26.P2.el7_9.8.x86_64                                                                                                                                  1/3
-  Verifying  : python-ply-3.4-11.el7.noarch                                                                                                                                         2/3
-  Verifying  : 32:bind-chroot-9.11.4-26.P2.el7_9.8.x86_64                                                                                                                           3/3
-
-Installed:
-  bind-chroot.x86_64 32:9.11.4-26.P2.el7_9.8
-
-Dependency Installed:
-  bind.x86_64 32:9.11.4-26.P2.el7_9.8                                                           python-ply.noarch 0:3.4-11.el7
-
-Complete!
-</code></pre></div><p>注意：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#666>========================================================================================================================================================================================</span>
- Package                                  Arch                                Version                                              Repository                                      <span style=color:#b8860b>Size</span>
-<span style=color:#666>========================================================================================================================================================================================</span>
-Installing:
- bind-chroot                              x86_64                              32:9.11.4-26.P2.el7_9.8                              updates-openlogic                               <span style=color:#666>93</span> k
-Installing <span style=color:#a2f;font-weight:700>for</span> dependencies:
- <span style=color:#a2f>bind</span>                                     x86_64                              32:9.11.4-26.P2.el7_9.8                              updates-openlogic                              2.3 M
- python-ply                               noarch                              3.4-11.el7                                           base-openlogic                                 <span style=color:#666>123</span> k
-
-Transaction <span style=color:#b8860b>Summary</span>
-<span style=color:#666>========================================================================================================================================================================================</span>
-Install  <span style=color:#666>1</span> Package <span style=color:#666>(</span>+2 Dependent packages<span style=color:#666>)</span>
-</code></pre></div><p>安装了bind，bind-chroot和python-ply</p>
-<p>启动服务：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>systemctl start named
-</code></pre></div><h2 id=bind配置>Bind配置</h2>
-<p>Bind的基础配置工作是配置主配置文件和区域文件，其关系如下：
-<img src="https://img-blog.csdnimg.cn/150ae6eb1171454eba69be2b1e254a7d.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p>
-<h3 id=主要配置文件namedconf>主要配置文件named.conf</h3>
-<p>Bind服务器的主要配置文件/etc/named.conf，默认如下：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>//
-// named.conf
-//
-// Provided by Red Hat <span style=color:#a2f>bind</span> package to configure the ISC BIND named<span style=color:#666>(</span>8<span style=color:#666>)</span> DNS
-// server as a caching only nameserver <span style=color:#666>(</span>as a localhost DNS resolver only<span style=color:#666>)</span>.
-//
-// See /usr/share/doc/bind*/sample/ <span style=color:#a2f;font-weight:700>for</span> example named configuration files.
-//
-// See the BIND Administrator<span>&#39;</span>s Reference Manual <span style=color:#666>(</span>ARM<span style=color:#666>)</span> <span style=color:#a2f;font-weight:700>for</span> details about the
-// configuration located in /usr/share/doc/bind-<span style=color:#666>{</span>version<span style=color:#666>}</span>/Bv9ARM.html
-
-options <span style=color:#666>{</span>
-        listen-on port <span style=color:#666>53</span> <span style=color:#666>{</span> 127.0.0.1; <span style=color:#666>}</span>;
-        listen-on-v6 port <span style=color:#666>53</span> <span style=color:#666>{</span> ::1; <span style=color:#666>}</span>;
-        directory       <span style=color:#b44>&#34;/var/named&#34;</span>;
-        dump-file       <span style=color:#b44>&#34;/var/named/data/cache_dump.db&#34;</span>;
-        statistics-file <span style=color:#b44>&#34;/var/named/data/named_stats.txt&#34;</span>;
-        memstatistics-file <span style=color:#b44>&#34;/var/named/data/named_mem_stats.txt&#34;</span>;
-        recursing-file  <span style=color:#b44>&#34;/var/named/data/named.recursing&#34;</span>;
-        secroots-file   <span style=color:#b44>&#34;/var/named/data/named.secroots&#34;</span>;
-        allow-query     <span style=color:#666>{</span> localhost; <span style=color:#666>}</span>;
-
-        /*
-         - If you are building an AUTHORITATIVE DNS server, <span style=color:#a2f;font-weight:700>do</span> NOT <span style=color:#a2f>enable</span> recursion.
-         - If you are building a RECURSIVE <span style=color:#666>(</span>caching<span style=color:#666>)</span> DNS server, you need to <span style=color:#a2f>enable</span>
-           recursion.
-         - If your recursive DNS server has a public IP address, you MUST <span style=color:#a2f>enable</span> access
-           control to limit queries to your legitimate users. Failing to <span style=color:#a2f;font-weight:700>do</span> so will
-           cause your server to become part of large scale DNS amplification
-           attacks. Implementing BCP38 within your network would greatly
-           reduce such attack surface
-        */
-        recursion yes;
-
-        dnssec-enable yes;
-        dnssec-validation yes;
-
-        /* Path to ISC DLV key */
-        bindkeys-file <span style=color:#b44>&#34;/etc/named.root.key&#34;</span>;
-
-        managed-keys-directory <span style=color:#b44>&#34;/var/named/dynamic&#34;</span>;
-
-        pid-file <span style=color:#b44>&#34;/run/named/named.pid&#34;</span>;
-        session-keyfile <span style=color:#b44>&#34;/run/named/session.key&#34;</span>;
-<span style=color:#666>}</span>;
-
-logging <span style=color:#666>{</span>
-        channel default_debug <span style=color:#666>{</span>
-                file <span style=color:#b44>&#34;data/named.run&#34;</span>;
-                severity dynamic;
-        <span style=color:#666>}</span>;
-<span style=color:#666>}</span>;
-
-zone <span style=color:#b44>&#34;.&#34;</span> IN <span style=color:#666>{</span>
-        <span style=color:#a2f>type</span> hint;
-        file <span style=color:#b44>&#34;named.ca&#34;</span>;
-<span style=color:#666>}</span>;
-
-include <span style=color:#b44>&#34;/etc/named.rfc1912.zones&#34;</span>;
-include <span style=color:#b44>&#34;/etc/named.root.key&#34;</span>;
-</code></pre></div><h4 id=全局配置options>全局配置options</h4>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>options <span style=color:#666>{</span>                <span style=color:#080;font-style:italic># 全局配置段</span>
-        ...
-<span style=color:#666>}</span>;
-</code></pre></div><p>options 的参数设置会影响整个 BIND9 DNS环境的配置，具体各部分常用到的配置参数如下：</p>
-<ul>
-<li><strong><code>listen-on</code></strong>： 用于配置监听的端口以及IPv4地址，默认的监听端口为：53；</li>
-<li>listen-on-v6：用于监听 IPv6 地址以及端口；</li>
-<li><strong><code>directory</code></strong>: 用于指定读取DNS数据文件的文件夹，默认的文件夹的路径为：<strong>/var/nemed</strong>；</li>
-<li>dump-file：选项用来设置域名缓存数据库文件的位置，可以自己定义。
-默认的存储文件为：cache_dump.db；</li>
-<li>statistics-file：选项用来设置状态统计文件的位置，可以自己定义，默认/var/named/data/named_stats.txt；</li>
-<li>memstatistics-file ：选项用来设置服务器输出的内存使用统计信息。默认保存在 /var/named/data/named_mem_stats.txt；</li>
-<li><strong><code>allow-query</code></strong>：选项用来设置允许DNS查询的客户端地址，默认值为localhost, 可以设置为某个网段、任意地址、具体的某台主机三种情况。
-例如，要修改为任意地址，就在括号内的加入 <strong>any</strong>，也可以引用之前创建的 acl 内的所有地址；</li>
-<li><strong><code>recursion</code></strong>：用于设置<strong>递归查询</strong>，一般客户机和服务器之间属于递归查询，即当客户机向DNS服务器发出查询请求后，若DNS服务器本身不能解析，则会向另外的DNS服务器发出查询请求，得到结果后转交给客户机。此选项有<strong>yes和no</strong>两个值。这个选项用于设置 Failover 非常有用；
-系统的解释如下：</li>
-<li>如果您正在构建一个权威性DNS服务器，不要启用递归。</li>
-<li>如果您正在构建一个递归(缓存)DNS服务器，您需要启用递归。</li>
-<li>如果您的递归DNS服务器有一个公网IP地址，您必须启用访问控制，以限制对您的合法用户的查询。 如果不这样做，将导致您的服务器成为大规模DNS放大攻击的一部分。 在您的网络中实现BCP38将大大减少此类攻击</li>
-<li>dnssec-enable： 选项用来设置是否启用DNSSEC支持，DNSSEC可以用来验证DNS数据的有效性，该选项有yes和no两个值，默认值为yes。</li>
-<li>dnssec-validation：选项用来设置是否启用DNSSEC确认，默认值为yes，可以选择 auto。</li>
-<li>bindkeys-file ： 用来设置内置信任的密钥文件，其默认值为 /etc/named.root.key；</li>
-<li>managed-keys-directory： 选项用于指定目录中的文件存储位置，跟踪管理 DNSSEC 密钥；</li>
-</ul>
-<p>未在默认named.conf中的重要参数：</p>
-<ul>
-<li>
-<p><strong><code>forward</code></strong>：用于设置DNS转发的工作方式，有两种选择</p>
-</li>
-<li>
-<p><strong>forward first</strong> 设置优先使用forwarders DNS服务器做域名解析，如果查询不到再使用本地DNS服务器做域名解析。</p>
-</li>
-<li>
-<p><strong>forward only</strong>设置只使用forwarders DNS服务器做域名解析，如果查询不到则返回DNS客户端查询失败。</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>options <span style=color:#666>{</span>
-forwarders <span style=color:#666>{</span> 8.8.8.8; 8.8.4.4; 233.5.5.5;233.6.6.6<span style=color:#666>}</span>;
-<span style=color:#666>}</span>;
-</code></pre></div></li>
-<li>
-<p><strong><code>forwarders</code></strong>：DNS转发器。
+com. 172800 IN NS m.gtld-servers.net.</p></blockquote><p><img src="https://img-blog.csdnimg.cn/726e0bdfc2a64b05bedb468893e50ae5.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p><h2 id=dns查询>DNS查询</h2><p>DNS 域名解析服务采用分布式的数据结构来存放海量的“区域数据”信息，在执行用户发起的域名查询请求时，具有递归查询和迭代查询两种方式。</p><ul><li>递归查询，是指 DNS 服务器在收到用户发起的请求时，必须向用户返回一个准确的查询结果。如果 DNS 服务器本地没有存储与之对应的信息，则该服务器需要询问其他服务器，并将返回的查询结果提交给用户。</li><li>迭代查询，DNS 服务器在收到用户发起的请求时，并不直接回复查询结果，而是告诉另一台 DNS 服务器的地址，用户再向这台 DNS 服务器提交请求，这样依次反复，直到返回查询结果</li></ul><p>在一般情况下，当用户向配置指定的 DNS 服务器发起对某个域名的查询请求（这里以www.cisco.com为例），其查询流程大致如图</p><p><img src="https://img-blog.csdnimg.cn/3eef7d23537c47e9bbcfec477e42f18d.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p><h1 id=bind>Bind</h1><p><a href=https://www.isc.org/bind/>BIND 9</a></p><p>现在使用最为广泛的DNS服务器软件是BIND（Berkeley Internet Name Domain），最早由伯克利大学的一名学生编写，现在最新的版本是9，有ISC（Internet Systems Consortium）编写和维护。BIND支持先今绝大多数的操作系统（Linux，UNIX，Mac，Windows），BIND服务的名称称之named。DNS默认使用UDP、TCP协议，使用端口为53（domain），953（mdc，远程控制使用）。</p><h2 id=bind-chroot>Bind-chroot</h2><p>BIND服务器通常从因特网可直接访问。只要有一个通过因特网可以直接访问的系统，安全就成了一个大问题。这些安全问题包括有人破坏了服务器上的数据（有时称为数据投毒）和黑客控制了暴露的服务器进程，允许被劫持的服务器未经授权访问其他系统文件。</p><p>named进程在处理传人的DN查询时与网连接起交互。任何时候，只要一个进程是通过网络可访问的，那么这个进程就有可能受到动击。在这种攻击中，远程系统上的用户控制本地服务器上的进程。一旦这个用户有了提制权，他们就可以访问本地系统，包括查看或修改文件。</p><p>当被劫持的进程是以非root身份运行时，虽然危害是有限的。但是，像／etc/passwd这样
+的系统核心文件。系统上的每个用户，包括named用户，都能查看／etc/passwd文件的内容，因为每个用户都有这个文件的读取权限。</p><p>chroot jail的目的是限制对系统文件的访问。named进程被放入jail，在那里它只能看到和BIND相关的配置。这是通过将BIND的配置文件放到特定的子目录中并启动named进程实现，这样文件系统的根看起来就是前面提到的子目录（chroot代表 change root，就好像是更改这个进程的文件系统根路径）。</p><p>bind-chroot本质上是使用chroot方式给bind软件换了个“根”，这“根”在/var/named/chroot下，把yum安装的bind-chroot在/etc下的产生的配置文件硬链接到/var/named/chroot/etc下。配置起来就跟BIND9没什么区别。
+yum查看bind-chroot的info</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:#666>[</span>root@worker-03 ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># yum info bind-chroot</span>
+</span></span><span style=display:flex><span>Loaded plugins: fastestmirror, langpacks
+</span></span><span style=display:flex><span>Loading mirror speeds from cached hostfile
+</span></span><span style=display:flex><span> * base: mirrors.nju.edu.cn
+</span></span><span style=display:flex><span> * centos-sclo-rh: mirrors.nju.edu.cn
+</span></span><span style=display:flex><span> * centos-sclo-sclo: mirrors.nju.edu.cn
+</span></span><span style=display:flex><span> * epel: mirror.sjtu.edu.cn
+</span></span><span style=display:flex><span> * extras: mirrors.nju.edu.cn
+</span></span><span style=display:flex><span> * updates: mirrors.nju.edu.cn
+</span></span><span style=display:flex><span>Installed Packages
+</span></span><span style=display:flex><span>Name        : bind-chroot
+</span></span><span style=display:flex><span>Arch        : x86_64
+</span></span><span style=display:flex><span>Epoch       : <span style=color:#666>32</span>
+</span></span><span style=display:flex><span>Version     : 9.11.4
+</span></span><span style=display:flex><span>Release     : 26.P2.el7_9.8
+</span></span><span style=display:flex><span>Size        : 4.7 k
+</span></span><span style=display:flex><span>Repo        : installed
+</span></span><span style=display:flex><span>From repo   : updates
+</span></span><span style=display:flex><span>Summary     : A chroot runtime environment <span style=color:#a2f;font-weight:700>for</span> the ISC BIND DNS server, named<span style=color:#666>(</span>8<span style=color:#666>)</span>
+</span></span><span style=display:flex><span>URL         : http://www.isc.org/products/BIND/
+</span></span><span style=display:flex><span>License     : MPLv2.0
+</span></span><span style=display:flex><span>Description : This package contains a tree of files which can be used as a
+</span></span><span style=display:flex><span>            : chroot<span style=color:#666>(</span>2<span style=color:#666>)</span> jail <span style=color:#a2f;font-weight:700>for</span> the named<span style=color:#666>(</span>8<span style=color:#666>)</span> program from the BIND package.
+</span></span><span style=display:flex><span>            : Based on the code from Jan <span style=color:#b44>&#34;Yenya&#34;</span> Kasprzak &lt;kas@fi.muni.cz&gt;
+</span></span></code></pre></div><p>可以看到此安装包是为Bind安装包加了chroot 的jail。</p><h2 id=bindbind-chroot安装>Bind(Bind-chroot)安装</h2><p>在CentOS 7下可以用yum直接安装</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:#666>[</span>root@worker-03 ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># yum install bind-chroot</span>
+</span></span><span style=display:flex><span>Loaded plugins: langpacks
+</span></span><span style=display:flex><span>base-openlogic                                                                                                                                                   | 3.1 kB  00:00:00
+</span></span><span style=display:flex><span>extras-openlogic                                                                                                                                                 | 2.5 kB  00:00:00
+</span></span><span style=display:flex><span>updates-openlogic                                                                                                                                                | 2.6 kB  00:00:00
+</span></span><span style=display:flex><span>base                                                                                                                                                             | 3.6 kB  00:00:00
+</span></span><span style=display:flex><span>extras                                                                                                                                                           | 2.9 kB  00:00:00
+</span></span><span style=display:flex><span>openlogic                                                                                                                                                        | 2.9 kB  00:00:00
+</span></span><span style=display:flex><span>updates                                                                                                                                                          | 2.9 kB  00:00:00
+</span></span><span style=display:flex><span>updates-openlogic/7/x86_64/primary_db                                                                                                                            |  <span style=color:#666>13</span> MB  00:00:00
+</span></span><span style=display:flex><span>Resolving Dependencies
+</span></span><span style=display:flex><span>--&gt; Running transaction check
+</span></span><span style=display:flex><span>---&gt; Package bind-chroot.x86_64 32:9.11.4-26.P2.el7_9.8 will be installed
+</span></span><span style=display:flex><span>--&gt; Processing Dependency: bind<span style=color:#666>(</span>x86-64<span style=color:#666>)</span> <span style=color:#666>=</span> 32:9.11.4-26.P2.el7_9.8 <span style=color:#a2f;font-weight:700>for</span> package: 32:bind-chroot-9.11.4-26.P2.el7_9.8.x86_64
+</span></span><span style=display:flex><span>--&gt; Running transaction check
+</span></span><span style=display:flex><span>---&gt; Package bind.x86_64 32:9.11.4-26.P2.el7_9.8 will be installed
+</span></span><span style=display:flex><span>--&gt; Processing Dependency: python-ply <span style=color:#a2f;font-weight:700>for</span> package: 32:bind-9.11.4-26.P2.el7_9.8.x86_64
+</span></span><span style=display:flex><span>--&gt; Running transaction check
+</span></span><span style=display:flex><span>---&gt; Package python-ply.noarch 0:3.4-11.el7 will be installed
+</span></span><span style=display:flex><span>--&gt; Finished Dependency Resolution
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Dependencies <span style=color:#b8860b>Resolved</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#666>========================================================================================================================================================================================</span>
+</span></span><span style=display:flex><span> Package                                  Arch                                Version                                              Repository                                      <span style=color:#b8860b>Size</span>
+</span></span><span style=display:flex><span><span style=color:#666>========================================================================================================================================================================================</span>
+</span></span><span style=display:flex><span>Installing:
+</span></span><span style=display:flex><span> bind-chroot                              x86_64                              32:9.11.4-26.P2.el7_9.8                              updates-openlogic                               <span style=color:#666>93</span> k
+</span></span><span style=display:flex><span>Installing <span style=color:#a2f;font-weight:700>for</span> dependencies:
+</span></span><span style=display:flex><span> <span style=color:#a2f>bind</span>                                     x86_64                              32:9.11.4-26.P2.el7_9.8                              updates-openlogic                              2.3 M
+</span></span><span style=display:flex><span> python-ply                               noarch                              3.4-11.el7                                           base-openlogic                                 <span style=color:#666>123</span> k
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Transaction <span style=color:#b8860b>Summary</span>
+</span></span><span style=display:flex><span><span style=color:#666>========================================================================================================================================================================================</span>
+</span></span><span style=display:flex><span>Install  <span style=color:#666>1</span> Package <span style=color:#666>(</span>+2 Dependent packages<span style=color:#666>)</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Total download size: 2.5 M
+</span></span><span style=display:flex><span>Installed size: 5.9 M
+</span></span><span style=display:flex><span>Is this ok <span style=color:#666>[</span>y/d/N<span style=color:#666>]</span>: y
+</span></span><span style=display:flex><span>Downloading packages:
+</span></span><span style=display:flex><span><span style=color:#666>(</span>1/3<span style=color:#666>)</span>: bind-chroot-9.11.4-26.P2.el7_9.8.x86_64.rpm                                                                                                               |  <span style=color:#666>93</span> kB  00:00:00
+</span></span><span style=display:flex><span><span style=color:#666>(</span>2/3<span style=color:#666>)</span>: python-ply-3.4-11.el7.noarch.rpm                                                                                                                          | <span style=color:#666>123</span> kB  00:00:00
+</span></span><span style=display:flex><span><span style=color:#666>(</span>3/3<span style=color:#666>)</span>: bind-9.11.4-26.P2.el7_9.8.x86_64.rpm                                                                                                                      | 2.3 MB  00:00:00
+</span></span><span style=display:flex><span>----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+</span></span><span style=display:flex><span>Total                                                                                                                                                   3.2 MB/s | 2.5 MB  00:00:00
+</span></span><span style=display:flex><span>Running transaction check
+</span></span><span style=display:flex><span>Running transaction <span style=color:#a2f>test</span>
+</span></span><span style=display:flex><span>Transaction <span style=color:#a2f>test</span> succeeded
+</span></span><span style=display:flex><span>Running transaction
+</span></span><span style=display:flex><span>  Installing : python-ply-3.4-11.el7.noarch                                                                                                                                         1/3
+</span></span><span style=display:flex><span>  Installing : 32:bind-9.11.4-26.P2.el7_9.8.x86_64                                                                                                                                  2/3
+</span></span><span style=display:flex><span>/var/tmp/rpm-tmp.Tw26pc: line 90:  <span style=color:#666>2937</span> Done                    /bin/echo -e <span style=color:#b44>&#34;</span><span style=color:#b8860b>$semanage_import</span><span style=color:#b44>&#34;</span>
+</span></span><span style=display:flex><span>      <span style=color:#666>2938</span> Killed                  | /usr/sbin/semanage import -S <span style=color:#b44>&#34;</span><span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>_policytype</span><span style=color:#b68;font-weight:700>}</span><span style=color:#b44>&#34;</span>
+</span></span><span style=display:flex><span>  Installing : 32:bind-chroot-9.11.4-26.P2.el7_9.8.x86_64                                                                                                                           3/3
+</span></span><span style=display:flex><span>  Verifying  : 32:bind-9.11.4-26.P2.el7_9.8.x86_64                                                                                                                                  1/3
+</span></span><span style=display:flex><span>  Verifying  : python-ply-3.4-11.el7.noarch                                                                                                                                         2/3
+</span></span><span style=display:flex><span>  Verifying  : 32:bind-chroot-9.11.4-26.P2.el7_9.8.x86_64                                                                                                                           3/3
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Installed:
+</span></span><span style=display:flex><span>  bind-chroot.x86_64 32:9.11.4-26.P2.el7_9.8
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Dependency Installed:
+</span></span><span style=display:flex><span>  bind.x86_64 32:9.11.4-26.P2.el7_9.8                                                           python-ply.noarch 0:3.4-11.el7
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Complete!
+</span></span></code></pre></div><p>注意：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:#666>========================================================================================================================================================================================</span>
+</span></span><span style=display:flex><span> Package                                  Arch                                Version                                              Repository                                      <span style=color:#b8860b>Size</span>
+</span></span><span style=display:flex><span><span style=color:#666>========================================================================================================================================================================================</span>
+</span></span><span style=display:flex><span>Installing:
+</span></span><span style=display:flex><span> bind-chroot                              x86_64                              32:9.11.4-26.P2.el7_9.8                              updates-openlogic                               <span style=color:#666>93</span> k
+</span></span><span style=display:flex><span>Installing <span style=color:#a2f;font-weight:700>for</span> dependencies:
+</span></span><span style=display:flex><span> <span style=color:#a2f>bind</span>                                     x86_64                              32:9.11.4-26.P2.el7_9.8                              updates-openlogic                              2.3 M
+</span></span><span style=display:flex><span> python-ply                               noarch                              3.4-11.el7                                           base-openlogic                                 <span style=color:#666>123</span> k
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Transaction <span style=color:#b8860b>Summary</span>
+</span></span><span style=display:flex><span><span style=color:#666>========================================================================================================================================================================================</span>
+</span></span><span style=display:flex><span>Install  <span style=color:#666>1</span> Package <span style=color:#666>(</span>+2 Dependent packages<span style=color:#666>)</span>
+</span></span></code></pre></div><p>安装了bind，bind-chroot和python-ply</p><p>启动服务：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>systemctl start named
+</span></span></code></pre></div><h2 id=bind配置>Bind配置</h2><p>Bind的基础配置工作是配置主配置文件和区域文件，其关系如下：
+<img src="https://img-blog.csdnimg.cn/150ae6eb1171454eba69be2b1e254a7d.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p><h3 id=主要配置文件namedconf>主要配置文件named.conf</h3><p>Bind服务器的主要配置文件/etc/named.conf，默认如下：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>//
+</span></span><span style=display:flex><span>// named.conf
+</span></span><span style=display:flex><span>//
+</span></span><span style=display:flex><span>// Provided by Red Hat <span style=color:#a2f>bind</span> package to configure the ISC BIND named<span style=color:#666>(</span>8<span style=color:#666>)</span> DNS
+</span></span><span style=display:flex><span>// server as a caching only nameserver <span style=color:#666>(</span>as a localhost DNS resolver only<span style=color:#666>)</span>.
+</span></span><span style=display:flex><span>//
+</span></span><span style=display:flex><span>// See /usr/share/doc/bind*/sample/ <span style=color:#a2f;font-weight:700>for</span> example named configuration files.
+</span></span><span style=display:flex><span>//
+</span></span><span style=display:flex><span>// See the BIND Administrator<span>&#39;</span>s Reference Manual <span style=color:#666>(</span>ARM<span style=color:#666>)</span> <span style=color:#a2f;font-weight:700>for</span> details about the
+</span></span><span style=display:flex><span>// configuration located in /usr/share/doc/bind-<span style=color:#666>{</span>version<span style=color:#666>}</span>/Bv9ARM.html
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>options <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>        listen-on port <span style=color:#666>53</span> <span style=color:#666>{</span> 127.0.0.1; <span style=color:#666>}</span>;
+</span></span><span style=display:flex><span>        listen-on-v6 port <span style=color:#666>53</span> <span style=color:#666>{</span> ::1; <span style=color:#666>}</span>;
+</span></span><span style=display:flex><span>        directory       <span style=color:#b44>&#34;/var/named&#34;</span>;
+</span></span><span style=display:flex><span>        dump-file       <span style=color:#b44>&#34;/var/named/data/cache_dump.db&#34;</span>;
+</span></span><span style=display:flex><span>        statistics-file <span style=color:#b44>&#34;/var/named/data/named_stats.txt&#34;</span>;
+</span></span><span style=display:flex><span>        memstatistics-file <span style=color:#b44>&#34;/var/named/data/named_mem_stats.txt&#34;</span>;
+</span></span><span style=display:flex><span>        recursing-file  <span style=color:#b44>&#34;/var/named/data/named.recursing&#34;</span>;
+</span></span><span style=display:flex><span>        secroots-file   <span style=color:#b44>&#34;/var/named/data/named.secroots&#34;</span>;
+</span></span><span style=display:flex><span>        allow-query     <span style=color:#666>{</span> localhost; <span style=color:#666>}</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        /*
+</span></span><span style=display:flex><span>         - If you are building an AUTHORITATIVE DNS server, <span style=color:#a2f;font-weight:700>do</span> NOT <span style=color:#a2f>enable</span> recursion.
+</span></span><span style=display:flex><span>         - If you are building a RECURSIVE <span style=color:#666>(</span>caching<span style=color:#666>)</span> DNS server, you need to <span style=color:#a2f>enable</span>
+</span></span><span style=display:flex><span>           recursion.
+</span></span><span style=display:flex><span>         - If your recursive DNS server has a public IP address, you MUST <span style=color:#a2f>enable</span> access
+</span></span><span style=display:flex><span>           control to limit queries to your legitimate users. Failing to <span style=color:#a2f;font-weight:700>do</span> so will
+</span></span><span style=display:flex><span>           cause your server to become part of large scale DNS amplification
+</span></span><span style=display:flex><span>           attacks. Implementing BCP38 within your network would greatly
+</span></span><span style=display:flex><span>           reduce such attack surface
+</span></span><span style=display:flex><span>        */
+</span></span><span style=display:flex><span>        recursion yes;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        dnssec-enable yes;
+</span></span><span style=display:flex><span>        dnssec-validation yes;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        /* Path to ISC DLV key */
+</span></span><span style=display:flex><span>        bindkeys-file <span style=color:#b44>&#34;/etc/named.root.key&#34;</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        managed-keys-directory <span style=color:#b44>&#34;/var/named/dynamic&#34;</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        pid-file <span style=color:#b44>&#34;/run/named/named.pid&#34;</span>;
+</span></span><span style=display:flex><span>        session-keyfile <span style=color:#b44>&#34;/run/named/session.key&#34;</span>;
+</span></span><span style=display:flex><span><span style=color:#666>}</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>logging <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>        channel default_debug <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>                file <span style=color:#b44>&#34;data/named.run&#34;</span>;
+</span></span><span style=display:flex><span>                severity dynamic;
+</span></span><span style=display:flex><span>        <span style=color:#666>}</span>;
+</span></span><span style=display:flex><span><span style=color:#666>}</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>zone <span style=color:#b44>&#34;.&#34;</span> IN <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#a2f>type</span> hint;
+</span></span><span style=display:flex><span>        file <span style=color:#b44>&#34;named.ca&#34;</span>;
+</span></span><span style=display:flex><span><span style=color:#666>}</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>include <span style=color:#b44>&#34;/etc/named.rfc1912.zones&#34;</span>;
+</span></span><span style=display:flex><span>include <span style=color:#b44>&#34;/etc/named.root.key&#34;</span>;
+</span></span></code></pre></div><h4 id=全局配置options>全局配置options</h4><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>options <span style=color:#666>{</span>                <span style=color:#080;font-style:italic># 全局配置段</span>
+</span></span><span style=display:flex><span>        ...
+</span></span><span style=display:flex><span><span style=color:#666>}</span>;
+</span></span></code></pre></div><p>options 的参数设置会影响整个 BIND9 DNS环境的配置，具体各部分常用到的配置参数如下：</p><ul><li><strong><code>listen-on</code></strong>： 用于配置监听的端口以及IPv4地址，默认的监听端口为：53；</li><li>listen-on-v6：用于监听 IPv6 地址以及端口；</li><li><strong><code>directory</code></strong>: 用于指定读取DNS数据文件的文件夹，默认的文件夹的路径为：<strong>/var/nemed</strong>；</li><li>dump-file：选项用来设置域名缓存数据库文件的位置，可以自己定义。
+默认的存储文件为：cache_dump.db；</li><li>statistics-file：选项用来设置状态统计文件的位置，可以自己定义，默认/var/named/data/named_stats.txt；</li><li>memstatistics-file ：选项用来设置服务器输出的内存使用统计信息。默认保存在 /var/named/data/named_mem_stats.txt；</li><li><strong><code>allow-query</code></strong>：选项用来设置允许DNS查询的客户端地址，默认值为localhost, 可以设置为某个网段、任意地址、具体的某台主机三种情况。
+例如，要修改为任意地址，就在括号内的加入 <strong>any</strong>，也可以引用之前创建的 acl 内的所有地址；</li><li><strong><code>recursion</code></strong>：用于设置<strong>递归查询</strong>，一般客户机和服务器之间属于递归查询，即当客户机向DNS服务器发出查询请求后，若DNS服务器本身不能解析，则会向另外的DNS服务器发出查询请求，得到结果后转交给客户机。此选项有<strong>yes和no</strong>两个值。这个选项用于设置 Failover 非常有用；
+系统的解释如下：</li><li>如果您正在构建一个权威性DNS服务器，不要启用递归。</li><li>如果您正在构建一个递归(缓存)DNS服务器，您需要启用递归。</li><li>如果您的递归DNS服务器有一个公网IP地址，您必须启用访问控制，以限制对您的合法用户的查询。 如果不这样做，将导致您的服务器成为大规模DNS放大攻击的一部分。 在您的网络中实现BCP38将大大减少此类攻击</li><li>dnssec-enable： 选项用来设置是否启用DNSSEC支持，DNSSEC可以用来验证DNS数据的有效性，该选项有yes和no两个值，默认值为yes。</li><li>dnssec-validation：选项用来设置是否启用DNSSEC确认，默认值为yes，可以选择 auto。</li><li>bindkeys-file ： 用来设置内置信任的密钥文件，其默认值为 /etc/named.root.key；</li><li>managed-keys-directory： 选项用于指定目录中的文件存储位置，跟踪管理 DNSSEC 密钥；</li></ul><p>未在默认named.conf中的重要参数：</p><ul><li><p><strong><code>forward</code></strong>：用于设置DNS转发的工作方式，有两种选择</p></li><li><p><strong>forward first</strong> 设置优先使用forwarders DNS服务器做域名解析，如果查询不到再使用本地DNS服务器做域名解析。</p></li><li><p><strong>forward only</strong>设置只使用forwarders DNS服务器做域名解析，如果查询不到则返回DNS客户端查询失败。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>options <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>forwarders <span style=color:#666>{</span> 8.8.8.8; 8.8.4.4; 233.5.5.5;233.6.6.6<span style=color:#666>}</span>;
+</span></span><span style=display:flex><span><span style=color:#666>}</span>;
+</span></span></code></pre></div></li><li><p><strong><code>forwarders</code></strong>：DNS转发器。
 用于设定该DNS解析服务器无法进行当前域名解析的情况下，进行转发解析的DNS地址。可以设置 8.8.8.8 和 8.8.4.4 （谷歌的免费DNS服务器的网络地址）；233.5.5.5 和 233.6.6.6 （阿里云的免费DNS地址）。
 当设置了 forwarder 的转发器之后，所有的非本域的和在缓存中无法查找到的域名查询都转发都设置的DNS转发器，由DNS转发器完成转发操作。因此这台转发器的缓存中就记录了丰富的域名信息。因此如果遇到非本域的查询，转发器的缓存就可以做到查询，从而减少了向外部的查询流量。
 在BIND8.2以后引入了一个新的特性：<strong>转发区（forward zone），它允许把DNS配置成只有查找特定域名的时候才使用转发器</strong>。<strong>（ BIND 9从9.1.0才开始有转发区功能 ）</strong>
@@ -583,668 +264,316 @@ forwarders <span style=color:#666>{</span> 8.8.8.8; 8.8.4.4; 233.5.5.5;233.6.6.6
 zone &ldquo;etaon.cn&rdquo; {
 type forward;
 forwarders { 3.203.8.8; 3.203.8.2; };
-};</p>
-</li>
-<li>
-<p>rrset-order：
+};</p></li><li><p>rrset-order：
 在 BIND 9 提供的负载均衡策略建立在一个名称（域名 - Name）使用多个资源记录 ( Records ) 的情况下，其实现的轮询机制并不是传统的负载均衡服务器实现的轮询机制 - 即追踪和记录每一次应答的资源顺序；
-BIND 9 实现了一个类似 List 的数据结构，将所有的资源记录填入到 一个顺序表中，这个填入的次序随机，或者根据设定的参数随机；</p>
-</li>
-</ul>
-<p>格式：</p>
-<blockquote>
-<p>[class class_name] [type type_name] [name “domain_name”] order ordering</p>
-</blockquote>
-<p>如果参数没有被赋值，那么默认的赋值为： class: ANY type: ANY Name: *
-参数：</p>
-<blockquote>
-<ul>
-<li>fixed ： 根据 zone 文件定义资源记录的顺序按照顺序逐个进行解析；</li>
-<li>random： 根据 zone 文件资源记录随机返回解析记录；</li>
-<li>cyclic： 创建一个循环，循环输出资源记录；</li>
-<li>none： 完全随机的资源返回形式；</li>
-</ul>
-</blockquote>
-<h4 id=logging>logging</h4>
-<p><strong><code>logging</code></strong> 部分的配置为DNS解析服务器提供了日志记录的功能，DNS服务器上的所有日志记录被存储到了指定的文件中。其通用的配置文件为:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>logging {
-      category &lt;string&gt; { &lt;channel_name_string&gt;; ... };
-      channel &lt;string&gt; {
-              buffered &lt;boolean&gt;;
-              file &lt;quoted_string&gt; [ versions ( unlimited | &lt;integer&gt; ) ]
-                  [ size &lt;size&gt; ] [ suffix ( increment | timestamp ) ];
-              null;
-              print-category &lt;boolean&gt;;
-              print-severity &lt;boolean&gt;;
-              print-time ( iso8601 | iso8601-utc | local | &lt;boolean&gt; );
-              severity &lt;log_severity&gt;;
-              stderr;
-              syslog [ &lt;syslog_facility&gt; ];
-      };
-};
-</code></pre></div><p>从上边的通用配置格式可以看出来，<strong><code>logging</code></strong> 模块分为两个部分，<strong><code>category</code></strong> 和 <strong><code>channel。</code><strong>category 用来区分不同的事件产生的类别或者场景，比如：客户端请求-</strong><code>client request</code></strong>、配置文件解析处理-<strong><code>Configuration file parsing and processing</code></strong>。
-<code>channel</code>的作用是指定输出的方式、日志格式的选项和事件的严重性，每一个channel 可以指定一个 category 来指定记录的事件类型。</p>
-<p>默认named.conf</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>logging <span style=color:#666>{</span>
-        channel default_debug <span style=color:#666>{</span>
-                file <span style=color:#b44>&#34;data/named.run&#34;</span>;
-                severity dynamic;
-        <span style=color:#666>}</span>;
-<span style=color:#666>}</span>;
-</code></pre></div><p><strong><code>file</code></strong>： 将日志输出流通过通道直接输出给文件</p>
-<p><strong><code>severity</code></strong>：用来承担定义日志严重级别的定义角色，相当于 <strong><code>syslog</code></strong> - <strong><code>priorities</code></strong>。
+BIND 9 实现了一个类似 List 的数据结构，将所有的资源记录填入到 一个顺序表中，这个填入的次序随机，或者根据设定的参数随机；</p></li></ul><p>格式：</p><blockquote><p>[class class_name] [type type_name] [name “domain_name”] order ordering</p></blockquote><p>如果参数没有被赋值，那么默认的赋值为： class: ANY type: ANY Name: *
+参数：</p><blockquote><ul><li>fixed ： 根据 zone 文件定义资源记录的顺序按照顺序逐个进行解析；</li><li>random： 根据 zone 文件资源记录随机返回解析记录；</li><li>cyclic： 创建一个循环，循环输出资源记录；</li><li>none： 完全随机的资源返回形式；</li></ul></blockquote><h4 id=logging>logging</h4><p><strong><code>logging</code></strong> 部分的配置为DNS解析服务器提供了日志记录的功能，DNS服务器上的所有日志记录被存储到了指定的文件中。其通用的配置文件为:</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>logging {
+</span></span><span style=display:flex><span>      category &lt;string&gt; { &lt;channel_name_string&gt;; ... };
+</span></span><span style=display:flex><span>      channel &lt;string&gt; {
+</span></span><span style=display:flex><span>              buffered &lt;boolean&gt;;
+</span></span><span style=display:flex><span>              file &lt;quoted_string&gt; [ versions ( unlimited | &lt;integer&gt; ) ]
+</span></span><span style=display:flex><span>                  [ size &lt;size&gt; ] [ suffix ( increment | timestamp ) ];
+</span></span><span style=display:flex><span>              null;
+</span></span><span style=display:flex><span>              print-category &lt;boolean&gt;;
+</span></span><span style=display:flex><span>              print-severity &lt;boolean&gt;;
+</span></span><span style=display:flex><span>              print-time ( iso8601 | iso8601-utc | local | &lt;boolean&gt; );
+</span></span><span style=display:flex><span>              severity &lt;log_severity&gt;;
+</span></span><span style=display:flex><span>              stderr;
+</span></span><span style=display:flex><span>              syslog [ &lt;syslog_facility&gt; ];
+</span></span><span style=display:flex><span>      };
+</span></span><span style=display:flex><span>};
+</span></span></code></pre></div><p>从上边的通用配置格式可以看出来，<strong><code>logging</code></strong> 模块分为两个部分，<strong><code>category</code></strong> 和 <strong><code>channel。</code><strong>category 用来区分不同的事件产生的类别或者场景，比如：客户端请求-</strong><code>client request</code></strong>、配置文件解析处理-<strong><code>Configuration file parsing and processing</code></strong>。
+<code>channel</code>的作用是指定输出的方式、日志格式的选项和事件的严重性，每一个channel 可以指定一个 category 来指定记录的事件类型。</p><p>默认named.conf</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>logging <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>        channel default_debug <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>                file <span style=color:#b44>&#34;data/named.run&#34;</span>;
+</span></span><span style=display:flex><span>                severity dynamic;
+</span></span><span style=display:flex><span>        <span style=color:#666>}</span>;
+</span></span><span style=display:flex><span><span style=color:#666>}</span>;
+</span></span></code></pre></div><p><strong><code>file</code></strong>： 将日志输出流通过通道直接输出给文件</p><p><strong><code>severity</code></strong>：用来承担定义日志严重级别的定义角色，相当于 <strong><code>syslog</code></strong> - <strong><code>priorities</code></strong>。
 比如说定义了日志的严重级别为 <strong><code>Debug</code></strong>，那么会输出日志事件 <strong><code>Debug</code></strong> 以上的错误到文件中。
-一般常用的严重等级： <strong><code>debug[level]</code></strong>、<strong><code>notice</code></strong>、<strong><code>warning</code></strong>、<strong><code>dynamic</code></strong></p>
-<h4 id=zone-的引导配置>Zone 的引导配置</h4>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>zone <span style=color:#b44>&#34;.&#34;</span> IN <span style=color:#666>{</span>
-        <span style=color:#a2f>type</span> hint;
-        file <span style=color:#b44>&#34;named.ca&#34;</span>;
-<span style=color:#666>}</span>;
-
-include <span style=color:#b44>&#34;/etc/named.rfc1912.zones&#34;</span>;
-include <span style=color:#b44>&#34;/etc/named.root.key&#34;</span>;
-</code></pre></div><p>常用的参数配置如下：</p>
-<ul>
-<li><strong><code>file</code></strong> :用于指出域名与IP地址解析的数据库配置区域文件；</li>
-<li><strong><code>allow-transfer</code></strong>: 这个地方的配置是用来给出 Failover 或者递归查询DNS服务器的IP地址，如果之前在 <strong><code>options</code></strong> 里配置的<code>allow-transfer</code>如果设置成了参数 <strong><code>yes</code></strong>， 那么需要在这里指出递归查询服务器的IP地址；</li>
-<li><strong><code>type</code></strong>： 用于指定当前DNS解析服务器的位置，有三个选项</li>
-<li>master:表示定义的是主域名服务器</li>
-<li>slave :表示定义的是辅助域名服务器</li>
-<li>hint:表示是互联网中根域名服务器</li>
-</ul>
-<p>在默认里指定了根域”.”使用named.ca文件，在此文件中已经记录了13个根域服务器地址。</p>
-<p>另外使用了/etc/named.rfc1912.zones：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>// named.rfc1912.zones:
-//
-// Provided by Red Hat caching-nameserver package
-//
-// ISC BIND named zone configuration <span style=color:#a2f;font-weight:700>for</span> zones recommended by
-// RFC <span style=color:#666>1912</span> section 4.1 : localhost TLDs and address zones
-// and http://www.ietf.org/internet-drafts/draft-ietf-dnsop-default-local-zones-02.txt
-// <span style=color:#666>(</span>c<span style=color:#666>)</span><span style=color:#666>2007</span> R W Franks
-//
-// See /usr/share/doc/bind*/sample/ <span style=color:#a2f;font-weight:700>for</span> example named configuration files.
-//
-
-zone <span style=color:#b44>&#34;localhost.localdomain&#34;</span> IN <span style=color:#666>{</span>
-        <span style=color:#a2f>type</span> master;
-        file <span style=color:#b44>&#34;named.localhost&#34;</span>;
-        allow-update <span style=color:#666>{</span> none; <span style=color:#666>}</span>;
-<span style=color:#666>}</span>;
-
-zone <span style=color:#b44>&#34;localhost&#34;</span> IN <span style=color:#666>{</span>
-        <span style=color:#a2f>type</span> master;
-        file <span style=color:#b44>&#34;named.localhost&#34;</span>;
-        allow-update <span style=color:#666>{</span> none; <span style=color:#666>}</span>;
-<span style=color:#666>}</span>;
-
-zone <span style=color:#b44>&#34;1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa&#34;</span> IN <span style=color:#666>{</span>
-        <span style=color:#a2f>type</span> master;
-        file <span style=color:#b44>&#34;named.loopback&#34;</span>;
-        allow-update <span style=color:#666>{</span> none; <span style=color:#666>}</span>;
-<span style=color:#666>}</span>;
-
-zone <span style=color:#b44>&#34;1.0.0.127.in-addr.arpa&#34;</span> IN <span style=color:#666>{</span>
-        <span style=color:#a2f>type</span> master;
-        file <span style=color:#b44>&#34;named.loopback&#34;</span>;
-        allow-update <span style=color:#666>{</span> none; <span style=color:#666>}</span>;
-<span style=color:#666>}</span>;
-
-zone <span style=color:#b44>&#34;0.in-addr.arpa&#34;</span> IN <span style=color:#666>{</span>
-        <span style=color:#a2f>type</span> master;
-        file <span style=color:#b44>&#34;named.empty&#34;</span>;
-        allow-update <span style=color:#666>{</span> none; <span style=color:#666>}</span>;
-<span style=color:#666>}</span>;
-
-~
-</code></pre></div><p>/etc/named.rfc1912.zones的内容格式和named.conf中zone引导配置一致，用于不同域的配置并指定区域文件。如果不用/etc/named.rfc1912.zones，也可以直接在named.conf中写zone引导。</p>
-<p>我们可以看到整个基础配置的配置链：
+一般常用的严重等级： <strong><code>debug[level]</code></strong>、<strong><code>notice</code></strong>、<strong><code>warning</code></strong>、<strong><code>dynamic</code></strong></p><h4 id=zone-的引导配置>Zone 的引导配置</h4><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>zone <span style=color:#b44>&#34;.&#34;</span> IN <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#a2f>type</span> hint;
+</span></span><span style=display:flex><span>        file <span style=color:#b44>&#34;named.ca&#34;</span>;
+</span></span><span style=display:flex><span><span style=color:#666>}</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>include <span style=color:#b44>&#34;/etc/named.rfc1912.zones&#34;</span>;
+</span></span><span style=display:flex><span>include <span style=color:#b44>&#34;/etc/named.root.key&#34;</span>;
+</span></span></code></pre></div><p>常用的参数配置如下：</p><ul><li><strong><code>file</code></strong> :用于指出域名与IP地址解析的数据库配置区域文件；</li><li><strong><code>allow-transfer</code></strong>: 这个地方的配置是用来给出 Failover 或者递归查询DNS服务器的IP地址，如果之前在 <strong><code>options</code></strong> 里配置的<code>allow-transfer</code>如果设置成了参数 <strong><code>yes</code></strong>， 那么需要在这里指出递归查询服务器的IP地址；</li><li><strong><code>type</code></strong>： 用于指定当前DNS解析服务器的位置，有三个选项</li><li>master:表示定义的是主域名服务器</li><li>slave :表示定义的是辅助域名服务器</li><li>hint:表示是互联网中根域名服务器</li></ul><p>在默认里指定了根域”.”使用named.ca文件，在此文件中已经记录了13个根域服务器地址。</p><p>另外使用了/etc/named.rfc1912.zones：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>// named.rfc1912.zones:
+</span></span><span style=display:flex><span>//
+</span></span><span style=display:flex><span>// Provided by Red Hat caching-nameserver package
+</span></span><span style=display:flex><span>//
+</span></span><span style=display:flex><span>// ISC BIND named zone configuration <span style=color:#a2f;font-weight:700>for</span> zones recommended by
+</span></span><span style=display:flex><span>// RFC <span style=color:#666>1912</span> section 4.1 : localhost TLDs and address zones
+</span></span><span style=display:flex><span>// and http://www.ietf.org/internet-drafts/draft-ietf-dnsop-default-local-zones-02.txt
+</span></span><span style=display:flex><span>// <span style=color:#666>(</span>c<span style=color:#666>)</span><span style=color:#666>2007</span> R W Franks
+</span></span><span style=display:flex><span>//
+</span></span><span style=display:flex><span>// See /usr/share/doc/bind*/sample/ <span style=color:#a2f;font-weight:700>for</span> example named configuration files.
+</span></span><span style=display:flex><span>//
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>zone <span style=color:#b44>&#34;localhost.localdomain&#34;</span> IN <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#a2f>type</span> master;
+</span></span><span style=display:flex><span>        file <span style=color:#b44>&#34;named.localhost&#34;</span>;
+</span></span><span style=display:flex><span>        allow-update <span style=color:#666>{</span> none; <span style=color:#666>}</span>;
+</span></span><span style=display:flex><span><span style=color:#666>}</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>zone <span style=color:#b44>&#34;localhost&#34;</span> IN <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#a2f>type</span> master;
+</span></span><span style=display:flex><span>        file <span style=color:#b44>&#34;named.localhost&#34;</span>;
+</span></span><span style=display:flex><span>        allow-update <span style=color:#666>{</span> none; <span style=color:#666>}</span>;
+</span></span><span style=display:flex><span><span style=color:#666>}</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>zone <span style=color:#b44>&#34;1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa&#34;</span> IN <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#a2f>type</span> master;
+</span></span><span style=display:flex><span>        file <span style=color:#b44>&#34;named.loopback&#34;</span>;
+</span></span><span style=display:flex><span>        allow-update <span style=color:#666>{</span> none; <span style=color:#666>}</span>;
+</span></span><span style=display:flex><span><span style=color:#666>}</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>zone <span style=color:#b44>&#34;1.0.0.127.in-addr.arpa&#34;</span> IN <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#a2f>type</span> master;
+</span></span><span style=display:flex><span>        file <span style=color:#b44>&#34;named.loopback&#34;</span>;
+</span></span><span style=display:flex><span>        allow-update <span style=color:#666>{</span> none; <span style=color:#666>}</span>;
+</span></span><span style=display:flex><span><span style=color:#666>}</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>zone <span style=color:#b44>&#34;0.in-addr.arpa&#34;</span> IN <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#a2f>type</span> master;
+</span></span><span style=display:flex><span>        file <span style=color:#b44>&#34;named.empty&#34;</span>;
+</span></span><span style=display:flex><span>        allow-update <span style=color:#666>{</span> none; <span style=color:#666>}</span>;
+</span></span><span style=display:flex><span><span style=color:#666>}</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>~
+</span></span></code></pre></div><p>/etc/named.rfc1912.zones的内容格式和named.conf中zone引导配置一致，用于不同域的配置并指定区域文件。如果不用/etc/named.rfc1912.zones，也可以直接在named.conf中写zone引导。</p><p>我们可以看到整个基础配置的配置链：
 <img src="https://img-blog.csdnimg.cn/107ff4f0433949799d988044b1123e4f.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述>
-其中，/var/named/named.ca由系统提供，我们需要配置主配置文件和其他区域文件。</p>
-<h3 id=区域文件zone-file>区域文件Zone File</h3>
-<p>区域文件用于记录主机名到IP地址的转换以及该域的其他信息，使用Bind的标准安装，区域文件会存放在/var/named目录下。</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>;默认的named.localhost
-<span style=color:#b8860b>$TTL</span> 1D
-@       IN SOA  @ rname.invalid. <span style=color:#666>(</span>
-                                        <span style=color:#666>0</span>       ; serial
-                                        1D      ; refresh
-                                        1H      ; retry
-                                        1W      ; expire
-                                        3H <span style=color:#666>)</span>    ; minimum
-        NS      @
-        A       127.0.0.1
-        AAAA    ::1
-~
-</code></pre></div><h4 id=规则>规则</h4>
-<ul>
-<li>注释以分号（；）开始，直到行尾结束。</li>
-<li>每一行就是一条记录，大多数情况下，一行的结束就是一条记录的结束。在某些情况下，一条记录可以跨多行（如SOA）。</li>
-<li>每条记录是由空格或制表符tab分隔的字段组成，这些字段定义了名称生存时间、记录类别、记录类型和记录数据。</li>
-<li>＠符号在区域文件里有特殊含义，它代表当前来源，就是指当前域。
+其中，/var/named/named.ca由系统提供，我们需要配置主配置文件和其他区域文件。</p><h3 id=区域文件zone-file>区域文件Zone File</h3><p>区域文件用于记录主机名到IP地址的转换以及该域的其他信息，使用Bind的标准安装，区域文件会存放在/var/named目录下。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>;默认的named.localhost
+</span></span><span style=display:flex><span><span style=color:#b8860b>$TTL</span> 1D
+</span></span><span style=display:flex><span>@       IN SOA  @ rname.invalid. <span style=color:#666>(</span>
+</span></span><span style=display:flex><span>                                        <span style=color:#666>0</span>       ; serial
+</span></span><span style=display:flex><span>                                        1D      ; refresh
+</span></span><span style=display:flex><span>                                        1H      ; retry
+</span></span><span style=display:flex><span>                                        1W      ; expire
+</span></span><span style=display:flex><span>                                        3H <span style=color:#666>)</span>    ; minimum
+</span></span><span style=display:flex><span>        NS      @
+</span></span><span style=display:flex><span>        A       127.0.0.1
+</span></span><span style=display:flex><span>        AAAA    ::1
+</span></span><span style=display:flex><span>~
+</span></span></code></pre></div><h4 id=规则>规则</h4><ul><li>注释以分号（；）开始，直到行尾结束。</li><li>每一行就是一条记录，大多数情况下，一行的结束就是一条记录的结束。在某些情况下，一条记录可以跨多行（如SOA）。</li><li>每条记录是由空格或制表符tab分隔的字段组成，这些字段定义了名称生存时间、记录类别、记录类型和记录数据。</li><li>＠符号在区域文件里有特殊含义，它代表当前来源，就是指当前域。
 因此，在 etaon.com域的正向查找区域文件中，＠符号的意思是 etaon.com.（注意结尾的那个点，在区域文件中是必需的）。
-通过使用$ORIGIN设置可以修改＠字符的含义（例如，＄ORIGIN <a href=http://example.com/>example.com</a>.即把@改成example.com.）。</li>
-<li>每个区域文件都应该以＄TTL开始，用于设置默认的生存时间（TTL）。</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th>字段</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>name（名称）</td>
-<td>与此记录关联的域名</td>
-</tr>
-<tr>
-<td>ttl</td>
-<td>记录的生存时间。这也是缓存名称服务器（或像浏览器这样的客户端程序）判断该记录有效的最大时间。这个时间到期后，客户端会从本地缓存中丢弃该记录。注意这个字段可以省略，如果在记录中省略了，则使用区域文件的默认TTL值，该值由＄TTL指令定义（例如，＄TTL 1D）</td>
-</tr>
-<tr>
-<td>record class（记录类别）</td>
-<td>这是一个预定义值，通常设为IN（表示Internet）。虽然还有一些可用的类别，但通常都使用IN这个类别</td>
-</tr>
-<tr>
-<td>record type（记录类型）</td>
-<td>记录的类型</td>
-</tr>
-<tr>
-<td>record data（记录数据）</td>
-<td>记录的数据随记录的类型的不同而不同。可以是单个值，也可以是值的集合，这取决于记录类型</td>
-</tr>
-</tbody>
-</table>
-<p><strong>注意：无论何时在区域文件中使用FQDN，结尾的点（.）字符很重要。相对域名不需要结尾的点字符，因为相对域名会追加上＄ORIGIN的值。</strong></p>
-<p><strong>常见区域记录类型</strong></p>
-<h4 id=soa记录>SOA记录</h4>
-<p>SOA（Start of Authority）记录类型用于定义域的权威信息（可以将其视为域的操作说明）。如</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>;默认的named.localhost的SOA
-@       IN SOA  @ rname.invalid. <span style=color:#666>(</span>
-                                        <span style=color:#666>0</span>       ; serial
-                                        1D      ; refresh
-                                        1H      ; retry
-                                        1W      ; expire
-                                        3H <span style=color:#666>)</span>    ; minimum
-</code></pre></div><p>圆括号（）允许将数据分散到多行，并为每个数据值提供注释。
-虽然这是为了方便阅读，但不是必需的。也可以使用单行格式的记录：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>@ IN SOA  ns.etaon.com.  root.etaon.com. <span style=color:#666>0</span> 1D 1H 1W 3H
-
-</code></pre></div><p>在name字段中，提供整个域的名称。</p>
-<ul>
-<li>＠字符表示当前城名，它由／etc/named.conf文件中的区域条目决定。
-通常，如果ttl字段被省略了则使用区域文件的默认值。</li>
-<li>记录类别通常使用IN</li>
-<li>记录类型为SOA。</li>
-<li>记录的数据字段包含7个值</li>
-</ul>
-<p><strong>- 名称服务器</strong>：主名称服务器的域名。例如，ns.etaon.com</p>
-<p><strong>- 本域的DNS管理员的电子邮件地址</strong>：这里不是使用＠来分隔用户名和域名，而是使用 “.”字符。例如，root.etaon.com，相当于root@etaon.com</p>
-<p><strong>- 序号</strong>：如果有从服务器，这个数字很重要，因为这个值用于确定是否应该启动区域传输。从服务器会定期查询主服务器，以确定此序号是否有更新。
+通过使用$ORIGIN设置可以修改＠字符的含义（例如，＄ORIGIN <a href=http://example.com/>example.com</a>.即把@改成example.com.）。</li><li>每个区域文件都应该以＄TTL开始，用于设置默认的生存时间（TTL）。</li></ul><table><thead><tr><th>字段</th><th>说明</th></tr></thead><tbody><tr><td>name（名称）</td><td>与此记录关联的域名</td></tr><tr><td>ttl</td><td>记录的生存时间。这也是缓存名称服务器（或像浏览器这样的客户端程序）判断该记录有效的最大时间。这个时间到期后，客户端会从本地缓存中丢弃该记录。注意这个字段可以省略，如果在记录中省略了，则使用区域文件的默认TTL值，该值由＄TTL指令定义（例如，＄TTL 1D）</td></tr><tr><td>record class（记录类别）</td><td>这是一个预定义值，通常设为IN（表示Internet）。虽然还有一些可用的类别，但通常都使用IN这个类别</td></tr><tr><td>record type（记录类型）</td><td>记录的类型</td></tr><tr><td>record data（记录数据）</td><td>记录的数据随记录的类型的不同而不同。可以是单个值，也可以是值的集合，这取决于记录类型</td></tr></tbody></table><p><strong>注意：无论何时在区域文件中使用FQDN，结尾的点（.）字符很重要。相对域名不需要结尾的点字符，因为相对域名会追加上＄ORIGIN的值。</strong></p><p><strong>常见区域记录类型</strong></p><h4 id=soa记录>SOA记录</h4><p>SOA（Start of Authority）记录类型用于定义域的权威信息（可以将其视为域的操作说明）。如</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>;默认的named.localhost的SOA
+</span></span><span style=display:flex><span>@       IN SOA  @ rname.invalid. <span style=color:#666>(</span>
+</span></span><span style=display:flex><span>                                        <span style=color:#666>0</span>       ; serial
+</span></span><span style=display:flex><span>                                        1D      ; refresh
+</span></span><span style=display:flex><span>                                        1H      ; retry
+</span></span><span style=display:flex><span>                                        1W      ; expire
+</span></span><span style=display:flex><span>                                        3H <span style=color:#666>)</span>    ; minimum
+</span></span></code></pre></div><p>圆括号（）允许将数据分散到多行，并为每个数据值提供注释。
+虽然这是为了方便阅读，但不是必需的。也可以使用单行格式的记录：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>@ IN SOA  ns.etaon.com.  root.etaon.com. <span style=color:#666>0</span> 1D 1H 1W 3H
+</span></span></code></pre></div><p>在name字段中，提供整个域的名称。</p><ul><li>＠字符表示当前城名，它由／etc/named.conf文件中的区域条目决定。
+通常，如果ttl字段被省略了则使用区域文件的默认值。</li><li>记录类别通常使用IN</li><li>记录类型为SOA。</li><li>记录的数据字段包含7个值</li></ul><p><strong>- 名称服务器</strong>：主名称服务器的域名。例如，ns.etaon.com</p><p><strong>- 本域的DNS管理员的电子邮件地址</strong>：这里不是使用＠来分隔用户名和域名，而是使用 “.”字符。例如，root.etaon.com，相当于root@etaon.com</p><p><strong>- 序号</strong>：如果有从服务器，这个数字很重要，因为这个值用于确定是否应该启动区域传输。从服务器会定期查询主服务器，以确定此序号是否有更新。
 例如，假设当前序号为100，并在主服务器上修改了区域文件，那么执行修改的管理员应该将此序号的值至少增加1（例如101）。然后从服务器才能知道区域文件有了更改，并通过一个名为区域传输的过程向主服务器获取这些更改。
 序号的值限制为最多10位数。这样可以使用这么一种格式，这种格式总是递增的。
 同时，序号又可以表示区域文件的最后修改时间，这种格式是：YEARmonthDAYrev。
 YEAR是4位数字的年份，month是2位数字的月份，DAY是2位数字的天数，而rev是文件在当天的版本号。
-例如，区域文件在2017年1月31号的第一次修改，序号可能是2017013100，这种格式允许每天最多更新区域文件100次，直到9999年12月31日。</p>
-<p><strong>-刷新频率</strong>：从服务器多久查询一次主服务器，以判断序号是否变更。这就是刷新频率的用途。通常，默认1D表示从服务器每隔24小时向主服务器发起一次查询。但在区域文件变更很频繁的域中，可以使用如1H或6H的值，让从服务器每隔1小时或6小时就查询一次</p>
-<p><strong>- 重试间隔</strong>：这个值是从服务器再次向主服务器发起查询的等待时间。例如，假如刷新频率设置为1D，当从服务器向主服务查询更新时，若主服务器没有响应，就会使用重试间隔。1H会使从
-服务器等待1小时，然后才会再次向主服务器发起查询请求</p>
-<p><strong>- 过期时间</strong>：如果主服务器一直不能访问，过期时间用来指定从服务器何时不再响应DNS客户端的查询请求。主服务器这么长时间都没有响应，DNS条目可能不再有效。过期时间通常设置为1周或2周</p>
-<p><strong>- 最小值</strong>：最小值用于设定否定的DNS响应的缓存时间。如果域更新频繁，可设置小一些的值（也许是1小时或更小），如果域很少更新，可以设置大一些的值（但可能不会大于1天）</p>
-<h4 id=a记录>A记录</h4>
-<p>A记录（也称为地址记录）用于定义域名到IP地址的转换，典型示例如下所示：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>www   IN   A   138.29.16.101
-</code></pre></div><p>第一个字段是域名（例如www），此例中，域是相对形式，相对于$ORIGIN定义的默认域，当然也可以用完整域名形式：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>www.etaon.com. IN  A  138.29.16.101
-</code></pre></div><p>A表示这行是一条A记录，138.29.16.101是域名www.etaon.com.所关联 的IP地址。
-<strong>注意，A记录仅存在于正向查找区域文件中。</strong></p>
-<p><strong>别名记录cname</strong>
+例如，区域文件在2017年1月31号的第一次修改，序号可能是2017013100，这种格式允许每天最多更新区域文件100次，直到9999年12月31日。</p><p><strong>-刷新频率</strong>：从服务器多久查询一次主服务器，以判断序号是否变更。这就是刷新频率的用途。通常，默认1D表示从服务器每隔24小时向主服务器发起一次查询。但在区域文件变更很频繁的域中，可以使用如1H或6H的值，让从服务器每隔1小时或6小时就查询一次</p><p><strong>- 重试间隔</strong>：这个值是从服务器再次向主服务器发起查询的等待时间。例如，假如刷新频率设置为1D，当从服务器向主服务查询更新时，若主服务器没有响应，就会使用重试间隔。1H会使从
+服务器等待1小时，然后才会再次向主服务器发起查询请求</p><p><strong>- 过期时间</strong>：如果主服务器一直不能访问，过期时间用来指定从服务器何时不再响应DNS客户端的查询请求。主服务器这么长时间都没有响应，DNS条目可能不再有效。过期时间通常设置为1周或2周</p><p><strong>- 最小值</strong>：最小值用于设定否定的DNS响应的缓存时间。如果域更新频繁，可设置小一些的值（也许是1小时或更小），如果域很少更新，可以设置大一些的值（但可能不会大于1天）</p><h4 id=a记录>A记录</h4><p>A记录（也称为地址记录）用于定义域名到IP地址的转换，典型示例如下所示：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>www   IN   A   138.29.16.101
+</span></span></code></pre></div><p>第一个字段是域名（例如www），此例中，域是相对形式，相对于$ORIGIN定义的默认域，当然也可以用完整域名形式：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>www.etaon.com. IN  A  138.29.16.101
+</span></span></code></pre></div><p>A表示这行是一条A记录，138.29.16.101是域名www.etaon.com.所关联 的IP地址。
+<strong>注意，A记录仅存在于正向查找区域文件中。</strong></p><p><strong>别名记录cname</strong>
 在某些情况下，域中的一台主机不止一个角色，因此应该使用多个域名来访问。
 例如，etaon.com域中的Web服务器通常也是FTP服务器，因此，这一个主机既可以使用www.etaon.com访问，也可以使用ftp.etaon.com访问。
 但是，每个IP址应该只有一条A记录。因此，为了要把多个域名转换为同一个IP地址，使用别名记录。
-别名记录（也称为cname）像是一个昵称，通常就像下面所示的第二条记录：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>www.etaon.com.   IN   A   138.29.16.101
-ftp   IN   CNAME   www
-
-</code></pre></div><p>像这样的条目，域名ftp.etaon.com会被转换为域名 www.etaon. com，后者又进一步被转换为IP地址138.29.16.101。</p>
-<h4 id=ns记录>NS记录</h4>
-<p>每个域可以有一个或多个名称服务器，这些可以由NS记录（也称为域名服务器记录）定义。
+别名记录（也称为cname）像是一个昵称，通常就像下面所示的第二条记录：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>www.etaon.com.   IN   A   138.29.16.101
+</span></span><span style=display:flex><span>ftp   IN   CNAME   www
+</span></span></code></pre></div><p>像这样的条目，域名ftp.etaon.com会被转换为域名 www.etaon. com，后者又进一步被转换为IP地址138.29.16.101。</p><h4 id=ns记录>NS记录</h4><p>每个域可以有一个或多个名称服务器，这些可以由NS记录（也称为域名服务器记录）定义。
 首选（或主）名称服务器在SOA记录中指定，但还是需要一条NS记录。此外，还需要用NS记录定义其他（辅助或从）名称服务器。
-要定义名称服务器，如下所示：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash> @   IN   NS   ns.sample.com.
-     IN   NS   ns2.sample.com.
-</code></pre></div><p>所有的名称服务器都需要有相应的NS记录，即使是主名称服务器也要有相应的NS记录。
+要定义名称服务器，如下所示：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span> @   IN   NS   ns.sample.com.
+</span></span><span style=display:flex><span>     IN   NS   ns2.sample.com.
+</span></span></code></pre></div><p>所有的名称服务器都需要有相应的NS记录，即使是主名称服务器也要有相应的NS记录。
 NS记录的数据是域名的形式，不是IP地址，因此<strong>需要为每个域名服务器创建一条A记录</strong>，这一点很重要。
-注意，NS示例中的＠字符可能已经被彻底移除了。如果省略了第一个字段，则假定它是＄ORIGIN的值。</p>
-<h4 id=邮件交换记录>邮件交换记录</h4>
-<p>假设要给info@etaon.com发送一封电子邮件，发送域的MTA（Mai Tamea Agent，邮件传输代理）需要知道 onecoursesource.com域中哪台主机负责处理电子邮件，MTA通过向域名服务器查询邮件交换（MX）记录来获得这个信息。</p>
-<p>域的MX记录通常如下所示：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>@   IN   MX   <span style=color:#666>10</span>  mail1.etaon.com
-@   IN   MX   <span style=color:#666>20</span>  mai12.etaon.com
-</code></pre></div><p>10和20这些数字代表<strong>优先级</strong>，数字越小，优先级越大。
+注意，NS示例中的＠字符可能已经被彻底移除了。如果省略了第一个字段，则假定它是＄ORIGIN的值。</p><h4 id=邮件交换记录>邮件交换记录</h4><p>假设要给info@etaon.com发送一封电子邮件，发送域的MTA（Mai Tamea Agent，邮件传输代理）需要知道 onecoursesource.com域中哪台主机负责处理电子邮件，MTA通过向域名服务器查询邮件交换（MX）记录来获得这个信息。</p><p>域的MX记录通常如下所示：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>@   IN   MX   <span style=color:#666>10</span>  mail1.etaon.com
+</span></span><span style=display:flex><span>@   IN   MX   <span style=color:#666>20</span>  mai12.etaon.com
+</span></span></code></pre></div><p>10和20这些数字代表<strong>优先级</strong>，数字越小，优先级越大。
 如果一台邮件服务器的优先级是10，另一台是20，邮件发送域的MTA会先尝试把邮件发送给优先级是10的服务器，如果这台服务器没有响应，则会发送给优先级为20的服务器。可能永远不会使用到第二台邮件服务器，因为大多数邮件服务器都是7＊24可用的。
 更常见的是为每台邮件服务器设置相同的优先级，以达到负载均衡的效果。在这种情况下，邮件服务器的利用率大致相同（“大致”是因为缓存DNS服务器会使负载稍微失衡）。
-只有一个MX记录的情况也很常见，因为许多中小型公司不需要多个邮件服务器来处理传入的电子邮件。</p>
-<h4 id=指针记录>指针记录</h4>
-<p>前面描述的A记录用于正向查找区域文件中把域名转换为IP地址，指针（PTR）记录则用于反向查找区域文件中把IP地址转换为域名。
-下面是典型的PTR记录的示例：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>101.16.29.138.in-addr.arpa.   IN  PTR  www.etaon.com.
-</code></pre></div><p><code>重要</code>：PTR记录中的IP地址格式是实际IP地址的逆序形式再加上in-addr.arpa.</p>
-<p>例如，101.16.29.138.in-addr.arpa.表示IP地址是138.29.16.101
-在大多数情况下，不需要指定完整的IP地址，因为$ORIGIN被设置为当前的反向查找网络域（例如，16.29.138.in-addr）。如果是这样，只需提供IP地址中的主机地址：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#666>101</span> IN PTR www.etaon.com.
-</code></pre></div><h1 id=lab>LAB</h1>
-<h2 id=实验拓扑>实验拓扑</h2>
-<p><img src="https://img-blog.csdnimg.cn/63258e1d982d4ee9ba8a45f4aca0468b.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述>
-$ORIGIN linuxdns.com</p>
-<h2 id=配置链>配置链</h2>
-<p><img src="https://img-blog.csdnimg.cn/dc6423445f76434ea93d1bdb121154da.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p>
-<h3 id=配置主配置文件namedconf>配置主配置文件named.conf</h3>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>//   /etc/named.conf
-//
-// named.conf
-//
-// Provided by Red Hat <span style=color:#a2f>bind</span> package to configure the ISC BIND named<span style=color:#666>(</span>8<span style=color:#666>)</span> DNS
-// server as a caching only nameserver <span style=color:#666>(</span>as a localhost DNS resolver only<span style=color:#666>)</span>.
-//
-// See /usr/share/doc/bind*/sample/ <span style=color:#a2f;font-weight:700>for</span> example named configuration files.
-//
-// See the BIND Administrator<span>&#39;</span>s Reference Manual <span style=color:#666>(</span>ARM<span style=color:#666>)</span> <span style=color:#a2f;font-weight:700>for</span> details about the
-// configuration located in /usr/share/doc/bind-<span style=color:#666>{</span>version<span style=color:#666>}</span>/Bv9ARM.html
-
-options <span style=color:#666>{</span>
-        <span style=color:#b44>`</span>listen-on port <span style=color:#666>53</span> <span style=color:#666>{</span> any; <span style=color:#666>}</span>;<span style=color:#b44>`</span>
-        listen-on-v6 port <span style=color:#666>53</span> <span style=color:#666>{</span> ::1; <span style=color:#666>}</span>;
-        directory       <span style=color:#b44>&#34;/var/named&#34;</span>;
-        dump-file       <span style=color:#b44>&#34;/var/named/data/cache_dump.db&#34;</span>;
-        statistics-file <span style=color:#b44>&#34;/var/named/data/named_stats.txt&#34;</span>;
-        memstatistics-file <span style=color:#b44>&#34;/var/named/data/named_mem_stats.txt&#34;</span>;
-        recursing-file  <span style=color:#b44>&#34;/var/named/data/named.recursing&#34;</span>;
-        secroots-file   <span style=color:#b44>&#34;/var/named/data/named.secroots&#34;</span>;
-        <span style=color:#b44>`</span>allow-query     <span style=color:#666>{</span> any; <span style=color:#666>}</span>;<span style=color:#b44>`</span>
-
-        /*
-         - If you are building an AUTHORITATIVE DNS server, <span style=color:#a2f;font-weight:700>do</span> NOT <span style=color:#a2f>enable</span> recursion.
-         - If you are building a RECURSIVE <span style=color:#666>(</span>caching<span style=color:#666>)</span> DNS server, you need to <span style=color:#a2f>enable</span>
-           recursion.
-         - If your recursive DNS server has a public IP address, you MUST <span style=color:#a2f>enable</span> access
-           control to limit queries to your legitimate users. Failing to <span style=color:#a2f;font-weight:700>do</span> so will
-           cause your server to become part of large scale DNS amplification
-           attacks. Implementing BCP38 within your network would greatly
-           reduce such attack surface
-        */
-        recursion yes;
-
-        dnssec-enable yes;
-        dnssec-validation yes;
-
-        /* Path to ISC DLV key */
-        bindkeys-file <span style=color:#b44>&#34;/etc/named.root.key&#34;</span>;
-
-        managed-keys-directory <span style=color:#b44>&#34;/var/named/dynamic&#34;</span>;
-
-        pid-file <span style=color:#b44>&#34;/run/named/named.pid&#34;</span>;
-        session-keyfile <span style=color:#b44>&#34;/run/named/session.key&#34;</span>;
-<span style=color:#666>}</span>;
-
-logging <span style=color:#666>{</span>
-        channel default_debug <span style=color:#666>{</span>
-                file <span style=color:#b44>&#34;data/named.run&#34;</span>;
-                severity dynamic;
-        <span style=color:#666>}</span>;
-<span style=color:#666>}</span>;
-
-zone <span style=color:#b44>&#34;.&#34;</span> IN <span style=color:#666>{</span>
-        <span style=color:#a2f>type</span> hint;
-        file <span style=color:#b44>&#34;named.ca&#34;</span>;
-<span style=color:#666>}</span>;
-
-include <span style=color:#b44>&#34;/etc/named.rfc1912.zones&#34;</span>;
-include <span style=color:#b44>&#34;/etc/named.root.key&#34;</span>;
-</code></pre></div><h3 id=配置etcnamedrfc1912zones>配置/etc/named.rfc1912.zones</h3>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>// named.rfc1912.zones:
-//
-// Provided by Red Hat caching-nameserver package
-//
-// ISC BIND named zone configuration <span style=color:#a2f;font-weight:700>for</span> zones recommended by
-// RFC <span style=color:#666>1912</span> section 4.1 : localhost TLDs and address zones
-// and http://www.ietf.org/internet-drafts/draft-ietf-dnsop-default-local-zones-02.txt
-// <span style=color:#666>(</span>c<span style=color:#666>)</span><span style=color:#666>2007</span> R W Franks
-//
-// See /usr/share/doc/bind*/sample/ <span style=color:#a2f;font-weight:700>for</span> example named configuration files.
-//
-
-zone <span style=color:#b44>&#34;linuxdns.com&#34;</span> IN <span style=color:#666>{</span>
-        <span style=color:#a2f>type</span> master;
-        file <span style=color:#b44>&#34;linuxdns.com.zone&#34;</span>;
-        allow-update <span style=color:#666>{</span> none; <span style=color:#666>}</span>;
-<span style=color:#666>}</span>;
-zone <span style=color:#b44>&#34;21.16.172.in-addr.arpa&#34;</span> IN <span style=color:#666>{</span>
-        <span style=color:#a2f>type</span> master;
-        file <span style=color:#b44>&#34;172.16.21.arpa&#34;</span>;
-<span style=color:#666>}</span>;
-</code></pre></div><h3 id=配置varnamedlinuxdnscomzone>配置/var/named/linuxdns.com.zone</h3>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#b8860b>$TTL</span> 1D
-@       IN SOA   ns.linuxdns.com. root.linuxdns.com <span style=color:#666>(</span>
-                                        <span style=color:#666>0</span>       ; serial
-                                        1D      ; refresh
-                                        1H      ; retry
-                                        1W      ; expire
-                                        3H <span style=color:#666>)</span>    ; minimum
-
-; Nameservers:
-               IN      NS      ns1.linuxdns.com.
-
-; Address records:
-mysql          IN      A       172.16.21.9
-ns1            IN      A       172.16.21.13
-</code></pre></div><h3 id=配置varnamed1721621arpa>配置/var/named/172.16.21.arpa</h3>
-<p>采用简单写法</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#b8860b>$TTL</span> 1D
-@       IN SOA  ns.linuxdns.com. root.linuxdns.com <span style=color:#666>(</span>
-                                        <span style=color:#666>0</span>       ; serial
-                                        1D      ; refresh
-                                        1H      ; retry
-                                        1W      ; expire
-                                        3H <span style=color:#666>)</span>    ; minimum
-
-; Nameservers:
-@    IN      NS      ns1.linuxdns.com.
-
-; Address records:
-<span style=color:#666>13</span>   IN      PTR     ns1
-<span style=color:#666>9</span>    IN      PTR     mysql
-</code></pre></div><p>重启服务：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>systemctl restart named-chroot
-</code></pre></div><h2 id=测试>测试</h2>
-<p>在MySQL.linuxdns.com上查询</p>
-<p><a href=http://linuxdns.com>linuxdns.com</a> :</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#666>[</span>root@Alma ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># nslookup ns1.linuxdns.com</span>
-Server:         172.16.21.13
-Address:        172.16.21.13#53
-
-Name:   ns1.linuxdns.com
-Address: 172.16.21.13
-
-<span style=color:#666>[</span>root@Alma ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># nslookup mysql.linuxdns.com</span>
-Server:         172.16.21.13
-Address:        172.16.21.13#53
-
-Name:   mysql.linuxdns.com
-Address: 172.16.21.9
-</code></pre></div><p>Internet :</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#666>[</span>root@Alma ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># nslookup www.topgoer.com</span>
-Server:         172.16.21.13
-Address:        172.16.21.13#53
-
-Non-authoritative answer:
-Name:   www.topgoer.com
-Address: 122.114.11.160
-</code></pre></div><p>Tcpdump该查询的过程</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>02:50:34.392509 IP 172.16.21.9.49358 &gt; ns1.domain: 11953+ A? www.topgoer.com. <span style=color:#666>(</span>33<span style=color:#666>)</span>
-02:50:34.394149 IP ns1.41109 &gt; 192.52.178.30.domain: <span style=color:#666>44424</span> <span style=color:#666>[</span>1au<span style=color:#666>]</span> A? www.topgoer.com. <span style=color:#666>(</span>44<span style=color:#666>)</span>
-02:50:34.570135 IP 192.52.178.30.domain &gt; ns1.41109: 44424- 0/6/23 <span style=color:#666>(</span>1017<span style=color:#666>)</span>
-02:50:34.570967 IP ns1.9483 &gt; 106.11.141.115.domain: <span style=color:#666>53380</span> <span style=color:#666>[</span>1au<span style=color:#666>]</span> A? www.topgoer.com. <span style=color:#666>(</span>44<span style=color:#666>)</span>
-02:50:34.612167 IP 106.11.141.115.domain &gt; ns1.9483: 53380*- 1/0/1 A 122.114.11.160 <span style=color:#666>(</span>60<span style=color:#666>)</span>
-02:50:34.613586 IP ns1.51026 &gt; l.gtld-servers.net.domain: <span style=color:#666>15348</span> <span style=color:#666>[</span>1au<span style=color:#666>]</span> DS? topgoer.com. <span style=color:#666>(</span>40<span style=color:#666>)</span>
-02:50:34.787232 IP l.gtld-servers.net.domain &gt; ns1.51026: 15348*- 0/6/1 <span style=color:#666>(</span>857<span style=color:#666>)</span>
-02:50:34.788002 IP ns1.domain &gt; 172.16.21.9.49358: <span style=color:#666>11953</span> 1/2/22 A 122.114.11.160 <span style=color:#666>(</span>473<span style=color:#666>)</span>
-</code></pre></div><p>第一步，向顶级com.ns服务器发起请求。其中，192.52.178.30为com.的顶级ns服务器k.gtld-servers.net. 位于东京，是离本地最近的。</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#666>[</span>root@Alma ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># nslookup 192.52.178.30</span>
-30.178.52.192.in-addr.arpa      <span style=color:#b8860b>name</span> <span style=color:#666>=</span> k.gtld-servers.net.
-
-Authoritative answers can be found from:
-178.52.192.in-addr.arpa <span style=color:#b8860b>nameserver</span> <span style=color:#666>=</span> a3.verisigndns.com.
-178.52.192.in-addr.arpa <span style=color:#b8860b>nameserver</span> <span style=color:#666>=</span> a2.verisigndns.com.
-178.52.192.in-addr.arpa <span style=color:#b8860b>nameserver</span> <span style=color:#666>=</span> a1.verisigndns.com.
-</code></pre></div><p>第二步，拿到顶级服务器的信息后，查询topgoer.com，指向了106.11.141.115。只能查询到该地址是一个阿里云的IP地址。该服务器直接回答查询的A 记录为122.114.11.160</p>
-<p>第三步，本地dns服务器再次询问l.gtld-servers.net.-位于美国弗吉尼亚州的ICANN，得到同样的A记录</p>
-<p>第四步，本地dns服务器将A记录返回客户端172.16.21.9。</p>
-<h1 id=附一些术语>附：<strong>一些术语</strong></h1>
-<ul>
-<li>主机：主机通常是连接到网络的一台计算机（台式计算机、笔记本计算机、平板计算机或手机），另一种看法是主机就是可以进行通信的设备。</li>
-<li>域名：因特网上的主机使用IP地址相互寻址。人们很难记住这些数字，因此会为主机分配一个唯一的名称，当这个名称在一个授权DNS服务器上注册后，名称就被视为“域名”。</li>
-<li>顶级域名：域名在结构上以树状形式呈现，就像文件在虚拟文件系统结构中一段，DNS结构的最顶层简单地称为“点”，并用“.”来表示。直接位于“”下面的发是顶级域。最初的顶级域名有.com、.org、.net、.int、.edu、.gov和.mil，近年来还增加了许多其他的顶级域。</li>
-<li>FQDN:完全限定域名（Fully Qualified Domain Name，FQDN）是指从DNS结构顶部开始的主机域名。例如，“www.etaon.com.”就是一个FQDN，注意FQDN最后结尾的“.”符号，它是顶级以上的域名。当用户提供域名时，通常会省略此字符，因为大多数情况下，“.”符号被认为是FQDN的最后一个字符。但是，如果要管理DNS服务器，则应该习惯于加上“.”符号，因为在某些DNS
-务器配置文件中将需要它。</li>
-<li>子域：子域是较大域的组成部分，例如，假设你想用3个域来按照功能分类管理公司的主机，可以将这些域称为sales、eng和support。如果公司的域名是“etaon.com.”，则这3个子域的名称分别是“sales.etaon.com.””eng.etaon.com.”和“support.etaon.com.”。</li>
-<li>名称服务器：名称服务器是响应DNS客户端请求的系统。名称服务器提供从IP地址到域名的转换（有时是相反的，即域名到IP地址的转换）。请注意，名称服务器要么在本地存储有此信息的副本（称为区域文件），要么是将从其他名称服务器获取的信息临时存储在内存中，抑或将查询请求转发给具有该信息的其他服务器。</li>
-<li>权威名称服务器：权威名称服务器是根据系统本地存储的信息（原始主记录）返目结果的服务器。</li>
-<li>区域文件：用来存储IP地址到域名转换信息（即DNS记录）的文件的名称。此文件还包含用来定义域自身所需的信息。</li>
-<li>记录：在区域文件中，记录是为区域定义单个信息块的一个条目，例如将一个地址转换为域名的数据。</li>
-<li>缓存名称服务器：缓存名称服务器是基于从另一个名称服务器（如权威名称服务器）获得的信息返回结果的服务器。缓存名称服务器的主要优点是它可以加速IP地址到域名的解析，因为它会把查询结果缓存起来，并能够直接使用此缓存中的信息响应后续的请求。</li>
-<li>TTL：存储在缓存名称服务器中的数据通常不会永久存储。提供数据的名称服务器还为缓存名称服务器提供了该数据的TTL值，又叫作生存时间（Time To Live）。
-缓存名称服务器将信息存储在内存中直到TTL周期结束。通常这段时间是24小时，但这取决于权威名称服务器中的记录更新的频率。</li>
-<li>DNS转发器：一种DNS服务器，用于从内部网络接收DNS查询并将其发送到外部DNS服务器。</li>
-<li>正向查找：把域名转换为IP地址的过程，大多数DNS服务器都提供这种功能。</li>
-<li>反向查找：把IP地址转换为域名的过程，虽然许多DNS服务器提供此功能，但它不如正向查找常见。</li>
-</ul>
-</div>
-<footer class=post-footer>
-<div id=wcomments></div>
-</footer>
-</article>
-</section>
-</div>
-</div>
-<div class=sidebar-toggle>
-<div class=sidebar-toggle-line-wrap>
-<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+只有一个MX记录的情况也很常见，因为许多中小型公司不需要多个邮件服务器来处理传入的电子邮件。</p><h4 id=指针记录>指针记录</h4><p>前面描述的A记录用于正向查找区域文件中把域名转换为IP地址，指针（PTR）记录则用于反向查找区域文件中把IP地址转换为域名。
+下面是典型的PTR记录的示例：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>101.16.29.138.in-addr.arpa.   IN  PTR  www.etaon.com.
+</span></span></code></pre></div><p><code>重要</code>：PTR记录中的IP地址格式是实际IP地址的逆序形式再加上in-addr.arpa.</p><p>例如，101.16.29.138.in-addr.arpa.表示IP地址是138.29.16.101
+在大多数情况下，不需要指定完整的IP地址，因为$ORIGIN被设置为当前的反向查找网络域（例如，16.29.138.in-addr）。如果是这样，只需提供IP地址中的主机地址：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:#666>101</span> IN PTR www.etaon.com.
+</span></span></code></pre></div><h1 id=lab>LAB</h1><h2 id=实验拓扑>实验拓扑</h2><p><img src="https://img-blog.csdnimg.cn/63258e1d982d4ee9ba8a45f4aca0468b.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述>
+$ORIGIN linuxdns.com</p><h2 id=配置链>配置链</h2><p><img src="https://img-blog.csdnimg.cn/dc6423445f76434ea93d1bdb121154da.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p><h3 id=配置主配置文件namedconf>配置主配置文件named.conf</h3><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>//   /etc/named.conf
+</span></span><span style=display:flex><span>//
+</span></span><span style=display:flex><span>// named.conf
+</span></span><span style=display:flex><span>//
+</span></span><span style=display:flex><span>// Provided by Red Hat <span style=color:#a2f>bind</span> package to configure the ISC BIND named<span style=color:#666>(</span>8<span style=color:#666>)</span> DNS
+</span></span><span style=display:flex><span>// server as a caching only nameserver <span style=color:#666>(</span>as a localhost DNS resolver only<span style=color:#666>)</span>.
+</span></span><span style=display:flex><span>//
+</span></span><span style=display:flex><span>// See /usr/share/doc/bind*/sample/ <span style=color:#a2f;font-weight:700>for</span> example named configuration files.
+</span></span><span style=display:flex><span>//
+</span></span><span style=display:flex><span>// See the BIND Administrator<span>&#39;</span>s Reference Manual <span style=color:#666>(</span>ARM<span style=color:#666>)</span> <span style=color:#a2f;font-weight:700>for</span> details about the
+</span></span><span style=display:flex><span>// configuration located in /usr/share/doc/bind-<span style=color:#666>{</span>version<span style=color:#666>}</span>/Bv9ARM.html
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>options <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#b44>`</span>listen-on port <span style=color:#666>53</span> <span style=color:#666>{</span> any; <span style=color:#666>}</span>;<span style=color:#b44>`</span>
+</span></span><span style=display:flex><span>        listen-on-v6 port <span style=color:#666>53</span> <span style=color:#666>{</span> ::1; <span style=color:#666>}</span>;
+</span></span><span style=display:flex><span>        directory       <span style=color:#b44>&#34;/var/named&#34;</span>;
+</span></span><span style=display:flex><span>        dump-file       <span style=color:#b44>&#34;/var/named/data/cache_dump.db&#34;</span>;
+</span></span><span style=display:flex><span>        statistics-file <span style=color:#b44>&#34;/var/named/data/named_stats.txt&#34;</span>;
+</span></span><span style=display:flex><span>        memstatistics-file <span style=color:#b44>&#34;/var/named/data/named_mem_stats.txt&#34;</span>;
+</span></span><span style=display:flex><span>        recursing-file  <span style=color:#b44>&#34;/var/named/data/named.recursing&#34;</span>;
+</span></span><span style=display:flex><span>        secroots-file   <span style=color:#b44>&#34;/var/named/data/named.secroots&#34;</span>;
+</span></span><span style=display:flex><span>        <span style=color:#b44>`</span>allow-query     <span style=color:#666>{</span> any; <span style=color:#666>}</span>;<span style=color:#b44>`</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        /*
+</span></span><span style=display:flex><span>         - If you are building an AUTHORITATIVE DNS server, <span style=color:#a2f;font-weight:700>do</span> NOT <span style=color:#a2f>enable</span> recursion.
+</span></span><span style=display:flex><span>         - If you are building a RECURSIVE <span style=color:#666>(</span>caching<span style=color:#666>)</span> DNS server, you need to <span style=color:#a2f>enable</span>
+</span></span><span style=display:flex><span>           recursion.
+</span></span><span style=display:flex><span>         - If your recursive DNS server has a public IP address, you MUST <span style=color:#a2f>enable</span> access
+</span></span><span style=display:flex><span>           control to limit queries to your legitimate users. Failing to <span style=color:#a2f;font-weight:700>do</span> so will
+</span></span><span style=display:flex><span>           cause your server to become part of large scale DNS amplification
+</span></span><span style=display:flex><span>           attacks. Implementing BCP38 within your network would greatly
+</span></span><span style=display:flex><span>           reduce such attack surface
+</span></span><span style=display:flex><span>        */
+</span></span><span style=display:flex><span>        recursion yes;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        dnssec-enable yes;
+</span></span><span style=display:flex><span>        dnssec-validation yes;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        /* Path to ISC DLV key */
+</span></span><span style=display:flex><span>        bindkeys-file <span style=color:#b44>&#34;/etc/named.root.key&#34;</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        managed-keys-directory <span style=color:#b44>&#34;/var/named/dynamic&#34;</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        pid-file <span style=color:#b44>&#34;/run/named/named.pid&#34;</span>;
+</span></span><span style=display:flex><span>        session-keyfile <span style=color:#b44>&#34;/run/named/session.key&#34;</span>;
+</span></span><span style=display:flex><span><span style=color:#666>}</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>logging <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>        channel default_debug <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>                file <span style=color:#b44>&#34;data/named.run&#34;</span>;
+</span></span><span style=display:flex><span>                severity dynamic;
+</span></span><span style=display:flex><span>        <span style=color:#666>}</span>;
+</span></span><span style=display:flex><span><span style=color:#666>}</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>zone <span style=color:#b44>&#34;.&#34;</span> IN <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#a2f>type</span> hint;
+</span></span><span style=display:flex><span>        file <span style=color:#b44>&#34;named.ca&#34;</span>;
+</span></span><span style=display:flex><span><span style=color:#666>}</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>include <span style=color:#b44>&#34;/etc/named.rfc1912.zones&#34;</span>;
+</span></span><span style=display:flex><span>include <span style=color:#b44>&#34;/etc/named.root.key&#34;</span>;
+</span></span></code></pre></div><h3 id=配置etcnamedrfc1912zones>配置/etc/named.rfc1912.zones</h3><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>// named.rfc1912.zones:
+</span></span><span style=display:flex><span>//
+</span></span><span style=display:flex><span>// Provided by Red Hat caching-nameserver package
+</span></span><span style=display:flex><span>//
+</span></span><span style=display:flex><span>// ISC BIND named zone configuration <span style=color:#a2f;font-weight:700>for</span> zones recommended by
+</span></span><span style=display:flex><span>// RFC <span style=color:#666>1912</span> section 4.1 : localhost TLDs and address zones
+</span></span><span style=display:flex><span>// and http://www.ietf.org/internet-drafts/draft-ietf-dnsop-default-local-zones-02.txt
+</span></span><span style=display:flex><span>// <span style=color:#666>(</span>c<span style=color:#666>)</span><span style=color:#666>2007</span> R W Franks
+</span></span><span style=display:flex><span>//
+</span></span><span style=display:flex><span>// See /usr/share/doc/bind*/sample/ <span style=color:#a2f;font-weight:700>for</span> example named configuration files.
+</span></span><span style=display:flex><span>//
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>zone <span style=color:#b44>&#34;linuxdns.com&#34;</span> IN <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#a2f>type</span> master;
+</span></span><span style=display:flex><span>        file <span style=color:#b44>&#34;linuxdns.com.zone&#34;</span>;
+</span></span><span style=display:flex><span>        allow-update <span style=color:#666>{</span> none; <span style=color:#666>}</span>;
+</span></span><span style=display:flex><span><span style=color:#666>}</span>;
+</span></span><span style=display:flex><span>zone <span style=color:#b44>&#34;21.16.172.in-addr.arpa&#34;</span> IN <span style=color:#666>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#a2f>type</span> master;
+</span></span><span style=display:flex><span>        file <span style=color:#b44>&#34;172.16.21.arpa&#34;</span>;
+</span></span><span style=display:flex><span><span style=color:#666>}</span>;
+</span></span></code></pre></div><h3 id=配置varnamedlinuxdnscomzone>配置/var/named/linuxdns.com.zone</h3><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:#b8860b>$TTL</span> 1D
+</span></span><span style=display:flex><span>@       IN SOA   ns.linuxdns.com. root.linuxdns.com <span style=color:#666>(</span>
+</span></span><span style=display:flex><span>                                        <span style=color:#666>0</span>       ; serial
+</span></span><span style=display:flex><span>                                        1D      ; refresh
+</span></span><span style=display:flex><span>                                        1H      ; retry
+</span></span><span style=display:flex><span>                                        1W      ; expire
+</span></span><span style=display:flex><span>                                        3H <span style=color:#666>)</span>    ; minimum
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>; Nameservers:
+</span></span><span style=display:flex><span>               IN      NS      ns1.linuxdns.com.
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>; Address records:
+</span></span><span style=display:flex><span>mysql          IN      A       172.16.21.9
+</span></span><span style=display:flex><span>ns1            IN      A       172.16.21.13
+</span></span></code></pre></div><h3 id=配置varnamed1721621arpa>配置/var/named/172.16.21.arpa</h3><p>采用简单写法</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:#b8860b>$TTL</span> 1D
+</span></span><span style=display:flex><span>@       IN SOA  ns.linuxdns.com. root.linuxdns.com <span style=color:#666>(</span>
+</span></span><span style=display:flex><span>                                        <span style=color:#666>0</span>       ; serial
+</span></span><span style=display:flex><span>                                        1D      ; refresh
+</span></span><span style=display:flex><span>                                        1H      ; retry
+</span></span><span style=display:flex><span>                                        1W      ; expire
+</span></span><span style=display:flex><span>                                        3H <span style=color:#666>)</span>    ; minimum
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>; Nameservers:
+</span></span><span style=display:flex><span>@    IN      NS      ns1.linuxdns.com.
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>; Address records:
+</span></span><span style=display:flex><span><span style=color:#666>13</span>   IN      PTR     ns1
+</span></span><span style=display:flex><span><span style=color:#666>9</span>    IN      PTR     mysql
+</span></span></code></pre></div><p>重启服务：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>systemctl restart named-chroot
+</span></span></code></pre></div><h2 id=测试>测试</h2><p>在MySQL.linuxdns.com上查询</p><p><a href=http://linuxdns.com>linuxdns.com</a> :</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:#666>[</span>root@Alma ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># nslookup ns1.linuxdns.com</span>
+</span></span><span style=display:flex><span>Server:         172.16.21.13
+</span></span><span style=display:flex><span>Address:        172.16.21.13#53
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Name:   ns1.linuxdns.com
+</span></span><span style=display:flex><span>Address: 172.16.21.13
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#666>[</span>root@Alma ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># nslookup mysql.linuxdns.com</span>
+</span></span><span style=display:flex><span>Server:         172.16.21.13
+</span></span><span style=display:flex><span>Address:        172.16.21.13#53
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Name:   mysql.linuxdns.com
+</span></span><span style=display:flex><span>Address: 172.16.21.9
+</span></span></code></pre></div><p>Internet :</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:#666>[</span>root@Alma ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># nslookup www.topgoer.com</span>
+</span></span><span style=display:flex><span>Server:         172.16.21.13
+</span></span><span style=display:flex><span>Address:        172.16.21.13#53
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Non-authoritative answer:
+</span></span><span style=display:flex><span>Name:   www.topgoer.com
+</span></span><span style=display:flex><span>Address: 122.114.11.160
+</span></span></code></pre></div><p>Tcpdump该查询的过程</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>02:50:34.392509 IP 172.16.21.9.49358 &gt; ns1.domain: 11953+ A? www.topgoer.com. <span style=color:#666>(</span>33<span style=color:#666>)</span>
+</span></span><span style=display:flex><span>02:50:34.394149 IP ns1.41109 &gt; 192.52.178.30.domain: <span style=color:#666>44424</span> <span style=color:#666>[</span>1au<span style=color:#666>]</span> A? www.topgoer.com. <span style=color:#666>(</span>44<span style=color:#666>)</span>
+</span></span><span style=display:flex><span>02:50:34.570135 IP 192.52.178.30.domain &gt; ns1.41109: 44424- 0/6/23 <span style=color:#666>(</span>1017<span style=color:#666>)</span>
+</span></span><span style=display:flex><span>02:50:34.570967 IP ns1.9483 &gt; 106.11.141.115.domain: <span style=color:#666>53380</span> <span style=color:#666>[</span>1au<span style=color:#666>]</span> A? www.topgoer.com. <span style=color:#666>(</span>44<span style=color:#666>)</span>
+</span></span><span style=display:flex><span>02:50:34.612167 IP 106.11.141.115.domain &gt; ns1.9483: 53380*- 1/0/1 A 122.114.11.160 <span style=color:#666>(</span>60<span style=color:#666>)</span>
+</span></span><span style=display:flex><span>02:50:34.613586 IP ns1.51026 &gt; l.gtld-servers.net.domain: <span style=color:#666>15348</span> <span style=color:#666>[</span>1au<span style=color:#666>]</span> DS? topgoer.com. <span style=color:#666>(</span>40<span style=color:#666>)</span>
+</span></span><span style=display:flex><span>02:50:34.787232 IP l.gtld-servers.net.domain &gt; ns1.51026: 15348*- 0/6/1 <span style=color:#666>(</span>857<span style=color:#666>)</span>
+</span></span><span style=display:flex><span>02:50:34.788002 IP ns1.domain &gt; 172.16.21.9.49358: <span style=color:#666>11953</span> 1/2/22 A 122.114.11.160 <span style=color:#666>(</span>473<span style=color:#666>)</span>
+</span></span></code></pre></div><p>第一步，向顶级com.ns服务器发起请求。其中，192.52.178.30为com.的顶级ns服务器k.gtld-servers.net. 位于东京，是离本地最近的。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:#666>[</span>root@Alma ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># nslookup 192.52.178.30</span>
+</span></span><span style=display:flex><span>30.178.52.192.in-addr.arpa      <span style=color:#b8860b>name</span> <span style=color:#666>=</span> k.gtld-servers.net.
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Authoritative answers can be found from:
+</span></span><span style=display:flex><span>178.52.192.in-addr.arpa <span style=color:#b8860b>nameserver</span> <span style=color:#666>=</span> a3.verisigndns.com.
+</span></span><span style=display:flex><span>178.52.192.in-addr.arpa <span style=color:#b8860b>nameserver</span> <span style=color:#666>=</span> a2.verisigndns.com.
+</span></span><span style=display:flex><span>178.52.192.in-addr.arpa <span style=color:#b8860b>nameserver</span> <span style=color:#666>=</span> a1.verisigndns.com.
+</span></span></code></pre></div><p>第二步，拿到顶级服务器的信息后，查询topgoer.com，指向了106.11.141.115。只能查询到该地址是一个阿里云的IP地址。该服务器直接回答查询的A 记录为122.114.11.160</p><p>第三步，本地dns服务器再次询问l.gtld-servers.net.-位于美国弗吉尼亚州的ICANN，得到同样的A记录</p><p>第四步，本地dns服务器将A记录返回客户端172.16.21.9。</p><h1 id=附一些术语>附：<strong>一些术语</strong></h1><ul><li>主机：主机通常是连接到网络的一台计算机（台式计算机、笔记本计算机、平板计算机或手机），另一种看法是主机就是可以进行通信的设备。</li><li>域名：因特网上的主机使用IP地址相互寻址。人们很难记住这些数字，因此会为主机分配一个唯一的名称，当这个名称在一个授权DNS服务器上注册后，名称就被视为“域名”。</li><li>顶级域名：域名在结构上以树状形式呈现，就像文件在虚拟文件系统结构中一段，DNS结构的最顶层简单地称为“点”，并用“.”来表示。直接位于“”下面的发是顶级域。最初的顶级域名有.com、.org、.net、.int、.edu、.gov和.mil，近年来还增加了许多其他的顶级域。</li><li>FQDN:完全限定域名（Fully Qualified Domain Name，FQDN）是指从DNS结构顶部开始的主机域名。例如，“www.etaon.com.”就是一个FQDN，注意FQDN最后结尾的“.”符号，它是顶级以上的域名。当用户提供域名时，通常会省略此字符，因为大多数情况下，“.”符号被认为是FQDN的最后一个字符。但是，如果要管理DNS服务器，则应该习惯于加上“.”符号，因为在某些DNS
+务器配置文件中将需要它。</li><li>子域：子域是较大域的组成部分，例如，假设你想用3个域来按照功能分类管理公司的主机，可以将这些域称为sales、eng和support。如果公司的域名是“etaon.com.”，则这3个子域的名称分别是“sales.etaon.com.””eng.etaon.com.”和“support.etaon.com.”。</li><li>名称服务器：名称服务器是响应DNS客户端请求的系统。名称服务器提供从IP地址到域名的转换（有时是相反的，即域名到IP地址的转换）。请注意，名称服务器要么在本地存储有此信息的副本（称为区域文件），要么是将从其他名称服务器获取的信息临时存储在内存中，抑或将查询请求转发给具有该信息的其他服务器。</li><li>权威名称服务器：权威名称服务器是根据系统本地存储的信息（原始主记录）返目结果的服务器。</li><li>区域文件：用来存储IP地址到域名转换信息（即DNS记录）的文件的名称。此文件还包含用来定义域自身所需的信息。</li><li>记录：在区域文件中，记录是为区域定义单个信息块的一个条目，例如将一个地址转换为域名的数据。</li><li>缓存名称服务器：缓存名称服务器是基于从另一个名称服务器（如权威名称服务器）获得的信息返回结果的服务器。缓存名称服务器的主要优点是它可以加速IP地址到域名的解析，因为它会把查询结果缓存起来，并能够直接使用此缓存中的信息响应后续的请求。</li><li>TTL：存储在缓存名称服务器中的数据通常不会永久存储。提供数据的名称服务器还为缓存名称服务器提供了该数据的TTL值，又叫作生存时间（Time To Live）。
+缓存名称服务器将信息存储在内存中直到TTL周期结束。通常这段时间是24小时，但这取决于权威名称服务器中的记录更新的频率。</li><li>DNS转发器：一种DNS服务器，用于从内部网络接收DNS查询并将其发送到外部DNS服务器。</li><li>正向查找：把域名转换为IP地址的过程，大多数DNS服务器都提供这种功能。</li><li>反向查找：把IP地址转换为域名的过程，虽然许多DNS服务器提供此功能，但它不如正向查找常见。</li></ul></div><footer class=post-footer><div id=wcomments></div></footer></article></section></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
 <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-</div>
-</div>
-<aside id=sidebar class=sidebar>
-<div class=sidebar-inner>
-<ul class="sidebar-nav motion-element">
-<li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>
-文章目录
-</li>
-<li class=sidebar-nav-overview data-target=site-overview>
-站点概览
-</li>
-</ul>
-<section class="site-overview sidebar-panel">
-<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
-<img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon>
-<p class=site-author-name itemprop=name>Etaon</p>
-<p class="site-description motion-element" itemprop=description>
-Kepp Going!
-</p>
-</div>
-<nav class="site-state motion-element">
-<div class="site-state-item site-state-posts">
-<a href=/post/>
-<span class=site-state-item-count>61</span>
-<span class=site-state-item-name>日志</span>
-</a>
-</div>
-<div class="site-state-item site-state-categories">
-<a href=/categories/>
-<span class=site-state-item-count>13</span>
-<span class=site-state-item-name>分类</span>
-</a>
-</div>
-<div class="site-state-item site-state-tags">
-<a href=/tags/>
-<span class=site-state-item-count>34</span>
-<span class=site-state-item-name>标签</span>
-</a>
-</div>
-</nav>
-<div class="links-of-author motion-element">
-<span class=links-of-author-item>
-<a href=https://github.com/etaon target=_blank title=GitHub>
-<i class="fa fa-fw fa-github"></i>
-GitHub
-</a>
-</span>
-<span class=links-of-author-item>
-<a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN>
-<i class="fa fa-fw fa-CSDN"></i>
-CSDN
-</a>
-</span>
-</div>
-<div class="links-of-blogroll motion-element links-of-blogroll-inline">
-<div class=links-of-blogroll-title>
-<i class="fa fa-fw fa-globe"></i>
-友情链接
-</div>
-<ul class=links-of-blogroll-list>
-<li class=links-of-blogroll-item>
-<a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a>
-</li>
-</ul>
-</div>
-<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
-<div class=tagcloud-of-blogroll-title>
-<i class="fa fa-fw fa-tags"></i>
-标签云
-</div>
-<ul class=tagcloud-of-blogroll-list>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mysql>Mysql</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/aws>Aws</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/dql>Dql</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/hadoop>Hadoop</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/redis>Redis</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/cicd>Cicd</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/git>Git</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/istio>Istio</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mongodb>Mongodb</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/azure>Azure</a>
-</li>
-</ul>
-</div>
-</section>
-<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-<div class=post-toc>
-<div class=post-toc-content><nav id=TableOfContents>
-<ul>
-<li><a href=#icann><strong>ICANN</strong></a></li>
-<li><a href=#根域名及根服务器><strong>根域名及根服务器</strong></a>
-<ul>
-<li><a href=#dns-根域名服务器>DNS 根域名服务器</a></li>
-<li><a href=#dns根区>DNS根区</a></li>
-</ul>
-</li>
-<li><a href=#dns查询>DNS查询</a></li>
-</ul>
-<ul>
-<li><a href=#bind-chroot>Bind-chroot</a></li>
-<li><a href=#bindbind-chroot安装>Bind(Bind-chroot)安装</a></li>
-<li><a href=#bind配置>Bind配置</a>
-<ul>
-<li><a href=#主要配置文件namedconf>主要配置文件named.conf</a></li>
-<li><a href=#区域文件zone-file>区域文件Zone File</a></li>
-</ul>
-</li>
-</ul>
-<ul>
-<li><a href=#实验拓扑>实验拓扑</a></li>
-<li><a href=#配置链>配置链</a>
-<ul>
-<li><a href=#配置主配置文件namedconf>配置主配置文件named.conf</a></li>
-<li><a href=#配置etcnamedrfc1912zones>配置/etc/named.rfc1912.zones</a></li>
-<li><a href=#配置varnamedlinuxdnscomzone>配置/var/named/linuxdns.com.zone</a></li>
-<li><a href=#配置varnamed1721621arpa>配置/var/named/172.16.21.arpa</a></li>
-</ul>
-</li>
-<li><a href=#测试>测试</a></li>
-</ul>
-</nav></div>
-</div>
-</section>
-</div>
-</aside>
-</div>
-</main>
-<footer id=footer class=footer>
-<div class=footer-inner>
-<div class=copyright>
-<span class=copyright-year>
-&copy; 2010 - 2022
-</span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id=sidebar class=sidebar><div class=sidebar-inner><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>文章目录</li><li class=sidebar-nav-overview data-target=site-overview>站点概览</li></ul><section class="site-overview sidebar-panel"><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon><p class=site-author-name itemprop=name>Etaon</p><p class="site-description motion-element" itemprop=description>Kepp Going!</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=/post/><span class=site-state-item-count>61</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>13</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>34</span>
+<span class=site-state-item-name>标签</span></a></div></nav><div class="links-of-author motion-element"><span class=links-of-author-item><a href=https://github.com/etaon target=_blank title=GitHub><i class="fa fa-fw fa-github"></i>
+GitHub</a></span>
+<span class=links-of-author-item><a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN><i class="fa fa-fw fa-CSDN"></i>
+CSDN</a></span></div><div class="links-of-blogroll motion-element links-of-blogroll-inline"><div class=links-of-blogroll-title><i class="fa fa-fw fa-globe"></i>
+友情链接</div><ul class=links-of-blogroll-list><li class=links-of-blogroll-item><a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a></li><li class=links-of-blogroll-item><a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a></li><li class=links-of-blogroll-item><a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a></li><li class=links-of-blogroll-item><a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a></li></ul></div><div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline"><div class=tagcloud-of-blogroll-title><i class="fa fa-fw fa-tags"></i>
+标签云</div><ul class=tagcloud-of-blogroll-list><li class=tagcloud-of-blogroll-item><a href=/tags/mysql>Mysql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/aws>Aws</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/dql>Dql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/hadoop>Hadoop</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/redis>Redis</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/cicd>Cicd</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/git>Git</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/istio>Istio</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/mongodb>Mongodb</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/azure>Azure</a></li></ul></div></section><section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active"><div class=post-toc><div class=post-toc-content><nav id=TableOfContents><ul><li><a href=#icann><strong>ICANN</strong></a></li><li><a href=#根域名及根服务器><strong>根域名及根服务器</strong></a><ul><li><a href=#dns-根域名服务器>DNS 根域名服务器</a></li><li><a href=#dns根区>DNS根区</a></li></ul></li><li><a href=#dns查询>DNS查询</a></li></ul><ul><li><a href=#bind-chroot>Bind-chroot</a></li><li><a href=#bindbind-chroot安装>Bind(Bind-chroot)安装</a></li><li><a href=#bind配置>Bind配置</a><ul><li><a href=#主要配置文件namedconf>主要配置文件named.conf</a></li><li><a href=#区域文件zone-file>区域文件Zone File</a></li></ul></li></ul><ul><li><a href=#实验拓扑>实验拓扑</a></li><li><a href=#配置链>配置链</a><ul><li><a href=#配置主配置文件namedconf>配置主配置文件named.conf</a></li><li><a href=#配置etcnamedrfc1912zones>配置/etc/named.rfc1912.zones</a></li><li><a href=#配置varnamedlinuxdnscomzone>配置/var/named/linuxdns.com.zone</a></li><li><a href=#配置varnamed1721621arpa>配置/var/named/172.16.21.arpa</a></li></ul></li><li><a href=#测试>测试</a></li></ul></nav></div></div></section></div></aside></div></main><footer id=footer class=footer><div class=footer-inner><div class=copyright><span class=copyright-year>&copy; 2010 - 2022</span>
 <span class=with-love><i class="fa fa-heart"></i></span>
-<span class=copyright-author>路无止境！</span>
-</div>
-<div class=powered-info>
-<span class=powered-by>
-Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.91.2</a>
-</span>
+<span class=copyright-author>路无止境！</span></div><div class=powered-info><span class=powered-by>Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.101.0</a></span>
 <span class=separator-line>/</span>
-<span class=theme-info>
-Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
-</a>
-</span>
-</div>
-<div class=vistor-info>
-<script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
-<span class=site-uv>
-<i class="fa fa-user"></i>
-<span class=busuanzi-value id=busuanzi_value_site_uv></span>
-</span>
+<span class=theme-info>Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank>NexT</a></span></div><div class=vistor-info><script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<span class=site-uv><i class="fa fa-user"></i>
+<span class=busuanzi-value id=busuanzi_value_site_uv></span></span>
 <span class=separator-line>/</span>
-<span class=site-pv>
-<i class="fa fa-eye"></i>
-<span class=busuanzi-value id=busuanzi_value_site_pv></span>
-</span>
-</div>
-<div class=license-info>
-<span class=storage-info>
-Storage by
-<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a>
-</span>
+<span class=site-pv><i class="fa fa-eye"></i>
+<span class=busuanzi-value id=busuanzi_value_site_pv></span></span></div><div class=license-info><span class=storage-info>Storage by
+<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a></span>
 <span class=separator-line>/</span>
-<span class=license-num>
-<a href target=_blank></a>
-</span>
-</div>
-</div>
-</footer>
-<div class=back-to-top>
-<i class="fa fa-arrow-up"></i>
-<span id=scrollpercent><span>0</span>%</span>
-</div>
-</div>
-<script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
+<span class=license-num><a href target=_blank></a></span></div></div></footer><div class=back-to-top><i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span></div></div><script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
 <script type=text/javascript src=/js/search.js></script>
 <script type=text/javascript src=/js/affix.js></script>
 <script type=text/javascript src=/js/scrollspy.js></script>
-<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.main').css('padding-bottom'),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}}),$(document).on('affixed.bs.affix',function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var b=$('.header-inner').height()+10,c,d,a,e;$('#sidebar').css({'margin-top':b}).show(),c=parseInt($('#sidebar').css('margin-top')),d=parseInt($('.sidebar-inner').css('height')),a=c+d,e=$('.content-wrap').height(),e<a&&$('.content-wrap').css('min-height',a),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
-<script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
-<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
-<script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+'//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js',function(){new Waline({el:'#wcomments',visitor:!0,avatar:'wavatar',avatarCDN:'https://sdn.geekzu.org/avatar/',avatarForce:!1,wordLimit:'200',placeholder:' 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ',requiredFields:['nick','mail'],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$('#wcomments').html('抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。')})</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type=text/javascript>function detectIE(){var e=window.navigator.userAgent,t=e.indexOf("MSIE "),n=e.indexOf("Trident/"),s=e.indexOf("Edge/");return t>0||n>0||s>0?-1:1}function getCntViewHeight(){var t=$("#content").height(),e=$(window).height(),n=t>e?t-e:$(document).height()-e;return n}function getScrollbarWidth(){var e=$("<div />").addClass("scrollbar-measure").prependTo("body"),t=e[0],n=t.offsetWidth-t.clientWidth;return e.remove(),n}function registerBackTop(){var t=50,e=$(".back-to-top");$(window).on("scroll",function(){e.toggleClass("back-to-top-on",window.pageYOffset>t);var s=$(window).scrollTop(),o=getCntViewHeight(),i=s/o,n=Math.round(i*100),a=n>100?100:n;$("#scrollpercent>span").html(a)}),e.on("click",function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var e=".post-toc",s=$(e),t=".active-current";s.on("activate.bs.scrollspy",function(){var t=$(e+" .active").last();n(),t.addClass("active-current")}).on("clear.bs.scrollspy",n),$("body").scrollspy({target:e});function n(){$(e+" "+t).removeClass(t.substring(1))}}function initAffix(){var e=$(".header-inner").height(),t=parseInt($(".main").css("padding-bottom"),10),n=e+10;$(".sidebar-inner").affix({offset:{top:n,bottom:t}}),$(document).on("affixed.bs.affix",function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){$(window).on("resize",function(){e&&clearTimeout(e),e=setTimeout(function(){var e=document.body.clientHeight-100;updateTOCHeight(e)},0)}),updateTOCHeight(document.body.clientHeight-100);var e,t=getScrollbarWidth();$(".post-toc").css("width","calc(100% + "+t+"px)")}function updateTOCHeight(e){e=e||"auto",$(".post-toc").css("max-height",e)}$(function(){var e,t,n,s,o=$(".header-inner").height()+10;$("#sidebar").css({"margin-top":o}).show(),t=parseInt($("#sidebar").css("margin-top")),n=parseInt($(".sidebar-inner").css("height")),e=t+n,s=$(".content-wrap").height(),s<e&&$(".content-wrap").css("min-height",e),$(".site-nav-toggle").on("click",function(){var e=$(".site-nav"),o=$(".toggle"),t="site-nav-on",i="toggle-close",n=e.hasClass(t),a=n?"slideUp":"slideDown",s=n?"removeClass":"addClass";e.stop()[a]("normal",function(){e[s](t),o[s](i)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$(".sidebar-nav-toc").click(function(){$(this).addClass("sidebar-nav-active"),$(this).next().removeClass("sidebar-nav-active"),$("."+$(this).next().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)}),$(".sidebar-nav-overview").click(function(){$(this).addClass("sidebar-nav-active"),$(this).prev().removeClass("sidebar-nav-active"),$("."+$(this).prev().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)})})</script><script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$(".post-body").viewer()})</script><script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+"//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js",function(){new Waline({el:"#wcomments",visitor:!0,avatar:"wavatar",avatarCDN:"https://sdn.geekzu.org/avatar/",avatarForce:!1,wordLimit:"200",placeholder:" 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ",requiredFields:["nick","mail"],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$("#wcomments").html("抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。")})</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
 <script type=text/javascript src="//s7.addthis.com/js/300/addthis_widget.js#pubid=Your%20AddthisId"></script>
-<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
-</body>
-</html>
+<script>(function(){var t,e=document.createElement("script"),n=window.location.protocol.split(":")[0];n==="https"?e.src="https://zz.bdstatic.com/linksubmit/push.js":e.src="http://push.zhanzhang.baidu.com/push.js",t=document.getElementsByTagName("script")[0],t.parentNode.insertBefore(e,t)})()</script></body></html>

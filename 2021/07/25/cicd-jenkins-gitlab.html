@@ -1,783 +1,381 @@
-<!doctype html><html lang=zh-cn dir=content/zh-cn>
-<head>
-<meta charset=utf-8>
-<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
-<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
-<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
-<title> CICD-Jenkins综合项目 - 路无止境！ </title>
-<meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云">
-<meta name=author content="Etaon">
-<meta property="og:title" content="CICD-Jenkins综合项目">
-<meta property="og:site_name" content="路无止境！">
-<meta property="og:image" content="/img/author.jpg">
-<meta name=title content="CICD-Jenkins综合项目 - 路无止境！">
-<meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。">
-<link rel="shortcut icon" href=/img/favicon.ico>
-<link rel=apple-touch-icon href=/img/apple-touch-icon.png>
-<link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png>
-<link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css>
-<link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet>
-<link href=/css/main.css rel=stylesheet type=text/css>
-<link href=/css/syntax.css rel=stylesheet type=text/css>
-</head>
-<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
-<div class="container one-collumn sidebar-position-left page-home">
-<div class=headband></div>
-<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
-<div class=header-inner> <div class=site-brand-container>
-<div class=site-nav-toggle>
-<div class=toggle role=button style=opacity:1;top:0>
+<!doctype html><html lang=zh-cn dir=content/zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=content-security-policy content="upgrade-insecure-requests"><title>CICD-Jenkins综合项目 - 路无止境！</title><meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云"><meta name=author content="Etaon"><meta property="og:title" content="CICD-Jenkins综合项目"><meta property="og:site_name" content="路无止境！"><meta property="og:image" content="/img/author.jpg"><meta name=title content="CICD-Jenkins综合项目 - 路无止境！"><meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。"><link rel="shortcut icon" href=/img/favicon.ico><link rel=apple-touch-icon href=/img/apple-touch-icon.png><link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png><link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css><link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet><link href=/css/main.css rel=stylesheet type=text/css><link href=/css/syntax.css rel=stylesheet type=text/css></head><body itemscope itemtype=http://schema.org/WebPage lang=zh-hans><div class="container one-collumn sidebar-position-left page-home"><div class=headband></div><header id=header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle role=button style=opacity:1;top:0><span class=toggle-line></span>
 <span class=toggle-line></span>
-<span class=toggle-line></span>
-<span class=toggle-line></span>
-</div>
-</div>
-<div class=site-meta>
-<div class=multi-lang-switch>
-<i class="fa fa-fw fa-language" style=margin-right:5px></i>
-<a class=lang-link id=zh-cn href=#>中文</a>
-</div>
-<div class=custom-logo-site-title>
-<a href=/ class=brand rel=start>
-<span class=logo-line-before><i></i></span>
+<span class=toggle-line></span></div></div><div class=site-meta><div class=multi-lang-switch><i class="fa fa-fw fa-language" style=margin-right:5px></i>
+<a class=lang-link id=zh-cn href=#>中文</a></div><div class=custom-logo-site-title><a href=/ class=brand rel=start><span class=logo-line-before><i></i></span>
 <span class=site-title>路无止境！</span>
-<span class=logo-line-after><i></i></span>
-</a>
-</div>
-<p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p>
-</div>
-<div class=site-nav-right>
-<div class="toggle popup-trigger" style=opacity:1;top:0>
-<i class="fa fa-search fa-fw fa-lg"></i>
-</div>
-</div>
-</div>
-<nav class=site-nav>
-<ul id=menu class=menu>
-<li class=menu-item>
-<a href=/ rel=section>
-<i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页
-</a>
-</li>
-<li class=menu-item>
-<a href=/post rel=section>
-<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档
-</a>
-</li>
-<li class=menu-item>
-<a href=/about.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于我
-</a>
-</li>
-<li class=menu-item>
-<a href=/404.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益404
-</a>
-</li>
-<li class="menu-item menu-item-search">
-<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> 搜索</a>
-</li>
-</ul>
-<div class=site-search>
-<div class="popup search-popup local-search-popup">
-<div class="local-search-header clearfix">
-<span class=search-icon><i class="fa fa-search"></i> </span>
-<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
-<div class=local-search-input-wrapper>
-<input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
-</div>
-</div>
-<div id=local-search-result></div>
-</div>
-</div>
-</nav>
-</div>
-</header>
-<main id=main class=main>
-<div class=main-inner>
-<div class=content-wrap>
-<div id=content class=content>
-<section id=posts class=posts-expand>
-<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
-<header class=post-header>
-<h1 class=post-title itemprop="name headline" style=font-weight:700>
-<a class=post-title-link href=https://www.etaon.link/2021/07/25/cicd-jenkins-gitlab.html itemprop=url>
-CICD-Jenkins综合项目
-</a>
-</h1>
-</header>
-<div class=post-body itemprop=articleBody>
-<h2 id=实验说明>实验说明</h2>
-<h3 id=实验拓扑>实验拓扑</h3>
-<p><img src="https://img-blog.csdnimg.cn/1dd0f7940d614cae89e9951610a3f693.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p>
-<h3 id=部署流程>部署流程</h3>
-<ol>
-<li>
-<p>研发push到github代码库</p>
-</li>
-<li>
-<p>Jenkins 构建，pull git代码 使用maven进行编译打包</p>
-</li>
-<li>
-<p>打包生成的代码，生成一个新版本的镜像，push到本地docker仓库harbor</p>
-</li>
-<li>
-<p>发布，测试机器 pull 新版本的镜像，并删除原来的容器，重新运行新版本镜像。</p>
-</li>
-</ol>
-<h3 id=实验参数>实验参数</h3>
-<table>
-<thead>
-<tr>
-<th>项目</th>
-<th>描述</th>
-<th>备注</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>代码仓库</td>
-<td><a href=https://github.com>https://github.com</a></td>
-<td></td>
-</tr>
-<tr>
-<td>容器镜像仓库</td>
-<td>Harbor V2.3</td>
-<td>harbor.corp.tanzu</td>
-</tr>
-<tr>
-<td>CI/CD服务器</td>
-<td>Jenkins 2.289.2-1.1</td>
-<td>jenkins.corp.tanzu; Installed:JDK/Jenkins/gitlab</td>
-</tr>
-<tr>
-<td>测试服务器</td>
-<td>安装Docker</td>
-<td>192.168.110.27</td>
-</tr>
-</tbody>
-</table>
-<h2 id=部署服务>部署服务</h2>
-<h3 id=部署harbor镜像仓库>部署Harbor镜像仓库</h3>
-<p>参考：<a href="https://editor.csdn.net/md/?articleId=117402485">基于SSL的Harbor镜像仓库的搭建</a>，创建用户zyi
+<span class=logo-line-after><i></i></span></a></div><p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p></div><div class=site-nav-right><div class="toggle popup-trigger" style=opacity:1;top:0><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class=site-nav><ul id=menu class=menu><li class=menu-item><a href=/ rel=section><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class=menu-item><a href=/post rel=section><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class=menu-item><a href=/about.html rel=section><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于我</a></li><li class=menu-item><a href=/404.html rel=section><i class="menu-item-icon fa fa-fw fa-heartbeat"></i><br>公益404</a></li><li class="menu-item menu-item-search"><a href=javascript:; class=popup-trigger><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class=site-search><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class=search-icon><i class="fa fa-search"></i></span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span><div class=local-search-input-wrapper><input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off></div></div><div id=local-search-result></div></div></div></nav></div></header><main id=main class=main><div class=main-inner><div class=content-wrap><div id=content class=content><section id=posts class=posts-expand><article class="post post-type-normal" itemscope itemtype=http://schema.org/Article><header class=post-header><h1 class=post-title itemprop="name headline" style=font-weight:700><a class=post-title-link href=https://www.etaon.top/2021/07/25/cicd-jenkins-gitlab.html itemprop=url>CICD-Jenkins综合项目</a></h1></header><div class=post-body itemprop=articleBody><h2 id=实验说明>实验说明</h2><h3 id=实验拓扑>实验拓扑</h3><p><img src="https://img-blog.csdnimg.cn/1dd0f7940d614cae89e9951610a3f693.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p><h3 id=部署流程>部署流程</h3><ol><li><p>研发push到github代码库</p></li><li><p>Jenkins 构建，pull git代码 使用maven进行编译打包</p></li><li><p>打包生成的代码，生成一个新版本的镜像，push到本地docker仓库harbor</p></li><li><p>发布，测试机器 pull 新版本的镜像，并删除原来的容器，重新运行新版本镜像。</p></li></ol><h3 id=实验参数>实验参数</h3><table><thead><tr><th>项目</th><th>描述</th><th>备注</th></tr></thead><tbody><tr><td>代码仓库</td><td><a href=https://github.com>https://github.com</a></td><td></td></tr><tr><td>容器镜像仓库</td><td>Harbor V2.3</td><td>harbor.corp.tanzu</td></tr><tr><td>CI/CD服务器</td><td>Jenkins 2.289.2-1.1</td><td>jenkins.corp.tanzu; Installed:JDK/Jenkins/gitlab</td></tr><tr><td>测试服务器</td><td>安装Docker</td><td>192.168.110.27</td></tr></tbody></table><h2 id=部署服务>部署服务</h2><h3 id=部署harbor镜像仓库>部署Harbor镜像仓库</h3><p>参考：<a href="https://editor.csdn.net/md/?articleId=117402485">基于SSL的Harbor镜像仓库的搭建</a>，创建用户zyi
 创建公有项目jenkins
-<img src="https://img-blog.csdnimg.cn/ed942c1b6a1a45ea917a1d897f7d0e1a.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p>
-<h3 id=测试服务器>测试服务器</h3>
-<h4 id=安装docker和jq>安装Docker和jq</h4>
-<blockquote>
-<p>yum install docker jq -y //后面的脚本会用到,jq类似于sed/awk专门处理json格式的文件
-systemctl start docker</p>
-</blockquote>
-<h4 id=预先配置>预先配置</h4>
-<blockquote>
-<p>上配置：</p>
-</blockquote>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback> #visudo
-#Defaults    requiretty
-Defaults:root !requiretty
-</code></pre></div><blockquote>
-<p>否则在机器业务机器上执行脚本时会报错：</p>
-</blockquote>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[SSH] executing...
-sudo: sorry, you must have a tty to run sudo
-docker: invalid reference format.
-</code></pre></div><h3 id=jenkins服务部署>Jenkins服务部署</h3>
-<p>See:<a href="https://editor.csdn.net/md/?articleId=118884289">CI/CD学习笔记-jenkins安装</a></p>
-<h4 id=预先配置-1>预先配置</h4>
-<p>由于在Jenkins机器上docker是使用root用户运行的，而Jenkins是使用普通用户jenkins运行的，所以要先配置下jenkins用户可以使用docker命令。</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@jenkins ~]# visudo
-jenkins ALL=(root)      NOPASSWD: /usr/bin/docker
-</code></pre></div><p>另外j基于以下原因在Jenkins机器上配置visudo</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>#Disable &#34;ssh hostname sudo &lt;cmd&gt;&#34;, because it will show the password in clear.
-#You have to run &#34;ssh -t hostname sudo &lt;cmd&gt;&#34;.
-[root@jenkins ~]#visudo
-#Defaults    requiretty
-Defaults:jenkins !requiretty
-</code></pre></div><p>如果不配置这个，在执行下面脚本时，会报错误：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>+ cp -f /home/jenkins/.jenkins/workspace/godseyeBranchForNov/godseye-container/target/godseye-container-wisedu.war /home/jenkins/docker-file/godseye_war/godseye.war
-+ sudo docker login -u zyi -p W123 -e xxx04@qq.com jenkins.corp.tanzu
-sudo: sorry, you must have a tty to run sudo
-</code></pre></div><h4 id=安装插件>安装插件</h4>
-<p><strong>插件"Maven Integration"和"SSH"</strong>
+<img src="https://img-blog.csdnimg.cn/ed942c1b6a1a45ea917a1d897f7d0e1a.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p><h3 id=测试服务器>测试服务器</h3><h4 id=安装docker和jq>安装Docker和jq</h4><blockquote><p>yum install docker jq -y //后面的脚本会用到,jq类似于sed/awk专门处理json格式的文件
+systemctl start docker</p></blockquote><h4 id=预先配置>预先配置</h4><blockquote><p>上配置：</p></blockquote><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span> #visudo
+</span></span><span style=display:flex><span>#Defaults    requiretty
+</span></span><span style=display:flex><span>Defaults:root !requiretty
+</span></span></code></pre></div><blockquote><p>否则在机器业务机器上执行脚本时会报错：</p></blockquote><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[SSH] executing...
+</span></span><span style=display:flex><span>sudo: sorry, you must have a tty to run sudo
+</span></span><span style=display:flex><span>docker: invalid reference format.
+</span></span></code></pre></div><h3 id=jenkins服务部署>Jenkins服务部署</h3><p>See:<a href="https://editor.csdn.net/md/?articleId=118884289">CI/CD学习笔记-jenkins安装</a></p><h4 id=预先配置-1>预先配置</h4><p>由于在Jenkins机器上docker是使用root用户运行的，而Jenkins是使用普通用户jenkins运行的，所以要先配置下jenkins用户可以使用docker命令。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[root@jenkins ~]# visudo
+</span></span><span style=display:flex><span>jenkins ALL=(root)      NOPASSWD: /usr/bin/docker
+</span></span></code></pre></div><p>另外j基于以下原因在Jenkins机器上配置visudo</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>#Disable &#34;ssh hostname sudo &lt;cmd&gt;&#34;, because it will show the password in clear.
+</span></span><span style=display:flex><span>#You have to run &#34;ssh -t hostname sudo &lt;cmd&gt;&#34;.
+</span></span><span style=display:flex><span>[root@jenkins ~]#visudo
+</span></span><span style=display:flex><span>#Defaults    requiretty
+</span></span><span style=display:flex><span>Defaults:jenkins !requiretty
+</span></span></code></pre></div><p>如果不配置这个，在执行下面脚本时，会报错误：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>+ cp -f /home/jenkins/.jenkins/workspace/godseyeBranchForNov/godseye-container/target/godseye-container-wisedu.war /home/jenkins/docker-file/godseye_war/godseye.war
+</span></span><span style=display:flex><span>+ sudo docker login -u zyi -p W123 -e xxx04@qq.com jenkins.corp.tanzu
+</span></span><span style=display:flex><span>sudo: sorry, you must have a tty to run sudo
+</span></span></code></pre></div><h4 id=安装插件>安装插件</h4><p><strong>插件"Maven Integration"和"SSH"</strong>
 点击“Manage Jenkins”&ndash;>“Plugin Manager”，搜索插件"Maven Integration"和"SSH"，进行安装。
 <img src="https://img-blog.csdnimg.cn/9cb85be2e93e4735b4a0c93e2a3f1ae3.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述>
-<img src=https://img-blog.csdnimg.cn/dbcff2c02b8048d98749ca8e9b451868.png alt=在这里插入图片描述></p>
-<h4 id=配置远程接入测试服务器>配置远程接入测试服务器</h4>
-<p>点击“Manage Jenkins”&ndash;>“Manage Credentials ”
+<img src=https://img-blog.csdnimg.cn/dbcff2c02b8048d98749ca8e9b451868.png alt=在这里插入图片描述></p><h4 id=配置远程接入测试服务器>配置远程接入测试服务器</h4><p>点击“Manage Jenkins”&ndash;>“Manage Credentials ”
 <img src="https://img-blog.csdnimg.cn/12e700985b4c4753840c6b35cd190514.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述>
 <img src="https://img-blog.csdnimg.cn/09b0b9ecf3d2460780e0ca203460b51e.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述>
 选择用户名密码方式
-<img src="https://img-blog.csdnimg.cn/ee14d9db490346d692f3bcb3c4069266.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p>
-<h2 id=构建job>构建JOB</h2>
-<h3 id=代码源>代码源</h3>
-<p>使用Git，代码地址： <a href=https://github.com/etaon/easy-springmvc-maven.git>https://github.com/etaon/easy-springmvc-maven.git</a>
+<img src="https://img-blog.csdnimg.cn/ee14d9db490346d692f3bcb3c4069266.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p><h2 id=构建job>构建JOB</h2><h3 id=代码源>代码源</h3><p>使用Git，代码地址： <a href=https://github.com/etaon/easy-springmvc-maven.git>https://github.com/etaon/easy-springmvc-maven.git</a>
 <img src="https://img-blog.csdnimg.cn/a58fe081900d452080d6ea0425bbc4b1.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述>
 <img src="https://img-blog.csdnimg.cn/77a85c5cc0af4857a5132e116e11e364.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述>
-Goals and options填写：clean package -Dmaven.test.skip=true</p>
-<p><img src="https://img-blog.csdnimg.cn/77a684fc217b485199b00518385061a9.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p>
-<h3 id=post-step>Post Step</h3>
-<p>需要完成以下任务：</p>
-<ol>
-<li>Jenkins服务器：编译完成后，build生成一个新版本的镜像，push到远程harbor仓库；</li>
-<li>远程测试服务器：拉取镜像、发布</li>
-</ol>
-<h3 id=构建新镜像并push到harbor>构建新镜像并push到Harbor</h3>
-<h4 id=配置可执行脚本>配置可执行脚本</h4>
-<p>脚本方式提交：
-<img src="https://img-blog.csdnimg.cn/4b3f1729a7d74fa68bb71a74b35a259a.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=color:#080;font-style:italic># Jenkins机器：编译完成后，build生成一个新版本的镜像，push到远程harbor仓库</span>
-
-<span style=color:#080;font-style:italic># Variables</span>
-<span style=color:#b8860b>JENKINS_WAR_HOME</span><span style=color:#666>=</span><span style=color:#b44>&#39;/var/lib/jenkins/workspace/maven-docker/target&#39;</span>
-<span style=color:#b8860b>DOCKERFILE_HOME</span><span style=color:#666>=</span><span style=color:#b44>&#39;/var/lib/jenkins/docker-file/maven-docker-test_war&#39;</span>
-<span style=color:#b8860b>HARBOR_IP</span><span style=color:#666>=</span><span style=color:#b44>&#39;harbor.corp.tanzu&#39;</span>
-<span style=color:#b8860b>REPOSITORIES</span><span style=color:#666>=</span><span style=color:#b44>&#39;jenkins/maven-docker&#39;</span>
-<span style=color:#b8860b>HARBOR_USER</span><span style=color:#666>=</span><span style=color:#b44>&#39;zyi&#39;</span>
-<span style=color:#b8860b>HARBOR_USER_PASSWD</span><span style=color:#666>=</span><span style=color:#b44>&#39;VMware1!&#39;</span>
-<span style=color:#b8860b>HARBOR_USER_EMAIL</span><span style=color:#666>=</span><span style=color:#b44>&#39;zyi@etaon.top&#39;</span>
-
-<span style=color:#080;font-style:italic># Copy the newest war to docker-file directory.</span>
-<span style=color:#b62;font-weight:700>\c</span>p -f <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>JENKINS_WAR_HOME</span><span style=color:#b68;font-weight:700>}</span>/easy-springmvc-maven.war <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>DOCKERFILE_HOME</span><span style=color:#b68;font-weight:700>}</span>/maven-docker.war
-
-<span style=color:#080;font-style:italic># Delete image early version.</span>
-sudo docker login -u <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>HARBOR_USER</span><span style=color:#b68;font-weight:700>}</span> -p <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>HARBOR_USER_PASSWD</span><span style=color:#b68;font-weight:700>}</span> <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>HARBOR_IP</span><span style=color:#b68;font-weight:700>}</span>
-<span style=color:#b8860b>IMAGE_ID</span><span style=color:#666>=</span><span style=color:#b44>`</span>sudo docker images | grep <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>REPOSITORIES</span><span style=color:#b68;font-weight:700>}</span> | awk <span style=color:#b44>&#39;{print $3}&#39;</span><span style=color:#b44>`</span>
-<span style=color:#a2f;font-weight:700>if</span> <span style=color:#666>[</span> -n <span style=color:#b44>&#34;</span><span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>IMAGE_ID</span><span style=color:#b68;font-weight:700>}</span><span style=color:#b44>&#34;</span> <span style=color:#666>]</span>;<span style=color:#a2f;font-weight:700>then</span>
-    sudo docker rmi <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>IMAGE_ID</span><span style=color:#b68;font-weight:700>}</span>
-<span style=color:#a2f;font-weight:700>fi</span>
-
-sudo docker login -u dewinals -p xxxxxx
-<span style=color:#080;font-style:italic># Build image.</span>
-<span style=color:#a2f>cd</span> <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>DOCKERFILE_HOME</span><span style=color:#b68;font-weight:700>}</span>
-<span style=color:#b8860b>TAG</span><span style=color:#666>=</span><span style=color:#b44>`</span>date +%Y%m%d-%H%M%S<span style=color:#b44>`</span>
-sudo docker build -t <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>HARBOR_IP</span><span style=color:#b68;font-weight:700>}</span>/<span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>REPOSITORIES</span><span style=color:#b68;font-weight:700>}</span>:<span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>TAG</span><span style=color:#b68;font-weight:700>}</span> . &amp;&gt;/dev/null
-
-sudo docker login -u <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>HARBOR_USER</span><span style=color:#b68;font-weight:700>}</span> -p <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>HARBOR_USER_PASSWD</span><span style=color:#b68;font-weight:700>}</span> <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>HARBOR_IP</span><span style=color:#b68;font-weight:700>}</span>  
-<span style=color:#080;font-style:italic># Push to the harbor registry.</span>
-sudo docker push <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>HARBOR_IP</span><span style=color:#b68;font-weight:700>}</span>/<span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>REPOSITORIES</span><span style=color:#b68;font-weight:700>}</span>:<span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>TAG</span><span style=color:#b68;font-weight:700>}</span> &amp;&gt;/dev/null
-</code></pre></div><p><strong>注意：</strong>
-1.在*DOCKERFILE_HOME='/var/lib/jenkins/docker-file/maven-docker-test_war'*下构建Dockerfile</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic># cd /root/jenkins/docker-file/maven-docker-test_war</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic># vim Dockerfile</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic># Version 1.0</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic># Base images.</span><span style=color:#bbb>
-</span><span style=color:#bbb></span>FROM tomcat:8.0.36-alpine<span style=color:#bbb>
-</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic># Author.</span><span style=color:#bbb>
-</span><span style=color:#bbb></span>MAINTAINER zyi &lt;zyi@etaon.top&gt;<span style=color:#bbb>
-</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic># Add war.</span><span style=color:#bbb>
-</span><span style=color:#bbb></span>ADD maven-docker.war /usr/local/tomcat/webapps/<span style=color:#bbb>
-</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic># Define working directory.</span><span style=color:#bbb>
-</span><span style=color:#bbb></span>WORKDIR /usr/local/tomcat/bin/<span style=color:#bbb>
-</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic># Define environment variables.</span><span style=color:#bbb>
-</span><span style=color:#bbb></span>ENV PATH /usr/local/tomcat/bin:$PATH<span style=color:#bbb>
-</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic># Define default command.</span><span style=color:#bbb>
-</span><span style=color:#bbb></span>CMD [&#34;catalina.sh&#34;, &#34;run&#34;]<span style=color:#bbb>
-</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic># Expose ports.</span><span style=color:#bbb>
-</span><span style=color:#bbb></span>EXPOSE 8080<span style=color:#bbb>
-</span></code></pre></div><ol start=2>
-<li>赋权文件夹docker-file</li>
-</ol>
-<blockquote>
-<p>chmod 777 docker-file/ -R</p>
-</blockquote>
-<ol start=3>
-<li>Dockerfile所需的base images：tomcat需要从dockers.io下载，构建之前登录</li>
-</ol>
-<blockquote>
-<p>sudo docker login -u dewinals -p xxxxxx</p>
-</blockquote>
-<h4 id=build-control-output>Build Control output</h4>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>Started by user yizhao
-Running as SYSTEM
-<span style=color:#666>**</span>Building in workspace <span style=color:#666>/</span><span style=color:#a2f;font-weight:700>var</span><span style=color:#666>/</span>lib<span style=color:#666>/</span>jenkins<span style=color:#666>/</span>workspace<span style=color:#666>/</span>maven<span style=color:#666>-</span>docker<span style=color:#666>**</span>
-The recommended git tool is: NONE
-No credentials specified
- &gt; <span style=color:#666>/</span>usr<span style=color:#666>/</span>bin<span style=color:#666>/</span>git rev<span style=color:#666>-</span>parse <span style=color:#666>--</span>resolve<span style=color:#666>-</span>git<span style=color:#666>-</span>dir <span style=color:#666>/</span><span style=color:#a2f;font-weight:700>var</span><span style=color:#666>/</span>lib<span style=color:#666>/</span>jenkins<span style=color:#666>/</span>workspace<span style=color:#666>/</span>maven<span style=color:#666>-</span>docker<span style=color:#666>/</span>.git <span>#</span> timeout=<span style=color:#666>10</span>
-Fetching changes from the remote Git repository
- &gt; <span style=color:#666>/</span>usr<span style=color:#666>/</span>bin<span style=color:#666>/</span>git config remote.origin.url https:<span style=color:#080;font-style:italic>//github.com/etaon/easy-springmvc-maven.git # timeout=10
-</span><span style=color:#080;font-style:italic></span><span style=color:#b44>`Fetching upstream changes from https://github.com/etaon/easy-springmvc-maven.git`</span>
- &gt; <span style=color:#666>/</span>usr<span style=color:#666>/</span>bin<span style=color:#666>/</span>git <span style=color:#666>--</span>version <span>#</span> timeout=<span style=color:#666>10</span>
- &gt; git <span style=color:#666>--</span>version <span>#</span> <span>&#39;</span>git version <span style=color:#666>2.27.0</span><span>&#39;</span>
- &gt; <span style=color:#666>/</span>usr<span style=color:#666>/</span>bin<span style=color:#666>/</span>git fetch <span style=color:#666>--</span>tags <span style=color:#666>--</span>force <span style=color:#666>--</span>progress <span style=color:#666>--</span> https:<span style=color:#080;font-style:italic>//github.com/etaon/easy-springmvc-maven.git +refs/heads/*:refs/remotes/origin/* # timeout=10
-</span><span style=color:#080;font-style:italic></span> &gt; <span style=color:#666>/</span>usr<span style=color:#666>/</span>bin<span style=color:#666>/</span>git rev<span style=color:#666>-</span>parse refs<span style=color:#666>/</span>remotes<span style=color:#666>/</span>origin<span style=color:#666>/</span>master^{commit} <span>#</span> timeout=<span style=color:#666>10</span>
-Checking out Revision <span style=color:#666>67604</span><span style=color:#00a000>f7f9f30505e3bb3e8935c745154f04aa372</span> (refs<span style=color:#666>/</span>remotes<span style=color:#666>/</span>origin<span style=color:#666>/</span>master)
- &gt; <span style=color:#666>/</span>usr<span style=color:#666>/</span>bin<span style=color:#666>/</span>git config core.sparsecheckout <span>#</span> timeout=<span style=color:#666>10</span>
- &gt; <span style=color:#666>/</span>usr<span style=color:#666>/</span>bin<span style=color:#666>/</span>git checkout <span style=color:#666>-</span>f <span style=color:#666>67604</span>f7f9f30505e3bb3e8935c745154f04aa372 <span>#</span> timeout=<span style=color:#666>10</span>
-Commit message: <span style=color:#b44>&#34;修改standard/1.1.2的依赖&#34;</span>
- &gt; <span style=color:#666>/</span>usr<span style=color:#666>/</span>bin<span style=color:#666>/</span>git rev<span style=color:#666>-</span>list <span style=color:#666>--</span>no<span style=color:#666>-</span>walk <span style=color:#666>67604</span>f7f9f30505e3bb3e8935c745154f04aa372 <span>#</span> timeout=<span style=color:#666>10</span>
-Parsing POMs
-Established TCP socket on <span style=color:#666>33405</span>
-[maven<span style=color:#666>-</span>docker] <span>$</span> <span style=color:#666>/</span>usr<span style=color:#666>/</span>lib<span style=color:#666>/</span>jvm<span style=color:#666>/</span>java<span style=color:#666>-</span><span style=color:#666>1.8.0</span><span style=color:#666>-</span>openjdk<span style=color:#666>-</span><span style=color:#666>1.8.0.292</span>.b10<span style=color:#666>-</span><span style=color:#666>1.</span>el8_4.x86_64<span style=color:#080;font-style:italic>//bin/java -cp /var/lib/jenkins/plugins/maven-plugin/WEB-INF/lib/maven35-agent-1.13.jar:/usr/share/maven/boot/plexus-classworlds-2.5.2.jar:/usr/share/maven/conf/logging jenkins.maven3.agent.Maven35Main /usr/share/maven /var/cache/jenkins/war/WEB-INF/lib/remoting-4.7.jar /var/lib/jenkins/plugins/maven-plugin/WEB-INF/lib/maven35-interceptor-1.13.jar /var/lib/jenkins/plugins/maven-plugin/WEB-INF/lib/maven3-interceptor-commons-1.13.jar 33405
-</span><span style=color:#080;font-style:italic></span><span style=color:#666>&lt;===</span>[JENKINS REMOTING CAPACITY]<span style=color:#666>==</span>=&gt;channel started
-Executing Maven:  <span style=color:#666>-</span>B <span style=color:#666>-</span>f <span style=color:#666>/</span><span style=color:#a2f;font-weight:700>var</span><span style=color:#666>/</span>lib<span style=color:#666>/</span>jenkins<span style=color:#666>/</span>workspace<span style=color:#666>/</span>maven<span style=color:#666>-</span>docker<span style=color:#666>/</span>pom.xml clean <span style=color:#a2f;font-weight:700>package</span> <span style=color:#666>-</span>Dmaven.test.skip=<span style=color:#a2f;font-weight:700>true</span>
-[INFO] Scanning <span style=color:#a2f;font-weight:700>for</span> projects<span style=color:#666>...</span>
-[WARNING]
-[WARNING] Some problems were encountered while building the effective model <span style=color:#a2f;font-weight:700>for</span> springmvc<span style=color:#666>-</span>maven:easy<span style=color:#666>-</span>springmvc<span style=color:#666>-</span>maven:war:<span style=color:#666>0.0.1</span><span style=color:#666>-</span>SNAPSHOT
-[WARNING] <span>&#39;</span>build.plugins.plugin.version<span>&#39;</span> <span style=color:#a2f;font-weight:700>for</span> org.apache.maven.plugins:maven<span style=color:#666>-</span>war<span style=color:#666>-</span>plugin is missing. <span>@</span> line <span style=color:#666>22</span>, column <span style=color:#666>15</span>
-[WARNING]
-[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
-[WARNING]
-[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
-[WARNING]
-[INFO]
-[INFO] <span style=color:#666>----------------</span>&lt; springmvc<span style=color:#666>-</span>maven:easy<span style=color:#666>-</span>springmvc<span style=color:#666>-</span>maven &gt;<span style=color:#666>----------------</span>
-[INFO] Building springmvc<span style=color:#666>-</span>maven <span style=color:#666>0.0.1</span><span style=color:#666>-</span>SNAPSHOT
-[INFO] <span style=color:#666>--------------------------------</span>[ war ]<span style=color:#666>---------------------------------</span>
-[INFO]
-[INFO] <span style=color:#666>---</span> maven<span style=color:#666>-</span>clean<span style=color:#666>-</span>plugin:<span style=color:#666>2.5</span>:<span style=color:#00a000>clean</span> (<span style=color:#a2f;font-weight:700>default</span><span style=color:#666>-</span>clean) <span>@</span> easy<span style=color:#666>-</span>springmvc<span style=color:#666>-</span>maven <span style=color:#666>---</span>
-[INFO] Deleting <span style=color:#666>/</span><span style=color:#a2f;font-weight:700>var</span><span style=color:#666>/</span>lib<span style=color:#666>/</span>jenkins<span style=color:#666>/</span>workspace<span style=color:#666>/</span>maven<span style=color:#666>-</span>docker<span style=color:#666>/</span>target
-[INFO]
-[INFO] <span style=color:#666>---</span> maven<span style=color:#666>-</span>resources<span style=color:#666>-</span>plugin:<span style=color:#666>2.6</span>:<span style=color:#00a000>resources</span> (<span style=color:#a2f;font-weight:700>default</span><span style=color:#666>-</span>resources) <span>@</span> easy<span style=color:#666>-</span>springmvc<span style=color:#666>-</span>maven <span style=color:#666>---</span>
-[INFO] Using <span>&#39;</span>UTF<span style=color:#666>-</span><span style=color:#666>8</span><span>&#39;</span> encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory <span style=color:#666>/</span><span style=color:#a2f;font-weight:700>var</span><span style=color:#666>/</span>lib<span style=color:#666>/</span>jenkins<span style=color:#666>/</span>workspace<span style=color:#666>/</span>maven<span style=color:#666>-</span>docker<span style=color:#666>/</span>src<span style=color:#666>/</span>main<span style=color:#666>/</span>resources
-[INFO]
-[INFO] <span style=color:#666>---</span> maven<span style=color:#666>-</span>compiler<span style=color:#666>-</span>plugin:<span style=color:#666>3.1</span>:<span style=color:#00a000>compile</span> (<span style=color:#a2f;font-weight:700>default</span><span style=color:#666>-</span>compile) <span>@</span> easy<span style=color:#666>-</span>springmvc<span style=color:#666>-</span>maven <span style=color:#666>---</span>
-[INFO] Changes detected <span style=color:#666>-</span> recompiling the module!
-[INFO] Compiling <span style=color:#666>2</span> source files to <span style=color:#666>/</span><span style=color:#a2f;font-weight:700>var</span><span style=color:#666>/</span>lib<span style=color:#666>/</span>jenkins<span style=color:#666>/</span>workspace<span style=color:#666>/</span>maven<span style=color:#666>-</span>docker<span style=color:#666>/</span>target<span style=color:#666>/</span>classes
-[INFO]
-[INFO] <span style=color:#666>---</span> maven<span style=color:#666>-</span>resources<span style=color:#666>-</span>plugin:<span style=color:#666>2.6</span>:<span style=color:#00a000>testResources</span> (<span style=color:#a2f;font-weight:700>default</span><span style=color:#666>-</span>testResources) <span>@</span> easy<span style=color:#666>-</span>springmvc<span style=color:#666>-</span>maven <span style=color:#666>---</span>
-[INFO] Not copying test resources
-[INFO]
-[INFO] <span style=color:#666>---</span> maven<span style=color:#666>-</span>compiler<span style=color:#666>-</span>plugin:<span style=color:#666>3.1</span>:<span style=color:#00a000>testCompile</span> (<span style=color:#a2f;font-weight:700>default</span><span style=color:#666>-</span>testCompile) <span>@</span> easy<span style=color:#666>-</span>springmvc<span style=color:#666>-</span>maven <span style=color:#666>---</span>
-[INFO] Not compiling test sources
-[INFO]
-[INFO] <span style=color:#666>---</span> maven<span style=color:#666>-</span>surefire<span style=color:#666>-</span>plugin:<span style=color:#666>2.12.4</span>:<span style=color:#00a000>test</span> (<span style=color:#a2f;font-weight:700>default</span><span style=color:#666>-</span>test) <span>@</span> easy<span style=color:#666>-</span>springmvc<span style=color:#666>-</span>maven <span style=color:#666>---</span>
-[INFO] Tests are skipped.
-[INFO]
-[INFO] <span style=color:#666>---</span> maven<span style=color:#666>-</span>war<span style=color:#666>-</span>plugin:<span style=color:#666>2.2</span>:<span style=color:#00a000>war</span> (<span style=color:#a2f;font-weight:700>default</span><span style=color:#666>-</span>war) <span>@</span> easy<span style=color:#666>-</span>springmvc<span style=color:#666>-</span>maven <span style=color:#666>---</span>
-[INFO] Packaging webapp
-[INFO] Assembling webapp [easy<span style=color:#666>-</span>springmvc<span style=color:#666>-</span>maven] in [<span style=color:#666>/</span><span style=color:#a2f;font-weight:700>var</span><span style=color:#666>/</span>lib<span style=color:#666>/</span>jenkins<span style=color:#666>/</span>workspace<span style=color:#666>/</span>maven<span style=color:#666>-</span>docker<span style=color:#666>/</span>target<span style=color:#666>/</span>easy<span style=color:#666>-</span>springmvc<span style=color:#666>-</span>maven]
-[INFO] Processing war project
-[INFO] Copying webapp resources [<span style=color:#666>/</span><span style=color:#a2f;font-weight:700>var</span><span style=color:#666>/</span>lib<span style=color:#666>/</span>jenkins<span style=color:#666>/</span>workspace<span style=color:#666>/</span>maven<span style=color:#666>-</span>docker<span style=color:#666>/</span>src<span style=color:#666>/</span>main<span style=color:#666>/</span>webapp]
-[INFO] Webapp assembled in [<span style=color:#666>105</span> msecs]
-<span style=color:#b44>`[INFO] Building war: /var/lib/jenkins/workspace/maven-docker/target/easy-springmvc-maven.war`</span>
-[INFO] WEB<span style=color:#666>-</span>INF<span style=color:#666>/</span>web.xml already added, skipping
-[INFO] <span style=color:#666>------------------------------------------------------------------------</span>
-<span style=color:#b44>`[INFO] BUILD SUCCESS`</span>
-[INFO] <span style=color:#666>------------------------------------------------------------------------</span>
-[INFO] Total time: <span style=color:#666>5.080</span> s
-[INFO] Finished at: <span style=color:#666>2021</span><span style=color:#666>-</span><span style=color:#666>07</span><span style=color:#666>-</span><span style=color:#666>23</span>T01:<span style=color:#666>03</span>:<span style=color:#666>44</span><span style=color:#666>-</span><span style=color:#666>07</span>:<span style=color:#666>00</span>
-[INFO] <span style=color:#666>------------------------------------------------------------------------</span>
-Waiting <span style=color:#a2f;font-weight:700>for</span> Jenkins to finish collecting data
-[JENKINS] Archiving <span style=color:#666>/</span><span style=color:#a2f;font-weight:700>var</span><span style=color:#666>/</span>lib<span style=color:#666>/</span>jenkins<span style=color:#666>/</span>workspace<span style=color:#666>/</span>maven<span style=color:#666>-</span>docker<span style=color:#666>/</span>pom.xml to springmvc<span style=color:#666>-</span>maven<span style=color:#666>/</span>easy<span style=color:#666>-</span>springmvc<span style=color:#666>-</span>maven<span style=color:#666>/</span><span style=color:#666>0.0.1</span><span style=color:#666>-</span>SNAPSHOT<span style=color:#666>/</span>easy<span style=color:#666>-</span>springmvc<span style=color:#666>-</span>maven<span style=color:#666>-</span><span style=color:#666>0.0.1</span><span style=color:#666>-</span>SNAPSHOT.pom
-[JENKINS] Archiving <span style=color:#666>/</span><span style=color:#a2f;font-weight:700>var</span><span style=color:#666>/</span>lib<span style=color:#666>/</span>jenkins<span style=color:#666>/</span>workspace<span style=color:#666>/</span>maven<span style=color:#666>-</span>docker<span style=color:#666>/</span>target<span style=color:#666>/</span>easy<span style=color:#666>-</span>springmvc<span style=color:#666>-</span>maven.war to springmvc<span style=color:#666>-</span>maven<span style=color:#666>/</span>easy<span style=color:#666>-</span>springmvc<span style=color:#666>-</span>maven<span style=color:#666>/</span><span style=color:#666>0.0.1</span><span style=color:#666>-</span>SNAPSHOT<span style=color:#666>/</span>easy<span style=color:#666>-</span>springmvc<span style=color:#666>-</span>maven<span style=color:#666>-</span><span style=color:#666>0.0.1</span><span style=color:#666>-</span>SNAPSHOT.war
-channel stopped
-<span style=color:#b44>`[maven-docker] $ /bin/sh -xe /tmp/jenkins711386174496231458.sh`</span>
-&gt;<span style=color:#666>+</span> JENKINS_WAR_HOME=<span style=color:#666>/</span><span style=color:#a2f;font-weight:700>var</span><span style=color:#666>/</span>lib<span style=color:#666>/</span>jenkins<span style=color:#666>/</span>workspace<span style=color:#666>/</span>maven<span style=color:#666>-</span>docker<span style=color:#666>/</span>target
-&gt;<span style=color:#666>+</span> DOCKERFILE_HOME=<span style=color:#666>/</span><span style=color:#a2f;font-weight:700>var</span><span style=color:#666>/</span>lib<span style=color:#666>/</span>jenkins<span style=color:#666>/</span>docker<span style=color:#666>-</span>file<span style=color:#666>/</span>maven<span style=color:#666>-</span>docker<span style=color:#666>-</span>test_war
-&gt;<span style=color:#666>+</span> HARBOR_IP=harbor.corp.tanzu
-&gt;<span style=color:#666>+</span> REPOSITORIES=jenkins<span style=color:#666>/</span>maven<span style=color:#666>-</span>docker
-&gt;<span style=color:#666>+</span> HARBOR_USER=zyi
-&gt;<span style=color:#666>+</span> HARBOR_USER_PASSWD=<span>&#39;</span>VMware1!<span>&#39;</span>
-&gt;<span style=color:#666>+</span> HARBOR_USER_EMAIL=zyi<span>@</span>etaon.top
-&gt;<span style=color:#666>+</span> cp <span style=color:#666>-</span>f <span style=color:#666>/</span><span style=color:#a2f;font-weight:700>var</span><span style=color:#666>/</span>lib<span style=color:#666>/</span>jenkins<span style=color:#666>/</span>workspace<span style=color:#666>/</span>maven<span style=color:#666>-</span>docker<span style=color:#666>/</span>target<span style=color:#666>/</span>easy<span style=color:#666>-</span>springmvc<span style=color:#666>-</span>maven.war <span style=color:#666>/</span><span style=color:#a2f;font-weight:700>var</span><span style=color:#666>/</span>lib<span style=color:#666>/</span>jenkins<span style=color:#666>/</span>docker<span style=color:#666>-</span>file<span style=color:#666>/</span>maven<span style=color:#666>-</span>docker<span style=color:#666>-</span>test_war<span style=color:#666>/</span>maven<span style=color:#666>-</span>docker.war
-&gt;<span style=color:#666>+</span> sudo docker login <span style=color:#666>-</span>u zyi <span style=color:#666>-</span>p <span>&#39;</span>VMware1!<span>&#39;</span> harbor.corp.tanzu
-WARNING! Using <span style=color:#666>--</span>password via the CLI is insecure. Use <span style=color:#666>--</span>password<span style=color:#666>-</span>stdin.
-WARNING! Your password will be stored unencrypted in <span style=color:#666>/</span>root<span style=color:#666>/</span>.docker<span style=color:#666>/</span>config.json.
-Configure a credential helper to remove this warning. See
-https:<span style=color:#080;font-style:italic>//docs.docker.com/engine/reference/commandline/login/#credentials-store
-</span><span style=color:#080;font-style:italic></span>
-&gt;Login Succeeded
-&gt;<span style=color:#666>++</span> sudo docker images
-&gt;<span style=color:#666>++</span> grep jenkins<span style=color:#666>/</span>maven<span style=color:#666>-</span>docker
-&gt;<span style=color:#666>++</span> awk <span>&#39;</span>{print <span>$</span><span style=color:#666>3</span>}<span>&#39;</span>
-&gt;<span style=color:#666>+</span> IMAGE_ID=d0dcd354b02b
-&gt;<span style=color:#666>+</span> <span style=color:#b44>&#39;[&#39;</span> <span style=color:#666>-</span>n d0dcd354b02b <span style=color:#b44>&#39;]&#39;</span>
-&gt;<span style=color:#666>+</span> sudo docker rmi d0dcd354b02b
-Untagged: harbor.corp.tanzu<span style=color:#666>/</span>jenkins<span style=color:#666>/</span>maven<span style=color:#666>-</span>docker:<span style=color:#666>20210723</span><span style=color:#666>-</span><span style=color:#666>005</span><span style=color:#666>858</span>
-Untagged: harbor.corp.tanzu<span style=color:#666>/</span>jenkins<span style=color:#666>/</span>maven<span style=color:#666>-</span>docker<span>@</span>sha256:a759dc8c7beb0f3a918c9dcba9a7032236714a6c10db61655536b489f96933ee
-Deleted: sha256:d0dcd354b02bf2a48925498b6abed56a42152e6a5fa0eddd40f4fc4a60180466
-Deleted: sha256:<span style=color:#666>9</span>b645e1a904b6a46adddb7c2ab169918d2b76000cb9482a23e7d8a64bd6b8f56
-Deleted: sha256:<span style=color:#666>9877</span>d1031b7a5adbf70df56ce3f16174da7e289a47e412cd0d83bbd352f45c30
-Deleted: sha256:<span style=color:#666>19</span>d261fd72b302179fb46184d6cbc26528478bd047daa3f4db6ad32e5327e380
-Deleted: sha256:<span style=color:#666>38e37</span>a14460f2dc6b9eb9794635107d9ad13e6ee7e0e4be229066d59dabbcd91
-Deleted: sha256:<span style=color:#666>2</span>cc14fc784b435ec741c3077be2a13fd9c7b1456430ae6b528c451797949395d
-Deleted: sha256:eeb150de68bf106cb41e0262d03911f278bc81e3f31b84aacf84445705a42e65
-&gt;<span style=color:#666>+</span> <span style=color:#b44>`sudo docker login -u dewinals -p xxxxxx`</span>
-WARNING! Using <span style=color:#666>--</span>password via the CLI is insecure. Use <span style=color:#666>--</span>password<span style=color:#666>-</span>stdin.
-WARNING! Your password will be stored unencrypted in <span style=color:#666>/</span>root<span style=color:#666>/</span>.docker<span style=color:#666>/</span>config.json.
-Configure a credential helper to remove this warning. See
-https:<span style=color:#080;font-style:italic>//docs.docker.com/engine/reference/commandline/login/#credentials-store
-</span><span style=color:#080;font-style:italic></span>
-&gt;Login Succeeded
-&gt;<span style=color:#666>+</span> cd <span style=color:#666>/</span><span style=color:#a2f;font-weight:700>var</span><span style=color:#666>/</span>lib<span style=color:#666>/</span>jenkins<span style=color:#666>/</span>docker<span style=color:#666>-</span>file<span style=color:#666>/</span>maven<span style=color:#666>-</span>docker<span style=color:#666>-</span>test_war
-&gt;<span style=color:#666>++</span> date <span style=color:#666>+%</span>Y<span style=color:#666>%</span>m<span style=color:#666>%</span>d<span style=color:#666>-%</span>H<span style=color:#666>%</span>M<span style=color:#666>%</span>S
-&gt;<span style=color:#666>+</span> TAG=<span style=color:#666>20210723</span><span style=color:#666>-</span><span style=color:#666>010352</span>
-&gt;<span style=color:#666>+</span> <span style=color:#b44>`sudo docker build -t harbor.corp.tanzu/jenkins/maven-docker:20210723-010352 .`</span>
-&gt;<span style=color:#666>+</span> sudo docker login <span style=color:#666>-</span>u zyi <span style=color:#666>-</span>p <span>&#39;</span>VMware1!<span>&#39;</span> harbor.corp.tanzu
-WARNING! Using <span style=color:#666>--</span>password via the CLI is insecure. Use <span style=color:#666>--</span>password<span style=color:#666>-</span>stdin.
-WARNING! Your password will be stored unencrypted in <span style=color:#666>/</span>root<span style=color:#666>/</span>.docker<span style=color:#666>/</span>config.json.
-Configure a credential helper to remove this warning. See
-https:<span style=color:#080;font-style:italic>//docs.docker.com/engine/reference/commandline/login/#credentials-store
-</span><span style=color:#080;font-style:italic></span>
-&gt;Login Succeeded
-&gt;<span style=color:#666>+</span> <span style=color:#b44>`sudo docker push harbor.corp.tanzu/jenkins/maven-docker:20210723-010352`</span>
-[SSH] script:
-USER=<span style=color:#b44>&#34;jenkins&#34;</span>
-</code></pre></div><p>在Harbor上查看上传结果
-<img src="https://img-blog.csdnimg.cn/08b04286631c4fba9e746fb8fe4ff7ee.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p>
-<h3 id=测试服务器拉取镜像发布ssh>测试服务器拉取镜像，发布（ssh）</h3>
-<h4 id=配置ssh脚本>配置ssh脚本</h4>
-<p>在Post Step选择
+Goals and options填写：clean package -Dmaven.test.skip=true</p><p><img src="https://img-blog.csdnimg.cn/77a684fc217b485199b00518385061a9.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p><h3 id=post-step>Post Step</h3><p>需要完成以下任务：</p><ol><li>Jenkins服务器：编译完成后，build生成一个新版本的镜像，push到远程harbor仓库；</li><li>远程测试服务器：拉取镜像、发布</li></ol><h3 id=构建新镜像并push到harbor>构建新镜像并push到Harbor</h3><h4 id=配置可执行脚本>配置可执行脚本</h4><p>脚本方式提交：
+<img src="https://img-blog.csdnimg.cn/4b3f1729a7d74fa68bb71a74b35a259a.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span><span style=color:#080;font-style:italic># Jenkins机器：编译完成后，build生成一个新版本的镜像，push到远程harbor仓库</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic># Variables</span>
+</span></span><span style=display:flex><span><span style=color:#b8860b>JENKINS_WAR_HOME</span><span style=color:#666>=</span><span style=color:#b44>&#39;/var/lib/jenkins/workspace/maven-docker/target&#39;</span>
+</span></span><span style=display:flex><span><span style=color:#b8860b>DOCKERFILE_HOME</span><span style=color:#666>=</span><span style=color:#b44>&#39;/var/lib/jenkins/docker-file/maven-docker-test_war&#39;</span>
+</span></span><span style=display:flex><span><span style=color:#b8860b>HARBOR_IP</span><span style=color:#666>=</span><span style=color:#b44>&#39;harbor.corp.tanzu&#39;</span>
+</span></span><span style=display:flex><span><span style=color:#b8860b>REPOSITORIES</span><span style=color:#666>=</span><span style=color:#b44>&#39;jenkins/maven-docker&#39;</span>
+</span></span><span style=display:flex><span><span style=color:#b8860b>HARBOR_USER</span><span style=color:#666>=</span><span style=color:#b44>&#39;zyi&#39;</span>
+</span></span><span style=display:flex><span><span style=color:#b8860b>HARBOR_USER_PASSWD</span><span style=color:#666>=</span><span style=color:#b44>&#39;VMware1!&#39;</span>
+</span></span><span style=display:flex><span><span style=color:#b8860b>HARBOR_USER_EMAIL</span><span style=color:#666>=</span><span style=color:#b44>&#39;zyi@etaon.top&#39;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic># Copy the newest war to docker-file directory.</span>
+</span></span><span style=display:flex><span><span style=color:#b62;font-weight:700>\c</span>p -f <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>JENKINS_WAR_HOME</span><span style=color:#b68;font-weight:700>}</span>/easy-springmvc-maven.war <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>DOCKERFILE_HOME</span><span style=color:#b68;font-weight:700>}</span>/maven-docker.war
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic># Delete image early version.</span>
+</span></span><span style=display:flex><span>sudo docker login -u <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>HARBOR_USER</span><span style=color:#b68;font-weight:700>}</span> -p <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>HARBOR_USER_PASSWD</span><span style=color:#b68;font-weight:700>}</span> <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>HARBOR_IP</span><span style=color:#b68;font-weight:700>}</span>
+</span></span><span style=display:flex><span><span style=color:#b8860b>IMAGE_ID</span><span style=color:#666>=</span><span style=color:#b44>`</span>sudo docker images | grep <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>REPOSITORIES</span><span style=color:#b68;font-weight:700>}</span> | awk <span style=color:#b44>&#39;{print $3}&#39;</span><span style=color:#b44>`</span>
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>if</span> <span style=color:#666>[</span> -n <span style=color:#b44>&#34;</span><span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>IMAGE_ID</span><span style=color:#b68;font-weight:700>}</span><span style=color:#b44>&#34;</span> <span style=color:#666>]</span>;<span style=color:#a2f;font-weight:700>then</span>
+</span></span><span style=display:flex><span>    sudo docker rmi <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>IMAGE_ID</span><span style=color:#b68;font-weight:700>}</span>
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>fi</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>sudo docker login -u dewinals -p xxxxxx
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic># Build image.</span>
+</span></span><span style=display:flex><span><span style=color:#a2f>cd</span> <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>DOCKERFILE_HOME</span><span style=color:#b68;font-weight:700>}</span>
+</span></span><span style=display:flex><span><span style=color:#b8860b>TAG</span><span style=color:#666>=</span><span style=color:#b44>`</span>date +%Y%m%d-%H%M%S<span style=color:#b44>`</span>
+</span></span><span style=display:flex><span>sudo docker build -t <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>HARBOR_IP</span><span style=color:#b68;font-weight:700>}</span>/<span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>REPOSITORIES</span><span style=color:#b68;font-weight:700>}</span>:<span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>TAG</span><span style=color:#b68;font-weight:700>}</span> . &amp;&gt;/dev/null
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>sudo docker login -u <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>HARBOR_USER</span><span style=color:#b68;font-weight:700>}</span> -p <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>HARBOR_USER_PASSWD</span><span style=color:#b68;font-weight:700>}</span> <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>HARBOR_IP</span><span style=color:#b68;font-weight:700>}</span>  
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic># Push to the harbor registry.</span>
+</span></span><span style=display:flex><span>sudo docker push <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>HARBOR_IP</span><span style=color:#b68;font-weight:700>}</span>/<span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>REPOSITORIES</span><span style=color:#b68;font-weight:700>}</span>:<span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>TAG</span><span style=color:#b68;font-weight:700>}</span> &amp;&gt;/dev/null
+</span></span></code></pre></div><p><strong>注意：</strong>
+1.在*DOCKERFILE_HOME=&rsquo;/var/lib/jenkins/docker-file/maven-docker-test_war&rsquo;*下构建Dockerfile</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic># cd /root/jenkins/docker-file/maven-docker-test_war</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic># vim Dockerfile</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic># Version 1.0</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic># Base images.</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>FROM tomcat:8.0.36-alpine<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic># Author.</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>MAINTAINER zyi &lt;zyi@etaon.top&gt;<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic># Add war.</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>ADD maven-docker.war /usr/local/tomcat/webapps/<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic># Define working directory.</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>WORKDIR /usr/local/tomcat/bin/<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic># Define environment variables.</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>ENV PATH /usr/local/tomcat/bin:$PATH<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic># Define default command.</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>CMD [&#34;catalina.sh&#34;, &#34;run&#34;]<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic># Expose ports.</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>EXPOSE 8080<span style=color:#bbb>
+</span></span></span></code></pre></div><ol start=2><li>赋权文件夹docker-file</li></ol><blockquote><p>chmod 777 docker-file/ -R</p></blockquote><ol start=3><li>Dockerfile所需的base images：tomcat需要从dockers.io下载，构建之前登录</li></ol><blockquote><p>sudo docker login -u dewinals -p xxxxxx</p></blockquote><h4 id=build-control-output>Build Control output</h4><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>Started by user yizhao
+</span></span><span style=display:flex><span>Running as SYSTEM
+</span></span><span style=display:flex><span><span style=color:#666>**</span>Building in workspace <span style=color:#666>/</span><span style=color:#a2f;font-weight:700>var</span><span style=color:#666>/</span>lib<span style=color:#666>/</span>jenkins<span style=color:#666>/</span>workspace<span style=color:#666>/</span>maven<span style=color:#666>-</span>docker<span style=color:#666>**</span>
+</span></span><span style=display:flex><span>The recommended git tool is: NONE
+</span></span><span style=display:flex><span>No credentials specified
+</span></span><span style=display:flex><span> &gt; <span style=color:#666>/</span>usr<span style=color:#666>/</span>bin<span style=color:#666>/</span>git rev<span style=color:#666>-</span>parse <span style=color:#666>--</span>resolve<span style=color:#666>-</span>git<span style=color:#666>-</span>dir <span style=color:#666>/</span><span style=color:#a2f;font-weight:700>var</span><span style=color:#666>/</span>lib<span style=color:#666>/</span>jenkins<span style=color:#666>/</span>workspace<span style=color:#666>/</span>maven<span style=color:#666>-</span>docker<span style=color:#666>/</span>.git <span>#</span> timeout=<span style=color:#666>10</span>
+</span></span><span style=display:flex><span>Fetching changes from the remote Git repository
+</span></span><span style=display:flex><span> &gt; <span style=color:#666>/</span>usr<span style=color:#666>/</span>bin<span style=color:#666>/</span>git config remote.origin.url https:<span style=color:#080;font-style:italic>//github.com/etaon/easy-springmvc-maven.git # timeout=10
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span><span style=color:#b44>`Fetching upstream changes from https://github.com/etaon/easy-springmvc-maven.git`</span>
+</span></span><span style=display:flex><span> &gt; <span style=color:#666>/</span>usr<span style=color:#666>/</span>bin<span style=color:#666>/</span>git <span style=color:#666>--</span>version <span>#</span> timeout=<span style=color:#666>10</span>
+</span></span><span style=display:flex><span> &gt; git <span style=color:#666>--</span>version <span>#</span> <span>&#39;</span>git version <span style=color:#666>2.27.0</span><span>&#39;</span>
+</span></span><span style=display:flex><span> &gt; <span style=color:#666>/</span>usr<span style=color:#666>/</span>bin<span style=color:#666>/</span>git fetch <span style=color:#666>--</span>tags <span style=color:#666>--</span>force <span style=color:#666>--</span>progress <span style=color:#666>--</span> https:<span style=color:#080;font-style:italic>//github.com/etaon/easy-springmvc-maven.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span> &gt; <span style=color:#666>/</span>usr<span style=color:#666>/</span>bin<span style=color:#666>/</span>git rev<span style=color:#666>-</span>parse refs<span style=color:#666>/</span>remotes<span style=color:#666>/</span>origin<span style=color:#666>/</span>master^{commit} <span>#</span> timeout=<span style=color:#666>10</span>
+</span></span><span style=display:flex><span>Checking out Revision <span style=color:#666>67604</span><span style=color:#00a000>f7f9f30505e3bb3e8935c745154f04aa372</span> (refs<span style=color:#666>/</span>remotes<span style=color:#666>/</span>origin<span style=color:#666>/</span>master)
+</span></span><span style=display:flex><span> &gt; <span style=color:#666>/</span>usr<span style=color:#666>/</span>bin<span style=color:#666>/</span>git config core.sparsecheckout <span>#</span> timeout=<span style=color:#666>10</span>
+</span></span><span style=display:flex><span> &gt; <span style=color:#666>/</span>usr<span style=color:#666>/</span>bin<span style=color:#666>/</span>git checkout <span style=color:#666>-</span>f <span style=color:#666>67604</span>f7f9f30505e3bb3e8935c745154f04aa372 <span>#</span> timeout=<span style=color:#666>10</span>
+</span></span><span style=display:flex><span>Commit message: <span style=color:#b44>&#34;修改standard/1.1.2的依赖&#34;</span>
+</span></span><span style=display:flex><span> &gt; <span style=color:#666>/</span>usr<span style=color:#666>/</span>bin<span style=color:#666>/</span>git rev<span style=color:#666>-</span>list <span style=color:#666>--</span>no<span style=color:#666>-</span>walk <span style=color:#666>67604</span>f7f9f30505e3bb3e8935c745154f04aa372 <span>#</span> timeout=<span style=color:#666>10</span>
+</span></span><span style=display:flex><span>Parsing POMs
+</span></span><span style=display:flex><span>Established TCP socket on <span style=color:#666>33405</span>
+</span></span><span style=display:flex><span>[maven<span style=color:#666>-</span>docker] <span>$</span> <span style=color:#666>/</span>usr<span style=color:#666>/</span>lib<span style=color:#666>/</span>jvm<span style=color:#666>/</span>java<span style=color:#666>-</span><span style=color:#666>1.8.0</span><span style=color:#666>-</span>openjdk<span style=color:#666>-</span><span style=color:#666>1.8.0.292</span>.b10<span style=color:#666>-</span><span style=color:#666>1.</span>el8_4.x86_64<span style=color:#080;font-style:italic>//bin/java -cp /var/lib/jenkins/plugins/maven-plugin/WEB-INF/lib/maven35-agent-1.13.jar:/usr/share/maven/boot/plexus-classworlds-2.5.2.jar:/usr/share/maven/conf/logging jenkins.maven3.agent.Maven35Main /usr/share/maven /var/cache/jenkins/war/WEB-INF/lib/remoting-4.7.jar /var/lib/jenkins/plugins/maven-plugin/WEB-INF/lib/maven35-interceptor-1.13.jar /var/lib/jenkins/plugins/maven-plugin/WEB-INF/lib/maven3-interceptor-commons-1.13.jar 33405
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span><span style=color:#666>&lt;===</span>[JENKINS REMOTING CAPACITY]<span style=color:#666>==</span>=&gt;channel started
+</span></span><span style=display:flex><span>Executing Maven:  <span style=color:#666>-</span>B <span style=color:#666>-</span>f <span style=color:#666>/</span><span style=color:#a2f;font-weight:700>var</span><span style=color:#666>/</span>lib<span style=color:#666>/</span>jenkins<span style=color:#666>/</span>workspace<span style=color:#666>/</span>maven<span style=color:#666>-</span>docker<span style=color:#666>/</span>pom.xml clean <span style=color:#a2f;font-weight:700>package</span> <span style=color:#666>-</span>Dmaven.test.skip=<span style=color:#a2f;font-weight:700>true</span>
+</span></span><span style=display:flex><span>[INFO] Scanning <span style=color:#a2f;font-weight:700>for</span> projects<span style=color:#666>...</span>
+</span></span><span style=display:flex><span>[WARNING]
+</span></span><span style=display:flex><span>[WARNING] Some problems were encountered while building the effective model <span style=color:#a2f;font-weight:700>for</span> springmvc<span style=color:#666>-</span>maven:easy<span style=color:#666>-</span>springmvc<span style=color:#666>-</span>maven:war:<span style=color:#666>0.0.1</span><span style=color:#666>-</span>SNAPSHOT
+</span></span><span style=display:flex><span>[WARNING] <span>&#39;</span>build.plugins.plugin.version<span>&#39;</span> <span style=color:#a2f;font-weight:700>for</span> org.apache.maven.plugins:maven<span style=color:#666>-</span>war<span style=color:#666>-</span>plugin is missing. <span>@</span> line <span style=color:#666>22</span>, column <span style=color:#666>15</span>
+</span></span><span style=display:flex><span>[WARNING]
+</span></span><span style=display:flex><span>[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+</span></span><span style=display:flex><span>[WARNING]
+</span></span><span style=display:flex><span>[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+</span></span><span style=display:flex><span>[WARNING]
+</span></span><span style=display:flex><span>[INFO]
+</span></span><span style=display:flex><span>[INFO] <span style=color:#666>----------------</span>&lt; springmvc<span style=color:#666>-</span>maven:easy<span style=color:#666>-</span>springmvc<span style=color:#666>-</span>maven &gt;<span style=color:#666>----------------</span>
+</span></span><span style=display:flex><span>[INFO] Building springmvc<span style=color:#666>-</span>maven <span style=color:#666>0.0.1</span><span style=color:#666>-</span>SNAPSHOT
+</span></span><span style=display:flex><span>[INFO] <span style=color:#666>--------------------------------</span>[ war ]<span style=color:#666>---------------------------------</span>
+</span></span><span style=display:flex><span>[INFO]
+</span></span><span style=display:flex><span>[INFO] <span style=color:#666>---</span> maven<span style=color:#666>-</span>clean<span style=color:#666>-</span>plugin:<span style=color:#666>2.5</span>:<span style=color:#00a000>clean</span> (<span style=color:#a2f;font-weight:700>default</span><span style=color:#666>-</span>clean) <span>@</span> easy<span style=color:#666>-</span>springmvc<span style=color:#666>-</span>maven <span style=color:#666>---</span>
+</span></span><span style=display:flex><span>[INFO] Deleting <span style=color:#666>/</span><span style=color:#a2f;font-weight:700>var</span><span style=color:#666>/</span>lib<span style=color:#666>/</span>jenkins<span style=color:#666>/</span>workspace<span style=color:#666>/</span>maven<span style=color:#666>-</span>docker<span style=color:#666>/</span>target
+</span></span><span style=display:flex><span>[INFO]
+</span></span><span style=display:flex><span>[INFO] <span style=color:#666>---</span> maven<span style=color:#666>-</span>resources<span style=color:#666>-</span>plugin:<span style=color:#666>2.6</span>:<span style=color:#00a000>resources</span> (<span style=color:#a2f;font-weight:700>default</span><span style=color:#666>-</span>resources) <span>@</span> easy<span style=color:#666>-</span>springmvc<span style=color:#666>-</span>maven <span style=color:#666>---</span>
+</span></span><span style=display:flex><span>[INFO] Using <span>&#39;</span>UTF<span style=color:#666>-</span><span style=color:#666>8</span><span>&#39;</span> encoding to copy filtered resources.
+</span></span><span style=display:flex><span>[INFO] skip non existing resourceDirectory <span style=color:#666>/</span><span style=color:#a2f;font-weight:700>var</span><span style=color:#666>/</span>lib<span style=color:#666>/</span>jenkins<span style=color:#666>/</span>workspace<span style=color:#666>/</span>maven<span style=color:#666>-</span>docker<span style=color:#666>/</span>src<span style=color:#666>/</span>main<span style=color:#666>/</span>resources
+</span></span><span style=display:flex><span>[INFO]
+</span></span><span style=display:flex><span>[INFO] <span style=color:#666>---</span> maven<span style=color:#666>-</span>compiler<span style=color:#666>-</span>plugin:<span style=color:#666>3.1</span>:<span style=color:#00a000>compile</span> (<span style=color:#a2f;font-weight:700>default</span><span style=color:#666>-</span>compile) <span>@</span> easy<span style=color:#666>-</span>springmvc<span style=color:#666>-</span>maven <span style=color:#666>---</span>
+</span></span><span style=display:flex><span>[INFO] Changes detected <span style=color:#666>-</span> recompiling the module!
+</span></span><span style=display:flex><span>[INFO] Compiling <span style=color:#666>2</span> source files to <span style=color:#666>/</span><span style=color:#a2f;font-weight:700>var</span><span style=color:#666>/</span>lib<span style=color:#666>/</span>jenkins<span style=color:#666>/</span>workspace<span style=color:#666>/</span>maven<span style=color:#666>-</span>docker<span style=color:#666>/</span>target<span style=color:#666>/</span>classes
+</span></span><span style=display:flex><span>[INFO]
+</span></span><span style=display:flex><span>[INFO] <span style=color:#666>---</span> maven<span style=color:#666>-</span>resources<span style=color:#666>-</span>plugin:<span style=color:#666>2.6</span>:<span style=color:#00a000>testResources</span> (<span style=color:#a2f;font-weight:700>default</span><span style=color:#666>-</span>testResources) <span>@</span> easy<span style=color:#666>-</span>springmvc<span style=color:#666>-</span>maven <span style=color:#666>---</span>
+</span></span><span style=display:flex><span>[INFO] Not copying test resources
+</span></span><span style=display:flex><span>[INFO]
+</span></span><span style=display:flex><span>[INFO] <span style=color:#666>---</span> maven<span style=color:#666>-</span>compiler<span style=color:#666>-</span>plugin:<span style=color:#666>3.1</span>:<span style=color:#00a000>testCompile</span> (<span style=color:#a2f;font-weight:700>default</span><span style=color:#666>-</span>testCompile) <span>@</span> easy<span style=color:#666>-</span>springmvc<span style=color:#666>-</span>maven <span style=color:#666>---</span>
+</span></span><span style=display:flex><span>[INFO] Not compiling test sources
+</span></span><span style=display:flex><span>[INFO]
+</span></span><span style=display:flex><span>[INFO] <span style=color:#666>---</span> maven<span style=color:#666>-</span>surefire<span style=color:#666>-</span>plugin:<span style=color:#666>2.12.4</span>:<span style=color:#00a000>test</span> (<span style=color:#a2f;font-weight:700>default</span><span style=color:#666>-</span>test) <span>@</span> easy<span style=color:#666>-</span>springmvc<span style=color:#666>-</span>maven <span style=color:#666>---</span>
+</span></span><span style=display:flex><span>[INFO] Tests are skipped.
+</span></span><span style=display:flex><span>[INFO]
+</span></span><span style=display:flex><span>[INFO] <span style=color:#666>---</span> maven<span style=color:#666>-</span>war<span style=color:#666>-</span>plugin:<span style=color:#666>2.2</span>:<span style=color:#00a000>war</span> (<span style=color:#a2f;font-weight:700>default</span><span style=color:#666>-</span>war) <span>@</span> easy<span style=color:#666>-</span>springmvc<span style=color:#666>-</span>maven <span style=color:#666>---</span>
+</span></span><span style=display:flex><span>[INFO] Packaging webapp
+</span></span><span style=display:flex><span>[INFO] Assembling webapp [easy<span style=color:#666>-</span>springmvc<span style=color:#666>-</span>maven] in [<span style=color:#666>/</span><span style=color:#a2f;font-weight:700>var</span><span style=color:#666>/</span>lib<span style=color:#666>/</span>jenkins<span style=color:#666>/</span>workspace<span style=color:#666>/</span>maven<span style=color:#666>-</span>docker<span style=color:#666>/</span>target<span style=color:#666>/</span>easy<span style=color:#666>-</span>springmvc<span style=color:#666>-</span>maven]
+</span></span><span style=display:flex><span>[INFO] Processing war project
+</span></span><span style=display:flex><span>[INFO] Copying webapp resources [<span style=color:#666>/</span><span style=color:#a2f;font-weight:700>var</span><span style=color:#666>/</span>lib<span style=color:#666>/</span>jenkins<span style=color:#666>/</span>workspace<span style=color:#666>/</span>maven<span style=color:#666>-</span>docker<span style=color:#666>/</span>src<span style=color:#666>/</span>main<span style=color:#666>/</span>webapp]
+</span></span><span style=display:flex><span>[INFO] Webapp assembled in [<span style=color:#666>105</span> msecs]
+</span></span><span style=display:flex><span><span style=color:#b44>`[INFO] Building war: /var/lib/jenkins/workspace/maven-docker/target/easy-springmvc-maven.war`</span>
+</span></span><span style=display:flex><span>[INFO] WEB<span style=color:#666>-</span>INF<span style=color:#666>/</span>web.xml already added, skipping
+</span></span><span style=display:flex><span>[INFO] <span style=color:#666>------------------------------------------------------------------------</span>
+</span></span><span style=display:flex><span><span style=color:#b44>`[INFO] BUILD SUCCESS`</span>
+</span></span><span style=display:flex><span>[INFO] <span style=color:#666>------------------------------------------------------------------------</span>
+</span></span><span style=display:flex><span>[INFO] Total time: <span style=color:#666>5.080</span> s
+</span></span><span style=display:flex><span>[INFO] Finished at: <span style=color:#666>2021</span><span style=color:#666>-</span><span style=color:#666>07</span><span style=color:#666>-</span><span style=color:#666>23</span>T01:<span style=color:#666>03</span>:<span style=color:#666>44</span><span style=color:#666>-</span><span style=color:#666>07</span>:<span style=color:#666>00</span>
+</span></span><span style=display:flex><span>[INFO] <span style=color:#666>------------------------------------------------------------------------</span>
+</span></span><span style=display:flex><span>Waiting <span style=color:#a2f;font-weight:700>for</span> Jenkins to finish collecting data
+</span></span><span style=display:flex><span>[JENKINS] Archiving <span style=color:#666>/</span><span style=color:#a2f;font-weight:700>var</span><span style=color:#666>/</span>lib<span style=color:#666>/</span>jenkins<span style=color:#666>/</span>workspace<span style=color:#666>/</span>maven<span style=color:#666>-</span>docker<span style=color:#666>/</span>pom.xml to springmvc<span style=color:#666>-</span>maven<span style=color:#666>/</span>easy<span style=color:#666>-</span>springmvc<span style=color:#666>-</span>maven<span style=color:#666>/</span><span style=color:#666>0.0.1</span><span style=color:#666>-</span>SNAPSHOT<span style=color:#666>/</span>easy<span style=color:#666>-</span>springmvc<span style=color:#666>-</span>maven<span style=color:#666>-</span><span style=color:#666>0.0.1</span><span style=color:#666>-</span>SNAPSHOT.pom
+</span></span><span style=display:flex><span>[JENKINS] Archiving <span style=color:#666>/</span><span style=color:#a2f;font-weight:700>var</span><span style=color:#666>/</span>lib<span style=color:#666>/</span>jenkins<span style=color:#666>/</span>workspace<span style=color:#666>/</span>maven<span style=color:#666>-</span>docker<span style=color:#666>/</span>target<span style=color:#666>/</span>easy<span style=color:#666>-</span>springmvc<span style=color:#666>-</span>maven.war to springmvc<span style=color:#666>-</span>maven<span style=color:#666>/</span>easy<span style=color:#666>-</span>springmvc<span style=color:#666>-</span>maven<span style=color:#666>/</span><span style=color:#666>0.0.1</span><span style=color:#666>-</span>SNAPSHOT<span style=color:#666>/</span>easy<span style=color:#666>-</span>springmvc<span style=color:#666>-</span>maven<span style=color:#666>-</span><span style=color:#666>0.0.1</span><span style=color:#666>-</span>SNAPSHOT.war
+</span></span><span style=display:flex><span>channel stopped
+</span></span><span style=display:flex><span><span style=color:#b44>`[maven-docker] $ /bin/sh -xe /tmp/jenkins711386174496231458.sh`</span>
+</span></span><span style=display:flex><span>&gt;<span style=color:#666>+</span> JENKINS_WAR_HOME=<span style=color:#666>/</span><span style=color:#a2f;font-weight:700>var</span><span style=color:#666>/</span>lib<span style=color:#666>/</span>jenkins<span style=color:#666>/</span>workspace<span style=color:#666>/</span>maven<span style=color:#666>-</span>docker<span style=color:#666>/</span>target
+</span></span><span style=display:flex><span>&gt;<span style=color:#666>+</span> DOCKERFILE_HOME=<span style=color:#666>/</span><span style=color:#a2f;font-weight:700>var</span><span style=color:#666>/</span>lib<span style=color:#666>/</span>jenkins<span style=color:#666>/</span>docker<span style=color:#666>-</span>file<span style=color:#666>/</span>maven<span style=color:#666>-</span>docker<span style=color:#666>-</span>test_war
+</span></span><span style=display:flex><span>&gt;<span style=color:#666>+</span> HARBOR_IP=harbor.corp.tanzu
+</span></span><span style=display:flex><span>&gt;<span style=color:#666>+</span> REPOSITORIES=jenkins<span style=color:#666>/</span>maven<span style=color:#666>-</span>docker
+</span></span><span style=display:flex><span>&gt;<span style=color:#666>+</span> HARBOR_USER=zyi
+</span></span><span style=display:flex><span>&gt;<span style=color:#666>+</span> HARBOR_USER_PASSWD=<span>&#39;</span>VMware1!<span>&#39;</span>
+</span></span><span style=display:flex><span>&gt;<span style=color:#666>+</span> HARBOR_USER_EMAIL=zyi<span>@</span>etaon.top
+</span></span><span style=display:flex><span>&gt;<span style=color:#666>+</span> cp <span style=color:#666>-</span>f <span style=color:#666>/</span><span style=color:#a2f;font-weight:700>var</span><span style=color:#666>/</span>lib<span style=color:#666>/</span>jenkins<span style=color:#666>/</span>workspace<span style=color:#666>/</span>maven<span style=color:#666>-</span>docker<span style=color:#666>/</span>target<span style=color:#666>/</span>easy<span style=color:#666>-</span>springmvc<span style=color:#666>-</span>maven.war <span style=color:#666>/</span><span style=color:#a2f;font-weight:700>var</span><span style=color:#666>/</span>lib<span style=color:#666>/</span>jenkins<span style=color:#666>/</span>docker<span style=color:#666>-</span>file<span style=color:#666>/</span>maven<span style=color:#666>-</span>docker<span style=color:#666>-</span>test_war<span style=color:#666>/</span>maven<span style=color:#666>-</span>docker.war
+</span></span><span style=display:flex><span>&gt;<span style=color:#666>+</span> sudo docker login <span style=color:#666>-</span>u zyi <span style=color:#666>-</span>p <span>&#39;</span>VMware1!<span>&#39;</span> harbor.corp.tanzu
+</span></span><span style=display:flex><span>WARNING! Using <span style=color:#666>--</span>password via the CLI is insecure. Use <span style=color:#666>--</span>password<span style=color:#666>-</span>stdin.
+</span></span><span style=display:flex><span>WARNING! Your password will be stored unencrypted in <span style=color:#666>/</span>root<span style=color:#666>/</span>.docker<span style=color:#666>/</span>config.json.
+</span></span><span style=display:flex><span>Configure a credential helper to remove this warning. See
+</span></span><span style=display:flex><span>https:<span style=color:#080;font-style:italic>//docs.docker.com/engine/reference/commandline/login/#credentials-store
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>
+</span></span><span style=display:flex><span>&gt;Login Succeeded
+</span></span><span style=display:flex><span>&gt;<span style=color:#666>++</span> sudo docker images
+</span></span><span style=display:flex><span>&gt;<span style=color:#666>++</span> grep jenkins<span style=color:#666>/</span>maven<span style=color:#666>-</span>docker
+</span></span><span style=display:flex><span>&gt;<span style=color:#666>++</span> awk <span>&#39;</span>{print <span>$</span><span style=color:#666>3</span>}<span>&#39;</span>
+</span></span><span style=display:flex><span>&gt;<span style=color:#666>+</span> IMAGE_ID=d0dcd354b02b
+</span></span><span style=display:flex><span>&gt;<span style=color:#666>+</span> <span style=color:#b44>&#39;[&#39;</span> <span style=color:#666>-</span>n d0dcd354b02b <span style=color:#b44>&#39;]&#39;</span>
+</span></span><span style=display:flex><span>&gt;<span style=color:#666>+</span> sudo docker rmi d0dcd354b02b
+</span></span><span style=display:flex><span>Untagged: harbor.corp.tanzu<span style=color:#666>/</span>jenkins<span style=color:#666>/</span>maven<span style=color:#666>-</span>docker:<span style=color:#666>20210723</span><span style=color:#666>-</span><span style=color:#666>005</span><span style=color:#666>858</span>
+</span></span><span style=display:flex><span>Untagged: harbor.corp.tanzu<span style=color:#666>/</span>jenkins<span style=color:#666>/</span>maven<span style=color:#666>-</span>docker<span>@</span>sha256:a759dc8c7beb0f3a918c9dcba9a7032236714a6c10db61655536b489f96933ee
+</span></span><span style=display:flex><span>Deleted: sha256:d0dcd354b02bf2a48925498b6abed56a42152e6a5fa0eddd40f4fc4a60180466
+</span></span><span style=display:flex><span>Deleted: sha256:<span style=color:#666>9</span>b645e1a904b6a46adddb7c2ab169918d2b76000cb9482a23e7d8a64bd6b8f56
+</span></span><span style=display:flex><span>Deleted: sha256:<span style=color:#666>9877</span>d1031b7a5adbf70df56ce3f16174da7e289a47e412cd0d83bbd352f45c30
+</span></span><span style=display:flex><span>Deleted: sha256:<span style=color:#666>19</span>d261fd72b302179fb46184d6cbc26528478bd047daa3f4db6ad32e5327e380
+</span></span><span style=display:flex><span>Deleted: sha256:<span style=color:#666>38e37</span>a14460f2dc6b9eb9794635107d9ad13e6ee7e0e4be229066d59dabbcd91
+</span></span><span style=display:flex><span>Deleted: sha256:<span style=color:#666>2</span>cc14fc784b435ec741c3077be2a13fd9c7b1456430ae6b528c451797949395d
+</span></span><span style=display:flex><span>Deleted: sha256:eeb150de68bf106cb41e0262d03911f278bc81e3f31b84aacf84445705a42e65
+</span></span><span style=display:flex><span>&gt;<span style=color:#666>+</span> <span style=color:#b44>`sudo docker login -u dewinals -p xxxxxx`</span>
+</span></span><span style=display:flex><span>WARNING! Using <span style=color:#666>--</span>password via the CLI is insecure. Use <span style=color:#666>--</span>password<span style=color:#666>-</span>stdin.
+</span></span><span style=display:flex><span>WARNING! Your password will be stored unencrypted in <span style=color:#666>/</span>root<span style=color:#666>/</span>.docker<span style=color:#666>/</span>config.json.
+</span></span><span style=display:flex><span>Configure a credential helper to remove this warning. See
+</span></span><span style=display:flex><span>https:<span style=color:#080;font-style:italic>//docs.docker.com/engine/reference/commandline/login/#credentials-store
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>
+</span></span><span style=display:flex><span>&gt;Login Succeeded
+</span></span><span style=display:flex><span>&gt;<span style=color:#666>+</span> cd <span style=color:#666>/</span><span style=color:#a2f;font-weight:700>var</span><span style=color:#666>/</span>lib<span style=color:#666>/</span>jenkins<span style=color:#666>/</span>docker<span style=color:#666>-</span>file<span style=color:#666>/</span>maven<span style=color:#666>-</span>docker<span style=color:#666>-</span>test_war
+</span></span><span style=display:flex><span>&gt;<span style=color:#666>++</span> date <span style=color:#666>+%</span>Y<span style=color:#666>%</span>m<span style=color:#666>%</span>d<span style=color:#666>-%</span>H<span style=color:#666>%</span>M<span style=color:#666>%</span>S
+</span></span><span style=display:flex><span>&gt;<span style=color:#666>+</span> TAG=<span style=color:#666>20210723</span><span style=color:#666>-</span><span style=color:#666>010352</span>
+</span></span><span style=display:flex><span>&gt;<span style=color:#666>+</span> <span style=color:#b44>`sudo docker build -t harbor.corp.tanzu/jenkins/maven-docker:20210723-010352 .`</span>
+</span></span><span style=display:flex><span>&gt;<span style=color:#666>+</span> sudo docker login <span style=color:#666>-</span>u zyi <span style=color:#666>-</span>p <span>&#39;</span>VMware1!<span>&#39;</span> harbor.corp.tanzu
+</span></span><span style=display:flex><span>WARNING! Using <span style=color:#666>--</span>password via the CLI is insecure. Use <span style=color:#666>--</span>password<span style=color:#666>-</span>stdin.
+</span></span><span style=display:flex><span>WARNING! Your password will be stored unencrypted in <span style=color:#666>/</span>root<span style=color:#666>/</span>.docker<span style=color:#666>/</span>config.json.
+</span></span><span style=display:flex><span>Configure a credential helper to remove this warning. See
+</span></span><span style=display:flex><span>https:<span style=color:#080;font-style:italic>//docs.docker.com/engine/reference/commandline/login/#credentials-store
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>
+</span></span><span style=display:flex><span>&gt;Login Succeeded
+</span></span><span style=display:flex><span>&gt;<span style=color:#666>+</span> <span style=color:#b44>`sudo docker push harbor.corp.tanzu/jenkins/maven-docker:20210723-010352`</span>
+</span></span><span style=display:flex><span>[SSH] script:
+</span></span><span style=display:flex><span>USER=<span style=color:#b44>&#34;jenkins&#34;</span>
+</span></span></code></pre></div><p>在Harbor上查看上传结果
+<img src="https://img-blog.csdnimg.cn/08b04286631c4fba9e746fb8fe4ff7ee.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p><h3 id=测试服务器拉取镜像发布ssh>测试服务器拉取镜像，发布（ssh）</h3><h4 id=配置ssh脚本>配置ssh脚本</h4><p>在Post Step选择
 <img src=https://img-blog.csdnimg.cn/fcb132d974844cbf938eefc3bf12c824.png alt=在这里插入图片描述>
-脚本</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=color:#080>#!/bin/bash
-</span><span style=color:#080></span>
-<span style=color:#080;font-style:italic># 拉取镜像，发布</span>
-<span style=color:#b8860b>HARBOR_IP</span><span style=color:#666>=</span><span style=color:#b44>&#39;harbor.corp.tanzu&#39;</span>
-<span style=color:#b8860b>REPOSITORIES</span><span style=color:#666>=</span><span style=color:#b44>&#39;jenkins/maven-docker&#39;</span>
-<span style=color:#b8860b>HARBOR_USER</span><span style=color:#666>=</span><span style=color:#b44>&#39;admin&#39;</span>
-<span style=color:#b8860b>HARBOR_USER_PASSWD</span><span style=color:#666>=</span><span style=color:#b44>&#39;VMware1!&#39;</span>
-
-<span style=color:#a2f>echo</span> <span style=color:#b8860b>$HARBOR_IP</span>
-
-<span style=color:#080;font-style:italic># 登录harbor</span>
-docker login -u <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>HARBOR_USER</span><span style=color:#b68;font-weight:700>}</span> -p <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>HARBOR_USER_PASSWD</span><span style=color:#b68;font-weight:700>}</span> <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>HARBOR_IP</span><span style=color:#b68;font-weight:700>}</span>
-
-<span style=color:#080;font-style:italic># Stop container, and delete the container.</span>
-<span style=color:#b8860b>CONTAINER_ID</span><span style=color:#666>=</span><span style=color:#b44>`</span>docker ps | grep <span style=color:#b44>&#34;maven-docker&#34;</span> | awk <span style=color:#b44>&#39;{print $1}&#39;</span><span style=color:#b44>`</span>
-<span style=color:#a2f;font-weight:700>if</span> <span style=color:#666>[</span> -n <span style=color:#b44>&#34;</span><span style=color:#b8860b>$CONTAINER_ID</span><span style=color:#b44>&#34;</span> <span style=color:#666>]</span>; <span style=color:#a2f;font-weight:700>then</span>
-    docker stop <span style=color:#b8860b>$CONTAINER_ID</span>
-    docker rm <span style=color:#b8860b>$CONTAINER_ID</span>
-<span style=color:#a2f;font-weight:700>else</span> <span style=color:#080;font-style:italic>#如果容器启动时失败了，就需要docker ps -a才能找到那个容器</span>
-    <span style=color:#b8860b>CONTAINER_ID</span><span style=color:#666>=</span><span style=color:#b44>`</span>docker ps -a | grep <span style=color:#b44>&#34;maven-docker&#34;</span> | awk <span style=color:#b44>&#39;{print $1}&#39;</span><span style=color:#b44>`</span>
-    <span style=color:#a2f;font-weight:700>if</span> <span style=color:#666>[</span> -n <span style=color:#b44>&#34;</span><span style=color:#b8860b>$CONTAINER_ID</span><span style=color:#b44>&#34;</span> <span style=color:#666>]</span>; <span style=color:#a2f;font-weight:700>then</span>  <span style=color:#080;font-style:italic># 如果是第一次在这台机器上拉取运行容器，那么docker ps -a也是找不到这个容器的</span>
-        docker rm <span style=color:#b8860b>$CONTAINER_ID</span>
-    <span style=color:#a2f;font-weight:700>fi</span>
-<span style=color:#a2f;font-weight:700>fi</span>
-
-<span style=color:#080;font-style:italic># Delet docker-maven image early version.</span>
-<span style=color:#b8860b>IMAGE_ID</span><span style=color:#666>=</span><span style=color:#b44>`</span>sudo docker images | grep <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>REPOSITORIES</span><span style=color:#b68;font-weight:700>}</span> | awk <span style=color:#b44>&#39;{print $3}&#39;</span><span style=color:#b44>`</span>
-<span style=color:#a2f;font-weight:700>if</span> <span style=color:#666>[</span> -n <span style=color:#b44>&#34;</span><span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>IMAGE_ID</span><span style=color:#b68;font-weight:700>}</span><span style=color:#b44>&#34;</span> <span style=color:#666>]</span>;<span style=color:#a2f;font-weight:700>then</span>
-    docker rmi <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>IMAGE_ID</span><span style=color:#b68;font-weight:700>}</span>
-<span style=color:#a2f;font-weight:700>fi</span>
-
-<span style=color:#080;font-style:italic># Pull image.</span>
- wget  <span style=color:#b8860b>$HARBOR_IP</span>/api/v2.0/projects/jenkins/repositories/maven-docker/artifacts --no-check-certificate
- <span style=color:#b8860b>TAG</span><span style=color:#666>=</span><span style=color:#b44>`</span>awk -F <span style=color:#b44>&#39;name&#34;:&#34;&#39;</span>  <span style=color:#b44>&#39;{print $2}&#39;</span> artifacts |cut -d <span style=color:#b44>&#39;&#34;&#39;</span> -f1<span style=color:#b44>`</span>
-
-docker pull <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>HARBOR_IP</span><span style=color:#b68;font-weight:700>}</span>/<span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>REPOSITORIES</span><span style=color:#b68;font-weight:700>}</span>:<span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>TAG</span><span style=color:#b68;font-weight:700>}</span> &amp;&gt;/dev/null
-
-<span style=color:#080;font-style:italic># Run.</span>
-docker run -d --name maven-docker-test -p 8080:8080 <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>HARBOR_IP</span><span style=color:#b68;font-weight:700>}</span>/<span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>REPOSITORIES</span><span style=color:#b68;font-weight:700>}</span>:<span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>TAG</span><span style=color:#b68;font-weight:700>}</span>
-
-**注意：**
-1. 本shell分为两部分:删除旧本地镜像和pull新镜像并部署
-2. 为了得到harbor镜像的tag，使用了以下代码
-
-wget  <span style=color:#b8860b>$HARBOR_IP</span>/api/v2.0/projects/jenkins/repositories/maven-docker/artifacts --no-check-certificate <span style=color:#080;font-style:italic>#下载包含tag的文件</span>
-<span style=color:#b8860b>TAG</span><span style=color:#666>=</span><span style=color:#b44>`</span>awk -F <span style=color:#b44>&#39;name&#34;:&#34;&#39;</span>  <span style=color:#b44>&#39;{print $2}&#39;</span> artifacts |cut -d <span style=color:#b44>&#39;&#34;&#39;</span> -f1<span style=color:#b44>`</span><span style=color:#080;font-style:italic>#awk提取tag</span>
-
-<span style=color:#080;font-style:italic>#### Build Control output</span>
-<span style=color:#080;font-style:italic>#!/bin/bash</span>
-<span style=color:#080;font-style:italic>#拉取镜像，发布</span>
-
-<span style=color:#b8860b>HARBOR_IP</span><span style=color:#666>=</span><span style=color:#b44>&#39;harbor.corp.tanzu&#39;</span>
-<span style=color:#b8860b>REPOSITORIES</span><span style=color:#666>=</span><span style=color:#b44>&#39;jenkins/maven-docker&#39;</span>
-<span style=color:#b8860b>HARBOR_USER</span><span style=color:#666>=</span><span style=color:#b44>&#39;admin&#39;</span>
-<span style=color:#b8860b>HARBOR_USER_PASSWD</span><span style=color:#666>=</span><span style=color:#b44>&#39;VMware1!&#39;</span>
-<span style=color:#a2f>echo</span> <span style=color:#b8860b>$HARBOR_IP</span>
-
-<span style=color:#080;font-style:italic>#登录harbor</span>
-
-docker login -u <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>HARBOR_USER</span><span style=color:#b68;font-weight:700>}</span> -p <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>HARBOR_USER_PASSWD</span><span style=color:#b68;font-weight:700>}</span> <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>HARBOR_IP</span><span style=color:#b68;font-weight:700>}</span>
- <span style=color:#080;font-style:italic>#Stop container, and delete the container.</span>
-<span style=color:#b8860b>CONTAINER_ID</span><span style=color:#666>=</span><span style=color:#b44>`</span>docker ps | grep <span style=color:#b44>&#34;maven-docker&#34;</span> | awk <span style=color:#b44>&#39;{print $1}&#39;</span><span style=color:#b44>`</span>
-<span style=color:#a2f;font-weight:700>if</span> <span style=color:#666>[</span> -n <span style=color:#b44>&#34;</span><span style=color:#b8860b>$CONTAINER_ID</span><span style=color:#b44>&#34;</span> <span style=color:#666>]</span>; <span style=color:#a2f;font-weight:700>then</span>
-    docker stop <span style=color:#b8860b>$CONTAINER_ID</span>
-    docker rm <span style=color:#b8860b>$CONTAINER_ID</span>
-<span style=color:#a2f;font-weight:700>else</span> <span style=color:#080;font-style:italic>#如果容器启动时失败了，就需要docker ps -a才能找到那个容器</span>
-    <span style=color:#b8860b>CONTAINER_ID</span><span style=color:#666>=</span><span style=color:#b44>`</span>docker ps -a | grep <span style=color:#b44>&#34;maven-docker&#34;</span> | awk <span style=color:#b44>&#39;{print $1}&#39;</span><span style=color:#b44>`</span>
-    <span style=color:#a2f;font-weight:700>if</span> <span style=color:#666>[</span> -n <span style=color:#b44>&#34;</span><span style=color:#b8860b>$CONTAINER_ID</span><span style=color:#b44>&#34;</span> <span style=color:#666>]</span>; <span style=color:#a2f;font-weight:700>then</span>  <span style=color:#080;font-style:italic># 如果是第一次在这台机器上拉取运行容器，那么docker ps -a也是找不到这个容器的</span>
-        docker rm <span style=color:#b8860b>$CONTAINER_ID</span>
-    <span style=color:#a2f;font-weight:700>fi</span>
-<span style=color:#a2f;font-weight:700>fi</span>
-&gt;#Delet docker-maven image early version.
-<span style=color:#b8860b>IMAGE_ID</span><span style=color:#666>=</span><span style=color:#b44>`</span>sudo docker images | grep <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>REPOSITORIES</span><span style=color:#b68;font-weight:700>}</span> | awk <span style=color:#b44>&#39;{print $3}&#39;</span><span style=color:#b44>`</span>
-<span style=color:#a2f;font-weight:700>if</span> <span style=color:#666>[</span> -n <span style=color:#b44>&#34;</span><span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>IMAGE_ID</span><span style=color:#b68;font-weight:700>}</span><span style=color:#b44>&#34;</span> <span style=color:#666>]</span>;<span style=color:#a2f;font-weight:700>then</span>
-    docker rmi <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>IMAGE_ID</span><span style=color:#b68;font-weight:700>}</span>
-<span style=color:#a2f;font-weight:700>fi</span>
- <span style=color:#080;font-style:italic>#Pull image.</span>
- wget  <span style=color:#b8860b>$HARBOR_IP</span>/api/v2.0/projects/jenkins/repositories/maven-docker/artifacts --no-check-certificate
- <span style=color:#b8860b>TAG</span><span style=color:#666>=</span><span style=color:#b44>`</span>awk -F <span style=color:#b44>&#39;name&#34;:&#34;&#39;</span>  <span style=color:#b44>&#39;{print $2}&#39;</span> artifacts |cut -d <span style=color:#b44>&#39;&#34;&#39;</span> -f1<span style=color:#b44>`</span>
-docker pull <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>HARBOR_IP</span><span style=color:#b68;font-weight:700>}</span>/<span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>REPOSITORIES</span><span style=color:#b68;font-weight:700>}</span>:<span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>TAG</span><span style=color:#b68;font-weight:700>}</span> &amp;&gt;/dev/null
-<span style=color:#080;font-style:italic>#Run.</span>
-</code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>docker run -d --name maven-docker-test -p 8080:8080 ${HARBOR_IP}/${REPOSITORIES}:${TAG}
-
- [SSH] executing...
-WARNING! Using --password via the CLI is insecure. Use --password-stdin.
-WARNING! Your password will be stored unencrypted in /root/.docker/config.json.
-Configure a credential helper to remove this warning. See
-https://docs.docker.com/engine/reference/commandline/login/#credentials-store
-
-harbor.corp.tanzu
-Login Succeeded
-URL transformed to HTTPS due to an HSTS policy
---2021-07-23 03:12:42--  `https://harbor.corp.tanzu/api/v2.0/projects/jenkins/repositories/maven-docker/artifacts`
-Resolving harbor.corp.tanzu (harbor.corp.tanzu)... 192.168.110.2
-Connecting to harbor.corp.tanzu (harbor.corp.tanzu)|192.168.110.2|:443... connected.
-WARNING: The certificate of ‘harbor.corp.tanzu’ is not trusted.
-WARNING: The certificate of ‘harbor.corp.tanzu’ hasn&#39;t got a known issuer.
-HTTP request sent, awaiting response... 200 OK
-Length: unspecified [application/json]
-`Saving to: ‘artifacts’
-   0K .......... ........                                    72.6M=0s`
-2021-07-23 03:12:42 (72.6 MB/s) - ‘artifacts’ saved [19341]
-Untagged: harbor.corp.tanzu/jenkins/maven-docker:20210723-020658
-Untagged: harbor.corp.tanzu/jenkins/maven-docker@sha256:6eeff5ee0e17aa4fba5f39cf667a35d05c271b45c52d96a1671ee8cdcc3bbb73
-Deleted: sha256:3e3d1ecab48f251264c6538fd6459ed01af8a92010943b2eb61ffc14a3ffc954
-Deleted: sha256:b1c870aac2cc56f68b22a5daadee04ee0e114b6f6d473cf38bf380200255c025
-Deleted: sha256:085a15bd8efb301e5b1242d2c0199f6d7a0dff5c6de4b092756458da8e39696d
-Deleted: sha256:c6f2dcb1332e84764d578eb547a281721e21bca7bf4e87e86ce3727aa4412a32
-Deleted: sha256:10c3de769b3e3fcb7448e105c5d3232e3581093e33ee3c8098b68fe9361b7243
-Deleted: sha256:f67b645b1e3e41d3acf3a4a1099fcf5c5106265ff0e54c99638d00f4b6f63c28
-Deleted: sha256:de2f333ab91a13c109652b25b79965c017f3e4f0f6cd8f706662b7ff221c05cc
-Deleted: sha256:9857c81f9ea282d7dac1546a918b0f9e43a06817459a8ef3d2ea98bc00a97afe
-Deleted: sha256:f129b789c58f529b932863a829528e08c6e9f930ebfd43bbdd35cddb7004b8ab
-Deleted: sha256:4fe15f8d0ae69e169824f25f1d4da3015a48feeeeebb265cd2e328e15c6a869f
-9cd6278866644fb7db29e7186b270d36696b65212fbf213b0c5e35e415329e72
-[SSH] completed
-[SSH] exit-status: 0
-`Finished: SUCCESS`
-
-#### 查看新image和服务
-[root@client-8 ~]# docker images
-REPOSITORY                                                            TAG               IMAGE ID       CREATED        SIZE
-harbor.corp.tanzu/jenkins/maven-docker                                20210723-031450   6c8e836bc53c   2 days ago     153MB
-
-[root@client-8 ~]# lsof -i:8080
-COMMAND     PID USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
-docker-pr 41188 root    4u  IPv4 563367      0t0  TCP *:webcache (LISTEN)
-docker-pr 41194 root    4u  IPv6 563373      0t0  TCP *:webcache (LISTEN)
-</code></pre></div><h3 id=部署结果>部署结果</h3>
-<p>http到测试服务器192.168.110.27的8080端口
-<img src="https://img-blog.csdnimg.cn/8cf6ccd828fe488daee1c66d5176e49b.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p>
-</div>
-<footer class=post-footer>
-<div id=wcomments></div>
-</footer>
-</article>
-</section>
-</div>
-</div>
-<div class=sidebar-toggle>
-<div class=sidebar-toggle-line-wrap>
-<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+脚本</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span><span style=color:#080>#!/bin/bash
+</span></span></span><span style=display:flex><span><span style=color:#080></span>
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic># 拉取镜像，发布</span>
+</span></span><span style=display:flex><span><span style=color:#b8860b>HARBOR_IP</span><span style=color:#666>=</span><span style=color:#b44>&#39;harbor.corp.tanzu&#39;</span>
+</span></span><span style=display:flex><span><span style=color:#b8860b>REPOSITORIES</span><span style=color:#666>=</span><span style=color:#b44>&#39;jenkins/maven-docker&#39;</span>
+</span></span><span style=display:flex><span><span style=color:#b8860b>HARBOR_USER</span><span style=color:#666>=</span><span style=color:#b44>&#39;admin&#39;</span>
+</span></span><span style=display:flex><span><span style=color:#b8860b>HARBOR_USER_PASSWD</span><span style=color:#666>=</span><span style=color:#b44>&#39;VMware1!&#39;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#a2f>echo</span> <span style=color:#b8860b>$HARBOR_IP</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic># 登录harbor</span>
+</span></span><span style=display:flex><span>docker login -u <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>HARBOR_USER</span><span style=color:#b68;font-weight:700>}</span> -p <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>HARBOR_USER_PASSWD</span><span style=color:#b68;font-weight:700>}</span> <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>HARBOR_IP</span><span style=color:#b68;font-weight:700>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic># Stop container, and delete the container.</span>
+</span></span><span style=display:flex><span><span style=color:#b8860b>CONTAINER_ID</span><span style=color:#666>=</span><span style=color:#b44>`</span>docker ps | grep <span style=color:#b44>&#34;maven-docker&#34;</span> | awk <span style=color:#b44>&#39;{print $1}&#39;</span><span style=color:#b44>`</span>
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>if</span> <span style=color:#666>[</span> -n <span style=color:#b44>&#34;</span><span style=color:#b8860b>$CONTAINER_ID</span><span style=color:#b44>&#34;</span> <span style=color:#666>]</span>; <span style=color:#a2f;font-weight:700>then</span>
+</span></span><span style=display:flex><span>    docker stop <span style=color:#b8860b>$CONTAINER_ID</span>
+</span></span><span style=display:flex><span>    docker rm <span style=color:#b8860b>$CONTAINER_ID</span>
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>else</span> <span style=color:#080;font-style:italic>#如果容器启动时失败了，就需要docker ps -a才能找到那个容器</span>
+</span></span><span style=display:flex><span>    <span style=color:#b8860b>CONTAINER_ID</span><span style=color:#666>=</span><span style=color:#b44>`</span>docker ps -a | grep <span style=color:#b44>&#34;maven-docker&#34;</span> | awk <span style=color:#b44>&#39;{print $1}&#39;</span><span style=color:#b44>`</span>
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>if</span> <span style=color:#666>[</span> -n <span style=color:#b44>&#34;</span><span style=color:#b8860b>$CONTAINER_ID</span><span style=color:#b44>&#34;</span> <span style=color:#666>]</span>; <span style=color:#a2f;font-weight:700>then</span>  <span style=color:#080;font-style:italic># 如果是第一次在这台机器上拉取运行容器，那么docker ps -a也是找不到这个容器的</span>
+</span></span><span style=display:flex><span>        docker rm <span style=color:#b8860b>$CONTAINER_ID</span>
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>fi</span>
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>fi</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic># Delet docker-maven image early version.</span>
+</span></span><span style=display:flex><span><span style=color:#b8860b>IMAGE_ID</span><span style=color:#666>=</span><span style=color:#b44>`</span>sudo docker images | grep <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>REPOSITORIES</span><span style=color:#b68;font-weight:700>}</span> | awk <span style=color:#b44>&#39;{print $3}&#39;</span><span style=color:#b44>`</span>
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>if</span> <span style=color:#666>[</span> -n <span style=color:#b44>&#34;</span><span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>IMAGE_ID</span><span style=color:#b68;font-weight:700>}</span><span style=color:#b44>&#34;</span> <span style=color:#666>]</span>;<span style=color:#a2f;font-weight:700>then</span>
+</span></span><span style=display:flex><span>    docker rmi <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>IMAGE_ID</span><span style=color:#b68;font-weight:700>}</span>
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>fi</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic># Pull image.</span>
+</span></span><span style=display:flex><span> wget  <span style=color:#b8860b>$HARBOR_IP</span>/api/v2.0/projects/jenkins/repositories/maven-docker/artifacts --no-check-certificate
+</span></span><span style=display:flex><span> <span style=color:#b8860b>TAG</span><span style=color:#666>=</span><span style=color:#b44>`</span>awk -F <span style=color:#b44>&#39;name&#34;:&#34;&#39;</span>  <span style=color:#b44>&#39;{print $2}&#39;</span> artifacts |cut -d <span style=color:#b44>&#39;&#34;&#39;</span> -f1<span style=color:#b44>`</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>docker pull <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>HARBOR_IP</span><span style=color:#b68;font-weight:700>}</span>/<span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>REPOSITORIES</span><span style=color:#b68;font-weight:700>}</span>:<span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>TAG</span><span style=color:#b68;font-weight:700>}</span> &amp;&gt;/dev/null
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic># Run.</span>
+</span></span><span style=display:flex><span>docker run -d --name maven-docker-test -p 8080:8080 <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>HARBOR_IP</span><span style=color:#b68;font-weight:700>}</span>/<span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>REPOSITORIES</span><span style=color:#b68;font-weight:700>}</span>:<span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>TAG</span><span style=color:#b68;font-weight:700>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>**注意：**
+</span></span><span style=display:flex><span>1. 本shell分为两部分:删除旧本地镜像和pull新镜像并部署
+</span></span><span style=display:flex><span>2. 为了得到harbor镜像的tag，使用了以下代码
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>wget  <span style=color:#b8860b>$HARBOR_IP</span>/api/v2.0/projects/jenkins/repositories/maven-docker/artifacts --no-check-certificate <span style=color:#080;font-style:italic>#下载包含tag的文件</span>
+</span></span><span style=display:flex><span><span style=color:#b8860b>TAG</span><span style=color:#666>=</span><span style=color:#b44>`</span>awk -F <span style=color:#b44>&#39;name&#34;:&#34;&#39;</span>  <span style=color:#b44>&#39;{print $2}&#39;</span> artifacts |cut -d <span style=color:#b44>&#39;&#34;&#39;</span> -f1<span style=color:#b44>`</span><span style=color:#080;font-style:italic>#awk提取tag</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic>#### Build Control output</span>
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic>#!/bin/bash</span>
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic>#拉取镜像，发布</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#b8860b>HARBOR_IP</span><span style=color:#666>=</span><span style=color:#b44>&#39;harbor.corp.tanzu&#39;</span>
+</span></span><span style=display:flex><span><span style=color:#b8860b>REPOSITORIES</span><span style=color:#666>=</span><span style=color:#b44>&#39;jenkins/maven-docker&#39;</span>
+</span></span><span style=display:flex><span><span style=color:#b8860b>HARBOR_USER</span><span style=color:#666>=</span><span style=color:#b44>&#39;admin&#39;</span>
+</span></span><span style=display:flex><span><span style=color:#b8860b>HARBOR_USER_PASSWD</span><span style=color:#666>=</span><span style=color:#b44>&#39;VMware1!&#39;</span>
+</span></span><span style=display:flex><span><span style=color:#a2f>echo</span> <span style=color:#b8860b>$HARBOR_IP</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic>#登录harbor</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>docker login -u <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>HARBOR_USER</span><span style=color:#b68;font-weight:700>}</span> -p <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>HARBOR_USER_PASSWD</span><span style=color:#b68;font-weight:700>}</span> <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>HARBOR_IP</span><span style=color:#b68;font-weight:700>}</span>
+</span></span><span style=display:flex><span> <span style=color:#080;font-style:italic>#Stop container, and delete the container.</span>
+</span></span><span style=display:flex><span><span style=color:#b8860b>CONTAINER_ID</span><span style=color:#666>=</span><span style=color:#b44>`</span>docker ps | grep <span style=color:#b44>&#34;maven-docker&#34;</span> | awk <span style=color:#b44>&#39;{print $1}&#39;</span><span style=color:#b44>`</span>
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>if</span> <span style=color:#666>[</span> -n <span style=color:#b44>&#34;</span><span style=color:#b8860b>$CONTAINER_ID</span><span style=color:#b44>&#34;</span> <span style=color:#666>]</span>; <span style=color:#a2f;font-weight:700>then</span>
+</span></span><span style=display:flex><span>    docker stop <span style=color:#b8860b>$CONTAINER_ID</span>
+</span></span><span style=display:flex><span>    docker rm <span style=color:#b8860b>$CONTAINER_ID</span>
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>else</span> <span style=color:#080;font-style:italic>#如果容器启动时失败了，就需要docker ps -a才能找到那个容器</span>
+</span></span><span style=display:flex><span>    <span style=color:#b8860b>CONTAINER_ID</span><span style=color:#666>=</span><span style=color:#b44>`</span>docker ps -a | grep <span style=color:#b44>&#34;maven-docker&#34;</span> | awk <span style=color:#b44>&#39;{print $1}&#39;</span><span style=color:#b44>`</span>
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>if</span> <span style=color:#666>[</span> -n <span style=color:#b44>&#34;</span><span style=color:#b8860b>$CONTAINER_ID</span><span style=color:#b44>&#34;</span> <span style=color:#666>]</span>; <span style=color:#a2f;font-weight:700>then</span>  <span style=color:#080;font-style:italic># 如果是第一次在这台机器上拉取运行容器，那么docker ps -a也是找不到这个容器的</span>
+</span></span><span style=display:flex><span>        docker rm <span style=color:#b8860b>$CONTAINER_ID</span>
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>fi</span>
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>fi</span>
+</span></span><span style=display:flex><span>&gt;#Delet docker-maven image early version.
+</span></span><span style=display:flex><span><span style=color:#b8860b>IMAGE_ID</span><span style=color:#666>=</span><span style=color:#b44>`</span>sudo docker images | grep <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>REPOSITORIES</span><span style=color:#b68;font-weight:700>}</span> | awk <span style=color:#b44>&#39;{print $3}&#39;</span><span style=color:#b44>`</span>
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>if</span> <span style=color:#666>[</span> -n <span style=color:#b44>&#34;</span><span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>IMAGE_ID</span><span style=color:#b68;font-weight:700>}</span><span style=color:#b44>&#34;</span> <span style=color:#666>]</span>;<span style=color:#a2f;font-weight:700>then</span>
+</span></span><span style=display:flex><span>    docker rmi <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>IMAGE_ID</span><span style=color:#b68;font-weight:700>}</span>
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>fi</span>
+</span></span><span style=display:flex><span> <span style=color:#080;font-style:italic>#Pull image.</span>
+</span></span><span style=display:flex><span> wget  <span style=color:#b8860b>$HARBOR_IP</span>/api/v2.0/projects/jenkins/repositories/maven-docker/artifacts --no-check-certificate
+</span></span><span style=display:flex><span> <span style=color:#b8860b>TAG</span><span style=color:#666>=</span><span style=color:#b44>`</span>awk -F <span style=color:#b44>&#39;name&#34;:&#34;&#39;</span>  <span style=color:#b44>&#39;{print $2}&#39;</span> artifacts |cut -d <span style=color:#b44>&#39;&#34;&#39;</span> -f1<span style=color:#b44>`</span>
+</span></span><span style=display:flex><span>docker pull <span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>HARBOR_IP</span><span style=color:#b68;font-weight:700>}</span>/<span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>REPOSITORIES</span><span style=color:#b68;font-weight:700>}</span>:<span style=color:#b68;font-weight:700>${</span><span style=color:#b8860b>TAG</span><span style=color:#b68;font-weight:700>}</span> &amp;&gt;/dev/null
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic>#Run.</span>
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>docker run -d --name maven-docker-test -p 8080:8080 ${HARBOR_IP}/${REPOSITORIES}:${TAG}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span> [SSH] executing...
+</span></span><span style=display:flex><span>WARNING! Using --password via the CLI is insecure. Use --password-stdin.
+</span></span><span style=display:flex><span>WARNING! Your password will be stored unencrypted in /root/.docker/config.json.
+</span></span><span style=display:flex><span>Configure a credential helper to remove this warning. See
+</span></span><span style=display:flex><span>https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>harbor.corp.tanzu
+</span></span><span style=display:flex><span>Login Succeeded
+</span></span><span style=display:flex><span>URL transformed to HTTPS due to an HSTS policy
+</span></span><span style=display:flex><span>--2021-07-23 03:12:42--  `https://harbor.corp.tanzu/api/v2.0/projects/jenkins/repositories/maven-docker/artifacts`
+</span></span><span style=display:flex><span>Resolving harbor.corp.tanzu (harbor.corp.tanzu)... 192.168.110.2
+</span></span><span style=display:flex><span>Connecting to harbor.corp.tanzu (harbor.corp.tanzu)|192.168.110.2|:443... connected.
+</span></span><span style=display:flex><span>WARNING: The certificate of ‘harbor.corp.tanzu’ is not trusted.
+</span></span><span style=display:flex><span>WARNING: The certificate of ‘harbor.corp.tanzu’ hasn&#39;t got a known issuer.
+</span></span><span style=display:flex><span>HTTP request sent, awaiting response... 200 OK
+</span></span><span style=display:flex><span>Length: unspecified [application/json]
+</span></span><span style=display:flex><span>`Saving to: ‘artifacts’
+</span></span><span style=display:flex><span>   0K .......... ........                                    72.6M=0s`
+</span></span><span style=display:flex><span>2021-07-23 03:12:42 (72.6 MB/s) - ‘artifacts’ saved [19341]
+</span></span><span style=display:flex><span>Untagged: harbor.corp.tanzu/jenkins/maven-docker:20210723-020658
+</span></span><span style=display:flex><span>Untagged: harbor.corp.tanzu/jenkins/maven-docker@sha256:6eeff5ee0e17aa4fba5f39cf667a35d05c271b45c52d96a1671ee8cdcc3bbb73
+</span></span><span style=display:flex><span>Deleted: sha256:3e3d1ecab48f251264c6538fd6459ed01af8a92010943b2eb61ffc14a3ffc954
+</span></span><span style=display:flex><span>Deleted: sha256:b1c870aac2cc56f68b22a5daadee04ee0e114b6f6d473cf38bf380200255c025
+</span></span><span style=display:flex><span>Deleted: sha256:085a15bd8efb301e5b1242d2c0199f6d7a0dff5c6de4b092756458da8e39696d
+</span></span><span style=display:flex><span>Deleted: sha256:c6f2dcb1332e84764d578eb547a281721e21bca7bf4e87e86ce3727aa4412a32
+</span></span><span style=display:flex><span>Deleted: sha256:10c3de769b3e3fcb7448e105c5d3232e3581093e33ee3c8098b68fe9361b7243
+</span></span><span style=display:flex><span>Deleted: sha256:f67b645b1e3e41d3acf3a4a1099fcf5c5106265ff0e54c99638d00f4b6f63c28
+</span></span><span style=display:flex><span>Deleted: sha256:de2f333ab91a13c109652b25b79965c017f3e4f0f6cd8f706662b7ff221c05cc
+</span></span><span style=display:flex><span>Deleted: sha256:9857c81f9ea282d7dac1546a918b0f9e43a06817459a8ef3d2ea98bc00a97afe
+</span></span><span style=display:flex><span>Deleted: sha256:f129b789c58f529b932863a829528e08c6e9f930ebfd43bbdd35cddb7004b8ab
+</span></span><span style=display:flex><span>Deleted: sha256:4fe15f8d0ae69e169824f25f1d4da3015a48feeeeebb265cd2e328e15c6a869f
+</span></span><span style=display:flex><span>9cd6278866644fb7db29e7186b270d36696b65212fbf213b0c5e35e415329e72
+</span></span><span style=display:flex><span>[SSH] completed
+</span></span><span style=display:flex><span>[SSH] exit-status: 0
+</span></span><span style=display:flex><span>`Finished: SUCCESS`
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>#### 查看新image和服务
+</span></span><span style=display:flex><span>[root@client-8 ~]# docker images
+</span></span><span style=display:flex><span>REPOSITORY                                                            TAG               IMAGE ID       CREATED        SIZE
+</span></span><span style=display:flex><span>harbor.corp.tanzu/jenkins/maven-docker                                20210723-031450   6c8e836bc53c   2 days ago     153MB
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>[root@client-8 ~]# lsof -i:8080
+</span></span><span style=display:flex><span>COMMAND     PID USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
+</span></span><span style=display:flex><span>docker-pr 41188 root    4u  IPv4 563367      0t0  TCP *:webcache (LISTEN)
+</span></span><span style=display:flex><span>docker-pr 41194 root    4u  IPv6 563373      0t0  TCP *:webcache (LISTEN)
+</span></span></code></pre></div><h3 id=部署结果>部署结果</h3><p>http到测试服务器192.168.110.27的8080端口
+<img src="https://img-blog.csdnimg.cn/8cf6ccd828fe488daee1c66d5176e49b.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p></div><footer class=post-footer><div id=wcomments></div></footer></article></section></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
 <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-</div>
-</div>
-<aside id=sidebar class=sidebar>
-<div class=sidebar-inner>
-<ul class="sidebar-nav motion-element">
-<li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>
-文章目录
-</li>
-<li class=sidebar-nav-overview data-target=site-overview>
-站点概览
-</li>
-</ul>
-<section class="site-overview sidebar-panel">
-<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
-<img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon>
-<p class=site-author-name itemprop=name>Etaon</p>
-<p class="site-description motion-element" itemprop=description>
-Kepp Going!
-</p>
-</div>
-<nav class="site-state motion-element">
-<div class="site-state-item site-state-posts">
-<a href=/post/>
-<span class=site-state-item-count>61</span>
-<span class=site-state-item-name>日志</span>
-</a>
-</div>
-<div class="site-state-item site-state-categories">
-<a href=/categories/>
-<span class=site-state-item-count>13</span>
-<span class=site-state-item-name>分类</span>
-</a>
-</div>
-<div class="site-state-item site-state-tags">
-<a href=/tags/>
-<span class=site-state-item-count>34</span>
-<span class=site-state-item-name>标签</span>
-</a>
-</div>
-</nav>
-<div class="links-of-author motion-element">
-<span class=links-of-author-item>
-<a href=https://github.com/etaon target=_blank title=GitHub>
-<i class="fa fa-fw fa-github"></i>
-GitHub
-</a>
-</span>
-<span class=links-of-author-item>
-<a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN>
-<i class="fa fa-fw fa-CSDN"></i>
-CSDN
-</a>
-</span>
-</div>
-<div class="links-of-blogroll motion-element links-of-blogroll-inline">
-<div class=links-of-blogroll-title>
-<i class="fa fa-fw fa-globe"></i>
-友情链接
-</div>
-<ul class=links-of-blogroll-list>
-<li class=links-of-blogroll-item>
-<a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a>
-</li>
-</ul>
-</div>
-<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
-<div class=tagcloud-of-blogroll-title>
-<i class="fa fa-fw fa-tags"></i>
-标签云
-</div>
-<ul class=tagcloud-of-blogroll-list>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mysql>Mysql</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/aws>Aws</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/dql>Dql</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/hadoop>Hadoop</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/redis>Redis</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/cicd>Cicd</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/git>Git</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/istio>Istio</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mongodb>Mongodb</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/azure>Azure</a>
-</li>
-</ul>
-</div>
-</section>
-<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-<div class=post-toc>
-<div class=post-toc-content><nav id=TableOfContents>
-<ul>
-<li><a href=#实验说明>实验说明</a>
-<ul>
-<li><a href=#实验拓扑>实验拓扑</a></li>
-<li><a href=#部署流程>部署流程</a></li>
-<li><a href=#实验参数>实验参数</a></li>
-</ul>
-</li>
-<li><a href=#部署服务>部署服务</a>
-<ul>
-<li><a href=#部署harbor镜像仓库>部署Harbor镜像仓库</a></li>
-<li><a href=#测试服务器>测试服务器</a></li>
-<li><a href=#jenkins服务部署>Jenkins服务部署</a></li>
-</ul>
-</li>
-<li><a href=#构建job>构建JOB</a>
-<ul>
-<li><a href=#代码源>代码源</a></li>
-<li><a href=#post-step>Post Step</a></li>
-<li><a href=#构建新镜像并push到harbor>构建新镜像并push到Harbor</a></li>
-<li><a href=#测试服务器拉取镜像发布ssh>测试服务器拉取镜像，发布（ssh）</a></li>
-<li><a href=#部署结果>部署结果</a></li>
-</ul>
-</li>
-</ul>
-</nav></div>
-</div>
-</section>
-</div>
-</aside>
-</div>
-</main>
-<footer id=footer class=footer>
-<div class=footer-inner>
-<div class=copyright>
-<span class=copyright-year>
-&copy; 2010 - 2022
-</span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id=sidebar class=sidebar><div class=sidebar-inner><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>文章目录</li><li class=sidebar-nav-overview data-target=site-overview>站点概览</li></ul><section class="site-overview sidebar-panel"><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon><p class=site-author-name itemprop=name>Etaon</p><p class="site-description motion-element" itemprop=description>Kepp Going!</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=/post/><span class=site-state-item-count>61</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>13</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>34</span>
+<span class=site-state-item-name>标签</span></a></div></nav><div class="links-of-author motion-element"><span class=links-of-author-item><a href=https://github.com/etaon target=_blank title=GitHub><i class="fa fa-fw fa-github"></i>
+GitHub</a></span>
+<span class=links-of-author-item><a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN><i class="fa fa-fw fa-CSDN"></i>
+CSDN</a></span></div><div class="links-of-blogroll motion-element links-of-blogroll-inline"><div class=links-of-blogroll-title><i class="fa fa-fw fa-globe"></i>
+友情链接</div><ul class=links-of-blogroll-list><li class=links-of-blogroll-item><a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a></li><li class=links-of-blogroll-item><a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a></li><li class=links-of-blogroll-item><a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a></li><li class=links-of-blogroll-item><a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a></li></ul></div><div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline"><div class=tagcloud-of-blogroll-title><i class="fa fa-fw fa-tags"></i>
+标签云</div><ul class=tagcloud-of-blogroll-list><li class=tagcloud-of-blogroll-item><a href=/tags/mysql>Mysql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/aws>Aws</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/dql>Dql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/hadoop>Hadoop</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/redis>Redis</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/cicd>Cicd</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/git>Git</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/istio>Istio</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/mongodb>Mongodb</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/azure>Azure</a></li></ul></div></section><section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active"><div class=post-toc><div class=post-toc-content><nav id=TableOfContents><ul><li><a href=#实验说明>实验说明</a><ul><li><a href=#实验拓扑>实验拓扑</a></li><li><a href=#部署流程>部署流程</a></li><li><a href=#实验参数>实验参数</a></li></ul></li><li><a href=#部署服务>部署服务</a><ul><li><a href=#部署harbor镜像仓库>部署Harbor镜像仓库</a></li><li><a href=#测试服务器>测试服务器</a></li><li><a href=#jenkins服务部署>Jenkins服务部署</a></li></ul></li><li><a href=#构建job>构建JOB</a><ul><li><a href=#代码源>代码源</a></li><li><a href=#post-step>Post Step</a></li><li><a href=#构建新镜像并push到harbor>构建新镜像并push到Harbor</a></li><li><a href=#测试服务器拉取镜像发布ssh>测试服务器拉取镜像，发布（ssh）</a></li><li><a href=#部署结果>部署结果</a></li></ul></li></ul></nav></div></div></section></div></aside></div></main><footer id=footer class=footer><div class=footer-inner><div class=copyright><span class=copyright-year>&copy; 2010 - 2022</span>
 <span class=with-love><i class="fa fa-heart"></i></span>
-<span class=copyright-author>路无止境！</span>
-</div>
-<div class=powered-info>
-<span class=powered-by>
-Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.91.2</a>
-</span>
+<span class=copyright-author>路无止境！</span></div><div class=powered-info><span class=powered-by>Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.101.0</a></span>
 <span class=separator-line>/</span>
-<span class=theme-info>
-Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
-</a>
-</span>
-</div>
-<div class=vistor-info>
-<script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
-<span class=site-uv>
-<i class="fa fa-user"></i>
-<span class=busuanzi-value id=busuanzi_value_site_uv></span>
-</span>
+<span class=theme-info>Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank>NexT</a></span></div><div class=vistor-info><script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<span class=site-uv><i class="fa fa-user"></i>
+<span class=busuanzi-value id=busuanzi_value_site_uv></span></span>
 <span class=separator-line>/</span>
-<span class=site-pv>
-<i class="fa fa-eye"></i>
-<span class=busuanzi-value id=busuanzi_value_site_pv></span>
-</span>
-</div>
-<div class=license-info>
-<span class=storage-info>
-Storage by
-<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a>
-</span>
+<span class=site-pv><i class="fa fa-eye"></i>
+<span class=busuanzi-value id=busuanzi_value_site_pv></span></span></div><div class=license-info><span class=storage-info>Storage by
+<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a></span>
 <span class=separator-line>/</span>
-<span class=license-num>
-<a href target=_blank></a>
-</span>
-</div>
-</div>
-</footer>
-<div class=back-to-top>
-<i class="fa fa-arrow-up"></i>
-<span id=scrollpercent><span>0</span>%</span>
-</div>
-</div>
-<script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
+<span class=license-num><a href target=_blank></a></span></div></div></footer><div class=back-to-top><i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span></div></div><script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
 <script type=text/javascript src=/js/search.js></script>
 <script type=text/javascript src=/js/affix.js></script>
 <script type=text/javascript src=/js/scrollspy.js></script>
-<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.main').css('padding-bottom'),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}}),$(document).on('affixed.bs.affix',function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var b=$('.header-inner').height()+10,c,d,a,e;$('#sidebar').css({'margin-top':b}).show(),c=parseInt($('#sidebar').css('margin-top')),d=parseInt($('.sidebar-inner').css('height')),a=c+d,e=$('.content-wrap').height(),e<a&&$('.content-wrap').css('min-height',a),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
-<script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
-<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
-<script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+'//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js',function(){new Waline({el:'#wcomments',visitor:!0,avatar:'wavatar',avatarCDN:'https://sdn.geekzu.org/avatar/',avatarForce:!1,wordLimit:'200',placeholder:' 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ',requiredFields:['nick','mail'],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$('#wcomments').html('抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。')})</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type=text/javascript>function detectIE(){var e=window.navigator.userAgent,t=e.indexOf("MSIE "),n=e.indexOf("Trident/"),s=e.indexOf("Edge/");return t>0||n>0||s>0?-1:1}function getCntViewHeight(){var t=$("#content").height(),e=$(window).height(),n=t>e?t-e:$(document).height()-e;return n}function getScrollbarWidth(){var e=$("<div />").addClass("scrollbar-measure").prependTo("body"),t=e[0],n=t.offsetWidth-t.clientWidth;return e.remove(),n}function registerBackTop(){var t=50,e=$(".back-to-top");$(window).on("scroll",function(){e.toggleClass("back-to-top-on",window.pageYOffset>t);var s=$(window).scrollTop(),o=getCntViewHeight(),i=s/o,n=Math.round(i*100),a=n>100?100:n;$("#scrollpercent>span").html(a)}),e.on("click",function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var e=".post-toc",s=$(e),t=".active-current";s.on("activate.bs.scrollspy",function(){var t=$(e+" .active").last();n(),t.addClass("active-current")}).on("clear.bs.scrollspy",n),$("body").scrollspy({target:e});function n(){$(e+" "+t).removeClass(t.substring(1))}}function initAffix(){var e=$(".header-inner").height(),t=parseInt($(".main").css("padding-bottom"),10),n=e+10;$(".sidebar-inner").affix({offset:{top:n,bottom:t}}),$(document).on("affixed.bs.affix",function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){$(window).on("resize",function(){e&&clearTimeout(e),e=setTimeout(function(){var e=document.body.clientHeight-100;updateTOCHeight(e)},0)}),updateTOCHeight(document.body.clientHeight-100);var e,t=getScrollbarWidth();$(".post-toc").css("width","calc(100% + "+t+"px)")}function updateTOCHeight(e){e=e||"auto",$(".post-toc").css("max-height",e)}$(function(){var e,t,n,s,o=$(".header-inner").height()+10;$("#sidebar").css({"margin-top":o}).show(),t=parseInt($("#sidebar").css("margin-top")),n=parseInt($(".sidebar-inner").css("height")),e=t+n,s=$(".content-wrap").height(),s<e&&$(".content-wrap").css("min-height",e),$(".site-nav-toggle").on("click",function(){var e=$(".site-nav"),o=$(".toggle"),t="site-nav-on",i="toggle-close",n=e.hasClass(t),a=n?"slideUp":"slideDown",s=n?"removeClass":"addClass";e.stop()[a]("normal",function(){e[s](t),o[s](i)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$(".sidebar-nav-toc").click(function(){$(this).addClass("sidebar-nav-active"),$(this).next().removeClass("sidebar-nav-active"),$("."+$(this).next().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)}),$(".sidebar-nav-overview").click(function(){$(this).addClass("sidebar-nav-active"),$(this).prev().removeClass("sidebar-nav-active"),$("."+$(this).prev().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)})})</script><script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$(".post-body").viewer()})</script><script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+"//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js",function(){new Waline({el:"#wcomments",visitor:!0,avatar:"wavatar",avatarCDN:"https://sdn.geekzu.org/avatar/",avatarForce:!1,wordLimit:"200",placeholder:" 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ",requiredFields:["nick","mail"],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$("#wcomments").html("抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。")})</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
 <script type=text/javascript src="//s7.addthis.com/js/300/addthis_widget.js#pubid=Your%20AddthisId"></script>
-<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
-</body>
-</html>
+<script>(function(){var t,e=document.createElement("script"),n=window.location.protocol.split(":")[0];n==="https"?e.src="https://zz.bdstatic.com/linksubmit/push.js":e.src="http://push.zhanzhang.baidu.com/push.js",t=document.getElementsByTagName("script")[0],t.parentNode.insertBefore(e,t)})()</script></body></html>

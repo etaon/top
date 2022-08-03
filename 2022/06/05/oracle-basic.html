@@ -1,169 +1,37 @@
-<!doctype html><html lang=zh-cn dir=content/zh-cn>
-<head>
-<meta charset=utf-8>
-<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
-<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
-<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
-<title> Oracle基本概念和结构 - 路无止境！ </title>
-<meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云">
-<meta name=author content="Etaon">
-<meta property="og:title" content="Oracle基本概念和结构">
-<meta property="og:site_name" content="路无止境！">
-<meta property="og:image" content="/img/author.jpg">
-<meta name=title content="Oracle基本概念和结构 - 路无止境！">
-<meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。">
-<link rel="shortcut icon" href=/img/favicon.ico>
-<link rel=apple-touch-icon href=/img/apple-touch-icon.png>
-<link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png>
-<link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css>
-<link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet>
-<link href=/css/main.css rel=stylesheet type=text/css>
-<link href=/css/syntax.css rel=stylesheet type=text/css>
-</head>
-<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
-<div class="container one-collumn sidebar-position-left page-home">
-<div class=headband></div>
-<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
-<div class=header-inner> <div class=site-brand-container>
-<div class=site-nav-toggle>
-<div class=toggle role=button style=opacity:1;top:0>
+<!doctype html><html lang=zh-cn dir=content/zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=content-security-policy content="upgrade-insecure-requests"><title>Oracle基本概念和结构 - 路无止境！</title><meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云"><meta name=author content="Etaon"><meta property="og:title" content="Oracle基本概念和结构"><meta property="og:site_name" content="路无止境！"><meta property="og:image" content="/img/author.jpg"><meta name=title content="Oracle基本概念和结构 - 路无止境！"><meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。"><link rel="shortcut icon" href=/img/favicon.ico><link rel=apple-touch-icon href=/img/apple-touch-icon.png><link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png><link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css><link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet><link href=/css/main.css rel=stylesheet type=text/css><link href=/css/syntax.css rel=stylesheet type=text/css></head><body itemscope itemtype=http://schema.org/WebPage lang=zh-hans><div class="container one-collumn sidebar-position-left page-home"><div class=headband></div><header id=header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle role=button style=opacity:1;top:0><span class=toggle-line></span>
 <span class=toggle-line></span>
-<span class=toggle-line></span>
-<span class=toggle-line></span>
-</div>
-</div>
-<div class=site-meta>
-<div class=multi-lang-switch>
-<i class="fa fa-fw fa-language" style=margin-right:5px></i>
-<a class=lang-link id=zh-cn href=#>中文</a>
-</div>
-<div class=custom-logo-site-title>
-<a href=/ class=brand rel=start>
-<span class=logo-line-before><i></i></span>
+<span class=toggle-line></span></div></div><div class=site-meta><div class=multi-lang-switch><i class="fa fa-fw fa-language" style=margin-right:5px></i>
+<a class=lang-link id=zh-cn href=#>中文</a></div><div class=custom-logo-site-title><a href=/ class=brand rel=start><span class=logo-line-before><i></i></span>
 <span class=site-title>路无止境！</span>
-<span class=logo-line-after><i></i></span>
-</a>
-</div>
-<p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p>
-</div>
-<div class=site-nav-right>
-<div class="toggle popup-trigger" style=opacity:1;top:0>
-<i class="fa fa-search fa-fw fa-lg"></i>
-</div>
-</div>
-</div>
-<nav class=site-nav>
-<ul id=menu class=menu>
-<li class=menu-item>
-<a href=/ rel=section>
-<i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页
-</a>
-</li>
-<li class=menu-item>
-<a href=/post rel=section>
-<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档
-</a>
-</li>
-<li class=menu-item>
-<a href=/about.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于我
-</a>
-</li>
-<li class=menu-item>
-<a href=/404.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益404
-</a>
-</li>
-<li class="menu-item menu-item-search">
-<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> 搜索</a>
-</li>
-</ul>
-<div class=site-search>
-<div class="popup search-popup local-search-popup">
-<div class="local-search-header clearfix">
-<span class=search-icon><i class="fa fa-search"></i> </span>
-<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
-<div class=local-search-input-wrapper>
-<input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
-</div>
-</div>
-<div id=local-search-result></div>
-</div>
-</div>
-</nav>
-</div>
-</header>
-<main id=main class=main>
-<div class=main-inner>
-<div class=content-wrap>
-<div id=content class=content>
-<section id=posts class=posts-expand>
-<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
-<header class=post-header>
-<h1 class=post-title itemprop="name headline" style=font-weight:700>
-<a class=post-title-link href=https://www.etaon.link/2022/06/05/oracle-basic.html itemprop=url>
-Oracle基本概念和结构
-</a>
-</h1>
-</header>
-<div class=post-body itemprop=articleBody>
-<ol>
-<li>什么是关系型数据库？
-基于关系模型的数据库，即基于二维表（行、列）存储数据的库。</li>
-<li>什么是数据库?
-数据库是存储介质上的文件—>物理存储结构</li>
-<li>什么是实例instance？
+<span class=logo-line-after><i></i></span></a></div><p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p></div><div class=site-nav-right><div class="toggle popup-trigger" style=opacity:1;top:0><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class=site-nav><ul id=menu class=menu><li class=menu-item><a href=/ rel=section><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class=menu-item><a href=/post rel=section><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class=menu-item><a href=/about.html rel=section><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于我</a></li><li class=menu-item><a href=/404.html rel=section><i class="menu-item-icon fa fa-fw fa-heartbeat"></i><br>公益404</a></li><li class="menu-item menu-item-search"><a href=javascript:; class=popup-trigger><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class=site-search><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class=search-icon><i class="fa fa-search"></i></span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span><div class=local-search-input-wrapper><input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off></div></div><div id=local-search-result></div></div></div></nav></div></header><main id=main class=main><div class=main-inner><div class=content-wrap><div id=content class=content><section id=posts class=posts-expand><article class="post post-type-normal" itemscope itemtype=http://schema.org/Article><header class=post-header><h1 class=post-title itemprop="name headline" style=font-weight:700><a class=post-title-link href=https://www.etaon.top/2022/06/05/oracle-basic.html itemprop=url>Oracle基本概念和结构</a></h1></header><div class=post-body itemprop=articleBody><ol><li>什么是关系型数据库？
+基于关系模型的数据库，即基于二维表（行、列）存储数据的库。</li><li>什么是数据库?
+数据库是存储介质上的文件—>物理存储结构</li><li>什么是实例instance？
 内存中运行的数据库进程，包括读入内容的数据库文件；
-数据库和实例可用是1:1，也可用是1:N的关系</li>
-</ol>
-<p><img src=Oracle%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E5%92%8C%E7%BB%93%E6%9E%84%20a9f74459f431436b9d5e9897ce3d3a92/DE22FBD4-EA19-46CC-B0B2-A8D082C887E5.jpeg alt=DE22FBD4-EA19-46CC-B0B2-A8D082C887E5.jpeg></p>
-<h2 id=架构-存储结构>架构-存储结构</h2>
-<p><img src=Oracle%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E5%92%8C%E7%BB%93%E6%9E%84%20a9f74459f431436b9d5e9897ce3d3a92/Untitled.png alt=Untitled></p>
-<h3 id=物理存储结构>物理存储结构</h3>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#080;font-style:italic>#实验的数据目录和文件</span>
-<span style=color:#666>[</span>root@oracle-12 prod<span style=color:#666>]</span><span style=color:#080;font-style:italic># pwd</span>
-/oracle_data/prod
-<span style=color:#666>[</span>root@oracle-12 prod<span style=color:#666>]</span><span style=color:#080;font-style:italic># ll</span>
-total <span style=color:#666>2428380</span>
--rw-r----- <span style=color:#666>1</span> oracle oinstall   <span style=color:#666>10600448</span> May <span style=color:#666>17</span> 16:50 control01.ctl
--rw-r----- <span style=color:#666>1</span> oracle oinstall   <span style=color:#666>10600448</span> May <span style=color:#666>17</span> 16:50 control02.ctl
--rw-r----- <span style=color:#666>1</span> oracle oinstall  <span style=color:#666>104865792</span> May <span style=color:#666>17</span> 15:05 lmtbsq1.dbf
--rw-r----- <span style=color:#666>1</span> oracle oinstall  <span style=color:#666>209715712</span> May <span style=color:#666>17</span> 16:50 redo01.log
--rw-r----- <span style=color:#666>1</span> oracle oinstall  <span style=color:#666>209715712</span> May <span style=color:#666>17</span> 00:15 redo02.log
--rw-r----- <span style=color:#666>1</span> oracle oinstall  <span style=color:#666>209715712</span> May <span style=color:#666>17</span> 15:00 redo03.log
--rw-r----- <span style=color:#666>1</span> oracle oinstall  <span style=color:#666>576724992</span> May <span style=color:#666>17</span> 16:50 sysaux01.dbf
--rw-r----- <span style=color:#666>1</span> oracle oinstall <span style=color:#666>1073750016</span> May <span style=color:#666>17</span> 16:46 system01.dbf
--rw-r----- <span style=color:#666>1</span> oracle oinstall   <span style=color:#666>33562624</span> May <span style=color:#666>17</span> 10:49 temp01.dbf
--rw-r----- <span style=color:#666>1</span> oracle oinstall   <span style=color:#666>73408512</span> May <span style=color:#666>17</span> 16:46 undotbs01.dbf
--rw-r----- <span style=color:#666>1</span> oracle oinstall    <span style=color:#666>5251072</span> May <span style=color:#666>17</span> 15:05 users01.dbf
-</code></pre></div><ul>
-<li>
-<p>数据文件（*.DBF）
+数据库和实例可用是1:1，也可用是1:N的关系</li></ol><p><img src=Oracle%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E5%92%8C%E7%BB%93%E6%9E%84%20a9f74459f431436b9d5e9897ce3d3a92/DE22FBD4-EA19-46CC-B0B2-A8D082C887E5.jpeg alt=DE22FBD4-EA19-46CC-B0B2-A8D082C887E5.jpeg></p><h2 id=架构-存储结构>架构-存储结构</h2><p><img src=Oracle%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E5%92%8C%E7%BB%93%E6%9E%84%20a9f74459f431436b9d5e9897ce3d3a92/Untitled.png alt=Untitled></p><h3 id=物理存储结构>物理存储结构</h3><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:#080;font-style:italic>#实验的数据目录和文件</span>
+</span></span><span style=display:flex><span><span style=color:#666>[</span>root@oracle-12 prod<span style=color:#666>]</span><span style=color:#080;font-style:italic># pwd</span>
+</span></span><span style=display:flex><span>/oracle_data/prod
+</span></span><span style=display:flex><span><span style=color:#666>[</span>root@oracle-12 prod<span style=color:#666>]</span><span style=color:#080;font-style:italic># ll</span>
+</span></span><span style=display:flex><span>total <span style=color:#666>2428380</span>
+</span></span><span style=display:flex><span>-rw-r----- <span style=color:#666>1</span> oracle oinstall   <span style=color:#666>10600448</span> May <span style=color:#666>17</span> 16:50 control01.ctl
+</span></span><span style=display:flex><span>-rw-r----- <span style=color:#666>1</span> oracle oinstall   <span style=color:#666>10600448</span> May <span style=color:#666>17</span> 16:50 control02.ctl
+</span></span><span style=display:flex><span>-rw-r----- <span style=color:#666>1</span> oracle oinstall  <span style=color:#666>104865792</span> May <span style=color:#666>17</span> 15:05 lmtbsq1.dbf
+</span></span><span style=display:flex><span>-rw-r----- <span style=color:#666>1</span> oracle oinstall  <span style=color:#666>209715712</span> May <span style=color:#666>17</span> 16:50 redo01.log
+</span></span><span style=display:flex><span>-rw-r----- <span style=color:#666>1</span> oracle oinstall  <span style=color:#666>209715712</span> May <span style=color:#666>17</span> 00:15 redo02.log
+</span></span><span style=display:flex><span>-rw-r----- <span style=color:#666>1</span> oracle oinstall  <span style=color:#666>209715712</span> May <span style=color:#666>17</span> 15:00 redo03.log
+</span></span><span style=display:flex><span>-rw-r----- <span style=color:#666>1</span> oracle oinstall  <span style=color:#666>576724992</span> May <span style=color:#666>17</span> 16:50 sysaux01.dbf
+</span></span><span style=display:flex><span>-rw-r----- <span style=color:#666>1</span> oracle oinstall <span style=color:#666>1073750016</span> May <span style=color:#666>17</span> 16:46 system01.dbf
+</span></span><span style=display:flex><span>-rw-r----- <span style=color:#666>1</span> oracle oinstall   <span style=color:#666>33562624</span> May <span style=color:#666>17</span> 10:49 temp01.dbf
+</span></span><span style=display:flex><span>-rw-r----- <span style=color:#666>1</span> oracle oinstall   <span style=color:#666>73408512</span> May <span style=color:#666>17</span> 16:46 undotbs01.dbf
+</span></span><span style=display:flex><span>-rw-r----- <span style=color:#666>1</span> oracle oinstall    <span style=color:#666>5251072</span> May <span style=color:#666>17</span> 15:05 users01.dbf
+</span></span></code></pre></div><ul><li><p>数据文件（*.DBF）
 数据文件是一个二进制文件，是用于保存用户应用程序数据和Oracle系统内部数据的文件，这些文件在操作系统中就是普通的操作系统文件。
-Oracle在创建表空间的同时会创建数据文件。</p>
-<p>必须存在的数据文件：</p>
-<ul>
-<li>system01.dbf 系统的数据文件</li>
-<li>sysaux01.dbf 系统的辅助数据文件，数据字典，AWR信息（性能诊断和调优使用）</li>
-<li>undotbs01.dbf 还原历史数据的记录文件</li>
-<li>temp.dbf 临时数据文件，排序等</li>
-</ul>
-<p>可选数据文件：</p>
-<ul>
-<li>用户数据文件lmtbsq1.dbf</li>
-</ul>
-</li>
-<li>
-<p>日志文件（*.LOG）
-日志文件在Oracle数据库中分为重做日志（Redo Log File）文件和归档日志文件两种。重做日志文件是Oracle数据库正常运行不可缺少的文件。重做日志文件主要记录了数据库操作过程。用于备份和还原数据库，以达到数据库的最新状态。</p>
-</li>
-</ul>
-<p>Oracle推荐：
+Oracle在创建表空间的同时会创建数据文件。</p><p>必须存在的数据文件：</p><ul><li>system01.dbf 系统的数据文件</li><li>sysaux01.dbf 系统的辅助数据文件，数据字典，AWR信息（性能诊断和调优使用）</li><li>undotbs01.dbf 还原历史数据的记录文件</li><li>temp.dbf 临时数据文件，排序等</li></ul><p>可选数据文件：</p><ul><li>用户数据文件lmtbsq1.dbf</li></ul></li><li><p>日志文件（*.LOG）
+日志文件在Oracle数据库中分为重做日志（Redo Log File）文件和归档日志文件两种。重做日志文件是Oracle数据库正常运行不可缺少的文件。重做日志文件主要记录了数据库操作过程。用于备份和还原数据库，以达到数据库的最新状态。</p></li></ul><p>Oracle推荐：
 - 使用日志组来管理日志文件
 - 每组至少两个成员
 - 写日志以日志组为单位
-- 默认有三个日志组</p>
-<pre><code>默认情况下，使用非归档模式
+- 默认有三个日志组</p><pre><code>默认情况下，使用非归档模式
 
 ```bash
 SYS@prod&gt;archive log list;
@@ -196,17 +64,10 @@ SYS@prod&gt;select group#,members from v$log;
 **数据文件和日志文件的关系（非常重要）**
 
 ![95B9A1C8-14E6-4B29-8357-64790FD7FE37.jpeg](Oracle%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E5%92%8C%E7%BB%93%E6%9E%84%20a9f74459f431436b9d5e9897ce3d3a92/95B9A1C8-14E6-4B29-8357-64790FD7FE37.jpeg)
-</code></pre>
-<ol>
-<li>客户端，如sqlplus 执行DML commit</li>
-<li>将事务写入日志文件，如果日志写入成功，就算客户端的commit操作成功。</li>
-</ol>
-<p>此时：
+</code></pre><ol><li>客户端，如sqlplus 执行DML commit</li><li>将事务写入日志文件，如果日志写入成功，就算客户端的commit操作成功。</li></ol><p>此时：
 1. 数据还在检查点队列，尚未写入存储中的数据文件
 2. 如果此时内存发生崩溃等情况，可用通过log文件恢复丢失的数据，称作实例恢复
-3. 当触发了检查点Checkpoint的时候，会以最高优先级唤醒数据库的写进程。来写脏数据到数据文件</p>
-<blockquote>
-<p>什么是检查点？checkpoint
+3. 当触发了检查点Checkpoint的时候，会以最高优先级唤醒数据库的写进程。来写脏数据到数据文件</p><blockquote><p>什么是检查点？checkpoint
 检查点是一个时间概念，分为完全检查点和增量检查点
 1、完全检查点
 （＊）正常关机；
@@ -214,465 +75,185 @@ SYS@prod&gt;select group#,members from v$log;
 （＊）alter system checkpoint；
 2、增量检查点（9i以后）
 （＊）每隔3秒
-（＊）当日志达到了1/3满的时候</p>
-</blockquote>
-<ul>
-<li>
-<p>控制文件（.CTL）
+（＊）当日志达到了1/3满的时候</p></blockquote><ul><li><p>控制文件（.CTL）
 控制文件是一个二进制文件，它主要记录数据库的名称、数据库的数据文件存放位置等信息。一个控制文件只能属于一个数据库。
-如果控制文件丢失，这数据库就无法操作。</p>
-<ul>
-<li>数据文件和Log文件的位置</li>
-<li>在启动过程中，系统会找tcl文件定位数据文件和log文件</li>
-<li>rman备份的元信息也存放在ctl文件中</li>
-<li>Oracle推荐多路复用机制—多存几份，应当放到不同的物理存储位置</li>
-</ul>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>SQL&gt; desc v<span style=color:#b8860b>$controlfile</span>
-Name                  Type          Nullable Default Comments
---------------------- ------------- -------- ------- --------
-STATUS                VARCHAR2<span style=color:#666>(</span>7<span style=color:#666>)</span>   Y                         
-NAME                  VARCHAR2<span style=color:#666>(</span>513<span style=color:#666>)</span> Y                         
-IS_RECOVERY_DEST_FILE VARCHAR2<span style=color:#666>(</span>3<span style=color:#666>)</span>   Y                         
-BLOCK_SIZE            NUMBER        Y                         
-FILE_SIZE_BLKS        NUMBER        Y                         
-CON_ID                NUMBER        Y                         
-
-SQL&gt; <span style=color:#a2f;font-weight:700>select</span> name from v<span style=color:#b8860b>$controlfile</span>;
-NAME
---------------------------------------------------------------------------------
-/oracle_data/prod/control01.ctl
-/oracle_data/prod/control02.ctl
-</code></pre></div></li>
-</ul>
-<h3 id=逻辑存储结构>逻辑存储结构</h3>
-<p>通过逻辑存储结构管理物理存储结构</p>
-<p><img src=Oracle%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E5%92%8C%E7%BB%93%E6%9E%84%20a9f74459f431436b9d5e9897ce3d3a92/Untitled%202.png alt=Untitled></p>
-<ol>
-<li>数据库</li>
-<li>表空间，重点关注<a href=https://www.notion.so/ae1c306764744032b0f7d8b4679605fb>表空间</a></li>
-<li>段Segment</li>
-<li>区Extent</li>
-<li>数据块 8K default</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>SQL&gt; show parameter db_block_size;
-NAME                                 TYPE        VALUE
------------------------------------- ----------- ------------------------------
-db_block_size                        integer     <span style=color:#666>8192</span>
-</code></pre></div><ul>
-<li>一个block - 8k，数据仓库 16k</li>
-<li>extent 若干连续的bolck</li>
-</ul>
-<h2 id=架构-进程结构>架构-进程结构</h2>
-<p>**<a href=https://docs.oracle.com/en/database/oracle/oracle-database/12.2/cncpt/glossary.html#GUID-DD083580-0AAF-4728-9186-BE1E319020DD>Oracle 进程</a>**是运行 Oracle 数据库代码的执行单元。在多线程体系结构中，Oracle 进程可以是操作系统进程，也可以是操作系统进程中的线程。Oracle 进程包括以下子类型：</p>
-<ul>
-<li><strong><a href=https://docs.oracle.com/en/database/oracle/oracle-database/12.2/cncpt/glossary.html#GUID-8EFE210D-EE23-42A9-B4F0-7EF79C9315EE>后台进程</a><strong>从数据库实例开始，执行维护任务，如执行</strong><a href=https://docs.oracle.com/en/database/oracle/oracle-database/12.2/cncpt/glossary.html#GUID-FFDBC27D-CE99-49C7-8BB9-C8C2D8D52801>实例恢复</a></strong>、清理进程、将重做缓冲区写入磁盘等。</li>
-<li>**<a href=https://docs.oracle.com/en/database/oracle/oracle-database/12.2/cncpt/glossary.html#GUID-E660AC1C-B704-4DC1-A35A-DB49EFB34F4A>服务器进程</a>**根据客户端请求执行工作（1-3）。</li>
-</ul>
-<p><img src=Oracle%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E5%92%8C%E7%BB%93%E6%9E%84%20a9f74459f431436b9d5e9897ce3d3a92/F69F4F92-D39B-4AE9-BA2E-AA8255D4F16C.jpeg alt=F69F4F92-D39B-4AE9-BA2E-AA8255D4F16C.jpeg></p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#666>[</span>oracle@oracle-12 prod<span style=color:#666>]</span>$ ps -ef |grep ora_ |grep -v grep
-**oracle   <span style=color:#666>21078</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:08 ora_pmon_prod**
-oracle   <span style=color:#666>21081</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:02 ora_clmn_prod
-oracle   <span style=color:#666>21083</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:16 ora_psp0_prod
-oracle   <span style=color:#666>21085</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:14:28 ora_vktm_prod
-oracle   <span style=color:#666>21090</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:09 ora_gen0_prod
-oracle   <span style=color:#666>21092</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:05 ora_mman_prod
-oracle   <span style=color:#666>21096</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:42 ora_gen1_prod
-oracle   <span style=color:#666>21100</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:04 ora_diag_prod
-oracle   <span style=color:#666>21102</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:02 ora_ofsd_prod
-oracle   <span style=color:#666>21106</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:01:13 ora_dbrm_prod
-oracle   <span style=color:#666>21108</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:17 ora_vkrm_prod
-oracle   <span style=color:#666>21110</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:04 ora_svcb_prod
-oracle   <span style=color:#666>21112</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:13 ora_pman_prod
-oracle   <span style=color:#666>21114</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:03:08 ora_dia0_prod
-**oracle   <span style=color:#666>21116</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:11 ora_dbw0_prod
-oracle   <span style=color:#666>21118</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:05 ora_lgwr_prod**
-**oracle   <span style=color:#666>21120</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:31 ora_ckpt_prod**
-oracle   <span style=color:#666>21122</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:03 ora_lg00_prod
-**oracle   <span style=color:#666>21124</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:02 ora_smon_prod**
-oracle   <span style=color:#666>21126</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:01 ora_lg01_prod
-oracle   <span style=color:#666>21128</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:08 ora_smco_prod
-oracle   <span style=color:#666>21130</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:01 ora_reco_prod
-oracle   <span style=color:#666>21134</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:04 ora_lreg_prod
-oracle   <span style=color:#666>21138</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:02 ora_pxmn_prod
-oracle   <span style=color:#666>21142</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:01:51 ora_mmon_prod
-oracle   <span style=color:#666>21144</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:01:22 ora_mmnl_prod
-oracle   <span style=color:#666>21146</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:01 ora_d000_prod
-oracle   <span style=color:#666>21148</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:01 ora_s000_prod
-oracle   <span style=color:#666>21150</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:01 ora_tmon_prod
-oracle   <span style=color:#666>21163</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:01 ora_tt00_prod
-oracle   <span style=color:#666>21165</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:01 ora_tt01_prod
-oracle   <span style=color:#666>21167</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:03 ora_tt02_prod
-oracle   <span style=color:#666>21172</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:01 ora_aqpc_prod
-oracle   <span style=color:#666>21176</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:03 ora_p000_prod
-oracle   <span style=color:#666>21178</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:01:06 ora_cjq0_prod
-oracle   <span style=color:#666>21180</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:04 ora_p001_prod
-...
-oracle   <span style=color:#666>21430</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:03 ora_p01b_prod
-oracle   <span style=color:#666>21521</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:01 ora_qm02_prod
-oracle   <span style=color:#666>21525</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:01 ora_q002_prod
-oracle   <span style=color:#666>21527</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:01 ora_q003_prod
-oracle   <span style=color:#666>23523</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> 22:00 ?        00:00:00 ora_w007_prod
-oracle   <span style=color:#666>24563</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> 22:15 ?        00:00:00 ora_w009_prod
-oracle   <span style=color:#666>24896</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> 22:20 ?        00:00:00 ora_w006_prod
-</code></pre></div><ol>
-<li>
-<p><strong>ora_dbw0_prod 写进程，默认只有一个</strong></p>
-<ol>
-<li>参数：</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>SQL&gt; show parameter writer
-NAME                                 TYPE        VALUE
------------------------------------- ----------- ------------------------------
-db_writer_processes                  integer     <span style=color:#666>1</span>
-</code></pre></div><ul>
-<li>原则：写进程的个数一般不超过CPU的核数</li>
-</ul>
-</li>
-<li>
-<p><strong>ora_lgwr_prod 写日志进程</strong></p>
-<ol>
-<li>日志组为单位</li>
-<li>看前面的日志文件内容</li>
-</ol>
-</li>
-<li>
-<p><strong>ora_ckpt_prod Checkpoint进程</strong></p>
-<ol>
-<li>完全检查点</li>
-<li>增量检查点</li>
-</ol>
-</li>
-<li>
-<p><strong>ora_smon_prod 系统的监控进程 System Monitor</strong></p>
-<ol>
-<li>Oracle的核心进程</li>
-<li>关闭Oracle最快的方式：kill -9 <em>smon进程号</em></li>
-</ol>
-</li>
-<li>
-<p><strong>ora_pmon_prod Process Monitor</strong></p>
-<ol>
-<li>当系统出现错误的时候，负责清理现场</li>
-</ol>
-</li>
-<li>
-<p>其他</p>
-</li>
-</ol>
-<p><a href=https://docs.oracle.com/en/database/oracle/oracle-database/12.2/cncpt/process-architecture.html#GUID-2E691FEA-9027-47E4-A3D0-1B235BBA295A>Database Concepts</a></p>
-<h2 id=架构-内存结构>架构-内存结构</h2>
-<ol>
-<li>SGA System Global Area</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>SQL&gt; show parameter sga
-NAME                                 TYPE        VALUE
------------------------------------- ----------- ------------------------------
-allow_group_access_to_sga            boolean     FALSE
-lock_sga                             boolean     FALSE
-pre_page_sga                         boolean     TRUE
-sga_max_size                         big integer 41216M
-sga_min_size                         big integer <span style=color:#666>0</span>
-sga_target                           big integer 41216M
-unified_audit_sga_queue_size         integer     <span style=color:#666>1048576</span>
-
-SYS@prod&gt;show sga;
-
-Total System Global Area 4.3218E+10 bytes
-Fixed Size                 <span style=color:#666>15710000</span> bytes
-Variable Size            <span style=color:#666>5637146832</span> bytes
-Database Buffers         3.7447E+10 bytes
-Redo Buffers              <span style=color:#666>118505472</span> bytes
-</code></pre></div><p>sga_target big integer 41216M，这是在数据库配置的时候设定的值；</p>
-<p>默认情况，sga_target 为 0，表示sga的值有系统自动指定</p>
-<p><img src=Oracle%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E5%92%8C%E7%BB%93%E6%9E%84%20a9f74459f431436b9d5e9897ce3d3a92/75218C39-F4D4-421A-B8BC-BD2D25B54E47.jpeg alt=75218C39-F4D4-421A-B8BC-BD2D25B54E47.jpeg></p>
-<p>1.1 SGA-BufferCache</p>
-<p><img src=Oracle%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E5%92%8C%E7%BB%93%E6%9E%84%20a9f74459f431436b9d5e9897ce3d3a92/3A5BFF0F-5DBB-4D58-B5E6-978C8020A91E.jpeg alt=3A5BFF0F-5DBB-4D58-B5E6-978C8020A91E.jpeg></p>
-<blockquote>
-<p>1、客户端在buffercache中查询数据
+如果控制文件丢失，这数据库就无法操作。</p><ul><li>数据文件和Log文件的位置</li><li>在启动过程中，系统会找tcl文件定位数据文件和log文件</li><li>rman备份的元信息也存放在ctl文件中</li><li>Oracle推荐多路复用机制—多存几份，应当放到不同的物理存储位置</li></ul><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>SQL&gt; desc v<span style=color:#b8860b>$controlfile</span>
+</span></span><span style=display:flex><span>Name                  Type          Nullable Default Comments
+</span></span><span style=display:flex><span>--------------------- ------------- -------- ------- --------
+</span></span><span style=display:flex><span>STATUS                VARCHAR2<span style=color:#666>(</span>7<span style=color:#666>)</span>   Y                         
+</span></span><span style=display:flex><span>NAME                  VARCHAR2<span style=color:#666>(</span>513<span style=color:#666>)</span> Y                         
+</span></span><span style=display:flex><span>IS_RECOVERY_DEST_FILE VARCHAR2<span style=color:#666>(</span>3<span style=color:#666>)</span>   Y                         
+</span></span><span style=display:flex><span>BLOCK_SIZE            NUMBER        Y                         
+</span></span><span style=display:flex><span>FILE_SIZE_BLKS        NUMBER        Y                         
+</span></span><span style=display:flex><span>CON_ID                NUMBER        Y                         
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>SQL&gt; <span style=color:#a2f;font-weight:700>select</span> name from v<span style=color:#b8860b>$controlfile</span>;
+</span></span><span style=display:flex><span>NAME
+</span></span><span style=display:flex><span>--------------------------------------------------------------------------------
+</span></span><span style=display:flex><span>/oracle_data/prod/control01.ctl
+</span></span><span style=display:flex><span>/oracle_data/prod/control02.ctl
+</span></span></code></pre></div></li></ul><h3 id=逻辑存储结构>逻辑存储结构</h3><p>通过逻辑存储结构管理物理存储结构</p><p><img src=Oracle%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E5%92%8C%E7%BB%93%E6%9E%84%20a9f74459f431436b9d5e9897ce3d3a92/Untitled%202.png alt=Untitled></p><ol><li>数据库</li><li>表空间，重点关注<a href=https://www.notion.so/ae1c306764744032b0f7d8b4679605fb>表空间</a></li><li>段Segment</li><li>区Extent</li><li>数据块 8K default</li></ol><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>SQL&gt; show parameter db_block_size;
+</span></span><span style=display:flex><span>NAME                                 TYPE        VALUE
+</span></span><span style=display:flex><span>------------------------------------ ----------- ------------------------------
+</span></span><span style=display:flex><span>db_block_size                        integer     <span style=color:#666>8192</span>
+</span></span></code></pre></div><ul><li>一个block - 8k，数据仓库 16k</li><li>extent 若干连续的bolck</li></ul><h2 id=架构-进程结构>架构-进程结构</h2><p>**<a href=https://docs.oracle.com/en/database/oracle/oracle-database/12.2/cncpt/glossary.html#GUID-DD083580-0AAF-4728-9186-BE1E319020DD>Oracle 进程</a>**是运行 Oracle 数据库代码的执行单元。在多线程体系结构中，Oracle 进程可以是操作系统进程，也可以是操作系统进程中的线程。Oracle 进程包括以下子类型：</p><ul><li><strong><a href=https://docs.oracle.com/en/database/oracle/oracle-database/12.2/cncpt/glossary.html#GUID-8EFE210D-EE23-42A9-B4F0-7EF79C9315EE>后台进程</a><strong>从数据库实例开始，执行维护任务，如执行</strong><a href=https://docs.oracle.com/en/database/oracle/oracle-database/12.2/cncpt/glossary.html#GUID-FFDBC27D-CE99-49C7-8BB9-C8C2D8D52801>实例恢复</a></strong>、清理进程、将重做缓冲区写入磁盘等。</li><li>**<a href=https://docs.oracle.com/en/database/oracle/oracle-database/12.2/cncpt/glossary.html#GUID-E660AC1C-B704-4DC1-A35A-DB49EFB34F4A>服务器进程</a>**根据客户端请求执行工作（1-3）。</li></ul><p><img src=Oracle%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E5%92%8C%E7%BB%93%E6%9E%84%20a9f74459f431436b9d5e9897ce3d3a92/F69F4F92-D39B-4AE9-BA2E-AA8255D4F16C.jpeg alt=F69F4F92-D39B-4AE9-BA2E-AA8255D4F16C.jpeg></p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:#666>[</span>oracle@oracle-12 prod<span style=color:#666>]</span>$ ps -ef |grep ora_ |grep -v grep
+</span></span><span style=display:flex><span>**oracle   <span style=color:#666>21078</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:08 ora_pmon_prod**
+</span></span><span style=display:flex><span>oracle   <span style=color:#666>21081</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:02 ora_clmn_prod
+</span></span><span style=display:flex><span>oracle   <span style=color:#666>21083</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:16 ora_psp0_prod
+</span></span><span style=display:flex><span>oracle   <span style=color:#666>21085</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:14:28 ora_vktm_prod
+</span></span><span style=display:flex><span>oracle   <span style=color:#666>21090</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:09 ora_gen0_prod
+</span></span><span style=display:flex><span>oracle   <span style=color:#666>21092</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:05 ora_mman_prod
+</span></span><span style=display:flex><span>oracle   <span style=color:#666>21096</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:42 ora_gen1_prod
+</span></span><span style=display:flex><span>oracle   <span style=color:#666>21100</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:04 ora_diag_prod
+</span></span><span style=display:flex><span>oracle   <span style=color:#666>21102</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:02 ora_ofsd_prod
+</span></span><span style=display:flex><span>oracle   <span style=color:#666>21106</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:01:13 ora_dbrm_prod
+</span></span><span style=display:flex><span>oracle   <span style=color:#666>21108</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:17 ora_vkrm_prod
+</span></span><span style=display:flex><span>oracle   <span style=color:#666>21110</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:04 ora_svcb_prod
+</span></span><span style=display:flex><span>oracle   <span style=color:#666>21112</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:13 ora_pman_prod
+</span></span><span style=display:flex><span>oracle   <span style=color:#666>21114</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:03:08 ora_dia0_prod
+</span></span><span style=display:flex><span>**oracle   <span style=color:#666>21116</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:11 ora_dbw0_prod
+</span></span><span style=display:flex><span>oracle   <span style=color:#666>21118</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:05 ora_lgwr_prod**
+</span></span><span style=display:flex><span>**oracle   <span style=color:#666>21120</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:31 ora_ckpt_prod**
+</span></span><span style=display:flex><span>oracle   <span style=color:#666>21122</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:03 ora_lg00_prod
+</span></span><span style=display:flex><span>**oracle   <span style=color:#666>21124</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:02 ora_smon_prod**
+</span></span><span style=display:flex><span>oracle   <span style=color:#666>21126</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:01 ora_lg01_prod
+</span></span><span style=display:flex><span>oracle   <span style=color:#666>21128</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:08 ora_smco_prod
+</span></span><span style=display:flex><span>oracle   <span style=color:#666>21130</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:01 ora_reco_prod
+</span></span><span style=display:flex><span>oracle   <span style=color:#666>21134</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:04 ora_lreg_prod
+</span></span><span style=display:flex><span>oracle   <span style=color:#666>21138</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:02 ora_pxmn_prod
+</span></span><span style=display:flex><span>oracle   <span style=color:#666>21142</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:01:51 ora_mmon_prod
+</span></span><span style=display:flex><span>oracle   <span style=color:#666>21144</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:01:22 ora_mmnl_prod
+</span></span><span style=display:flex><span>oracle   <span style=color:#666>21146</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:01 ora_d000_prod
+</span></span><span style=display:flex><span>oracle   <span style=color:#666>21148</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:01 ora_s000_prod
+</span></span><span style=display:flex><span>oracle   <span style=color:#666>21150</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:01 ora_tmon_prod
+</span></span><span style=display:flex><span>oracle   <span style=color:#666>21163</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:01 ora_tt00_prod
+</span></span><span style=display:flex><span>oracle   <span style=color:#666>21165</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:01 ora_tt01_prod
+</span></span><span style=display:flex><span>oracle   <span style=color:#666>21167</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:03 ora_tt02_prod
+</span></span><span style=display:flex><span>oracle   <span style=color:#666>21172</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:01 ora_aqpc_prod
+</span></span><span style=display:flex><span>oracle   <span style=color:#666>21176</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:03 ora_p000_prod
+</span></span><span style=display:flex><span>oracle   <span style=color:#666>21178</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:01:06 ora_cjq0_prod
+</span></span><span style=display:flex><span>oracle   <span style=color:#666>21180</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:04 ora_p001_prod
+</span></span><span style=display:flex><span>...
+</span></span><span style=display:flex><span>oracle   <span style=color:#666>21430</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:03 ora_p01b_prod
+</span></span><span style=display:flex><span>oracle   <span style=color:#666>21521</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:01 ora_qm02_prod
+</span></span><span style=display:flex><span>oracle   <span style=color:#666>21525</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:01 ora_q002_prod
+</span></span><span style=display:flex><span>oracle   <span style=color:#666>21527</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> May15 ?        00:00:01 ora_q003_prod
+</span></span><span style=display:flex><span>oracle   <span style=color:#666>23523</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> 22:00 ?        00:00:00 ora_w007_prod
+</span></span><span style=display:flex><span>oracle   <span style=color:#666>24563</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> 22:15 ?        00:00:00 ora_w009_prod
+</span></span><span style=display:flex><span>oracle   <span style=color:#666>24896</span>     <span style=color:#666>1</span>  <span style=color:#666>0</span> 22:20 ?        00:00:00 ora_w006_prod
+</span></span></code></pre></div><ol><li><p><strong>ora_dbw0_prod 写进程，默认只有一个</strong></p><ol><li>参数：</li></ol><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>SQL&gt; show parameter writer
+</span></span><span style=display:flex><span>NAME                                 TYPE        VALUE
+</span></span><span style=display:flex><span>------------------------------------ ----------- ------------------------------
+</span></span><span style=display:flex><span>db_writer_processes                  integer     <span style=color:#666>1</span>
+</span></span></code></pre></div><ul><li>原则：写进程的个数一般不超过CPU的核数</li></ul></li><li><p><strong>ora_lgwr_prod 写日志进程</strong></p><ol><li>日志组为单位</li><li>看前面的日志文件内容</li></ol></li><li><p><strong>ora_ckpt_prod Checkpoint进程</strong></p><ol><li>完全检查点</li><li>增量检查点</li></ol></li><li><p><strong>ora_smon_prod 系统的监控进程 System Monitor</strong></p><ol><li>Oracle的核心进程</li><li>关闭Oracle最快的方式：kill -9 <em>smon进程号</em></li></ol></li><li><p><strong>ora_pmon_prod Process Monitor</strong></p><ol><li>当系统出现错误的时候，负责清理现场</li></ol></li><li><p>其他</p></li></ol><p><a href=https://docs.oracle.com/en/database/oracle/oracle-database/12.2/cncpt/process-architecture.html#GUID-2E691FEA-9027-47E4-A3D0-1B235BBA295A>Database Concepts</a></p><h2 id=架构-内存结构>架构-内存结构</h2><ol><li>SGA System Global Area</li></ol><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>SQL&gt; show parameter sga
+</span></span><span style=display:flex><span>NAME                                 TYPE        VALUE
+</span></span><span style=display:flex><span>------------------------------------ ----------- ------------------------------
+</span></span><span style=display:flex><span>allow_group_access_to_sga            boolean     FALSE
+</span></span><span style=display:flex><span>lock_sga                             boolean     FALSE
+</span></span><span style=display:flex><span>pre_page_sga                         boolean     TRUE
+</span></span><span style=display:flex><span>sga_max_size                         big integer 41216M
+</span></span><span style=display:flex><span>sga_min_size                         big integer <span style=color:#666>0</span>
+</span></span><span style=display:flex><span>sga_target                           big integer 41216M
+</span></span><span style=display:flex><span>unified_audit_sga_queue_size         integer     <span style=color:#666>1048576</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>SYS@prod&gt;show sga;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Total System Global Area 4.3218E+10 bytes
+</span></span><span style=display:flex><span>Fixed Size                 <span style=color:#666>15710000</span> bytes
+</span></span><span style=display:flex><span>Variable Size            <span style=color:#666>5637146832</span> bytes
+</span></span><span style=display:flex><span>Database Buffers         3.7447E+10 bytes
+</span></span><span style=display:flex><span>Redo Buffers              <span style=color:#666>118505472</span> bytes
+</span></span></code></pre></div><p>sga_target big integer 41216M，这是在数据库配置的时候设定的值；</p><p>默认情况，sga_target 为 0，表示sga的值有系统自动指定</p><p><img src=Oracle%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E5%92%8C%E7%BB%93%E6%9E%84%20a9f74459f431436b9d5e9897ce3d3a92/75218C39-F4D4-421A-B8BC-BD2D25B54E47.jpeg alt=75218C39-F4D4-421A-B8BC-BD2D25B54E47.jpeg></p><p>1.1 SGA-BufferCache</p><p><img src=Oracle%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E5%92%8C%E7%BB%93%E6%9E%84%20a9f74459f431436b9d5e9897ce3d3a92/3A5BFF0F-5DBB-4D58-B5E6-978C8020A91E.jpeg alt=3A5BFF0F-5DBB-4D58-B5E6-978C8020A91E.jpeg></p><blockquote><p>1、客户端在buffercache中查询数据
 2、BufferCache如果有数据，称为一次命中
-3、如果没有数据，读取数据文件＊.dbf直接返回数据</p>
-</blockquote>
-<p>查看buffercache大小,0表示有Oracle自动指定</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>SQL&gt; show parameter cache_size
-NAME                                 TYPE        VALUE
------------------------------------- ----------- ------------------------------
-client_result_cache_size             big integer <span style=color:#666>0</span>
-data_transfer_cache_size             big integer <span style=color:#666>0</span>
-db_16k_cache_size                    big integer <span style=color:#666>0</span>
-db_2k_cache_size                     big integer <span style=color:#666>0</span>
-db_32k_cache_size                    big integer <span style=color:#666>0</span>
-db_4k_cache_size                     big integer <span style=color:#666>0</span>
-db_8k_cache_size                     big integer <span style=color:#666>0</span>
-**db_cache_size                        big integer 0**
-db_flash_cache_size                  big integer <span style=color:#666>0</span>
-db_keep_cache_size                   big integer <span style=color:#666>0</span>
-db_recycle_cache_size                big integer <span style=color:#666>0</span>
-</code></pre></div><p>1.2 SGA-Shared Pool</p>
-<p>数据字典、SQL、执行计划，</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>SQL&gt; show parameter shared_pool
-NAME                                 TYPE        VALUE
------------------------------------- ----------- ------------------------------
-shared_pool_reserved_size            big integer 224M
-shared_pool_size                     big integer <span style=color:#666>0</span>
-</code></pre></div><p>1.3 SGA-log Buffer</p>
-<p>有明确的值</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>SQL&gt; show parameter log_buffer
-NAME                                 TYPE        VALUE
------------------------------------- ----------- ------------------------------
-log_buffer                           big integer 112120K
-</code></pre></div><p>1.4 其他pool</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>SQL&gt; show parameter java_pool
-NAME                                 TYPE        VALUE
------------------------------------- ----------- ------------------------------
-java_pool_size                       big integer <span style=color:#666>0</span>
-
-SQL&gt; show parameter large_pool
-NAME                                 TYPE        VALUE
------------------------------------- ----------- ------------------------------
-large_pool_size                      big integer <span style=color:#666>0</span>
-
-SQL&gt; show parameter streams_pool
-NAME                                 TYPE        VALUE
------------------------------------- ----------- ------------------------------
-streams_pool_size                    big integer <span style=color:#666>0</span>
-</code></pre></div><ol>
-<li>PGA：Process Global Area</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>SQL&gt; show parameter pga
-NAME                                 TYPE        VALUE
------------------------------------- ----------- ------------------------------
-pga_aggregate_limit                  big integer 20564M
-pga_aggregate_target                 big integer 10282M
-
-<span style=color:#080;font-style:italic>#默认情况，sga_target  为 0</span>
-</code></pre></div><p>11g以后提供2个功能。</p>
-<ul>
-<li>AMM，Automatic memory management。设置一个总内存，让Oracle自动分配SGA和PGA。memory_target = SGA + n*PGA</li>
-</ul>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>SQL&gt; show parameter memory
-NAME                                 TYPE        VALUE
------------------------------------- ----------- ------------------------------
-hi_shared_memory_address             integer     <span style=color:#666>0</span>
-inmemory_adg_enabled                 boolean     TRUE
-inmemory_clause_default              string      
-inmemory_expressions_usage           string      ENABLE
-inmemory_force                       string      DEFAULT
-inmemory_max_populate_servers        integer     <span style=color:#666>0</span>
-inmemory_query                       string      ENABLE
-inmemory_size                        big integer <span style=color:#666>0</span>
-inmemory_trickle_repopulate_servers_percent integer <span style=color:#666>1</span>
-inmemory_virtual_columns             string      MANUAL
-memory_max_target                    big integer <span style=color:#666>0</span>
-memory_target                        big integer <span style=color:#666>0</span>
-optimizer_inmemory_aware             boolean     TRUE
-shared_memory_address                integer     <span style=color:#666>0</span>
-</code></pre></div><ul>
-<li>ASMM（Automatic Shared Memory Management）自动分配SGA内部的各部分内存使用。</li>
-</ul>
-</div>
-<footer class=post-footer>
-<div id=wcomments></div>
-</footer>
-</article>
-</section>
-</div>
-</div>
-<div class=sidebar-toggle>
-<div class=sidebar-toggle-line-wrap>
-<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+3、如果没有数据，读取数据文件＊.dbf直接返回数据</p></blockquote><p>查看buffercache大小,0表示有Oracle自动指定</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>SQL&gt; show parameter cache_size
+</span></span><span style=display:flex><span>NAME                                 TYPE        VALUE
+</span></span><span style=display:flex><span>------------------------------------ ----------- ------------------------------
+</span></span><span style=display:flex><span>client_result_cache_size             big integer <span style=color:#666>0</span>
+</span></span><span style=display:flex><span>data_transfer_cache_size             big integer <span style=color:#666>0</span>
+</span></span><span style=display:flex><span>db_16k_cache_size                    big integer <span style=color:#666>0</span>
+</span></span><span style=display:flex><span>db_2k_cache_size                     big integer <span style=color:#666>0</span>
+</span></span><span style=display:flex><span>db_32k_cache_size                    big integer <span style=color:#666>0</span>
+</span></span><span style=display:flex><span>db_4k_cache_size                     big integer <span style=color:#666>0</span>
+</span></span><span style=display:flex><span>db_8k_cache_size                     big integer <span style=color:#666>0</span>
+</span></span><span style=display:flex><span>**db_cache_size                        big integer 0**
+</span></span><span style=display:flex><span>db_flash_cache_size                  big integer <span style=color:#666>0</span>
+</span></span><span style=display:flex><span>db_keep_cache_size                   big integer <span style=color:#666>0</span>
+</span></span><span style=display:flex><span>db_recycle_cache_size                big integer <span style=color:#666>0</span>
+</span></span></code></pre></div><p>1.2 SGA-Shared Pool</p><p>数据字典、SQL、执行计划，</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>SQL&gt; show parameter shared_pool
+</span></span><span style=display:flex><span>NAME                                 TYPE        VALUE
+</span></span><span style=display:flex><span>------------------------------------ ----------- ------------------------------
+</span></span><span style=display:flex><span>shared_pool_reserved_size            big integer 224M
+</span></span><span style=display:flex><span>shared_pool_size                     big integer <span style=color:#666>0</span>
+</span></span></code></pre></div><p>1.3 SGA-log Buffer</p><p>有明确的值</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>SQL&gt; show parameter log_buffer
+</span></span><span style=display:flex><span>NAME                                 TYPE        VALUE
+</span></span><span style=display:flex><span>------------------------------------ ----------- ------------------------------
+</span></span><span style=display:flex><span>log_buffer                           big integer 112120K
+</span></span></code></pre></div><p>1.4 其他pool</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>SQL&gt; show parameter java_pool
+</span></span><span style=display:flex><span>NAME                                 TYPE        VALUE
+</span></span><span style=display:flex><span>------------------------------------ ----------- ------------------------------
+</span></span><span style=display:flex><span>java_pool_size                       big integer <span style=color:#666>0</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>SQL&gt; show parameter large_pool
+</span></span><span style=display:flex><span>NAME                                 TYPE        VALUE
+</span></span><span style=display:flex><span>------------------------------------ ----------- ------------------------------
+</span></span><span style=display:flex><span>large_pool_size                      big integer <span style=color:#666>0</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>SQL&gt; show parameter streams_pool
+</span></span><span style=display:flex><span>NAME                                 TYPE        VALUE
+</span></span><span style=display:flex><span>------------------------------------ ----------- ------------------------------
+</span></span><span style=display:flex><span>streams_pool_size                    big integer <span style=color:#666>0</span>
+</span></span></code></pre></div><ol><li>PGA：Process Global Area</li></ol><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>SQL&gt; show parameter pga
+</span></span><span style=display:flex><span>NAME                                 TYPE        VALUE
+</span></span><span style=display:flex><span>------------------------------------ ----------- ------------------------------
+</span></span><span style=display:flex><span>pga_aggregate_limit                  big integer 20564M
+</span></span><span style=display:flex><span>pga_aggregate_target                 big integer 10282M
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic>#默认情况，sga_target  为 0</span>
+</span></span></code></pre></div><p>11g以后提供2个功能。</p><ul><li>AMM，Automatic memory management。设置一个总内存，让Oracle自动分配SGA和PGA。memory_target = SGA + n*PGA</li></ul><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>SQL&gt; show parameter memory
+</span></span><span style=display:flex><span>NAME                                 TYPE        VALUE
+</span></span><span style=display:flex><span>------------------------------------ ----------- ------------------------------
+</span></span><span style=display:flex><span>hi_shared_memory_address             integer     <span style=color:#666>0</span>
+</span></span><span style=display:flex><span>inmemory_adg_enabled                 boolean     TRUE
+</span></span><span style=display:flex><span>inmemory_clause_default              string      
+</span></span><span style=display:flex><span>inmemory_expressions_usage           string      ENABLE
+</span></span><span style=display:flex><span>inmemory_force                       string      DEFAULT
+</span></span><span style=display:flex><span>inmemory_max_populate_servers        integer     <span style=color:#666>0</span>
+</span></span><span style=display:flex><span>inmemory_query                       string      ENABLE
+</span></span><span style=display:flex><span>inmemory_size                        big integer <span style=color:#666>0</span>
+</span></span><span style=display:flex><span>inmemory_trickle_repopulate_servers_percent integer <span style=color:#666>1</span>
+</span></span><span style=display:flex><span>inmemory_virtual_columns             string      MANUAL
+</span></span><span style=display:flex><span>memory_max_target                    big integer <span style=color:#666>0</span>
+</span></span><span style=display:flex><span>memory_target                        big integer <span style=color:#666>0</span>
+</span></span><span style=display:flex><span>optimizer_inmemory_aware             boolean     TRUE
+</span></span><span style=display:flex><span>shared_memory_address                integer     <span style=color:#666>0</span>
+</span></span></code></pre></div><ul><li>ASMM（Automatic Shared Memory Management）自动分配SGA内部的各部分内存使用。</li></ul></div><footer class=post-footer><div id=wcomments></div></footer></article></section></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
 <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-</div>
-</div>
-<aside id=sidebar class=sidebar>
-<div class=sidebar-inner>
-<ul class="sidebar-nav motion-element">
-<li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>
-文章目录
-</li>
-<li class=sidebar-nav-overview data-target=site-overview>
-站点概览
-</li>
-</ul>
-<section class="site-overview sidebar-panel">
-<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
-<img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon>
-<p class=site-author-name itemprop=name>Etaon</p>
-<p class="site-description motion-element" itemprop=description>
-Kepp Going!
-</p>
-</div>
-<nav class="site-state motion-element">
-<div class="site-state-item site-state-posts">
-<a href=/post/>
-<span class=site-state-item-count>61</span>
-<span class=site-state-item-name>日志</span>
-</a>
-</div>
-<div class="site-state-item site-state-categories">
-<a href=/categories/>
-<span class=site-state-item-count>13</span>
-<span class=site-state-item-name>分类</span>
-</a>
-</div>
-<div class="site-state-item site-state-tags">
-<a href=/tags/>
-<span class=site-state-item-count>34</span>
-<span class=site-state-item-name>标签</span>
-</a>
-</div>
-</nav>
-<div class="links-of-author motion-element">
-<span class=links-of-author-item>
-<a href=https://github.com/etaon target=_blank title=GitHub>
-<i class="fa fa-fw fa-github"></i>
-GitHub
-</a>
-</span>
-<span class=links-of-author-item>
-<a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN>
-<i class="fa fa-fw fa-CSDN"></i>
-CSDN
-</a>
-</span>
-</div>
-<div class="links-of-blogroll motion-element links-of-blogroll-inline">
-<div class=links-of-blogroll-title>
-<i class="fa fa-fw fa-globe"></i>
-友情链接
-</div>
-<ul class=links-of-blogroll-list>
-<li class=links-of-blogroll-item>
-<a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a>
-</li>
-</ul>
-</div>
-<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
-<div class=tagcloud-of-blogroll-title>
-<i class="fa fa-fw fa-tags"></i>
-标签云
-</div>
-<ul class=tagcloud-of-blogroll-list>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mysql>Mysql</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/aws>Aws</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/dql>Dql</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/hadoop>Hadoop</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/redis>Redis</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/cicd>Cicd</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/git>Git</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/istio>Istio</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mongodb>Mongodb</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/azure>Azure</a>
-</li>
-</ul>
-</div>
-</section>
-<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-<div class=post-toc>
-<div class=post-toc-content><nav id=TableOfContents>
-<ul>
-<li><a href=#架构-存储结构>架构-存储结构</a>
-<ul>
-<li><a href=#物理存储结构>物理存储结构</a></li>
-<li><a href=#逻辑存储结构>逻辑存储结构</a></li>
-</ul>
-</li>
-<li><a href=#架构-进程结构>架构-进程结构</a></li>
-<li><a href=#架构-内存结构>架构-内存结构</a></li>
-</ul>
-</nav></div>
-</div>
-</section>
-</div>
-</aside>
-</div>
-</main>
-<footer id=footer class=footer>
-<div class=footer-inner>
-<div class=copyright>
-<span class=copyright-year>
-&copy; 2010 - 2022
-</span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id=sidebar class=sidebar><div class=sidebar-inner><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>文章目录</li><li class=sidebar-nav-overview data-target=site-overview>站点概览</li></ul><section class="site-overview sidebar-panel"><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon><p class=site-author-name itemprop=name>Etaon</p><p class="site-description motion-element" itemprop=description>Kepp Going!</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=/post/><span class=site-state-item-count>61</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>13</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>34</span>
+<span class=site-state-item-name>标签</span></a></div></nav><div class="links-of-author motion-element"><span class=links-of-author-item><a href=https://github.com/etaon target=_blank title=GitHub><i class="fa fa-fw fa-github"></i>
+GitHub</a></span>
+<span class=links-of-author-item><a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN><i class="fa fa-fw fa-CSDN"></i>
+CSDN</a></span></div><div class="links-of-blogroll motion-element links-of-blogroll-inline"><div class=links-of-blogroll-title><i class="fa fa-fw fa-globe"></i>
+友情链接</div><ul class=links-of-blogroll-list><li class=links-of-blogroll-item><a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a></li><li class=links-of-blogroll-item><a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a></li><li class=links-of-blogroll-item><a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a></li><li class=links-of-blogroll-item><a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a></li></ul></div><div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline"><div class=tagcloud-of-blogroll-title><i class="fa fa-fw fa-tags"></i>
+标签云</div><ul class=tagcloud-of-blogroll-list><li class=tagcloud-of-blogroll-item><a href=/tags/mysql>Mysql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/aws>Aws</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/dql>Dql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/hadoop>Hadoop</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/redis>Redis</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/cicd>Cicd</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/git>Git</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/istio>Istio</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/mongodb>Mongodb</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/azure>Azure</a></li></ul></div></section><section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active"><div class=post-toc><div class=post-toc-content><nav id=TableOfContents><ul><li><a href=#架构-存储结构>架构-存储结构</a><ul><li><a href=#物理存储结构>物理存储结构</a></li><li><a href=#逻辑存储结构>逻辑存储结构</a></li></ul></li><li><a href=#架构-进程结构>架构-进程结构</a></li><li><a href=#架构-内存结构>架构-内存结构</a></li></ul></nav></div></div></section></div></aside></div></main><footer id=footer class=footer><div class=footer-inner><div class=copyright><span class=copyright-year>&copy; 2010 - 2022</span>
 <span class=with-love><i class="fa fa-heart"></i></span>
-<span class=copyright-author>路无止境！</span>
-</div>
-<div class=powered-info>
-<span class=powered-by>
-Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.91.2</a>
-</span>
+<span class=copyright-author>路无止境！</span></div><div class=powered-info><span class=powered-by>Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.101.0</a></span>
 <span class=separator-line>/</span>
-<span class=theme-info>
-Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
-</a>
-</span>
-</div>
-<div class=vistor-info>
-<script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
-<span class=site-uv>
-<i class="fa fa-user"></i>
-<span class=busuanzi-value id=busuanzi_value_site_uv></span>
-</span>
+<span class=theme-info>Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank>NexT</a></span></div><div class=vistor-info><script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<span class=site-uv><i class="fa fa-user"></i>
+<span class=busuanzi-value id=busuanzi_value_site_uv></span></span>
 <span class=separator-line>/</span>
-<span class=site-pv>
-<i class="fa fa-eye"></i>
-<span class=busuanzi-value id=busuanzi_value_site_pv></span>
-</span>
-</div>
-<div class=license-info>
-<span class=storage-info>
-Storage by
-<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a>
-</span>
+<span class=site-pv><i class="fa fa-eye"></i>
+<span class=busuanzi-value id=busuanzi_value_site_pv></span></span></div><div class=license-info><span class=storage-info>Storage by
+<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a></span>
 <span class=separator-line>/</span>
-<span class=license-num>
-<a href target=_blank></a>
-</span>
-</div>
-</div>
-</footer>
-<div class=back-to-top>
-<i class="fa fa-arrow-up"></i>
-<span id=scrollpercent><span>0</span>%</span>
-</div>
-</div>
-<script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
+<span class=license-num><a href target=_blank></a></span></div></div></footer><div class=back-to-top><i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span></div></div><script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
 <script type=text/javascript src=/js/search.js></script>
 <script type=text/javascript src=/js/affix.js></script>
 <script type=text/javascript src=/js/scrollspy.js></script>
-<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.main').css('padding-bottom'),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}}),$(document).on('affixed.bs.affix',function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var b=$('.header-inner').height()+10,c,d,a,e;$('#sidebar').css({'margin-top':b}).show(),c=parseInt($('#sidebar').css('margin-top')),d=parseInt($('.sidebar-inner').css('height')),a=c+d,e=$('.content-wrap').height(),e<a&&$('.content-wrap').css('min-height',a),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
-<script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
-<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
-<script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+'//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js',function(){new Waline({el:'#wcomments',visitor:!0,avatar:'wavatar',avatarCDN:'https://sdn.geekzu.org/avatar/',avatarForce:!1,wordLimit:'200',placeholder:' 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ',requiredFields:['nick','mail'],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$('#wcomments').html('抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。')})</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type=text/javascript>function detectIE(){var e=window.navigator.userAgent,t=e.indexOf("MSIE "),n=e.indexOf("Trident/"),s=e.indexOf("Edge/");return t>0||n>0||s>0?-1:1}function getCntViewHeight(){var t=$("#content").height(),e=$(window).height(),n=t>e?t-e:$(document).height()-e;return n}function getScrollbarWidth(){var e=$("<div />").addClass("scrollbar-measure").prependTo("body"),t=e[0],n=t.offsetWidth-t.clientWidth;return e.remove(),n}function registerBackTop(){var t=50,e=$(".back-to-top");$(window).on("scroll",function(){e.toggleClass("back-to-top-on",window.pageYOffset>t);var s=$(window).scrollTop(),o=getCntViewHeight(),i=s/o,n=Math.round(i*100),a=n>100?100:n;$("#scrollpercent>span").html(a)}),e.on("click",function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var e=".post-toc",s=$(e),t=".active-current";s.on("activate.bs.scrollspy",function(){var t=$(e+" .active").last();n(),t.addClass("active-current")}).on("clear.bs.scrollspy",n),$("body").scrollspy({target:e});function n(){$(e+" "+t).removeClass(t.substring(1))}}function initAffix(){var e=$(".header-inner").height(),t=parseInt($(".main").css("padding-bottom"),10),n=e+10;$(".sidebar-inner").affix({offset:{top:n,bottom:t}}),$(document).on("affixed.bs.affix",function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){$(window).on("resize",function(){e&&clearTimeout(e),e=setTimeout(function(){var e=document.body.clientHeight-100;updateTOCHeight(e)},0)}),updateTOCHeight(document.body.clientHeight-100);var e,t=getScrollbarWidth();$(".post-toc").css("width","calc(100% + "+t+"px)")}function updateTOCHeight(e){e=e||"auto",$(".post-toc").css("max-height",e)}$(function(){var e,t,n,s,o=$(".header-inner").height()+10;$("#sidebar").css({"margin-top":o}).show(),t=parseInt($("#sidebar").css("margin-top")),n=parseInt($(".sidebar-inner").css("height")),e=t+n,s=$(".content-wrap").height(),s<e&&$(".content-wrap").css("min-height",e),$(".site-nav-toggle").on("click",function(){var e=$(".site-nav"),o=$(".toggle"),t="site-nav-on",i="toggle-close",n=e.hasClass(t),a=n?"slideUp":"slideDown",s=n?"removeClass":"addClass";e.stop()[a]("normal",function(){e[s](t),o[s](i)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$(".sidebar-nav-toc").click(function(){$(this).addClass("sidebar-nav-active"),$(this).next().removeClass("sidebar-nav-active"),$("."+$(this).next().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)}),$(".sidebar-nav-overview").click(function(){$(this).addClass("sidebar-nav-active"),$(this).prev().removeClass("sidebar-nav-active"),$("."+$(this).prev().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)})})</script><script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$(".post-body").viewer()})</script><script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+"//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js",function(){new Waline({el:"#wcomments",visitor:!0,avatar:"wavatar",avatarCDN:"https://sdn.geekzu.org/avatar/",avatarForce:!1,wordLimit:"200",placeholder:" 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ",requiredFields:["nick","mail"],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$("#wcomments").html("抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。")})</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
 <script type=text/javascript src="//s7.addthis.com/js/300/addthis_widget.js#pubid=Your%20AddthisId"></script>
-<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
-</body>
-</html>
+<script>(function(){var t,e=document.createElement("script"),n=window.location.protocol.split(":")[0];n==="https"?e.src="https://zz.bdstatic.com/linksubmit/push.js":e.src="http://push.zhanzhang.baidu.com/push.js",t=document.getElementsByTagName("script")[0],t.parentNode.insertBefore(e,t)})()</script></body></html>

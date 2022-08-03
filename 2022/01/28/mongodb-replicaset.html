@@ -1,1267 +1,723 @@
-<!doctype html><html lang=zh-cn dir=content/zh-cn>
-<head>
-<meta charset=utf-8>
-<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
-<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
-<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
-<title> MongoDB-ReplicaSet - 路无止境！ </title>
-<meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云">
-<meta name=author content="Etaon">
-<meta property="og:title" content="MongoDB-ReplicaSet">
-<meta property="og:site_name" content="路无止境！">
-<meta property="og:image" content="/img/author.jpg">
-<meta name=title content="MongoDB-ReplicaSet - 路无止境！">
-<meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。">
-<link rel="shortcut icon" href=/img/favicon.ico>
-<link rel=apple-touch-icon href=/img/apple-touch-icon.png>
-<link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png>
-<link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css>
-<link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet>
-<link href=/css/main.css rel=stylesheet type=text/css>
-<link href=/css/syntax.css rel=stylesheet type=text/css>
-</head>
-<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
-<div class="container one-collumn sidebar-position-left page-home">
-<div class=headband></div>
-<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
-<div class=header-inner> <div class=site-brand-container>
-<div class=site-nav-toggle>
-<div class=toggle role=button style=opacity:1;top:0>
+<!doctype html><html lang=zh-cn dir=content/zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=content-security-policy content="upgrade-insecure-requests"><title>MongoDB-ReplicaSet - 路无止境！</title><meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云"><meta name=author content="Etaon"><meta property="og:title" content="MongoDB-ReplicaSet"><meta property="og:site_name" content="路无止境！"><meta property="og:image" content="/img/author.jpg"><meta name=title content="MongoDB-ReplicaSet - 路无止境！"><meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。"><link rel="shortcut icon" href=/img/favicon.ico><link rel=apple-touch-icon href=/img/apple-touch-icon.png><link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png><link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css><link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet><link href=/css/main.css rel=stylesheet type=text/css><link href=/css/syntax.css rel=stylesheet type=text/css></head><body itemscope itemtype=http://schema.org/WebPage lang=zh-hans><div class="container one-collumn sidebar-position-left page-home"><div class=headband></div><header id=header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle role=button style=opacity:1;top:0><span class=toggle-line></span>
 <span class=toggle-line></span>
-<span class=toggle-line></span>
-<span class=toggle-line></span>
-</div>
-</div>
-<div class=site-meta>
-<div class=multi-lang-switch>
-<i class="fa fa-fw fa-language" style=margin-right:5px></i>
-<a class=lang-link id=zh-cn href=#>中文</a>
-</div>
-<div class=custom-logo-site-title>
-<a href=/ class=brand rel=start>
-<span class=logo-line-before><i></i></span>
+<span class=toggle-line></span></div></div><div class=site-meta><div class=multi-lang-switch><i class="fa fa-fw fa-language" style=margin-right:5px></i>
+<a class=lang-link id=zh-cn href=#>中文</a></div><div class=custom-logo-site-title><a href=/ class=brand rel=start><span class=logo-line-before><i></i></span>
 <span class=site-title>路无止境！</span>
-<span class=logo-line-after><i></i></span>
-</a>
-</div>
-<p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p>
-</div>
-<div class=site-nav-right>
-<div class="toggle popup-trigger" style=opacity:1;top:0>
-<i class="fa fa-search fa-fw fa-lg"></i>
-</div>
-</div>
-</div>
-<nav class=site-nav>
-<ul id=menu class=menu>
-<li class=menu-item>
-<a href=/ rel=section>
-<i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页
-</a>
-</li>
-<li class=menu-item>
-<a href=/post rel=section>
-<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档
-</a>
-</li>
-<li class=menu-item>
-<a href=/about.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于我
-</a>
-</li>
-<li class=menu-item>
-<a href=/404.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益404
-</a>
-</li>
-<li class="menu-item menu-item-search">
-<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> 搜索</a>
-</li>
-</ul>
-<div class=site-search>
-<div class="popup search-popup local-search-popup">
-<div class="local-search-header clearfix">
-<span class=search-icon><i class="fa fa-search"></i> </span>
-<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
-<div class=local-search-input-wrapper>
-<input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
-</div>
-</div>
-<div id=local-search-result></div>
-</div>
-</div>
-</nav>
-</div>
-</header>
-<main id=main class=main>
-<div class=main-inner>
-<div class=content-wrap>
-<div id=content class=content>
-<section id=posts class=posts-expand>
-<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
-<header class=post-header>
-<h1 class=post-title itemprop="name headline" style=font-weight:700>
-<a class=post-title-link href=https://www.etaon.link/2022/01/28/mongodb-replicaset.html itemprop=url>
-MongoDB-ReplicaSet
-</a>
-</h1>
-</header>
-<div class=post-body itemprop=articleBody>
-<h1 id=mongodb-replicaset-install>Mongodb-ReplicaSet Install</h1>
-<h2 id=概述>概述</h2>
-<p>正如上一篇<a href=https://blog.csdn.net/weixin_43394724/article/details/122623604>Mongodb-Single Server Install</a>中所说，mongod数据库服务有不同的部署方案（单机部署，副本集部署，分片集群部署），通过不同的配置，可以扮演多种不同的角色：</p>
-<ul>
-<li>在单机部署中提供所有数据库服务读写功能</li>
-<li>在副本集部署中，部署可以是 primary节点（主服务器，负责写数据，也可以提供查询）、secondary节点（从服务器，它从主节点复制数据，也可以提供查询）、以及arbiter节点（仲裁节点，不保存数据，主要用于参与选举投票）</li>
-<li>在分片集群中，除了在每个分片中扮演上述角色外，还扮演着配置服务的角色（存储有分片集群的所有元数据信息，mongos的数据路由分发等都要依赖于它）</li>
-</ul>
-<p>我们本实验中安装副本集方案，参考官方文档：<a href=https://docs.mongodb.com/manual/replication/>https://docs.mongodb.com/manual/replication/</a></p>
-<p>MongoDB 在 1.6 版本对开发了新功能replica set，这比之前的replication 功能要强大一 些，增加了故障自动切换和自动修复成员节点，各个DB 之间数据完全一致，大大降低了维 护成功。3.6版本后已经不支持replication paris（主从复制方式），建议使用replica set，replica set 故障切换完全自动。</p>
-<p>Replica Sets的结构类似一个集群，完全可以把它当成一个集群，因为它确实与集群实现的作用是一样的：如果其中一个节点出现故障，其他节点马上会将业务接管过来而无须停机操作。</p>
-<h3 id=副本集角色>副本集角色</h3>
-<p>在副本集部署方案中，有三个角色：</p>
-<ul>
-<li>主节点（Primary）：主要接收所有写操作</li>
-<li>副本节点（Replicate）：从主节点通过复制操作以维护相同的数据集，即备份数据，不可写操作，但可以读操作（但需要配置），是默认的一种从节点类型。</li>
-<li>仲裁者（Arbiter）：不保留任何数据的副本，只具有投票选举作用。当然也可以将仲裁服务器维护为副本集的一部分，即副本成员同时也可以是仲裁者，也是一种从节点类型。</li>
-<li>避免为每个副本集部署多个仲裁服务器。</li>
-</ul>
-<h3 id=副本集成员及容错>副本集成员及容错</h3>
-<h3 id=成员最大数>成员最大数</h3>
-<ul>
-<li>一个副本集最多可以有50个成员，但只有7个投票权成员。即如果副本集已具有 7 个投票成员，则其他成员必须是无表决权的成员。</li>
-<li>确保副本集具有奇数个投票成员。</li>
-</ul>
-<h3 id=副本集容错>副本集容错</h3>
-<p>副本集的容错能力是可能变得不可用且仍会在集中留下足够成员来选择主副本集的成员数。
+<span class=logo-line-after><i></i></span></a></div><p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p></div><div class=site-nav-right><div class="toggle popup-trigger" style=opacity:1;top:0><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class=site-nav><ul id=menu class=menu><li class=menu-item><a href=/ rel=section><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class=menu-item><a href=/post rel=section><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class=menu-item><a href=/about.html rel=section><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于我</a></li><li class=menu-item><a href=/404.html rel=section><i class="menu-item-icon fa fa-fw fa-heartbeat"></i><br>公益404</a></li><li class="menu-item menu-item-search"><a href=javascript:; class=popup-trigger><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class=site-search><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class=search-icon><i class="fa fa-search"></i></span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span><div class=local-search-input-wrapper><input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off></div></div><div id=local-search-result></div></div></div></nav></div></header><main id=main class=main><div class=main-inner><div class=content-wrap><div id=content class=content><section id=posts class=posts-expand><article class="post post-type-normal" itemscope itemtype=http://schema.org/Article><header class=post-header><h1 class=post-title itemprop="name headline" style=font-weight:700><a class=post-title-link href=https://www.etaon.top/2022/01/28/mongodb-replicaset.html itemprop=url>MongoDB-ReplicaSet</a></h1></header><div class=post-body itemprop=articleBody><h1 id=mongodb-replicaset-install>Mongodb-ReplicaSet Install</h1><h2 id=概述>概述</h2><p>正如上一篇<a href=https://blog.csdn.net/weixin_43394724/article/details/122623604>Mongodb-Single Server Install</a>中所说，mongod数据库服务有不同的部署方案（单机部署，副本集部署，分片集群部署），通过不同的配置，可以扮演多种不同的角色：</p><ul><li>在单机部署中提供所有数据库服务读写功能</li><li>在副本集部署中，部署可以是 primary节点（主服务器，负责写数据，也可以提供查询）、secondary节点（从服务器，它从主节点复制数据，也可以提供查询）、以及arbiter节点（仲裁节点，不保存数据，主要用于参与选举投票）</li><li>在分片集群中，除了在每个分片中扮演上述角色外，还扮演着配置服务的角色（存储有分片集群的所有元数据信息，mongos的数据路由分发等都要依赖于它）</li></ul><p>我们本实验中安装副本集方案，参考官方文档：<a href=https://docs.mongodb.com/manual/replication/>https://docs.mongodb.com/manual/replication/</a></p><p>MongoDB 在 1.6 版本对开发了新功能replica set，这比之前的replication 功能要强大一 些，增加了故障自动切换和自动修复成员节点，各个DB 之间数据完全一致，大大降低了维 护成功。3.6版本后已经不支持replication paris（主从复制方式），建议使用replica set，replica set 故障切换完全自动。</p><p>Replica Sets的结构类似一个集群，完全可以把它当成一个集群，因为它确实与集群实现的作用是一样的：如果其中一个节点出现故障，其他节点马上会将业务接管过来而无须停机操作。</p><h3 id=副本集角色>副本集角色</h3><p>在副本集部署方案中，有三个角色：</p><ul><li>主节点（Primary）：主要接收所有写操作</li><li>副本节点（Replicate）：从主节点通过复制操作以维护相同的数据集，即备份数据，不可写操作，但可以读操作（但需要配置），是默认的一种从节点类型。</li><li>仲裁者（Arbiter）：不保留任何数据的副本，只具有投票选举作用。当然也可以将仲裁服务器维护为副本集的一部分，即副本成员同时也可以是仲裁者，也是一种从节点类型。</li><li>避免为每个副本集部署多个仲裁服务器。</li></ul><h3 id=副本集成员及容错>副本集成员及容错</h3><h3 id=成员最大数>成员最大数</h3><ul><li>一个副本集最多可以有50个成员，但只有7个投票权成员。即如果副本集已具有 7 个投票成员，则其他成员必须是无表决权的成员。</li><li>确保副本集具有奇数个投票成员。</li></ul><h3 id=副本集容错>副本集容错</h3><p>副本集的容错能力是可能变得不可用且仍会在集中留下足够成员来选择主副本集的成员数。
 换句话说，它是集合中的成员数量与选举初选所需的大多数投票成员之间的差异。如果没有主副本，副本集将无法接受写入操作。容错是副本集大小的影响，但这种关系不是直接的。
-我们知道大多数是指N/2+1，那么我们可以得到容错能力和集群成员数的关系：</p>
-<table>
-<thead>
-<tr>
-<th>成员数量</th>
-<th>选举新的初选所需的多数票</th>
-<th>容错</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>3</td>
-<td>2</td>
-<td>1</td>
-</tr>
-<tr>
-<td>4</td>
-<td>3</td>
-<td>1</td>
-</tr>
-<tr>
-<td>5</td>
-<td>3</td>
-<td>2</td>
-</tr>
-<tr>
-<td>6</td>
-<td>4</td>
-<td>2</td>
-</tr>
-<tr>
-<td>&mldr;</td>
-<td>0</td>
-<td>0</td>
-</tr>
-<tr>
-<td>设计集群成员数，最好也应为奇数。</td>
-<td>0</td>
-<td>0</td>
-</tr>
-</tbody>
-</table>
-<h3 id=主节点选取>主节点选取</h3>
-<p>当初始化的主节点故障是，副本集的其他主机会要根据一定规则来选主节点。</p>
-<h3 id=选举规则>选举规则</h3>
-<p>选举规则是根据票数来决定谁获胜：</p>
-<ul>
-<li>票数最高，且获得了“大多数”成员的投票支持的节点获胜。</li>
-<li>“大多数”的定义为：假设复制集内投票成员数量为N，则大多数为 N/2 + 1。例如：3个投票成员，
-则大多数的值是2。</li>
-<li>当复制集内存活成员数量不足大多数时，整个复制集将无法选举出Primary，复制集将无法提供写服务，处于只读状态。例如在两节点集群，大多数是N/+1=2，当主节点故障，则剩下一台无法选取得到2票。</li>
-<li>为了解决上一问题，可以使用仲裁者（Arbiter）。推广的讲，副本集应该设置奇数节点成员。</li>
-<li>若票数相同，且都获得了“大多数”成员的投票支持的，数据新的节点获胜。数据的新旧是通过操作日志oplog来对比的。</li>
-</ul>
-<h3 id=优先级>优先级</h3>
-<p>在获得票数的时候，优先级（priority）参数影响重大。
+我们知道大多数是指N/2+1，那么我们可以得到容错能力和集群成员数的关系：</p><table><thead><tr><th>成员数量</th><th>选举新的初选所需的多数票</th><th>容错</th></tr></thead><tbody><tr><td>3</td><td>2</td><td>1</td></tr><tr><td>4</td><td>3</td><td>1</td></tr><tr><td>5</td><td>3</td><td>2</td></tr><tr><td>6</td><td>4</td><td>2</td></tr><tr><td>&mldr;</td><td>0</td><td>0</td></tr><tr><td>设计集群成员数，最好也应为奇数。</td><td>0</td><td>0</td></tr></tbody></table><h3 id=主节点选取>主节点选取</h3><p>当初始化的主节点故障是，副本集的其他主机会要根据一定规则来选主节点。</p><h3 id=选举规则>选举规则</h3><p>选举规则是根据票数来决定谁获胜：</p><ul><li>票数最高，且获得了“大多数”成员的投票支持的节点获胜。</li><li>“大多数”的定义为：假设复制集内投票成员数量为N，则大多数为 N/2 + 1。例如：3个投票成员，
+则大多数的值是2。</li><li>当复制集内存活成员数量不足大多数时，整个复制集将无法选举出Primary，复制集将无法提供写服务，处于只读状态。例如在两节点集群，大多数是N/+1=2，当主节点故障，则剩下一台无法选取得到2票。</li><li>为了解决上一问题，可以使用仲裁者（Arbiter）。推广的讲，副本集应该设置奇数节点成员。</li><li>若票数相同，且都获得了“大多数”成员的投票支持的，数据新的节点获胜。数据的新旧是通过操作日志oplog来对比的。</li></ul><h3 id=优先级>优先级</h3><p>在获得票数的时候，优先级（priority）参数影响重大。
 可以通过设置优先级（priority）来设置额外票数。优先级即权重，取值为0-1000，相当于可额外增加0-1000的票数，优先级的值越大，就越可能获得多数成员的投票（votes）数。
 指定较高的值可使成员更有资格成为主要成员，更低的值可使成员更不符合条件。
-默认情况下，优先级的值是1。</p>
-<h3 id=连接到副本集>连接到副本集</h3>
-<p>由于在副本集中，能够接受写操作的是主成员，而主成员在发生故障的时候会发转移。<a href=https://docs.mongodb.com/manual/reference/connection-string/>Mongodb官方</a>给出了连接副本集的方法，而避免直接连接到某个副本集成员</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>标准 URI 连接方案的格式为：
-
-mongodb://[username:password@]host1[:port1][,...hostN[:portN]][/[defaultauthdb][?options]]
-
-</code></pre></div><p>对于副本集：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>mongodb://mongodb0.example.com:27017,mongodb1.example.com:27017,mongodb2.example.com:27017/?replicaSet=myrs #myrs为副本集名称
-
-</code></pre></div><p>对于强制实施访问控制的副本集，需要包括用户凭据：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>mongodb://myDBReader:D1fficultP%40ssw0rd@mongodb0.example.com:27017,mongodb1.example.com:27017,mongodb2.example.com:27017/?authSource=admin&amp;replicaSet=myrs
-
-</code></pre></div><h2 id=lab>Lab</h2>
-<p>设计3成员副本集，采用一台Primary和两台Secondary</p>
-<p><img src=Mongodb-ReplicaSet%20Install%204140895adb63499e80a48722c1e4e686/Untitled.png alt=Untitled></p>
-<h3 id=拓扑说明>拓扑说明</h3>
-<p>本次实验使用三个mongodb实例，分别为Alma、db1和db2。</p>
-<ul>
-<li>Alma为主节点（Primary）：主要接收所有写操作</li>
-<li>db1、db2为副本节点（Replicate）</li>
-</ul>
-<h3 id=安装过程>安装过程</h3>
-<h3 id=三台mongodb安装mongod-server>三台mongodb安装mongod server</h3>
-<p>安装步骤和<a href=https://blog.csdn.net/weixin_43394724/article/details/122623604>Mongodb-Single Server Install</a>一致，不过在mongd.conf中要配置副本集参数，默认位置/etc/mongod.conf：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>replication:
-  replSetName: etaonrs
-
-</code></pre></div><p>其中：副本集名字为：etaonrs</p>
-<p>参考完整的配置文件：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>systemLog:
-#MongoDB发送所有日志输出的目标指定为文件
-destination: file
-#mongod或mongos应向其发送所有诊断日志记录信息的日志文件的路径
-path: &#34;/mongodb/replica_sets/log/mongod.log&#34;
-#当mongos或mongod实例重新启动时，mongos或mongod会将新条目附加到现有日志文件的末尾。
-logAppend: true
-storage:
-#mongod实例存储其数据的目录。storage.dbPath设置仅适用于mongod。
-dbPath: &#34;/mongodb/replica_sets/data/db&#34;
-journal:
-#启用或禁用持久性日志以确保数据文件保持有效和可恢复。
-enabled: true
-processManagement:
-#启用在后台运行mongos或mongod进程的守护进程模式。
-fork: true
-#指定用于保存mongos或mongod进程的进程ID的文件位置，其中mongos或mongod将写入其PID
-pidFilePath: &#34;/mongodb/replica_sets/log/mongod.pid&#34;
-net:
-#服务实例绑定所有IP，有副作用，副本集初始化的时候，节点名字会自动设置为本地域名，而不是ip
-#bindIpAll: true
-#服务实例绑定的IP
-bindIp: 0.0.0.0
-#bindIp
-#绑定的端口
-port: 27019
-replication:
-#副本集的名称
-replSetName: etaonrs
-
-</code></pre></div><h3 id=选择主节点初始化副本集>选择主节点初始化副本集</h3>
-<p>使用rs.initiate()初始化副本集和主节点</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>rs.initiate(configuration)
-
-</code></pre></div><table>
-<thead>
-<tr>
-<th>Parameter</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>configuration</td>
-<td>document</td>
-<td>Optional. A document that specifies configuration for the new replica set. If a configuration is not specified,MongoDB uses a default replica set configuration.</td>
-</tr>
-</tbody>
-</table>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>&gt; rs.initiate()
-{
-        &#34;info2&#34; : &#34;no configuration specified. Using a default configuration for the set&#34;,
-        &#34;me&#34; : &#34;Alma:27017&#34;,
-        &#34;ok&#34; : 1
-}
-etaonrs:SECONDARY&gt;
-etaonrs:PRIMARY&gt;
-etaonrs:PRIMARY&gt;
-
-</code></pre></div><ul>
-<li>“ok”的值为1，说明创建成功。</li>
-<li>可以看到，该节点马上转化为主节点</li>
-</ul>
-<h3 id=向副本集添加辅助成员>向副本集添加辅助成员</h3>
-<p>语法：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>rs.add(host, arbiterOnly)
-
-</code></pre></div><table>
-<thead>
-<tr>
-<th>Parameter</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>host</td>
-<td>string or document</td>
-<td>要添加到副本集的新成员。 指定为字符串或配置文档：1）如果是一个字符串，则需要指定新成员的主机名和可选的端口号；2）如果是一个文档，请指定在members数组中找到的副本集成员配置文档。 必须在成员配置文档中指定主机字段。</td>
-</tr>
-<tr>
-<td>arbiterOnly</td>
-<td>boolean</td>
-<td>可选的。 仅在 <host> 值为字符串时适用。 如果为true，则添加的主机是仲裁者。</td>
-</tr>
-</tbody>
-</table>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>etaonrs:PRIMARY&gt; rs.add(&#39;db1:27017&#39;)
-{
-        &#34;ok&#34; : 1,
-        &#34;$clusterTime&#34; : {
-                &#34;clusterTime&#34; : Timestamp(1643259552, 1),
-                &#34;signature&#34; : {
-                        &#34;hash&#34; : BinData(0,&#34;AAAAAAAAAAAAAAAAAAAAAAAAAAA=&#34;),
-                        &#34;keyId&#34; : NumberLong(0)
-                }
-        },
-        &#34;operationTime&#34; : Timestamp(1643259552, 1)
-}
-etaonrs:PRIMARY&gt; rs.add(&#39;db2:27017&#39;)
-{
-        &#34;ok&#34; : 1,
-        &#34;$clusterTime&#34; : {
-                &#34;clusterTime&#34; : Timestamp(1643259569, 1),
-                &#34;signature&#34; : {
-                        &#34;hash&#34; : BinData(0,&#34;AAAAAAAAAAAAAAAAAAAAAAAAAAA=&#34;),
-                        &#34;keyId&#34; : NumberLong(0)
-                }
-        },
-        &#34;operationTime&#34; : Timestamp(1643259569, 1)
-}
-
-</code></pre></div><h3 id=查看副本集状态>查看副本集状态</h3>
-<p>使用rs.status()命令</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>etaonrs:PRIMARY&gt; rs.status()
-{
-        &#34;set&#34; : &#34;etaonrs&#34;,
-        &#34;date&#34; : ISODate(&#34;2022-01-27T05:05:54.779Z&#34;),
-        &#34;myState&#34; : 1,
-        &#34;term&#34; : NumberLong(9),
-        &#34;syncSourceHost&#34; : &#34;&#34;,
-        &#34;syncSourceId&#34; : -1,
-        &#34;heartbeatIntervalMillis&#34; : NumberLong(2000),
-        &#34;majorityVoteCount&#34; : 2,
-        &#34;writeMajorityCount&#34; : 2,
-        &#34;votingMembersCount&#34; : 3,
-        &#34;writableVotingMembersCount&#34; : 3,
-        &#34;optimes&#34; : {
-                &#34;lastCommittedOpTime&#34; : {
-                        &#34;ts&#34; : Timestamp(1643259948, 1),
-                        &#34;t&#34; : NumberLong(9)
-                },
-                &#34;lastCommittedWallTime&#34; : ISODate(&#34;2022-01-27T05:05:48.385Z&#34;),
-                &#34;readConcernMajorityOpTime&#34; : {
-                        &#34;ts&#34; : Timestamp(1643259948, 1),
-                        &#34;t&#34; : NumberLong(9)
-                },
-                &#34;appliedOpTime&#34; : {
-                        &#34;ts&#34; : Timestamp(1643259948, 1),
-                        &#34;t&#34; : NumberLong(9)
-                },
-                &#34;durableOpTime&#34; : {
-                        &#34;ts&#34; : Timestamp(1643259948, 1),
-                        &#34;t&#34; : NumberLong(9)
-                },
-                &#34;lastAppliedWallTime&#34; : ISODate(&#34;2022-01-27T05:05:48.385Z&#34;),
-                &#34;lastDurableWallTime&#34; : ISODate(&#34;2022-01-27T05:05:48.385Z&#34;)
-        },
-        &#34;lastStableRecoveryTimestamp&#34; : Timestamp(1643259898, 1),
-        &#34;electionCandidateMetrics&#34; : {
-                &#34;lastElectionReason&#34; : &#34;electionTimeout&#34;,
-                &#34;lastElectionDate&#34; : ISODate(&#34;2022-01-27T04:58:18.287Z&#34;),
-                &#34;electionTerm&#34; : NumberLong(9),
-                &#34;lastCommittedOpTimeAtElection&#34; : {
-                        &#34;ts&#34; : Timestamp(1643258692, 1),
-                        &#34;t&#34; : NumberLong(8)
-                },
-                &#34;lastSeenOpTimeAtElection&#34; : {
-                        &#34;ts&#34; : Timestamp(1643258702, 1),
-                        &#34;t&#34; : NumberLong(8)
-                },
-                &#34;numVotesNeeded&#34; : 1,
-                &#34;priorityAtElection&#34; : 1,
-                &#34;electionTimeoutMillis&#34; : NumberLong(10000),
-                &#34;newTermStartDate&#34; : ISODate(&#34;2022-01-27T04:58:18.296Z&#34;),
-                &#34;wMajorityWriteAvailabilityDate&#34; : ISODate(&#34;2022-01-27T04:58:18.306Z&#34;)
-        },
-        &#34;members&#34; : [
-                {
-                        &#34;_id&#34; : 0,
-                        &#34;name&#34; : &#34;Alma:27017&#34;,
-                        &#34;health&#34; : 1,
-                        &#34;state&#34; : 1,
-                        &#34;stateStr&#34; : &#34;PRIMARY&#34;,
-                        &#34;uptime&#34; : 5813,
-                        &#34;optime&#34; : {
-                                &#34;ts&#34; : Timestamp(1643259948, 1),
-                                &#34;t&#34; : NumberLong(9)
-                        },
-                        &#34;optimeDate&#34; : ISODate(&#34;2022-01-27T05:05:48Z&#34;),
-                        &#34;lastAppliedWallTime&#34; : ISODate(&#34;2022-01-27T05:05:48.385Z&#34;),
-                        &#34;lastDurableWallTime&#34; : ISODate(&#34;2022-01-27T05:05:48.385Z&#34;),
-                        &#34;syncSourceHost&#34; : &#34;&#34;,
-                        &#34;syncSourceId&#34; : -1,
-                        &#34;infoMessage&#34; : &#34;&#34;,
-                        &#34;electionTime&#34; : Timestamp(1643259498, 1),
-                        &#34;electionDate&#34; : ISODate(&#34;2022-01-27T04:58:18Z&#34;),
-                        &#34;configVersion&#34; : 387392,
-                        &#34;configTerm&#34; : 9,
-                        &#34;self&#34; : true,
-                        &#34;lastHeartbeatMessage&#34; : &#34;&#34;
-                },
-                {
-                        &#34;_id&#34; : 1,
-                        &#34;name&#34; : &#34;db1:27017&#34;,
-                        &#34;health&#34; : 1,
-                        &#34;state&#34; : 2,
-                        &#34;stateStr&#34; : &#34;SECONDARY&#34;,
-                        &#34;uptime&#34; : 212,
-                        &#34;optime&#34; : {
-                                &#34;ts&#34; : Timestamp(1643259948, 1),
-                                &#34;t&#34; : NumberLong(9)
-                        },
-                        &#34;optimeDurable&#34; : {
-                                &#34;ts&#34; : Timestamp(1643259948, 1),
-                                &#34;t&#34; : NumberLong(9)
-                        },
-                        &#34;optimeDate&#34; : ISODate(&#34;2022-01-27T05:05:48Z&#34;),
-                        &#34;optimeDurableDate&#34; : ISODate(&#34;2022-01-27T05:05:48Z&#34;),
-                        &#34;lastAppliedWallTime&#34; : ISODate(&#34;2022-01-27T05:05:48.385Z&#34;),
-                        &#34;lastDurableWallTime&#34; : ISODate(&#34;2022-01-27T05:05:48.385Z&#34;),
-                        &#34;lastHeartbeat&#34; : ISODate(&#34;2022-01-27T05:05:53.038Z&#34;),
-                        &#34;lastHeartbeatRecv&#34; : ISODate(&#34;2022-01-27T05:05:53.914Z&#34;),
-                        &#34;pingMs&#34; : NumberLong(0),
-                        &#34;lastHeartbeatMessage&#34; : &#34;&#34;,
-                        &#34;syncSourceHost&#34; : &#34;Alma:27017&#34;,
-                        &#34;syncSourceId&#34; : 0,
-                        &#34;infoMessage&#34; : &#34;&#34;,
-                        &#34;configVersion&#34; : 387392,
-                        &#34;configTerm&#34; : 9
-                },
-                {
-                        &#34;_id&#34; : 2,
-                        &#34;name&#34; : &#34;db2:27017&#34;,
-                        &#34;health&#34; : 1,
-                        &#34;state&#34; : 2,
-                        &#34;stateStr&#34; : &#34;SECONDARY&#34;,
-                        &#34;uptime&#34; : 218,
-                        &#34;optime&#34; : {
-                                &#34;ts&#34; : Timestamp(1643259948, 1),
-                                &#34;t&#34; : NumberLong(9)
-                        },
-                        &#34;optimeDurable&#34; : {
-                                &#34;ts&#34; : Timestamp(1643259948, 1),
-                                &#34;t&#34; : NumberLong(9)
-                        },
-                        &#34;optimeDate&#34; : ISODate(&#34;2022-01-27T05:05:48Z&#34;),
-                        &#34;optimeDurableDate&#34; : ISODate(&#34;2022-01-27T05:05:48Z&#34;),
-                        &#34;lastAppliedWallTime&#34; : ISODate(&#34;2022-01-27T05:05:48.385Z&#34;),
-                        &#34;lastDurableWallTime&#34; : ISODate(&#34;2022-01-27T05:05:48.385Z&#34;),
-                        &#34;lastHeartbeat&#34; : ISODate(&#34;2022-01-27T05:05:53.038Z&#34;),
-                        &#34;lastHeartbeatRecv&#34; : ISODate(&#34;2022-01-27T05:05:52.932Z&#34;),
-                        &#34;pingMs&#34; : NumberLong(0),
-                        &#34;lastHeartbeatMessage&#34; : &#34;&#34;,
-                        &#34;syncSourceHost&#34; : &#34;Alma:27017&#34;,
-                        &#34;syncSourceId&#34; : 0,
-                        &#34;infoMessage&#34; : &#34;&#34;,
-                        &#34;configVersion&#34; : 387392,
-                        &#34;configTerm&#34; : 9
-                }
-        ],
-        &#34;ok&#34; : 1,
-        &#34;$clusterTime&#34; : {
-                &#34;clusterTime&#34; : Timestamp(1643259948, 1),
-                &#34;signature&#34; : {
-                        &#34;hash&#34; : BinData(0,&#34;AAAAAAAAAAAAAAAAAAAAAAAAAAA=&#34;),
-                        &#34;keyId&#34; : NumberLong(0)
-                }
-        },
-        &#34;operationTime&#34; : Timestamp(1643259948, 1)
-}
-
-</code></pre></div><ul>
-<li>&ldquo;set&rdquo; : &ldquo;etaonrs&rdquo; ：副本集的名字</li>
-<li>&ldquo;myState&rdquo; : 1：说明状态正常</li>
-<li>&ldquo;majorityVoteCount&rdquo; : 2 ：抽票成主成员所需票数</li>
-<li>&ldquo;members&rdquo; ：副本集成员数组，此时有三个：&ldquo;name&rdquo; : &ldquo;Alma:27017&rdquo;， &ldquo;db1:27017"和 &ldquo;db2:27017&rdquo;</li>
-<li>&ldquo;stateStr&rdquo; : &ldquo;PRIMARY"成员角色</li>
-<li>&ldquo;health&rdquo; : 1 ：成员健康情况，1表示健康，-1表示不健康</li>
-</ul>
-<h3 id=副本集的读写操作>副本集的读写操作</h3>
-<ol>
-<li>主成员的操作
-在主成员上查看document，读取操作</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>etaonrs:PRIMARY&gt; use etaondb
-switched to db etaondb
-etaonrs:PRIMARY&gt; db.comment.find()
-{ &#34;_id&#34; : &#34;0&#34;, &#34;articleid&#34; : &#34;100000&#34;, &#34;content&#34; : &#34;今天天气真好，阳光明媚&#34;, &#34;userid&#34; : &#34;1001&#34;, &#34;nickname&#34; : &#34;Rose&#34;, &#34;createdatetime&#34; : ISODate(&#34;2022-01-27T03:06:19.502Z&#34;), &#34;likenum&#34; : 10, &#34;state&#34; : null }
-{ &#34;_id&#34; : &#34;1&#34;, &#34;articleid&#34; : &#34;100001&#34;, &#34;content&#34; : &#34;我们不应该把清晨浪费在手机上，健康很重要，一杯温水幸福你我他。&#34;, &#34;userid&#34; : &#34;1002&#34;, &#34;nickname&#34; : &#34;相忘于江湖&#34;, &#34;createdatetime&#34; : ISODate(&#34;2019-08-05T22:08:15.522Z&#34;), &#34;likenum&#34; : 1000, &#34;state&#34; : &#34;1&#34; }
-{ &#34;_id&#34; : &#34;2&#34;, &#34;articleid&#34; : &#34;100001&#34;, &#34;content&#34; : &#34;我夏天空腹喝凉开水，冬天喝温开水&#34;, &#34;userid&#34; : &#34;1005&#34;, &#34;nickname&#34; : &#34;伊人憔悴&#34;, &#34;createdatetime&#34; : ISODate(&#34;2019-08-05T23:58:51.485Z&#34;), &#34;likenum&#34; : 888, &#34;state&#34; : &#34;1&#34; }
-{ &#34;_id&#34; : &#34;3&#34;, &#34;articleid&#34; : &#34;100001&#34;, &#34;content&#34; : &#34;我一直喝凉开水，冬天夏天都喝。&#34;, &#34;userid&#34; : &#34;1004&#34;, &#34;nickname&#34; : &#34;杰克船长&#34;, &#34;createdatetime&#34; : ISODate(&#34;2019-08-06T01:05:06.321Z&#34;), &#34;likenum&#34; : 666, &#34;state&#34; : &#34;1&#34; }
-{ &#34;_id&#34; : &#34;4&#34;, &#34;articleid&#34; : &#34;100001&#34;, &#34;content&#34; : &#34;专家说不能空腹吃饭，影响健康。&#34;, &#34;userid&#34; : &#34;1003&#34;, &#34;nickname&#34; : &#34;凯撒&#34;, &#34;createdatetime&#34; : ISODate(&#34;2019-08-06T08:18:35.288Z&#34;), &#34;likenum&#34; : 2000, &#34;state&#34; : &#34;1&#34; }
-{ &#34;_id&#34; : &#34;5&#34;, &#34;articleid&#34; : &#34;100001&#34;, &#34;content&#34; : &#34;研究表明，刚烧开的水千万不能喝，因为烫嘴。&#34;, &#34;userid&#34; : &#34;1003&#34;, &#34;nickname&#34; : &#34;凯撒&#34;, &#34;createdatetime&#34; : ISODate(&#34;2019-08-06T11:01:02.521Z&#34;), &#34;likenum&#34; : 3000, &#34;state&#34; : &#34;1&#34; }
-
-</code></pre></div><p>删除一条记录并查看，写操作和读取操作</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>etaonrs:PRIMARY&gt; db.comment.remove({userid:&#39;1002&#39;})
-WriteResult({ &#34;nRemoved&#34; : 1 })
-etaonrs:PRIMARY&gt; db.comment.find()
-{ &#34;_id&#34; : &#34;0&#34;, &#34;articleid&#34; : &#34;100000&#34;, &#34;content&#34; : &#34;今天天气真好，阳光明媚&#34;, &#34;userid&#34; : &#34;1001&#34;, &#34;nickname&#34; : &#34;Rose&#34;, &#34;createdatetime&#34; : ISODate(&#34;2022-01-27T03:06:19.502Z&#34;), &#34;likenum&#34; : 10, &#34;state&#34; : null }
-{ &#34;_id&#34; : &#34;2&#34;, &#34;articleid&#34; : &#34;100001&#34;, &#34;content&#34; : &#34;我夏天空腹喝凉开水，冬天喝温开水&#34;, &#34;userid&#34; : &#34;1005&#34;, &#34;nickname&#34; : &#34;伊人憔悴&#34;, &#34;createdatetime&#34; : ISODate(&#34;2019-08-05T23:58:51.485Z&#34;), &#34;likenum&#34; : 888, &#34;state&#34; : &#34;1&#34; }
-{ &#34;_id&#34; : &#34;3&#34;, &#34;articleid&#34; : &#34;100001&#34;, &#34;content&#34; : &#34;我一直喝凉开水，冬天夏天都喝。&#34;, &#34;userid&#34; : &#34;1004&#34;, &#34;nickname&#34; : &#34;杰克船长&#34;, &#34;createdatetime&#34; : ISODate(&#34;2019-08-06T01:05:06.321Z&#34;), &#34;likenum&#34; : 666, &#34;state&#34; : &#34;1&#34; }
-{ &#34;_id&#34; : &#34;4&#34;, &#34;articleid&#34; : &#34;100001&#34;, &#34;content&#34; : &#34;专家说不能空腹吃饭，影响健康。&#34;, &#34;userid&#34; : &#34;1003&#34;, &#34;nickname&#34; : &#34;凯撒&#34;, &#34;createdatetime&#34; : ISODate(&#34;2019-08-06T08:18:35.288Z&#34;), &#34;likenum&#34; : 2000, &#34;state&#34; : &#34;1&#34; }
-{ &#34;_id&#34; : &#34;5&#34;, &#34;articleid&#34; : &#34;100001&#34;, &#34;content&#34; : &#34;研究表明，刚烧开的水千万不能喝，因为烫嘴。&#34;, &#34;userid&#34; : &#34;1003&#34;, &#34;nickname&#34; : &#34;凯撒&#34;, &#34;createdatetime&#34; : ISODate(&#34;2019-08-06T11:01:02.521Z&#34;), &#34;likenum&#34; : 3000, &#34;state&#34; : &#34;1&#34; }
-
-</code></pre></div><ul>
-<li>_id=1的记录被删除</li>
-</ul>
-<ol>
-<li>辅助成员的操作
+默认情况下，优先级的值是1。</p><h3 id=连接到副本集>连接到副本集</h3><p>由于在副本集中，能够接受写操作的是主成员，而主成员在发生故障的时候会发转移。<a href=https://docs.mongodb.com/manual/reference/connection-string/>Mongodb官方</a>给出了连接副本集的方法，而避免直接连接到某个副本集成员</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>标准 URI 连接方案的格式为：
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>mongodb://[username:password@]host1[:port1][,...hostN[:portN]][/[defaultauthdb][?options]]
+</span></span></code></pre></div><p>对于副本集：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>mongodb://mongodb0.example.com:27017,mongodb1.example.com:27017,mongodb2.example.com:27017/?replicaSet=myrs #myrs为副本集名称
+</span></span></code></pre></div><p>对于强制实施访问控制的副本集，需要包括用户凭据：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>mongodb://myDBReader:D1fficultP%40ssw0rd@mongodb0.example.com:27017,mongodb1.example.com:27017,mongodb2.example.com:27017/?authSource=admin&amp;replicaSet=myrs
+</span></span></code></pre></div><h2 id=lab>Lab</h2><p>设计3成员副本集，采用一台Primary和两台Secondary</p><p><img src=Mongodb-ReplicaSet%20Install%204140895adb63499e80a48722c1e4e686/Untitled.png alt=Untitled></p><h3 id=拓扑说明>拓扑说明</h3><p>本次实验使用三个mongodb实例，分别为Alma、db1和db2。</p><ul><li>Alma为主节点（Primary）：主要接收所有写操作</li><li>db1、db2为副本节点（Replicate）</li></ul><h3 id=安装过程>安装过程</h3><h3 id=三台mongodb安装mongod-server>三台mongodb安装mongod server</h3><p>安装步骤和<a href=https://blog.csdn.net/weixin_43394724/article/details/122623604>Mongodb-Single Server Install</a>一致，不过在mongd.conf中要配置副本集参数，默认位置/etc/mongod.conf：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>replication:
+</span></span><span style=display:flex><span>  replSetName: etaonrs
+</span></span></code></pre></div><p>其中：副本集名字为：etaonrs</p><p>参考完整的配置文件：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>systemLog:
+</span></span><span style=display:flex><span>#MongoDB发送所有日志输出的目标指定为文件
+</span></span><span style=display:flex><span>destination: file
+</span></span><span style=display:flex><span>#mongod或mongos应向其发送所有诊断日志记录信息的日志文件的路径
+</span></span><span style=display:flex><span>path: &#34;/mongodb/replica_sets/log/mongod.log&#34;
+</span></span><span style=display:flex><span>#当mongos或mongod实例重新启动时，mongos或mongod会将新条目附加到现有日志文件的末尾。
+</span></span><span style=display:flex><span>logAppend: true
+</span></span><span style=display:flex><span>storage:
+</span></span><span style=display:flex><span>#mongod实例存储其数据的目录。storage.dbPath设置仅适用于mongod。
+</span></span><span style=display:flex><span>dbPath: &#34;/mongodb/replica_sets/data/db&#34;
+</span></span><span style=display:flex><span>journal:
+</span></span><span style=display:flex><span>#启用或禁用持久性日志以确保数据文件保持有效和可恢复。
+</span></span><span style=display:flex><span>enabled: true
+</span></span><span style=display:flex><span>processManagement:
+</span></span><span style=display:flex><span>#启用在后台运行mongos或mongod进程的守护进程模式。
+</span></span><span style=display:flex><span>fork: true
+</span></span><span style=display:flex><span>#指定用于保存mongos或mongod进程的进程ID的文件位置，其中mongos或mongod将写入其PID
+</span></span><span style=display:flex><span>pidFilePath: &#34;/mongodb/replica_sets/log/mongod.pid&#34;
+</span></span><span style=display:flex><span>net:
+</span></span><span style=display:flex><span>#服务实例绑定所有IP，有副作用，副本集初始化的时候，节点名字会自动设置为本地域名，而不是ip
+</span></span><span style=display:flex><span>#bindIpAll: true
+</span></span><span style=display:flex><span>#服务实例绑定的IP
+</span></span><span style=display:flex><span>bindIp: 0.0.0.0
+</span></span><span style=display:flex><span>#bindIp
+</span></span><span style=display:flex><span>#绑定的端口
+</span></span><span style=display:flex><span>port: 27019
+</span></span><span style=display:flex><span>replication:
+</span></span><span style=display:flex><span>#副本集的名称
+</span></span><span style=display:flex><span>replSetName: etaonrs
+</span></span></code></pre></div><h3 id=选择主节点初始化副本集>选择主节点初始化副本集</h3><p>使用rs.initiate()初始化副本集和主节点</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>rs.initiate(configuration)
+</span></span></code></pre></div><table><thead><tr><th>Parameter</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td>configuration</td><td>document</td><td>Optional. A document that specifies configuration for the new replica set. If a configuration is not specified,MongoDB uses a default replica set configuration.</td></tr></tbody></table><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>&gt; rs.initiate()
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>        &#34;info2&#34; : &#34;no configuration specified. Using a default configuration for the set&#34;,
+</span></span><span style=display:flex><span>        &#34;me&#34; : &#34;Alma:27017&#34;,
+</span></span><span style=display:flex><span>        &#34;ok&#34; : 1
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>etaonrs:SECONDARY&gt;
+</span></span><span style=display:flex><span>etaonrs:PRIMARY&gt;
+</span></span><span style=display:flex><span>etaonrs:PRIMARY&gt;
+</span></span></code></pre></div><ul><li>“ok”的值为1，说明创建成功。</li><li>可以看到，该节点马上转化为主节点</li></ul><h3 id=向副本集添加辅助成员>向副本集添加辅助成员</h3><p>语法：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>rs.add(host, arbiterOnly)
+</span></span></code></pre></div><table><thead><tr><th>Parameter</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td>host</td><td>string or document</td><td>要添加到副本集的新成员。 指定为字符串或配置文档：1）如果是一个字符串，则需要指定新成员的主机名和可选的端口号；2）如果是一个文档，请指定在members数组中找到的副本集成员配置文档。 必须在成员配置文档中指定主机字段。</td></tr><tr><td>arbiterOnly</td><td>boolean</td><td>可选的。 仅在 <host>值为字符串时适用。 如果为true，则添加的主机是仲裁者。</td></tr></tbody></table><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>etaonrs:PRIMARY&gt; rs.add(&#39;db1:27017&#39;)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>        &#34;ok&#34; : 1,
+</span></span><span style=display:flex><span>        &#34;$clusterTime&#34; : {
+</span></span><span style=display:flex><span>                &#34;clusterTime&#34; : Timestamp(1643259552, 1),
+</span></span><span style=display:flex><span>                &#34;signature&#34; : {
+</span></span><span style=display:flex><span>                        &#34;hash&#34; : BinData(0,&#34;AAAAAAAAAAAAAAAAAAAAAAAAAAA=&#34;),
+</span></span><span style=display:flex><span>                        &#34;keyId&#34; : NumberLong(0)
+</span></span><span style=display:flex><span>                }
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        &#34;operationTime&#34; : Timestamp(1643259552, 1)
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>etaonrs:PRIMARY&gt; rs.add(&#39;db2:27017&#39;)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>        &#34;ok&#34; : 1,
+</span></span><span style=display:flex><span>        &#34;$clusterTime&#34; : {
+</span></span><span style=display:flex><span>                &#34;clusterTime&#34; : Timestamp(1643259569, 1),
+</span></span><span style=display:flex><span>                &#34;signature&#34; : {
+</span></span><span style=display:flex><span>                        &#34;hash&#34; : BinData(0,&#34;AAAAAAAAAAAAAAAAAAAAAAAAAAA=&#34;),
+</span></span><span style=display:flex><span>                        &#34;keyId&#34; : NumberLong(0)
+</span></span><span style=display:flex><span>                }
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        &#34;operationTime&#34; : Timestamp(1643259569, 1)
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h3 id=查看副本集状态>查看副本集状态</h3><p>使用rs.status()命令</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>etaonrs:PRIMARY&gt; rs.status()
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>        &#34;set&#34; : &#34;etaonrs&#34;,
+</span></span><span style=display:flex><span>        &#34;date&#34; : ISODate(&#34;2022-01-27T05:05:54.779Z&#34;),
+</span></span><span style=display:flex><span>        &#34;myState&#34; : 1,
+</span></span><span style=display:flex><span>        &#34;term&#34; : NumberLong(9),
+</span></span><span style=display:flex><span>        &#34;syncSourceHost&#34; : &#34;&#34;,
+</span></span><span style=display:flex><span>        &#34;syncSourceId&#34; : -1,
+</span></span><span style=display:flex><span>        &#34;heartbeatIntervalMillis&#34; : NumberLong(2000),
+</span></span><span style=display:flex><span>        &#34;majorityVoteCount&#34; : 2,
+</span></span><span style=display:flex><span>        &#34;writeMajorityCount&#34; : 2,
+</span></span><span style=display:flex><span>        &#34;votingMembersCount&#34; : 3,
+</span></span><span style=display:flex><span>        &#34;writableVotingMembersCount&#34; : 3,
+</span></span><span style=display:flex><span>        &#34;optimes&#34; : {
+</span></span><span style=display:flex><span>                &#34;lastCommittedOpTime&#34; : {
+</span></span><span style=display:flex><span>                        &#34;ts&#34; : Timestamp(1643259948, 1),
+</span></span><span style=display:flex><span>                        &#34;t&#34; : NumberLong(9)
+</span></span><span style=display:flex><span>                },
+</span></span><span style=display:flex><span>                &#34;lastCommittedWallTime&#34; : ISODate(&#34;2022-01-27T05:05:48.385Z&#34;),
+</span></span><span style=display:flex><span>                &#34;readConcernMajorityOpTime&#34; : {
+</span></span><span style=display:flex><span>                        &#34;ts&#34; : Timestamp(1643259948, 1),
+</span></span><span style=display:flex><span>                        &#34;t&#34; : NumberLong(9)
+</span></span><span style=display:flex><span>                },
+</span></span><span style=display:flex><span>                &#34;appliedOpTime&#34; : {
+</span></span><span style=display:flex><span>                        &#34;ts&#34; : Timestamp(1643259948, 1),
+</span></span><span style=display:flex><span>                        &#34;t&#34; : NumberLong(9)
+</span></span><span style=display:flex><span>                },
+</span></span><span style=display:flex><span>                &#34;durableOpTime&#34; : {
+</span></span><span style=display:flex><span>                        &#34;ts&#34; : Timestamp(1643259948, 1),
+</span></span><span style=display:flex><span>                        &#34;t&#34; : NumberLong(9)
+</span></span><span style=display:flex><span>                },
+</span></span><span style=display:flex><span>                &#34;lastAppliedWallTime&#34; : ISODate(&#34;2022-01-27T05:05:48.385Z&#34;),
+</span></span><span style=display:flex><span>                &#34;lastDurableWallTime&#34; : ISODate(&#34;2022-01-27T05:05:48.385Z&#34;)
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        &#34;lastStableRecoveryTimestamp&#34; : Timestamp(1643259898, 1),
+</span></span><span style=display:flex><span>        &#34;electionCandidateMetrics&#34; : {
+</span></span><span style=display:flex><span>                &#34;lastElectionReason&#34; : &#34;electionTimeout&#34;,
+</span></span><span style=display:flex><span>                &#34;lastElectionDate&#34; : ISODate(&#34;2022-01-27T04:58:18.287Z&#34;),
+</span></span><span style=display:flex><span>                &#34;electionTerm&#34; : NumberLong(9),
+</span></span><span style=display:flex><span>                &#34;lastCommittedOpTimeAtElection&#34; : {
+</span></span><span style=display:flex><span>                        &#34;ts&#34; : Timestamp(1643258692, 1),
+</span></span><span style=display:flex><span>                        &#34;t&#34; : NumberLong(8)
+</span></span><span style=display:flex><span>                },
+</span></span><span style=display:flex><span>                &#34;lastSeenOpTimeAtElection&#34; : {
+</span></span><span style=display:flex><span>                        &#34;ts&#34; : Timestamp(1643258702, 1),
+</span></span><span style=display:flex><span>                        &#34;t&#34; : NumberLong(8)
+</span></span><span style=display:flex><span>                },
+</span></span><span style=display:flex><span>                &#34;numVotesNeeded&#34; : 1,
+</span></span><span style=display:flex><span>                &#34;priorityAtElection&#34; : 1,
+</span></span><span style=display:flex><span>                &#34;electionTimeoutMillis&#34; : NumberLong(10000),
+</span></span><span style=display:flex><span>                &#34;newTermStartDate&#34; : ISODate(&#34;2022-01-27T04:58:18.296Z&#34;),
+</span></span><span style=display:flex><span>                &#34;wMajorityWriteAvailabilityDate&#34; : ISODate(&#34;2022-01-27T04:58:18.306Z&#34;)
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        &#34;members&#34; : [
+</span></span><span style=display:flex><span>                {
+</span></span><span style=display:flex><span>                        &#34;_id&#34; : 0,
+</span></span><span style=display:flex><span>                        &#34;name&#34; : &#34;Alma:27017&#34;,
+</span></span><span style=display:flex><span>                        &#34;health&#34; : 1,
+</span></span><span style=display:flex><span>                        &#34;state&#34; : 1,
+</span></span><span style=display:flex><span>                        &#34;stateStr&#34; : &#34;PRIMARY&#34;,
+</span></span><span style=display:flex><span>                        &#34;uptime&#34; : 5813,
+</span></span><span style=display:flex><span>                        &#34;optime&#34; : {
+</span></span><span style=display:flex><span>                                &#34;ts&#34; : Timestamp(1643259948, 1),
+</span></span><span style=display:flex><span>                                &#34;t&#34; : NumberLong(9)
+</span></span><span style=display:flex><span>                        },
+</span></span><span style=display:flex><span>                        &#34;optimeDate&#34; : ISODate(&#34;2022-01-27T05:05:48Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;lastAppliedWallTime&#34; : ISODate(&#34;2022-01-27T05:05:48.385Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;lastDurableWallTime&#34; : ISODate(&#34;2022-01-27T05:05:48.385Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;syncSourceHost&#34; : &#34;&#34;,
+</span></span><span style=display:flex><span>                        &#34;syncSourceId&#34; : -1,
+</span></span><span style=display:flex><span>                        &#34;infoMessage&#34; : &#34;&#34;,
+</span></span><span style=display:flex><span>                        &#34;electionTime&#34; : Timestamp(1643259498, 1),
+</span></span><span style=display:flex><span>                        &#34;electionDate&#34; : ISODate(&#34;2022-01-27T04:58:18Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;configVersion&#34; : 387392,
+</span></span><span style=display:flex><span>                        &#34;configTerm&#34; : 9,
+</span></span><span style=display:flex><span>                        &#34;self&#34; : true,
+</span></span><span style=display:flex><span>                        &#34;lastHeartbeatMessage&#34; : &#34;&#34;
+</span></span><span style=display:flex><span>                },
+</span></span><span style=display:flex><span>                {
+</span></span><span style=display:flex><span>                        &#34;_id&#34; : 1,
+</span></span><span style=display:flex><span>                        &#34;name&#34; : &#34;db1:27017&#34;,
+</span></span><span style=display:flex><span>                        &#34;health&#34; : 1,
+</span></span><span style=display:flex><span>                        &#34;state&#34; : 2,
+</span></span><span style=display:flex><span>                        &#34;stateStr&#34; : &#34;SECONDARY&#34;,
+</span></span><span style=display:flex><span>                        &#34;uptime&#34; : 212,
+</span></span><span style=display:flex><span>                        &#34;optime&#34; : {
+</span></span><span style=display:flex><span>                                &#34;ts&#34; : Timestamp(1643259948, 1),
+</span></span><span style=display:flex><span>                                &#34;t&#34; : NumberLong(9)
+</span></span><span style=display:flex><span>                        },
+</span></span><span style=display:flex><span>                        &#34;optimeDurable&#34; : {
+</span></span><span style=display:flex><span>                                &#34;ts&#34; : Timestamp(1643259948, 1),
+</span></span><span style=display:flex><span>                                &#34;t&#34; : NumberLong(9)
+</span></span><span style=display:flex><span>                        },
+</span></span><span style=display:flex><span>                        &#34;optimeDate&#34; : ISODate(&#34;2022-01-27T05:05:48Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;optimeDurableDate&#34; : ISODate(&#34;2022-01-27T05:05:48Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;lastAppliedWallTime&#34; : ISODate(&#34;2022-01-27T05:05:48.385Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;lastDurableWallTime&#34; : ISODate(&#34;2022-01-27T05:05:48.385Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;lastHeartbeat&#34; : ISODate(&#34;2022-01-27T05:05:53.038Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;lastHeartbeatRecv&#34; : ISODate(&#34;2022-01-27T05:05:53.914Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;pingMs&#34; : NumberLong(0),
+</span></span><span style=display:flex><span>                        &#34;lastHeartbeatMessage&#34; : &#34;&#34;,
+</span></span><span style=display:flex><span>                        &#34;syncSourceHost&#34; : &#34;Alma:27017&#34;,
+</span></span><span style=display:flex><span>                        &#34;syncSourceId&#34; : 0,
+</span></span><span style=display:flex><span>                        &#34;infoMessage&#34; : &#34;&#34;,
+</span></span><span style=display:flex><span>                        &#34;configVersion&#34; : 387392,
+</span></span><span style=display:flex><span>                        &#34;configTerm&#34; : 9
+</span></span><span style=display:flex><span>                },
+</span></span><span style=display:flex><span>                {
+</span></span><span style=display:flex><span>                        &#34;_id&#34; : 2,
+</span></span><span style=display:flex><span>                        &#34;name&#34; : &#34;db2:27017&#34;,
+</span></span><span style=display:flex><span>                        &#34;health&#34; : 1,
+</span></span><span style=display:flex><span>                        &#34;state&#34; : 2,
+</span></span><span style=display:flex><span>                        &#34;stateStr&#34; : &#34;SECONDARY&#34;,
+</span></span><span style=display:flex><span>                        &#34;uptime&#34; : 218,
+</span></span><span style=display:flex><span>                        &#34;optime&#34; : {
+</span></span><span style=display:flex><span>                                &#34;ts&#34; : Timestamp(1643259948, 1),
+</span></span><span style=display:flex><span>                                &#34;t&#34; : NumberLong(9)
+</span></span><span style=display:flex><span>                        },
+</span></span><span style=display:flex><span>                        &#34;optimeDurable&#34; : {
+</span></span><span style=display:flex><span>                                &#34;ts&#34; : Timestamp(1643259948, 1),
+</span></span><span style=display:flex><span>                                &#34;t&#34; : NumberLong(9)
+</span></span><span style=display:flex><span>                        },
+</span></span><span style=display:flex><span>                        &#34;optimeDate&#34; : ISODate(&#34;2022-01-27T05:05:48Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;optimeDurableDate&#34; : ISODate(&#34;2022-01-27T05:05:48Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;lastAppliedWallTime&#34; : ISODate(&#34;2022-01-27T05:05:48.385Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;lastDurableWallTime&#34; : ISODate(&#34;2022-01-27T05:05:48.385Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;lastHeartbeat&#34; : ISODate(&#34;2022-01-27T05:05:53.038Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;lastHeartbeatRecv&#34; : ISODate(&#34;2022-01-27T05:05:52.932Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;pingMs&#34; : NumberLong(0),
+</span></span><span style=display:flex><span>                        &#34;lastHeartbeatMessage&#34; : &#34;&#34;,
+</span></span><span style=display:flex><span>                        &#34;syncSourceHost&#34; : &#34;Alma:27017&#34;,
+</span></span><span style=display:flex><span>                        &#34;syncSourceId&#34; : 0,
+</span></span><span style=display:flex><span>                        &#34;infoMessage&#34; : &#34;&#34;,
+</span></span><span style=display:flex><span>                        &#34;configVersion&#34; : 387392,
+</span></span><span style=display:flex><span>                        &#34;configTerm&#34; : 9
+</span></span><span style=display:flex><span>                }
+</span></span><span style=display:flex><span>        ],
+</span></span><span style=display:flex><span>        &#34;ok&#34; : 1,
+</span></span><span style=display:flex><span>        &#34;$clusterTime&#34; : {
+</span></span><span style=display:flex><span>                &#34;clusterTime&#34; : Timestamp(1643259948, 1),
+</span></span><span style=display:flex><span>                &#34;signature&#34; : {
+</span></span><span style=display:flex><span>                        &#34;hash&#34; : BinData(0,&#34;AAAAAAAAAAAAAAAAAAAAAAAAAAA=&#34;),
+</span></span><span style=display:flex><span>                        &#34;keyId&#34; : NumberLong(0)
+</span></span><span style=display:flex><span>                }
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        &#34;operationTime&#34; : Timestamp(1643259948, 1)
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><ul><li>&ldquo;set&rdquo; : &ldquo;etaonrs&rdquo; ：副本集的名字</li><li>&ldquo;myState&rdquo; : 1：说明状态正常</li><li>&ldquo;majorityVoteCount&rdquo; : 2 ：抽票成主成员所需票数</li><li>&ldquo;members&rdquo; ：副本集成员数组，此时有三个：&ldquo;name&rdquo; : &ldquo;Alma:27017&rdquo;， &ldquo;db1:27017"和 &ldquo;db2:27017&rdquo;</li><li>&ldquo;stateStr&rdquo; : &ldquo;PRIMARY"成员角色</li><li>&ldquo;health&rdquo; : 1 ：成员健康情况，1表示健康，-1表示不健康</li></ul><h3 id=副本集的读写操作>副本集的读写操作</h3><ol><li>主成员的操作
+在主成员上查看document，读取操作</li></ol><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>etaonrs:PRIMARY&gt; use etaondb
+</span></span><span style=display:flex><span>switched to db etaondb
+</span></span><span style=display:flex><span>etaonrs:PRIMARY&gt; db.comment.find()
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;0&#34;, &#34;articleid&#34; : &#34;100000&#34;, &#34;content&#34; : &#34;今天天气真好，阳光明媚&#34;, &#34;userid&#34; : &#34;1001&#34;, &#34;nickname&#34; : &#34;Rose&#34;, &#34;createdatetime&#34; : ISODate(&#34;2022-01-27T03:06:19.502Z&#34;), &#34;likenum&#34; : 10, &#34;state&#34; : null }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;1&#34;, &#34;articleid&#34; : &#34;100001&#34;, &#34;content&#34; : &#34;我们不应该把清晨浪费在手机上，健康很重要，一杯温水幸福你我他。&#34;, &#34;userid&#34; : &#34;1002&#34;, &#34;nickname&#34; : &#34;相忘于江湖&#34;, &#34;createdatetime&#34; : ISODate(&#34;2019-08-05T22:08:15.522Z&#34;), &#34;likenum&#34; : 1000, &#34;state&#34; : &#34;1&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;2&#34;, &#34;articleid&#34; : &#34;100001&#34;, &#34;content&#34; : &#34;我夏天空腹喝凉开水，冬天喝温开水&#34;, &#34;userid&#34; : &#34;1005&#34;, &#34;nickname&#34; : &#34;伊人憔悴&#34;, &#34;createdatetime&#34; : ISODate(&#34;2019-08-05T23:58:51.485Z&#34;), &#34;likenum&#34; : 888, &#34;state&#34; : &#34;1&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;3&#34;, &#34;articleid&#34; : &#34;100001&#34;, &#34;content&#34; : &#34;我一直喝凉开水，冬天夏天都喝。&#34;, &#34;userid&#34; : &#34;1004&#34;, &#34;nickname&#34; : &#34;杰克船长&#34;, &#34;createdatetime&#34; : ISODate(&#34;2019-08-06T01:05:06.321Z&#34;), &#34;likenum&#34; : 666, &#34;state&#34; : &#34;1&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;4&#34;, &#34;articleid&#34; : &#34;100001&#34;, &#34;content&#34; : &#34;专家说不能空腹吃饭，影响健康。&#34;, &#34;userid&#34; : &#34;1003&#34;, &#34;nickname&#34; : &#34;凯撒&#34;, &#34;createdatetime&#34; : ISODate(&#34;2019-08-06T08:18:35.288Z&#34;), &#34;likenum&#34; : 2000, &#34;state&#34; : &#34;1&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;5&#34;, &#34;articleid&#34; : &#34;100001&#34;, &#34;content&#34; : &#34;研究表明，刚烧开的水千万不能喝，因为烫嘴。&#34;, &#34;userid&#34; : &#34;1003&#34;, &#34;nickname&#34; : &#34;凯撒&#34;, &#34;createdatetime&#34; : ISODate(&#34;2019-08-06T11:01:02.521Z&#34;), &#34;likenum&#34; : 3000, &#34;state&#34; : &#34;1&#34; }
+</span></span></code></pre></div><p>删除一条记录并查看，写操作和读取操作</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>etaonrs:PRIMARY&gt; db.comment.remove({userid:&#39;1002&#39;})
+</span></span><span style=display:flex><span>WriteResult({ &#34;nRemoved&#34; : 1 })
+</span></span><span style=display:flex><span>etaonrs:PRIMARY&gt; db.comment.find()
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;0&#34;, &#34;articleid&#34; : &#34;100000&#34;, &#34;content&#34; : &#34;今天天气真好，阳光明媚&#34;, &#34;userid&#34; : &#34;1001&#34;, &#34;nickname&#34; : &#34;Rose&#34;, &#34;createdatetime&#34; : ISODate(&#34;2022-01-27T03:06:19.502Z&#34;), &#34;likenum&#34; : 10, &#34;state&#34; : null }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;2&#34;, &#34;articleid&#34; : &#34;100001&#34;, &#34;content&#34; : &#34;我夏天空腹喝凉开水，冬天喝温开水&#34;, &#34;userid&#34; : &#34;1005&#34;, &#34;nickname&#34; : &#34;伊人憔悴&#34;, &#34;createdatetime&#34; : ISODate(&#34;2019-08-05T23:58:51.485Z&#34;), &#34;likenum&#34; : 888, &#34;state&#34; : &#34;1&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;3&#34;, &#34;articleid&#34; : &#34;100001&#34;, &#34;content&#34; : &#34;我一直喝凉开水，冬天夏天都喝。&#34;, &#34;userid&#34; : &#34;1004&#34;, &#34;nickname&#34; : &#34;杰克船长&#34;, &#34;createdatetime&#34; : ISODate(&#34;2019-08-06T01:05:06.321Z&#34;), &#34;likenum&#34; : 666, &#34;state&#34; : &#34;1&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;4&#34;, &#34;articleid&#34; : &#34;100001&#34;, &#34;content&#34; : &#34;专家说不能空腹吃饭，影响健康。&#34;, &#34;userid&#34; : &#34;1003&#34;, &#34;nickname&#34; : &#34;凯撒&#34;, &#34;createdatetime&#34; : ISODate(&#34;2019-08-06T08:18:35.288Z&#34;), &#34;likenum&#34; : 2000, &#34;state&#34; : &#34;1&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;5&#34;, &#34;articleid&#34; : &#34;100001&#34;, &#34;content&#34; : &#34;研究表明，刚烧开的水千万不能喝，因为烫嘴。&#34;, &#34;userid&#34; : &#34;1003&#34;, &#34;nickname&#34; : &#34;凯撒&#34;, &#34;createdatetime&#34; : ISODate(&#34;2019-08-06T11:01:02.521Z&#34;), &#34;likenum&#34; : 3000, &#34;state&#34; : &#34;1&#34; }
+</span></span></code></pre></div><ul><li>_id=1的记录被删除</li></ul><ol><li>辅助成员的操作
 辅助成员的数据库维护主数据库数据集的副本。为了复制数据，辅助数据库在异步进程中将主数据库的<strong>oplog</strong>中的操作应用于其自己的数据集。
 一个副本集可以有一个或多个辅助副本。
-我们查看辅助成员的数据情况：</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>etaonrs:SECONDARY&gt; db.comment.find()
-Error: error: {
-        &#34;topologyVersion&#34; : {
-                &#34;processId&#34; : ObjectId(&#34;61f223e7b916a2f7bd2ea194&#34;),
-                &#34;counter&#34; : NumberLong(5)
-        },
-        &#34;ok&#34; : 0,
-        &#34;errmsg&#34; : &#34;not master and slaveOk=false&#34;,
-        &#34;code&#34; : 13435,
-        &#34;codeName&#34; : &#34;NotPrimaryNoSecondaryOk&#34;,
-        &#34;$clusterTime&#34; : {
-                &#34;clusterTime&#34; : Timestamp(1643259928, 1),
-                &#34;signature&#34; : {
-                        &#34;hash&#34; : BinData(0,&#34;AAAAAAAAAAAAAAAAAAAAAAAAAAA=&#34;),
-                        &#34;keyId&#34; : NumberLong(0)
-                }
-        },
-        &#34;operationTime&#34; : Timestamp(1643259928, 1)
-}
-
-</code></pre></div><p>在辅助成员初始化后，其并没有变成slaveOk，需要使用命令rs.slaveOk()</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>etaonrs:SECONDARY&gt; rs.slaveOk()
-WARNING: slaveOk() is deprecated and may be removed in the next major release. Please use secondaryOk() instead.
-
-</code></pre></div><p>然后再进行查询</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>etaonrs:SECONDARY&gt; db.comment.find()
-{ &#34;_id&#34; : &#34;0&#34;, &#34;articleid&#34; : &#34;100000&#34;, &#34;content&#34; : &#34;今天天气真好，阳光明媚&#34;, &#34;userid&#34; : &#34;1001&#34;, &#34;nickname&#34; : &#34;Rose&#34;, &#34;createdatetime&#34; : ISODate(&#34;2022-01-27T03:06:19.502Z&#34;), &#34;likenum&#34; : 10, &#34;state&#34; : null }
-{ &#34;_id&#34; : &#34;2&#34;, &#34;articleid&#34; : &#34;100001&#34;, &#34;content&#34; : &#34;我夏天空腹喝凉开水，冬天喝温开水&#34;, &#34;userid&#34; : &#34;1005&#34;, &#34;nickname&#34; : &#34;伊人憔悴&#34;, &#34;createdatetime&#34; : ISODate(&#34;2019-08-05T23:58:51.485Z&#34;), &#34;likenum&#34; : 888, &#34;state&#34; : &#34;1&#34; }
-{ &#34;_id&#34; : &#34;3&#34;, &#34;articleid&#34; : &#34;100001&#34;, &#34;content&#34; : &#34;我一直喝凉开水，冬天夏天都喝。&#34;, &#34;userid&#34; : &#34;1004&#34;, &#34;nickname&#34; : &#34;杰克船长&#34;, &#34;createdatetime&#34; : ISODate(&#34;2019-08-06T01:05:06.321Z&#34;), &#34;likenum&#34; : 666, &#34;state&#34; : &#34;1&#34; }
-{ &#34;_id&#34; : &#34;4&#34;, &#34;articleid&#34; : &#34;100001&#34;, &#34;content&#34; : &#34;专家说不能空腹吃饭，影响健康。&#34;, &#34;userid&#34; : &#34;1003&#34;, &#34;nickname&#34; : &#34;凯撒&#34;, &#34;createdatetime&#34; : ISODate(&#34;2019-08-06T08:18:35.288Z&#34;), &#34;likenum&#34; : 2000, &#34;state&#34; : &#34;1&#34; }
-{ &#34;_id&#34; : &#34;5&#34;, &#34;articleid&#34; : &#34;100001&#34;, &#34;content&#34; : &#34;研究表明，刚烧开的水千万不能喝，因为烫嘴。&#34;, &#34;userid&#34; : &#34;1003&#34;, &#34;nickname&#34; : &#34;凯撒&#34;, &#34;createdatetime&#34; : ISODate(&#34;2019-08-06T11:01:02.521Z&#34;), &#34;likenum&#34; : 3000, &#34;state&#34; : &#34;1&#34; }
-
-</code></pre></div><ul>
-<li>可以看到_id=1的记录同样被删除</li>
-</ul>
-<ol>
-<li>对于客户端读取副本集的内容，是由读取首选项模式决定的，参考<a href=https://docs.mongodb.com/manual/core/read-preference/#std-label-replica-set-read-preference-modes>读取首选项</a>，默认为应用程序将其读取操作定向到副本集中的主成员。</li>
-</ol>
-<h3 id=故障模拟>故障模拟</h3>
-<p>现在的副本集为三成员，可以提供一个成员的故障保护</p>
-<h3 id=辅助成员失效>辅助成员失效</h3>
-<ol>
-<li>停掉db2-辅助成员的mongod进程，查看副本集中db2的状态：</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>{
-                        &#34;_id&#34; : 1,
-                        &#34;name&#34; : &#34;db2:27017&#34;,
-                        &#34;health&#34; : 0,
-                        &#34;state&#34; : 8,
-                        &#34;stateStr&#34; : &#34;(not reachable/healthy)&#34;,
-                        &#34;uptime&#34; : 0,
-                        &#34;optime&#34; : {
-                                &#34;ts&#34; : Timestamp(0, 0),
-                                &#34;t&#34; : NumberLong(-1)
-                        },
-                        &#34;optimeDurable&#34; : {
-                                &#34;ts&#34; : Timestamp(0, 0),
-                                &#34;t&#34; : NumberLong(-1)
-                        },
-                        &#34;optimeDate&#34; : ISODate(&#34;1970-01-01T00:00:00Z&#34;),
-                        &#34;optimeDurableDate&#34; : ISODate(&#34;1970-01-01T00:00:00Z&#34;),
-                        &#34;lastAppliedWallTime&#34; : ISODate(&#34;2022-01-28T03:28:25.101Z&#34;),
-                        &#34;lastDurableWallTime&#34; : ISODate(&#34;2022-01-28T03:28:25.101Z&#34;),
-                        &#34;lastHeartbeat&#34; : ISODate(&#34;2022-01-28T03:29:35.375Z&#34;),
-                        &#34;lastHeartbeatRecv&#34; : ISODate(&#34;2022-01-28T03:28:32.875Z&#34;),
-                        &#34;pingMs&#34; : NumberLong(0),
-                        &#34;lastHeartbeatMessage&#34; : &#34;Error connecting to db2:27017 (172.16.21.11:27017) :: caused by :: Connection refused&#34;,
-                        &#34;syncSourceHost&#34; : &#34;&#34;,
-                        &#34;syncSourceId&#34; : -1,
-                        &#34;infoMessage&#34; : &#34;&#34;,
-                        &#34;configVersion&#34; : 517368,
-                        &#34;configTerm&#34; : 15
-                },
-
-</code></pre></div><p>状态已经改变：&ldquo;stateStr&rdquo; : &ldquo;(not reachable/healthy)&rdquo;</p>
-<ol>
-<li>插入一条新的记录：</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>etaonrs:PRIMARY&gt; db.comment.find({},{userid:1})
-{ &#34;_id&#34; : &#34;0&#34;, &#34;userid&#34; : &#34;1001&#34; }
-{ &#34;_id&#34; : &#34;2&#34;, &#34;userid&#34; : &#34;1005&#34; }
-{ &#34;_id&#34; : &#34;3&#34;, &#34;userid&#34; : &#34;1004&#34; }
-{ &#34;_id&#34; : &#34;4&#34;, &#34;userid&#34; : &#34;1003&#34; }
-{ &#34;_id&#34; : &#34;5&#34;, &#34;userid&#34; : &#34;1003&#34; }
-
-etaonrs:PRIMARY&gt; db.comment.insert({&#34;_id&#34;:&#34;1&#34;,&#34;articleid&#34;:&#34;100001&#34;,&#34;content&#34;:&#34;我们不应该把清晨浪费在手机上，健康很重要，一杯温水幸福你我他。&#34;,&#34;userid&#34;:&#34;1002&#34;,&#34;nickname&#34;:&#34;相忘于江湖&#34;,&#34;createdatetime&#34;:new Date(&#34;2019-08-05T22:08:15.522&#34;),&#34;likenum&#34;:NumberInt(1000),&#34;state&#34;:&#34;1&#34;})
-WriteResult({ &#34;nInserted&#34; : 1 })
-etaonrs:PRIMARY&gt; db.comment.find({},{userid:1})
-{ &#34;_id&#34; : &#34;0&#34;, &#34;userid&#34; : &#34;1001&#34; }
-{ &#34;_id&#34; : &#34;2&#34;, &#34;userid&#34; : &#34;1005&#34; }
-{ &#34;_id&#34; : &#34;3&#34;, &#34;userid&#34; : &#34;1004&#34; }
-{ &#34;_id&#34; : &#34;4&#34;, &#34;userid&#34; : &#34;1003&#34; }
-{ &#34;_id&#34; : &#34;5&#34;, &#34;userid&#34; : &#34;1003&#34; }
-{ &#34;_id&#34; : &#34;1&#34;, &#34;userid&#34; : &#34;1002&#34; }
-
-</code></pre></div><ol>
-<li>恢复db2，查看其数据情况</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@db2 ~]# systemctl restart mongod
-[root@db2 ~]# mongo
-MongoDB shell version v5.0.5
-connecting to: mongodb://127.0.0.1:27017/?compressors=disabled&amp;gssapiServiceName=mongodb
-Implicit session: session { &#34;id&#34; : UUID(&#34;62202173-4e67-4a6b-b6fb-83fc3fb97aef&#34;) }
-MongoDB server version: 5.0.5
-================
-......
-etaonrs:SECONDARY&gt; rs.slaveOk()
-WARNING: slaveOk() is deprecated and may be removed in the next major release. Please use secondaryOk() instead.
-etaonrs:SECONDARY&gt; use etaondb
-switched to db etaondb
-etaonrs:SECONDARY&gt; db.comment.find({},{userid:1})
-{ &#34;_id&#34; : &#34;0&#34;, &#34;userid&#34; : &#34;1001&#34; }
-{ &#34;_id&#34; : &#34;2&#34;, &#34;userid&#34; : &#34;1005&#34; }
-{ &#34;_id&#34; : &#34;3&#34;, &#34;userid&#34; : &#34;1004&#34; }
-{ &#34;_id&#34; : &#34;4&#34;, &#34;userid&#34; : &#34;1003&#34; }
-{ &#34;_id&#34; : &#34;5&#34;, &#34;userid&#34; : &#34;1003&#34; }
-{ &#34;_id&#34; : &#34;1&#34;, &#34;userid&#34; : &#34;1002&#34; }
-
-</code></pre></div><p>再启动辅助成员，会发现，主成员写入的数据，会自动同步给辅助成员。</p>
-<h3 id=主成员失效>主成员失效</h3>
-<ol>
-<li>关闭主成员进程</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@Alma ~]# systemctl stop mongod.service
-[root@Alma ~]#
-
-</code></pre></div><ol>
-<li>查看副本集状态</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>etaonrs:SECONDARY&gt; rs.status()
-{
-        &#34;set&#34; : &#34;etaonrs&#34;,
-        &#34;date&#34; : ISODate(&#34;2022-01-28T03:45:25.763Z&#34;),
-        &#34;myState&#34; : 2,
-        &#34;term&#34; : NumberLong(16),
-        &#34;syncSourceHost&#34; : &#34;&#34;,
-        &#34;syncSourceId&#34; : -1,
-        &#34;heartbeatIntervalMillis&#34; : NumberLong(2000),
-        &#34;majorityVoteCount&#34; : 2,
-        &#34;writeMajorityCount&#34; : 2,
-        &#34;votingMembersCount&#34; : 3,
-        &#34;writableVotingMembersCount&#34; : 3,
-        &#34;optimes&#34; : {
-                &#34;lastCommittedOpTime&#34; : {
-                        &#34;ts&#34; : Timestamp(1643341519, 1),
-                        &#34;t&#34; : NumberLong(16)
-                },
-                &#34;lastCommittedWallTime&#34; : ISODate(&#34;2022-01-28T03:45:19.113Z&#34;),
-                &#34;readConcernMajorityOpTime&#34; : {
-                        &#34;ts&#34; : Timestamp(1643341519, 1),
-                        &#34;t&#34; : NumberLong(16)
-                },
-                &#34;appliedOpTime&#34; : {
-                        &#34;ts&#34; : Timestamp(1643341519, 1),
-                        &#34;t&#34; : NumberLong(16)
-                },
-                &#34;durableOpTime&#34; : {
-                        &#34;ts&#34; : Timestamp(1643341519, 1),
-                        &#34;t&#34; : NumberLong(16)
-                },
-                &#34;lastAppliedWallTime&#34; : ISODate(&#34;2022-01-28T03:45:19.113Z&#34;),
-                &#34;lastDurableWallTime&#34; : ISODate(&#34;2022-01-28T03:45:19.113Z&#34;)
-        },
-        &#34;lastStableRecoveryTimestamp&#34; : Timestamp(1643341465, 1),
-        &#34;electionParticipantMetrics&#34; : {
-                &#34;votedForCandidate&#34; : true,
-                &#34;electionTerm&#34; : NumberLong(16),
-                &#34;lastVoteDate&#34; : ISODate(&#34;2022-01-28T03:45:09.099Z&#34;),
-                &#34;electionCandidateMemberId&#34; : 1,
-                &#34;voteReason&#34; : &#34;&#34;,
-                &#34;lastAppliedOpTimeAtElection&#34; : {
-                        &#34;ts&#34; : Timestamp(1643341505, 1),
-                        &#34;t&#34; : NumberLong(15)
-                },
-                &#34;maxAppliedOpTimeInSet&#34; : {
-                        &#34;ts&#34; : Timestamp(1643341505, 1),
-                        &#34;t&#34; : NumberLong(15)
-                },
-                &#34;priorityAtElection&#34; : 1,
-                &#34;newTermStartDate&#34; : ISODate(&#34;2022-01-28T03:45:09.110Z&#34;),
-                &#34;newTermAppliedDate&#34; : ISODate(&#34;2022-01-28T03:45:10.107Z&#34;)
-        },
-        &#34;members&#34; : [
-                {
-                        &#34;_id&#34; : 0,
-                        &#34;name&#34; : &#34;Alma:27017&#34;,
-                        &#34;health&#34; : 0,
-                        &#34;state&#34; : 8,
-                        &#34;stateStr&#34; : &#34;(not reachable/healthy)&#34;,
-                        &#34;uptime&#34; : 0,
-                        &#34;optime&#34; : {
-                                &#34;ts&#34; : Timestamp(0, 0),
-                                &#34;t&#34; : NumberLong(-1)
-                        },
-                        &#34;optimeDurable&#34; : {
-                                &#34;ts&#34; : Timestamp(0, 0),
-                                &#34;t&#34; : NumberLong(-1)
-                        },
-                        &#34;optimeDate&#34; : ISODate(&#34;1970-01-01T00:00:00Z&#34;),
-                        &#34;optimeDurableDate&#34; : ISODate(&#34;1970-01-01T00:00:00Z&#34;),
-                        &#34;lastAppliedWallTime&#34; : ISODate(&#34;2022-01-28T03:45:19.113Z&#34;),
-                        &#34;lastDurableWallTime&#34; : ISODate(&#34;2022-01-28T03:45:19.113Z&#34;),
-                        &#34;lastHeartbeat&#34; : ISODate(&#34;2022-01-28T03:45:25.760Z&#34;),
-                        &#34;lastHeartbeatRecv&#34; : ISODate(&#34;2022-01-28T03:45:22.154Z&#34;),
-                        &#34;pingMs&#34; : NumberLong(0),
-                        &#34;lastHeartbeatMessage&#34; : &#34;Error connecting to Alma:27017 (172.16.21.9:27017) :: caused by :: Connection refused&#34;,
-                        &#34;syncSourceHost&#34; : &#34;&#34;,
-                        &#34;syncSourceId&#34; : -1,
-                        &#34;infoMessage&#34; : &#34;&#34;,
-                        &#34;configVersion&#34; : 517368,
-                        &#34;configTerm&#34; : 16
-                },
-                {
-                        &#34;_id&#34; : 1,
-                        &#34;name&#34; : &#34;db2:27017&#34;,
-                        &#34;health&#34; : 1,
-                        &#34;state&#34; : 1,
-                        &#34;stateStr&#34; : &#34;PRIMARY&#34;,
-                        &#34;uptime&#34; : 423,
-                        &#34;optime&#34; : {
-                                &#34;ts&#34; : Timestamp(1643341519, 1),
-                                &#34;t&#34; : NumberLong(16)
-                        },
-                        &#34;optimeDurable&#34; : {
-                                &#34;ts&#34; : Timestamp(1643341519, 1),
-                                &#34;t&#34; : NumberLong(16)
-                        },
-                        &#34;optimeDate&#34; : ISODate(&#34;2022-01-28T03:45:19Z&#34;),
-                        &#34;optimeDurableDate&#34; : ISODate(&#34;2022-01-28T03:45:19Z&#34;),
-                        &#34;lastAppliedWallTime&#34; : ISODate(&#34;2022-01-28T03:45:19.113Z&#34;),
-                        &#34;lastDurableWallTime&#34; : ISODate(&#34;2022-01-28T03:45:19.113Z&#34;),
-                        &#34;lastHeartbeat&#34; : ISODate(&#34;2022-01-28T03:45:25.710Z&#34;),
-                        &#34;lastHeartbeatRecv&#34; : ISODate(&#34;2022-01-28T03:45:25.131Z&#34;),
-                        &#34;pingMs&#34; : NumberLong(0),
-                        &#34;lastHeartbeatMessage&#34; : &#34;&#34;,
-                        &#34;syncSourceHost&#34; : &#34;&#34;,
-                        &#34;syncSourceId&#34; : -1,
-                        &#34;infoMessage&#34; : &#34;&#34;,
-                        &#34;electionTime&#34; : Timestamp(1643341509, 1),
-                        &#34;electionDate&#34; : ISODate(&#34;2022-01-28T03:45:09Z&#34;),
-                        &#34;configVersion&#34; : 517368,
-                        &#34;configTerm&#34; : 16
-                },
-                {
-                        &#34;_id&#34; : 2,
-                        &#34;name&#34; : &#34;db1:27017&#34;,
-                        &#34;health&#34; : 1,
-                        &#34;state&#34; : 2,
-                        &#34;stateStr&#34; : &#34;SECONDARY&#34;,
-                        &#34;uptime&#34; : 1835,
-                        &#34;optime&#34; : {
-                                &#34;ts&#34; : Timestamp(1643341519, 1),
-                                &#34;t&#34; : NumberLong(16)
-                        },
-                        &#34;optimeDate&#34; : ISODate(&#34;2022-01-28T03:45:19Z&#34;),
-                        &#34;lastAppliedWallTime&#34; : ISODate(&#34;2022-01-28T03:45:19.113Z&#34;),
-                        &#34;lastDurableWallTime&#34; : ISODate(&#34;2022-01-28T03:45:19.113Z&#34;),
-                        &#34;syncSourceHost&#34; : &#34;&#34;,
-                        &#34;syncSourceId&#34; : -1,
-                        &#34;infoMessage&#34; : &#34;&#34;,
-                        &#34;configVersion&#34; : 517368,
-                        &#34;configTerm&#34; : 16,
-                        &#34;self&#34; : true,
-                        &#34;lastHeartbeatMessage&#34; : &#34;&#34;
-                }
-        ],
-        &#34;ok&#34; : 1,
-        &#34;$clusterTime&#34; : {
-                &#34;clusterTime&#34; : Timestamp(1643341519, 1),
-                &#34;signature&#34; : {
-                        &#34;hash&#34; : BinData(0,&#34;AAAAAAAAAAAAAAAAAAAAAAAAAAA=&#34;),
-                        &#34;keyId&#34; : NumberLong(0)
-                }
-        },
-        &#34;operationTime&#34; : Timestamp(1643341519, 1)
-}
-
-</code></pre></div><p>原来的主成员：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>&#34;name&#34; : &#34;Alma:27017&#34;,
-                        &#34;health&#34; : 0,
-                        &#34;state&#34; : 8,
-                        &#34;stateStr&#34; : &#34;(not reachable/healthy)&#34;
-
-</code></pre></div><p>新的主成员变成了db2</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>  &#34;_id&#34; : 1,
-                        &#34;name&#34; : &#34;db2:27017&#34;,
-                        &#34;health&#34; : 1,
-                        &#34;state&#34; : 1,
-                        &#34;stateStr&#34; : &#34;PRIMARY&#34;,
-
-</code></pre></div><ol>
-<li>数据情况：</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>etaonrs:SECONDARY&gt; db.comment.find({},{userid:1,nickname:1})
-{ &#34;_id&#34; : &#34;0&#34;, &#34;userid&#34; : &#34;1001&#34;, &#34;nickname&#34; : &#34;Rose&#34; }
-{ &#34;_id&#34; : &#34;2&#34;, &#34;userid&#34; : &#34;1005&#34;, &#34;nickname&#34; : &#34;伊人憔悴&#34; }
-{ &#34;_id&#34; : &#34;3&#34;, &#34;userid&#34; : &#34;1004&#34;, &#34;nickname&#34; : &#34;杰克船长&#34; }
-{ &#34;_id&#34; : &#34;4&#34;, &#34;userid&#34; : &#34;1003&#34;, &#34;nickname&#34; : &#34;凯撒&#34; }
-{ &#34;_id&#34; : &#34;5&#34;, &#34;userid&#34; : &#34;1003&#34;, &#34;nickname&#34; : &#34;凯撒&#34; }
-{ &#34;_id&#34; : &#34;1&#34;, &#34;userid&#34; : &#34;1002&#34;, &#34;nickname&#34; : &#34;相忘于江湖&#34; }
-
-</code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>etaonrs:PRIMARY&gt; db.comment.find({},{userid:1})
-{ &#34;_id&#34; : &#34;0&#34;, &#34;userid&#34; : &#34;1001&#34; }
-{ &#34;_id&#34; : &#34;2&#34;, &#34;userid&#34; : &#34;1005&#34; }
-{ &#34;_id&#34; : &#34;3&#34;, &#34;userid&#34; : &#34;1004&#34; }
-{ &#34;_id&#34; : &#34;4&#34;, &#34;userid&#34; : &#34;1003&#34; }
-{ &#34;_id&#34; : &#34;5&#34;, &#34;userid&#34; : &#34;1003&#34; }
-{ &#34;_id&#34; : &#34;1&#34;, &#34;userid&#34; : &#34;1002&#34; }
-
-</code></pre></div><p>剩下的两台上面的数都没变。</p>
-<ol>
-<li>在db2上面修改documents数据</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>etaonrs:PRIMARY&gt; db.comment.find({},{userid:1,nickname:1})
-{ &#34;_id&#34; : &#34;0&#34;, &#34;userid&#34; : &#34;1001&#34;, &#34;nickname&#34; : &#34;Rose&#34; }
-{ &#34;_id&#34; : &#34;2&#34;, &#34;userid&#34; : &#34;1005&#34;, &#34;nickname&#34; : &#34;伊人憔悴&#34; }
-{ &#34;_id&#34; : &#34;3&#34;, &#34;userid&#34; : &#34;1004&#34;, &#34;nickname&#34; : &#34;杰克船长&#34; }
-{ &#34;_id&#34; : &#34;4&#34;, &#34;userid&#34; : &#34;1003&#34;, &#34;nickname&#34; : &#34;凯撒&#34; }
-{ &#34;_id&#34; : &#34;5&#34;, &#34;userid&#34; : &#34;1003&#34;, &#34;nickname&#34; : &#34;凯撒&#34; }
-{ &#34;_id&#34; : &#34;1&#34;, &#34;userid&#34; : &#34;1002&#34;, &#34;nickname&#34; : &#34;相忘于江湖&#34; }
-etaonrs:PRIMARY&gt; db.comment.update({userid:&#39;1003&#39;},{$set:{nickname:&#39;杨过&#39;}},{multi:true})
-WriteResult({ &#34;nMatched&#34; : 2, &#34;nUpserted&#34; : 0, &#34;nModified&#34; : 2 })
-etaonrs:PRIMARY&gt; db.comment.find({},{userid:1,nickname:1})
-{ &#34;_id&#34; : &#34;0&#34;, &#34;userid&#34; : &#34;1001&#34;, &#34;nickname&#34; : &#34;Rose&#34; }
-{ &#34;_id&#34; : &#34;2&#34;, &#34;userid&#34; : &#34;1005&#34;, &#34;nickname&#34; : &#34;伊人憔悴&#34; }
-{ &#34;_id&#34; : &#34;3&#34;, &#34;userid&#34; : &#34;1004&#34;, &#34;nickname&#34; : &#34;杰克船长&#34; }
-{ &#34;_id&#34; : &#34;4&#34;, &#34;userid&#34; : &#34;1003&#34;, &#34;nickname&#34; : &#34;杨过&#34; }
-{ &#34;_id&#34; : &#34;5&#34;, &#34;userid&#34; : &#34;1003&#34;, &#34;nickname&#34; : &#34;杨过&#34; }
-{ &#34;_id&#34; : &#34;1&#34;, &#34;userid&#34; : &#34;1002&#34;, &#34;nickname&#34; : &#34;相忘于江湖&#34; }
-
-</code></pre></div><ol>
-<li>恢复Alma，查看数据和副本集状态</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@Alma ~]# systemctl start mongod.service
-[root@Alma ~]# mongo
-MongoDB shell version v5.0.5
-connecting to: mongodb://127.0.0.1:27017/?compressors=disabled&amp;gssapiServiceName=mongodb
-Implicit session: session { &#34;id&#34; : UUID(&#34;b73a2247-defb-48a6-8af1-0615f617b8ac&#34;) }
-......
-etaonrs:SECONDARY&gt; rs.slaveOk()
-WARNING: slaveOk() is deprecated and may be removed in the next major release. Please use secondaryOk() instead.
-etaonrs:SECONDARY&gt; use etaondb
-switched to db etaondb
-etaonrs:SECONDARY&gt; db.comment.find({},{userid:1,nickname:1})
-{ &#34;_id&#34; : &#34;0&#34;, &#34;userid&#34; : &#34;1001&#34;, &#34;nickname&#34; : &#34;Rose&#34; }
-{ &#34;_id&#34; : &#34;2&#34;, &#34;userid&#34; : &#34;1005&#34;, &#34;nickname&#34; : &#34;伊人憔悴&#34; }
-{ &#34;_id&#34; : &#34;3&#34;, &#34;userid&#34; : &#34;1004&#34;, &#34;nickname&#34; : &#34;杰克船长&#34; }
-{ &#34;_id&#34; : &#34;4&#34;, &#34;userid&#34; : &#34;1003&#34;, &#34;nickname&#34; : &#34;杨过&#34; }
-{ &#34;_id&#34; : &#34;5&#34;, &#34;userid&#34; : &#34;1003&#34;, &#34;nickname&#34; : &#34;杨过&#34; }
-{ &#34;_id&#34; : &#34;1&#34;, &#34;userid&#34; : &#34;1002&#34;, &#34;nickname&#34; : &#34;相忘于江湖&#34; }
-
-</code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>etaonrs:SECONDARY&gt; rs.status()
-{
-        &#34;set&#34; : &#34;etaonrs&#34;,
-        &#34;date&#34; : ISODate(&#34;2022-01-28T04:11:32.101Z&#34;),
-        &#34;myState&#34; : 2,
-        &#34;term&#34; : NumberLong(16),
-        &#34;syncSourceHost&#34; : &#34;db1:27017&#34;,
-        &#34;syncSourceId&#34; : 2,
-        &#34;heartbeatIntervalMillis&#34; : NumberLong(2000),
-        &#34;majorityVoteCount&#34; : 2,
-        &#34;writeMajorityCount&#34; : 2,
-        &#34;votingMembersCount&#34; : 3,
-        &#34;writableVotingMembersCount&#34; : 3,
-        &#34;optimes&#34; : {
-                &#34;lastCommittedOpTime&#34; : {
-                        &#34;ts&#34; : Timestamp(1643343089, 1),
-                        &#34;t&#34; : NumberLong(16)
-                },
-                &#34;lastCommittedWallTime&#34; : ISODate(&#34;2022-01-28T04:11:29.276Z&#34;),
-                &#34;readConcernMajorityOpTime&#34; : {
-                        &#34;ts&#34; : Timestamp(1643343089, 1),
-                        &#34;t&#34; : NumberLong(16)
-                },
-                &#34;appliedOpTime&#34; : {
-                        &#34;ts&#34; : Timestamp(1643343089, 1),
-                        &#34;t&#34; : NumberLong(16)
-                },
-                &#34;durableOpTime&#34; : {
-                        &#34;ts&#34; : Timestamp(1643343089, 1),
-                        &#34;t&#34; : NumberLong(16)
-                },
-                &#34;lastAppliedWallTime&#34; : ISODate(&#34;2022-01-28T04:11:29.276Z&#34;),
-                &#34;lastDurableWallTime&#34; : ISODate(&#34;2022-01-28T04:11:29.276Z&#34;)
-        },
-        &#34;lastStableRecoveryTimestamp&#34; : Timestamp(1643343079, 1),
-        &#34;members&#34; : [
-                {
-                        &#34;_id&#34; : 0,
-                        &#34;name&#34; : &#34;Alma:27017&#34;,
-                        &#34;health&#34; : 1,
-                        &#34;state&#34; : 2,
-                        &#34;stateStr&#34; : &#34;SECONDARY&#34;,
-                        &#34;uptime&#34; : 375,
-                        &#34;optime&#34; : {
-                                &#34;ts&#34; : Timestamp(1643343089, 1),
-                                &#34;t&#34; : NumberLong(16)
-                        },
-                        &#34;optimeDate&#34; : ISODate(&#34;2022-01-28T04:11:29Z&#34;),
-                        &#34;lastAppliedWallTime&#34; : ISODate(&#34;2022-01-28T04:11:29.276Z&#34;),
-                        &#34;lastDurableWallTime&#34; : ISODate(&#34;2022-01-28T04:11:29.276Z&#34;),
-                        &#34;syncSourceHost&#34; : &#34;db1:27017&#34;,
-                        &#34;syncSourceId&#34; : 2,
-                        &#34;infoMessage&#34; : &#34;&#34;,
-                        &#34;configVersion&#34; : 517368,
-                        &#34;configTerm&#34; : 16,
-                        &#34;self&#34; : true,
-                        &#34;lastHeartbeatMessage&#34; : &#34;&#34;
-                },
-                {
-                        &#34;_id&#34; : 1,
-                        &#34;name&#34; : &#34;db2:27017&#34;,
-                        &#34;health&#34; : 1,
-                        &#34;state&#34; : 1,
-                        &#34;stateStr&#34; : &#34;PRIMARY&#34;,
-                        &#34;uptime&#34; : 372,
-                        &#34;optime&#34; : {
-                                &#34;ts&#34; : Timestamp(1643343089, 1),
-                                &#34;t&#34; : NumberLong(16)
-                        },
-                        &#34;optimeDurable&#34; : {
-                                &#34;ts&#34; : Timestamp(1643343089, 1),
-                                &#34;t&#34; : NumberLong(16)
-                        },
-                        &#34;optimeDate&#34; : ISODate(&#34;2022-01-28T04:11:29Z&#34;),
-                        &#34;optimeDurableDate&#34; : ISODate(&#34;2022-01-28T04:11:29Z&#34;),
-                        &#34;lastAppliedWallTime&#34; : ISODate(&#34;2022-01-28T04:11:29.276Z&#34;),
-                        &#34;lastDurableWallTime&#34; : ISODate(&#34;2022-01-28T04:11:29.276Z&#34;),
-                        &#34;lastHeartbeat&#34; : ISODate(&#34;2022-01-28T04:11:31.064Z&#34;),
-                        &#34;lastHeartbeatRecv&#34; : ISODate(&#34;2022-01-28T04:11:30.864Z&#34;),
-                        &#34;pingMs&#34; : NumberLong(0),
-                        &#34;lastHeartbeatMessage&#34; : &#34;&#34;,
-                        &#34;syncSourceHost&#34; : &#34;&#34;,
-                        &#34;syncSourceId&#34; : -1,
-                        &#34;infoMessage&#34; : &#34;&#34;,
-                        &#34;electionTime&#34; : Timestamp(1643341509, 1),
-                        &#34;electionDate&#34; : ISODate(&#34;2022-01-28T03:45:09Z&#34;),
-                        &#34;configVersion&#34; : 517368,
-                        &#34;configTerm&#34; : 16
-                },
-                {
-                        &#34;_id&#34; : 2,
-                        &#34;name&#34; : &#34;db1:27017&#34;,
-                        &#34;health&#34; : 1,
-                        &#34;state&#34; : 2,
-                        &#34;stateStr&#34; : &#34;SECONDARY&#34;,
-                        &#34;uptime&#34; : 372,
-                        &#34;optime&#34; : {
-                                &#34;ts&#34; : Timestamp(1643343089, 1),
-                                &#34;t&#34; : NumberLong(16)
-                        },
-                        &#34;optimeDurable&#34; : {
-                                &#34;ts&#34; : Timestamp(1643343089, 1),
-                                &#34;t&#34; : NumberLong(16)
-                        },
-                        &#34;optimeDate&#34; : ISODate(&#34;2022-01-28T04:11:29Z&#34;),
-                        &#34;optimeDurableDate&#34; : ISODate(&#34;2022-01-28T04:11:29Z&#34;),
-                        &#34;lastAppliedWallTime&#34; : ISODate(&#34;2022-01-28T04:11:29.276Z&#34;),
-                        &#34;lastDurableWallTime&#34; : ISODate(&#34;2022-01-28T04:11:29.276Z&#34;),
-                        &#34;lastHeartbeat&#34; : ISODate(&#34;2022-01-28T04:11:31.064Z&#34;),
-                        &#34;lastHeartbeatRecv&#34; : ISODate(&#34;2022-01-28T04:11:30.448Z&#34;),
-                        &#34;pingMs&#34; : NumberLong(1),
-                        &#34;lastHeartbeatMessage&#34; : &#34;&#34;,
-                        &#34;syncSourceHost&#34; : &#34;db2:27017&#34;,
-                        &#34;syncSourceId&#34; : 1,
-                        &#34;infoMessage&#34; : &#34;&#34;,
-                        &#34;configVersion&#34; : 517368,
-                        &#34;configTerm&#34; : 16
-                }
-        ],
-        &#34;ok&#34; : 1,
-        &#34;$clusterTime&#34; : {
-                &#34;clusterTime&#34; : Timestamp(1643343089, 1),
-                &#34;signature&#34; : {
-                        &#34;hash&#34; : BinData(0,&#34;AAAAAAAAAAAAAAAAAAAAAAAAAAA=&#34;),
-                        &#34;keyId&#34; : NumberLong(0)
-                }
-        },
-        &#34;operationTime&#34; : Timestamp(1643343089, 1)
-}
-
-</code></pre></div><p>db2依然为主成员，而Alma变成辅助成员</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback> &#34;_id&#34; : 1,
-                        &#34;name&#34; : &#34;db2:27017&#34;,
-                        &#34;health&#34; : 1,
-                        &#34;state&#34; : 1,
-                        &#34;stateStr&#34; : &#34;PRIMARY&#34;,
-   &#34;_id&#34; : 0,
-                        &#34;name&#34; : &#34;Alma:27017&#34;,
-                        &#34;health&#34; : 1,
-                        &#34;state&#34; : 2,
-                        &#34;stateStr&#34; : &#34;SECONDARY&#34;
-
-</code></pre></div><p>在副本集中，主成员的归属是可以改变的。</p>
-<h3 id=连接副本集>连接副本集</h3>
-<p>使用MongoDB Compass，连接要选择副本集而不是节点成员。
-使用命令：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>mongodb://Alma,db1,db2/etaondb?connect=replicaSet&amp;slaveOk=true&amp;replicaSet=etaonrs
-
-</code></pre></div><p>指定副本集，成员和设置slaveOK</p>
-<p><img src="https://img-blog.csdnimg.cn/bda8f2e78ba5481bbca4ef4dedad2f2c.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="https://img-blog.csdnimg.cn/bda8f2e78ba5481bbca4ef4dedad2f2c.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16"></p>
-<p>连接以后：</p>
-<p><img src="https://img-blog.csdnimg.cn/819be43397c14cdf927961faf2777b99.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="https://img-blog.csdnimg.cn/819be43397c14cdf927961faf2777b99.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16"></p>
-<p>利用Compass增加一条一个table：ccc
-从主机上看：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>etaonrs:SECONDARY&gt; show tables
-ccc
-comment
-
-</code></pre></div><p>创建成功。</p>
-</div>
-<footer class=post-footer>
-<div id=wcomments></div>
-</footer>
-</article>
-</section>
-</div>
-</div>
-<div class=sidebar-toggle>
-<div class=sidebar-toggle-line-wrap>
-<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+我们查看辅助成员的数据情况：</li></ol><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>etaonrs:SECONDARY&gt; db.comment.find()
+</span></span><span style=display:flex><span>Error: error: {
+</span></span><span style=display:flex><span>        &#34;topologyVersion&#34; : {
+</span></span><span style=display:flex><span>                &#34;processId&#34; : ObjectId(&#34;61f223e7b916a2f7bd2ea194&#34;),
+</span></span><span style=display:flex><span>                &#34;counter&#34; : NumberLong(5)
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        &#34;ok&#34; : 0,
+</span></span><span style=display:flex><span>        &#34;errmsg&#34; : &#34;not master and slaveOk=false&#34;,
+</span></span><span style=display:flex><span>        &#34;code&#34; : 13435,
+</span></span><span style=display:flex><span>        &#34;codeName&#34; : &#34;NotPrimaryNoSecondaryOk&#34;,
+</span></span><span style=display:flex><span>        &#34;$clusterTime&#34; : {
+</span></span><span style=display:flex><span>                &#34;clusterTime&#34; : Timestamp(1643259928, 1),
+</span></span><span style=display:flex><span>                &#34;signature&#34; : {
+</span></span><span style=display:flex><span>                        &#34;hash&#34; : BinData(0,&#34;AAAAAAAAAAAAAAAAAAAAAAAAAAA=&#34;),
+</span></span><span style=display:flex><span>                        &#34;keyId&#34; : NumberLong(0)
+</span></span><span style=display:flex><span>                }
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        &#34;operationTime&#34; : Timestamp(1643259928, 1)
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>在辅助成员初始化后，其并没有变成slaveOk，需要使用命令rs.slaveOk()</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>etaonrs:SECONDARY&gt; rs.slaveOk()
+</span></span><span style=display:flex><span>WARNING: slaveOk() is deprecated and may be removed in the next major release. Please use secondaryOk() instead.
+</span></span></code></pre></div><p>然后再进行查询</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>etaonrs:SECONDARY&gt; db.comment.find()
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;0&#34;, &#34;articleid&#34; : &#34;100000&#34;, &#34;content&#34; : &#34;今天天气真好，阳光明媚&#34;, &#34;userid&#34; : &#34;1001&#34;, &#34;nickname&#34; : &#34;Rose&#34;, &#34;createdatetime&#34; : ISODate(&#34;2022-01-27T03:06:19.502Z&#34;), &#34;likenum&#34; : 10, &#34;state&#34; : null }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;2&#34;, &#34;articleid&#34; : &#34;100001&#34;, &#34;content&#34; : &#34;我夏天空腹喝凉开水，冬天喝温开水&#34;, &#34;userid&#34; : &#34;1005&#34;, &#34;nickname&#34; : &#34;伊人憔悴&#34;, &#34;createdatetime&#34; : ISODate(&#34;2019-08-05T23:58:51.485Z&#34;), &#34;likenum&#34; : 888, &#34;state&#34; : &#34;1&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;3&#34;, &#34;articleid&#34; : &#34;100001&#34;, &#34;content&#34; : &#34;我一直喝凉开水，冬天夏天都喝。&#34;, &#34;userid&#34; : &#34;1004&#34;, &#34;nickname&#34; : &#34;杰克船长&#34;, &#34;createdatetime&#34; : ISODate(&#34;2019-08-06T01:05:06.321Z&#34;), &#34;likenum&#34; : 666, &#34;state&#34; : &#34;1&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;4&#34;, &#34;articleid&#34; : &#34;100001&#34;, &#34;content&#34; : &#34;专家说不能空腹吃饭，影响健康。&#34;, &#34;userid&#34; : &#34;1003&#34;, &#34;nickname&#34; : &#34;凯撒&#34;, &#34;createdatetime&#34; : ISODate(&#34;2019-08-06T08:18:35.288Z&#34;), &#34;likenum&#34; : 2000, &#34;state&#34; : &#34;1&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;5&#34;, &#34;articleid&#34; : &#34;100001&#34;, &#34;content&#34; : &#34;研究表明，刚烧开的水千万不能喝，因为烫嘴。&#34;, &#34;userid&#34; : &#34;1003&#34;, &#34;nickname&#34; : &#34;凯撒&#34;, &#34;createdatetime&#34; : ISODate(&#34;2019-08-06T11:01:02.521Z&#34;), &#34;likenum&#34; : 3000, &#34;state&#34; : &#34;1&#34; }
+</span></span></code></pre></div><ul><li>可以看到_id=1的记录同样被删除</li></ul><ol><li>对于客户端读取副本集的内容，是由读取首选项模式决定的，参考<a href=https://docs.mongodb.com/manual/core/read-preference/#std-label-replica-set-read-preference-modes>读取首选项</a>，默认为应用程序将其读取操作定向到副本集中的主成员。</li></ol><h3 id=故障模拟>故障模拟</h3><p>现在的副本集为三成员，可以提供一个成员的故障保护</p><h3 id=辅助成员失效>辅助成员失效</h3><ol><li>停掉db2-辅助成员的mongod进程，查看副本集中db2的状态：</li></ol><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>{
+</span></span><span style=display:flex><span>                        &#34;_id&#34; : 1,
+</span></span><span style=display:flex><span>                        &#34;name&#34; : &#34;db2:27017&#34;,
+</span></span><span style=display:flex><span>                        &#34;health&#34; : 0,
+</span></span><span style=display:flex><span>                        &#34;state&#34; : 8,
+</span></span><span style=display:flex><span>                        &#34;stateStr&#34; : &#34;(not reachable/healthy)&#34;,
+</span></span><span style=display:flex><span>                        &#34;uptime&#34; : 0,
+</span></span><span style=display:flex><span>                        &#34;optime&#34; : {
+</span></span><span style=display:flex><span>                                &#34;ts&#34; : Timestamp(0, 0),
+</span></span><span style=display:flex><span>                                &#34;t&#34; : NumberLong(-1)
+</span></span><span style=display:flex><span>                        },
+</span></span><span style=display:flex><span>                        &#34;optimeDurable&#34; : {
+</span></span><span style=display:flex><span>                                &#34;ts&#34; : Timestamp(0, 0),
+</span></span><span style=display:flex><span>                                &#34;t&#34; : NumberLong(-1)
+</span></span><span style=display:flex><span>                        },
+</span></span><span style=display:flex><span>                        &#34;optimeDate&#34; : ISODate(&#34;1970-01-01T00:00:00Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;optimeDurableDate&#34; : ISODate(&#34;1970-01-01T00:00:00Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;lastAppliedWallTime&#34; : ISODate(&#34;2022-01-28T03:28:25.101Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;lastDurableWallTime&#34; : ISODate(&#34;2022-01-28T03:28:25.101Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;lastHeartbeat&#34; : ISODate(&#34;2022-01-28T03:29:35.375Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;lastHeartbeatRecv&#34; : ISODate(&#34;2022-01-28T03:28:32.875Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;pingMs&#34; : NumberLong(0),
+</span></span><span style=display:flex><span>                        &#34;lastHeartbeatMessage&#34; : &#34;Error connecting to db2:27017 (172.16.21.11:27017) :: caused by :: Connection refused&#34;,
+</span></span><span style=display:flex><span>                        &#34;syncSourceHost&#34; : &#34;&#34;,
+</span></span><span style=display:flex><span>                        &#34;syncSourceId&#34; : -1,
+</span></span><span style=display:flex><span>                        &#34;infoMessage&#34; : &#34;&#34;,
+</span></span><span style=display:flex><span>                        &#34;configVersion&#34; : 517368,
+</span></span><span style=display:flex><span>                        &#34;configTerm&#34; : 15
+</span></span><span style=display:flex><span>                },
+</span></span></code></pre></div><p>状态已经改变：&ldquo;stateStr&rdquo; : &ldquo;(not reachable/healthy)&rdquo;</p><ol><li>插入一条新的记录：</li></ol><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>etaonrs:PRIMARY&gt; db.comment.find({},{userid:1})
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;0&#34;, &#34;userid&#34; : &#34;1001&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;2&#34;, &#34;userid&#34; : &#34;1005&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;3&#34;, &#34;userid&#34; : &#34;1004&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;4&#34;, &#34;userid&#34; : &#34;1003&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;5&#34;, &#34;userid&#34; : &#34;1003&#34; }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>etaonrs:PRIMARY&gt; db.comment.insert({&#34;_id&#34;:&#34;1&#34;,&#34;articleid&#34;:&#34;100001&#34;,&#34;content&#34;:&#34;我们不应该把清晨浪费在手机上，健康很重要，一杯温水幸福你我他。&#34;,&#34;userid&#34;:&#34;1002&#34;,&#34;nickname&#34;:&#34;相忘于江湖&#34;,&#34;createdatetime&#34;:new Date(&#34;2019-08-05T22:08:15.522&#34;),&#34;likenum&#34;:NumberInt(1000),&#34;state&#34;:&#34;1&#34;})
+</span></span><span style=display:flex><span>WriteResult({ &#34;nInserted&#34; : 1 })
+</span></span><span style=display:flex><span>etaonrs:PRIMARY&gt; db.comment.find({},{userid:1})
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;0&#34;, &#34;userid&#34; : &#34;1001&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;2&#34;, &#34;userid&#34; : &#34;1005&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;3&#34;, &#34;userid&#34; : &#34;1004&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;4&#34;, &#34;userid&#34; : &#34;1003&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;5&#34;, &#34;userid&#34; : &#34;1003&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;1&#34;, &#34;userid&#34; : &#34;1002&#34; }
+</span></span></code></pre></div><ol><li>恢复db2，查看其数据情况</li></ol><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[root@db2 ~]# systemctl restart mongod
+</span></span><span style=display:flex><span>[root@db2 ~]# mongo
+</span></span><span style=display:flex><span>MongoDB shell version v5.0.5
+</span></span><span style=display:flex><span>connecting to: mongodb://127.0.0.1:27017/?compressors=disabled&amp;gssapiServiceName=mongodb
+</span></span><span style=display:flex><span>Implicit session: session { &#34;id&#34; : UUID(&#34;62202173-4e67-4a6b-b6fb-83fc3fb97aef&#34;) }
+</span></span><span style=display:flex><span>MongoDB server version: 5.0.5
+</span></span><span style=display:flex><span>================
+</span></span><span style=display:flex><span>......
+</span></span><span style=display:flex><span>etaonrs:SECONDARY&gt; rs.slaveOk()
+</span></span><span style=display:flex><span>WARNING: slaveOk() is deprecated and may be removed in the next major release. Please use secondaryOk() instead.
+</span></span><span style=display:flex><span>etaonrs:SECONDARY&gt; use etaondb
+</span></span><span style=display:flex><span>switched to db etaondb
+</span></span><span style=display:flex><span>etaonrs:SECONDARY&gt; db.comment.find({},{userid:1})
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;0&#34;, &#34;userid&#34; : &#34;1001&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;2&#34;, &#34;userid&#34; : &#34;1005&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;3&#34;, &#34;userid&#34; : &#34;1004&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;4&#34;, &#34;userid&#34; : &#34;1003&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;5&#34;, &#34;userid&#34; : &#34;1003&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;1&#34;, &#34;userid&#34; : &#34;1002&#34; }
+</span></span></code></pre></div><p>再启动辅助成员，会发现，主成员写入的数据，会自动同步给辅助成员。</p><h3 id=主成员失效>主成员失效</h3><ol><li>关闭主成员进程</li></ol><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[root@Alma ~]# systemctl stop mongod.service
+</span></span><span style=display:flex><span>[root@Alma ~]#
+</span></span></code></pre></div><ol><li>查看副本集状态</li></ol><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>etaonrs:SECONDARY&gt; rs.status()
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>        &#34;set&#34; : &#34;etaonrs&#34;,
+</span></span><span style=display:flex><span>        &#34;date&#34; : ISODate(&#34;2022-01-28T03:45:25.763Z&#34;),
+</span></span><span style=display:flex><span>        &#34;myState&#34; : 2,
+</span></span><span style=display:flex><span>        &#34;term&#34; : NumberLong(16),
+</span></span><span style=display:flex><span>        &#34;syncSourceHost&#34; : &#34;&#34;,
+</span></span><span style=display:flex><span>        &#34;syncSourceId&#34; : -1,
+</span></span><span style=display:flex><span>        &#34;heartbeatIntervalMillis&#34; : NumberLong(2000),
+</span></span><span style=display:flex><span>        &#34;majorityVoteCount&#34; : 2,
+</span></span><span style=display:flex><span>        &#34;writeMajorityCount&#34; : 2,
+</span></span><span style=display:flex><span>        &#34;votingMembersCount&#34; : 3,
+</span></span><span style=display:flex><span>        &#34;writableVotingMembersCount&#34; : 3,
+</span></span><span style=display:flex><span>        &#34;optimes&#34; : {
+</span></span><span style=display:flex><span>                &#34;lastCommittedOpTime&#34; : {
+</span></span><span style=display:flex><span>                        &#34;ts&#34; : Timestamp(1643341519, 1),
+</span></span><span style=display:flex><span>                        &#34;t&#34; : NumberLong(16)
+</span></span><span style=display:flex><span>                },
+</span></span><span style=display:flex><span>                &#34;lastCommittedWallTime&#34; : ISODate(&#34;2022-01-28T03:45:19.113Z&#34;),
+</span></span><span style=display:flex><span>                &#34;readConcernMajorityOpTime&#34; : {
+</span></span><span style=display:flex><span>                        &#34;ts&#34; : Timestamp(1643341519, 1),
+</span></span><span style=display:flex><span>                        &#34;t&#34; : NumberLong(16)
+</span></span><span style=display:flex><span>                },
+</span></span><span style=display:flex><span>                &#34;appliedOpTime&#34; : {
+</span></span><span style=display:flex><span>                        &#34;ts&#34; : Timestamp(1643341519, 1),
+</span></span><span style=display:flex><span>                        &#34;t&#34; : NumberLong(16)
+</span></span><span style=display:flex><span>                },
+</span></span><span style=display:flex><span>                &#34;durableOpTime&#34; : {
+</span></span><span style=display:flex><span>                        &#34;ts&#34; : Timestamp(1643341519, 1),
+</span></span><span style=display:flex><span>                        &#34;t&#34; : NumberLong(16)
+</span></span><span style=display:flex><span>                },
+</span></span><span style=display:flex><span>                &#34;lastAppliedWallTime&#34; : ISODate(&#34;2022-01-28T03:45:19.113Z&#34;),
+</span></span><span style=display:flex><span>                &#34;lastDurableWallTime&#34; : ISODate(&#34;2022-01-28T03:45:19.113Z&#34;)
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        &#34;lastStableRecoveryTimestamp&#34; : Timestamp(1643341465, 1),
+</span></span><span style=display:flex><span>        &#34;electionParticipantMetrics&#34; : {
+</span></span><span style=display:flex><span>                &#34;votedForCandidate&#34; : true,
+</span></span><span style=display:flex><span>                &#34;electionTerm&#34; : NumberLong(16),
+</span></span><span style=display:flex><span>                &#34;lastVoteDate&#34; : ISODate(&#34;2022-01-28T03:45:09.099Z&#34;),
+</span></span><span style=display:flex><span>                &#34;electionCandidateMemberId&#34; : 1,
+</span></span><span style=display:flex><span>                &#34;voteReason&#34; : &#34;&#34;,
+</span></span><span style=display:flex><span>                &#34;lastAppliedOpTimeAtElection&#34; : {
+</span></span><span style=display:flex><span>                        &#34;ts&#34; : Timestamp(1643341505, 1),
+</span></span><span style=display:flex><span>                        &#34;t&#34; : NumberLong(15)
+</span></span><span style=display:flex><span>                },
+</span></span><span style=display:flex><span>                &#34;maxAppliedOpTimeInSet&#34; : {
+</span></span><span style=display:flex><span>                        &#34;ts&#34; : Timestamp(1643341505, 1),
+</span></span><span style=display:flex><span>                        &#34;t&#34; : NumberLong(15)
+</span></span><span style=display:flex><span>                },
+</span></span><span style=display:flex><span>                &#34;priorityAtElection&#34; : 1,
+</span></span><span style=display:flex><span>                &#34;newTermStartDate&#34; : ISODate(&#34;2022-01-28T03:45:09.110Z&#34;),
+</span></span><span style=display:flex><span>                &#34;newTermAppliedDate&#34; : ISODate(&#34;2022-01-28T03:45:10.107Z&#34;)
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        &#34;members&#34; : [
+</span></span><span style=display:flex><span>                {
+</span></span><span style=display:flex><span>                        &#34;_id&#34; : 0,
+</span></span><span style=display:flex><span>                        &#34;name&#34; : &#34;Alma:27017&#34;,
+</span></span><span style=display:flex><span>                        &#34;health&#34; : 0,
+</span></span><span style=display:flex><span>                        &#34;state&#34; : 8,
+</span></span><span style=display:flex><span>                        &#34;stateStr&#34; : &#34;(not reachable/healthy)&#34;,
+</span></span><span style=display:flex><span>                        &#34;uptime&#34; : 0,
+</span></span><span style=display:flex><span>                        &#34;optime&#34; : {
+</span></span><span style=display:flex><span>                                &#34;ts&#34; : Timestamp(0, 0),
+</span></span><span style=display:flex><span>                                &#34;t&#34; : NumberLong(-1)
+</span></span><span style=display:flex><span>                        },
+</span></span><span style=display:flex><span>                        &#34;optimeDurable&#34; : {
+</span></span><span style=display:flex><span>                                &#34;ts&#34; : Timestamp(0, 0),
+</span></span><span style=display:flex><span>                                &#34;t&#34; : NumberLong(-1)
+</span></span><span style=display:flex><span>                        },
+</span></span><span style=display:flex><span>                        &#34;optimeDate&#34; : ISODate(&#34;1970-01-01T00:00:00Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;optimeDurableDate&#34; : ISODate(&#34;1970-01-01T00:00:00Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;lastAppliedWallTime&#34; : ISODate(&#34;2022-01-28T03:45:19.113Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;lastDurableWallTime&#34; : ISODate(&#34;2022-01-28T03:45:19.113Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;lastHeartbeat&#34; : ISODate(&#34;2022-01-28T03:45:25.760Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;lastHeartbeatRecv&#34; : ISODate(&#34;2022-01-28T03:45:22.154Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;pingMs&#34; : NumberLong(0),
+</span></span><span style=display:flex><span>                        &#34;lastHeartbeatMessage&#34; : &#34;Error connecting to Alma:27017 (172.16.21.9:27017) :: caused by :: Connection refused&#34;,
+</span></span><span style=display:flex><span>                        &#34;syncSourceHost&#34; : &#34;&#34;,
+</span></span><span style=display:flex><span>                        &#34;syncSourceId&#34; : -1,
+</span></span><span style=display:flex><span>                        &#34;infoMessage&#34; : &#34;&#34;,
+</span></span><span style=display:flex><span>                        &#34;configVersion&#34; : 517368,
+</span></span><span style=display:flex><span>                        &#34;configTerm&#34; : 16
+</span></span><span style=display:flex><span>                },
+</span></span><span style=display:flex><span>                {
+</span></span><span style=display:flex><span>                        &#34;_id&#34; : 1,
+</span></span><span style=display:flex><span>                        &#34;name&#34; : &#34;db2:27017&#34;,
+</span></span><span style=display:flex><span>                        &#34;health&#34; : 1,
+</span></span><span style=display:flex><span>                        &#34;state&#34; : 1,
+</span></span><span style=display:flex><span>                        &#34;stateStr&#34; : &#34;PRIMARY&#34;,
+</span></span><span style=display:flex><span>                        &#34;uptime&#34; : 423,
+</span></span><span style=display:flex><span>                        &#34;optime&#34; : {
+</span></span><span style=display:flex><span>                                &#34;ts&#34; : Timestamp(1643341519, 1),
+</span></span><span style=display:flex><span>                                &#34;t&#34; : NumberLong(16)
+</span></span><span style=display:flex><span>                        },
+</span></span><span style=display:flex><span>                        &#34;optimeDurable&#34; : {
+</span></span><span style=display:flex><span>                                &#34;ts&#34; : Timestamp(1643341519, 1),
+</span></span><span style=display:flex><span>                                &#34;t&#34; : NumberLong(16)
+</span></span><span style=display:flex><span>                        },
+</span></span><span style=display:flex><span>                        &#34;optimeDate&#34; : ISODate(&#34;2022-01-28T03:45:19Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;optimeDurableDate&#34; : ISODate(&#34;2022-01-28T03:45:19Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;lastAppliedWallTime&#34; : ISODate(&#34;2022-01-28T03:45:19.113Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;lastDurableWallTime&#34; : ISODate(&#34;2022-01-28T03:45:19.113Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;lastHeartbeat&#34; : ISODate(&#34;2022-01-28T03:45:25.710Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;lastHeartbeatRecv&#34; : ISODate(&#34;2022-01-28T03:45:25.131Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;pingMs&#34; : NumberLong(0),
+</span></span><span style=display:flex><span>                        &#34;lastHeartbeatMessage&#34; : &#34;&#34;,
+</span></span><span style=display:flex><span>                        &#34;syncSourceHost&#34; : &#34;&#34;,
+</span></span><span style=display:flex><span>                        &#34;syncSourceId&#34; : -1,
+</span></span><span style=display:flex><span>                        &#34;infoMessage&#34; : &#34;&#34;,
+</span></span><span style=display:flex><span>                        &#34;electionTime&#34; : Timestamp(1643341509, 1),
+</span></span><span style=display:flex><span>                        &#34;electionDate&#34; : ISODate(&#34;2022-01-28T03:45:09Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;configVersion&#34; : 517368,
+</span></span><span style=display:flex><span>                        &#34;configTerm&#34; : 16
+</span></span><span style=display:flex><span>                },
+</span></span><span style=display:flex><span>                {
+</span></span><span style=display:flex><span>                        &#34;_id&#34; : 2,
+</span></span><span style=display:flex><span>                        &#34;name&#34; : &#34;db1:27017&#34;,
+</span></span><span style=display:flex><span>                        &#34;health&#34; : 1,
+</span></span><span style=display:flex><span>                        &#34;state&#34; : 2,
+</span></span><span style=display:flex><span>                        &#34;stateStr&#34; : &#34;SECONDARY&#34;,
+</span></span><span style=display:flex><span>                        &#34;uptime&#34; : 1835,
+</span></span><span style=display:flex><span>                        &#34;optime&#34; : {
+</span></span><span style=display:flex><span>                                &#34;ts&#34; : Timestamp(1643341519, 1),
+</span></span><span style=display:flex><span>                                &#34;t&#34; : NumberLong(16)
+</span></span><span style=display:flex><span>                        },
+</span></span><span style=display:flex><span>                        &#34;optimeDate&#34; : ISODate(&#34;2022-01-28T03:45:19Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;lastAppliedWallTime&#34; : ISODate(&#34;2022-01-28T03:45:19.113Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;lastDurableWallTime&#34; : ISODate(&#34;2022-01-28T03:45:19.113Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;syncSourceHost&#34; : &#34;&#34;,
+</span></span><span style=display:flex><span>                        &#34;syncSourceId&#34; : -1,
+</span></span><span style=display:flex><span>                        &#34;infoMessage&#34; : &#34;&#34;,
+</span></span><span style=display:flex><span>                        &#34;configVersion&#34; : 517368,
+</span></span><span style=display:flex><span>                        &#34;configTerm&#34; : 16,
+</span></span><span style=display:flex><span>                        &#34;self&#34; : true,
+</span></span><span style=display:flex><span>                        &#34;lastHeartbeatMessage&#34; : &#34;&#34;
+</span></span><span style=display:flex><span>                }
+</span></span><span style=display:flex><span>        ],
+</span></span><span style=display:flex><span>        &#34;ok&#34; : 1,
+</span></span><span style=display:flex><span>        &#34;$clusterTime&#34; : {
+</span></span><span style=display:flex><span>                &#34;clusterTime&#34; : Timestamp(1643341519, 1),
+</span></span><span style=display:flex><span>                &#34;signature&#34; : {
+</span></span><span style=display:flex><span>                        &#34;hash&#34; : BinData(0,&#34;AAAAAAAAAAAAAAAAAAAAAAAAAAA=&#34;),
+</span></span><span style=display:flex><span>                        &#34;keyId&#34; : NumberLong(0)
+</span></span><span style=display:flex><span>                }
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        &#34;operationTime&#34; : Timestamp(1643341519, 1)
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>原来的主成员：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>&#34;name&#34; : &#34;Alma:27017&#34;,
+</span></span><span style=display:flex><span>                        &#34;health&#34; : 0,
+</span></span><span style=display:flex><span>                        &#34;state&#34; : 8,
+</span></span><span style=display:flex><span>                        &#34;stateStr&#34; : &#34;(not reachable/healthy)&#34;
+</span></span></code></pre></div><p>新的主成员变成了db2</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>  &#34;_id&#34; : 1,
+</span></span><span style=display:flex><span>                        &#34;name&#34; : &#34;db2:27017&#34;,
+</span></span><span style=display:flex><span>                        &#34;health&#34; : 1,
+</span></span><span style=display:flex><span>                        &#34;state&#34; : 1,
+</span></span><span style=display:flex><span>                        &#34;stateStr&#34; : &#34;PRIMARY&#34;,
+</span></span></code></pre></div><ol><li>数据情况：</li></ol><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>etaonrs:SECONDARY&gt; db.comment.find({},{userid:1,nickname:1})
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;0&#34;, &#34;userid&#34; : &#34;1001&#34;, &#34;nickname&#34; : &#34;Rose&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;2&#34;, &#34;userid&#34; : &#34;1005&#34;, &#34;nickname&#34; : &#34;伊人憔悴&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;3&#34;, &#34;userid&#34; : &#34;1004&#34;, &#34;nickname&#34; : &#34;杰克船长&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;4&#34;, &#34;userid&#34; : &#34;1003&#34;, &#34;nickname&#34; : &#34;凯撒&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;5&#34;, &#34;userid&#34; : &#34;1003&#34;, &#34;nickname&#34; : &#34;凯撒&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;1&#34;, &#34;userid&#34; : &#34;1002&#34;, &#34;nickname&#34; : &#34;相忘于江湖&#34; }
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>etaonrs:PRIMARY&gt; db.comment.find({},{userid:1})
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;0&#34;, &#34;userid&#34; : &#34;1001&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;2&#34;, &#34;userid&#34; : &#34;1005&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;3&#34;, &#34;userid&#34; : &#34;1004&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;4&#34;, &#34;userid&#34; : &#34;1003&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;5&#34;, &#34;userid&#34; : &#34;1003&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;1&#34;, &#34;userid&#34; : &#34;1002&#34; }
+</span></span></code></pre></div><p>剩下的两台上面的数都没变。</p><ol><li>在db2上面修改documents数据</li></ol><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>etaonrs:PRIMARY&gt; db.comment.find({},{userid:1,nickname:1})
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;0&#34;, &#34;userid&#34; : &#34;1001&#34;, &#34;nickname&#34; : &#34;Rose&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;2&#34;, &#34;userid&#34; : &#34;1005&#34;, &#34;nickname&#34; : &#34;伊人憔悴&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;3&#34;, &#34;userid&#34; : &#34;1004&#34;, &#34;nickname&#34; : &#34;杰克船长&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;4&#34;, &#34;userid&#34; : &#34;1003&#34;, &#34;nickname&#34; : &#34;凯撒&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;5&#34;, &#34;userid&#34; : &#34;1003&#34;, &#34;nickname&#34; : &#34;凯撒&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;1&#34;, &#34;userid&#34; : &#34;1002&#34;, &#34;nickname&#34; : &#34;相忘于江湖&#34; }
+</span></span><span style=display:flex><span>etaonrs:PRIMARY&gt; db.comment.update({userid:&#39;1003&#39;},{$set:{nickname:&#39;杨过&#39;}},{multi:true})
+</span></span><span style=display:flex><span>WriteResult({ &#34;nMatched&#34; : 2, &#34;nUpserted&#34; : 0, &#34;nModified&#34; : 2 })
+</span></span><span style=display:flex><span>etaonrs:PRIMARY&gt; db.comment.find({},{userid:1,nickname:1})
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;0&#34;, &#34;userid&#34; : &#34;1001&#34;, &#34;nickname&#34; : &#34;Rose&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;2&#34;, &#34;userid&#34; : &#34;1005&#34;, &#34;nickname&#34; : &#34;伊人憔悴&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;3&#34;, &#34;userid&#34; : &#34;1004&#34;, &#34;nickname&#34; : &#34;杰克船长&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;4&#34;, &#34;userid&#34; : &#34;1003&#34;, &#34;nickname&#34; : &#34;杨过&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;5&#34;, &#34;userid&#34; : &#34;1003&#34;, &#34;nickname&#34; : &#34;杨过&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;1&#34;, &#34;userid&#34; : &#34;1002&#34;, &#34;nickname&#34; : &#34;相忘于江湖&#34; }
+</span></span></code></pre></div><ol><li>恢复Alma，查看数据和副本集状态</li></ol><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[root@Alma ~]# systemctl start mongod.service
+</span></span><span style=display:flex><span>[root@Alma ~]# mongo
+</span></span><span style=display:flex><span>MongoDB shell version v5.0.5
+</span></span><span style=display:flex><span>connecting to: mongodb://127.0.0.1:27017/?compressors=disabled&amp;gssapiServiceName=mongodb
+</span></span><span style=display:flex><span>Implicit session: session { &#34;id&#34; : UUID(&#34;b73a2247-defb-48a6-8af1-0615f617b8ac&#34;) }
+</span></span><span style=display:flex><span>......
+</span></span><span style=display:flex><span>etaonrs:SECONDARY&gt; rs.slaveOk()
+</span></span><span style=display:flex><span>WARNING: slaveOk() is deprecated and may be removed in the next major release. Please use secondaryOk() instead.
+</span></span><span style=display:flex><span>etaonrs:SECONDARY&gt; use etaondb
+</span></span><span style=display:flex><span>switched to db etaondb
+</span></span><span style=display:flex><span>etaonrs:SECONDARY&gt; db.comment.find({},{userid:1,nickname:1})
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;0&#34;, &#34;userid&#34; : &#34;1001&#34;, &#34;nickname&#34; : &#34;Rose&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;2&#34;, &#34;userid&#34; : &#34;1005&#34;, &#34;nickname&#34; : &#34;伊人憔悴&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;3&#34;, &#34;userid&#34; : &#34;1004&#34;, &#34;nickname&#34; : &#34;杰克船长&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;4&#34;, &#34;userid&#34; : &#34;1003&#34;, &#34;nickname&#34; : &#34;杨过&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;5&#34;, &#34;userid&#34; : &#34;1003&#34;, &#34;nickname&#34; : &#34;杨过&#34; }
+</span></span><span style=display:flex><span>{ &#34;_id&#34; : &#34;1&#34;, &#34;userid&#34; : &#34;1002&#34;, &#34;nickname&#34; : &#34;相忘于江湖&#34; }
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>etaonrs:SECONDARY&gt; rs.status()
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>        &#34;set&#34; : &#34;etaonrs&#34;,
+</span></span><span style=display:flex><span>        &#34;date&#34; : ISODate(&#34;2022-01-28T04:11:32.101Z&#34;),
+</span></span><span style=display:flex><span>        &#34;myState&#34; : 2,
+</span></span><span style=display:flex><span>        &#34;term&#34; : NumberLong(16),
+</span></span><span style=display:flex><span>        &#34;syncSourceHost&#34; : &#34;db1:27017&#34;,
+</span></span><span style=display:flex><span>        &#34;syncSourceId&#34; : 2,
+</span></span><span style=display:flex><span>        &#34;heartbeatIntervalMillis&#34; : NumberLong(2000),
+</span></span><span style=display:flex><span>        &#34;majorityVoteCount&#34; : 2,
+</span></span><span style=display:flex><span>        &#34;writeMajorityCount&#34; : 2,
+</span></span><span style=display:flex><span>        &#34;votingMembersCount&#34; : 3,
+</span></span><span style=display:flex><span>        &#34;writableVotingMembersCount&#34; : 3,
+</span></span><span style=display:flex><span>        &#34;optimes&#34; : {
+</span></span><span style=display:flex><span>                &#34;lastCommittedOpTime&#34; : {
+</span></span><span style=display:flex><span>                        &#34;ts&#34; : Timestamp(1643343089, 1),
+</span></span><span style=display:flex><span>                        &#34;t&#34; : NumberLong(16)
+</span></span><span style=display:flex><span>                },
+</span></span><span style=display:flex><span>                &#34;lastCommittedWallTime&#34; : ISODate(&#34;2022-01-28T04:11:29.276Z&#34;),
+</span></span><span style=display:flex><span>                &#34;readConcernMajorityOpTime&#34; : {
+</span></span><span style=display:flex><span>                        &#34;ts&#34; : Timestamp(1643343089, 1),
+</span></span><span style=display:flex><span>                        &#34;t&#34; : NumberLong(16)
+</span></span><span style=display:flex><span>                },
+</span></span><span style=display:flex><span>                &#34;appliedOpTime&#34; : {
+</span></span><span style=display:flex><span>                        &#34;ts&#34; : Timestamp(1643343089, 1),
+</span></span><span style=display:flex><span>                        &#34;t&#34; : NumberLong(16)
+</span></span><span style=display:flex><span>                },
+</span></span><span style=display:flex><span>                &#34;durableOpTime&#34; : {
+</span></span><span style=display:flex><span>                        &#34;ts&#34; : Timestamp(1643343089, 1),
+</span></span><span style=display:flex><span>                        &#34;t&#34; : NumberLong(16)
+</span></span><span style=display:flex><span>                },
+</span></span><span style=display:flex><span>                &#34;lastAppliedWallTime&#34; : ISODate(&#34;2022-01-28T04:11:29.276Z&#34;),
+</span></span><span style=display:flex><span>                &#34;lastDurableWallTime&#34; : ISODate(&#34;2022-01-28T04:11:29.276Z&#34;)
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        &#34;lastStableRecoveryTimestamp&#34; : Timestamp(1643343079, 1),
+</span></span><span style=display:flex><span>        &#34;members&#34; : [
+</span></span><span style=display:flex><span>                {
+</span></span><span style=display:flex><span>                        &#34;_id&#34; : 0,
+</span></span><span style=display:flex><span>                        &#34;name&#34; : &#34;Alma:27017&#34;,
+</span></span><span style=display:flex><span>                        &#34;health&#34; : 1,
+</span></span><span style=display:flex><span>                        &#34;state&#34; : 2,
+</span></span><span style=display:flex><span>                        &#34;stateStr&#34; : &#34;SECONDARY&#34;,
+</span></span><span style=display:flex><span>                        &#34;uptime&#34; : 375,
+</span></span><span style=display:flex><span>                        &#34;optime&#34; : {
+</span></span><span style=display:flex><span>                                &#34;ts&#34; : Timestamp(1643343089, 1),
+</span></span><span style=display:flex><span>                                &#34;t&#34; : NumberLong(16)
+</span></span><span style=display:flex><span>                        },
+</span></span><span style=display:flex><span>                        &#34;optimeDate&#34; : ISODate(&#34;2022-01-28T04:11:29Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;lastAppliedWallTime&#34; : ISODate(&#34;2022-01-28T04:11:29.276Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;lastDurableWallTime&#34; : ISODate(&#34;2022-01-28T04:11:29.276Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;syncSourceHost&#34; : &#34;db1:27017&#34;,
+</span></span><span style=display:flex><span>                        &#34;syncSourceId&#34; : 2,
+</span></span><span style=display:flex><span>                        &#34;infoMessage&#34; : &#34;&#34;,
+</span></span><span style=display:flex><span>                        &#34;configVersion&#34; : 517368,
+</span></span><span style=display:flex><span>                        &#34;configTerm&#34; : 16,
+</span></span><span style=display:flex><span>                        &#34;self&#34; : true,
+</span></span><span style=display:flex><span>                        &#34;lastHeartbeatMessage&#34; : &#34;&#34;
+</span></span><span style=display:flex><span>                },
+</span></span><span style=display:flex><span>                {
+</span></span><span style=display:flex><span>                        &#34;_id&#34; : 1,
+</span></span><span style=display:flex><span>                        &#34;name&#34; : &#34;db2:27017&#34;,
+</span></span><span style=display:flex><span>                        &#34;health&#34; : 1,
+</span></span><span style=display:flex><span>                        &#34;state&#34; : 1,
+</span></span><span style=display:flex><span>                        &#34;stateStr&#34; : &#34;PRIMARY&#34;,
+</span></span><span style=display:flex><span>                        &#34;uptime&#34; : 372,
+</span></span><span style=display:flex><span>                        &#34;optime&#34; : {
+</span></span><span style=display:flex><span>                                &#34;ts&#34; : Timestamp(1643343089, 1),
+</span></span><span style=display:flex><span>                                &#34;t&#34; : NumberLong(16)
+</span></span><span style=display:flex><span>                        },
+</span></span><span style=display:flex><span>                        &#34;optimeDurable&#34; : {
+</span></span><span style=display:flex><span>                                &#34;ts&#34; : Timestamp(1643343089, 1),
+</span></span><span style=display:flex><span>                                &#34;t&#34; : NumberLong(16)
+</span></span><span style=display:flex><span>                        },
+</span></span><span style=display:flex><span>                        &#34;optimeDate&#34; : ISODate(&#34;2022-01-28T04:11:29Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;optimeDurableDate&#34; : ISODate(&#34;2022-01-28T04:11:29Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;lastAppliedWallTime&#34; : ISODate(&#34;2022-01-28T04:11:29.276Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;lastDurableWallTime&#34; : ISODate(&#34;2022-01-28T04:11:29.276Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;lastHeartbeat&#34; : ISODate(&#34;2022-01-28T04:11:31.064Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;lastHeartbeatRecv&#34; : ISODate(&#34;2022-01-28T04:11:30.864Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;pingMs&#34; : NumberLong(0),
+</span></span><span style=display:flex><span>                        &#34;lastHeartbeatMessage&#34; : &#34;&#34;,
+</span></span><span style=display:flex><span>                        &#34;syncSourceHost&#34; : &#34;&#34;,
+</span></span><span style=display:flex><span>                        &#34;syncSourceId&#34; : -1,
+</span></span><span style=display:flex><span>                        &#34;infoMessage&#34; : &#34;&#34;,
+</span></span><span style=display:flex><span>                        &#34;electionTime&#34; : Timestamp(1643341509, 1),
+</span></span><span style=display:flex><span>                        &#34;electionDate&#34; : ISODate(&#34;2022-01-28T03:45:09Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;configVersion&#34; : 517368,
+</span></span><span style=display:flex><span>                        &#34;configTerm&#34; : 16
+</span></span><span style=display:flex><span>                },
+</span></span><span style=display:flex><span>                {
+</span></span><span style=display:flex><span>                        &#34;_id&#34; : 2,
+</span></span><span style=display:flex><span>                        &#34;name&#34; : &#34;db1:27017&#34;,
+</span></span><span style=display:flex><span>                        &#34;health&#34; : 1,
+</span></span><span style=display:flex><span>                        &#34;state&#34; : 2,
+</span></span><span style=display:flex><span>                        &#34;stateStr&#34; : &#34;SECONDARY&#34;,
+</span></span><span style=display:flex><span>                        &#34;uptime&#34; : 372,
+</span></span><span style=display:flex><span>                        &#34;optime&#34; : {
+</span></span><span style=display:flex><span>                                &#34;ts&#34; : Timestamp(1643343089, 1),
+</span></span><span style=display:flex><span>                                &#34;t&#34; : NumberLong(16)
+</span></span><span style=display:flex><span>                        },
+</span></span><span style=display:flex><span>                        &#34;optimeDurable&#34; : {
+</span></span><span style=display:flex><span>                                &#34;ts&#34; : Timestamp(1643343089, 1),
+</span></span><span style=display:flex><span>                                &#34;t&#34; : NumberLong(16)
+</span></span><span style=display:flex><span>                        },
+</span></span><span style=display:flex><span>                        &#34;optimeDate&#34; : ISODate(&#34;2022-01-28T04:11:29Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;optimeDurableDate&#34; : ISODate(&#34;2022-01-28T04:11:29Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;lastAppliedWallTime&#34; : ISODate(&#34;2022-01-28T04:11:29.276Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;lastDurableWallTime&#34; : ISODate(&#34;2022-01-28T04:11:29.276Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;lastHeartbeat&#34; : ISODate(&#34;2022-01-28T04:11:31.064Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;lastHeartbeatRecv&#34; : ISODate(&#34;2022-01-28T04:11:30.448Z&#34;),
+</span></span><span style=display:flex><span>                        &#34;pingMs&#34; : NumberLong(1),
+</span></span><span style=display:flex><span>                        &#34;lastHeartbeatMessage&#34; : &#34;&#34;,
+</span></span><span style=display:flex><span>                        &#34;syncSourceHost&#34; : &#34;db2:27017&#34;,
+</span></span><span style=display:flex><span>                        &#34;syncSourceId&#34; : 1,
+</span></span><span style=display:flex><span>                        &#34;infoMessage&#34; : &#34;&#34;,
+</span></span><span style=display:flex><span>                        &#34;configVersion&#34; : 517368,
+</span></span><span style=display:flex><span>                        &#34;configTerm&#34; : 16
+</span></span><span style=display:flex><span>                }
+</span></span><span style=display:flex><span>        ],
+</span></span><span style=display:flex><span>        &#34;ok&#34; : 1,
+</span></span><span style=display:flex><span>        &#34;$clusterTime&#34; : {
+</span></span><span style=display:flex><span>                &#34;clusterTime&#34; : Timestamp(1643343089, 1),
+</span></span><span style=display:flex><span>                &#34;signature&#34; : {
+</span></span><span style=display:flex><span>                        &#34;hash&#34; : BinData(0,&#34;AAAAAAAAAAAAAAAAAAAAAAAAAAA=&#34;),
+</span></span><span style=display:flex><span>                        &#34;keyId&#34; : NumberLong(0)
+</span></span><span style=display:flex><span>                }
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        &#34;operationTime&#34; : Timestamp(1643343089, 1)
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>db2依然为主成员，而Alma变成辅助成员</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span> &#34;_id&#34; : 1,
+</span></span><span style=display:flex><span>                        &#34;name&#34; : &#34;db2:27017&#34;,
+</span></span><span style=display:flex><span>                        &#34;health&#34; : 1,
+</span></span><span style=display:flex><span>                        &#34;state&#34; : 1,
+</span></span><span style=display:flex><span>                        &#34;stateStr&#34; : &#34;PRIMARY&#34;,
+</span></span><span style=display:flex><span>   &#34;_id&#34; : 0,
+</span></span><span style=display:flex><span>                        &#34;name&#34; : &#34;Alma:27017&#34;,
+</span></span><span style=display:flex><span>                        &#34;health&#34; : 1,
+</span></span><span style=display:flex><span>                        &#34;state&#34; : 2,
+</span></span><span style=display:flex><span>                        &#34;stateStr&#34; : &#34;SECONDARY&#34;
+</span></span></code></pre></div><p>在副本集中，主成员的归属是可以改变的。</p><h3 id=连接副本集>连接副本集</h3><p>使用MongoDB Compass，连接要选择副本集而不是节点成员。
+使用命令：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>mongodb://Alma,db1,db2/etaondb?connect=replicaSet&amp;slaveOk=true&amp;replicaSet=etaonrs
+</span></span></code></pre></div><p>指定副本集，成员和设置slaveOK</p><p><img src="https://img-blog.csdnimg.cn/bda8f2e78ba5481bbca4ef4dedad2f2c.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="https://img-blog.csdnimg.cn/bda8f2e78ba5481bbca4ef4dedad2f2c.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16"></p><p>连接以后：</p><p><img src="https://img-blog.csdnimg.cn/819be43397c14cdf927961faf2777b99.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="https://img-blog.csdnimg.cn/819be43397c14cdf927961faf2777b99.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16"></p><p>利用Compass增加一条一个table：ccc
+从主机上看：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>etaonrs:SECONDARY&gt; show tables
+</span></span><span style=display:flex><span>ccc
+</span></span><span style=display:flex><span>comment
+</span></span></code></pre></div><p>创建成功。</p></div><footer class=post-footer><div id=wcomments></div></footer></article></section></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
 <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-</div>
-</div>
-<aside id=sidebar class=sidebar>
-<div class=sidebar-inner>
-<ul class="sidebar-nav motion-element">
-<li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>
-文章目录
-</li>
-<li class=sidebar-nav-overview data-target=site-overview>
-站点概览
-</li>
-</ul>
-<section class="site-overview sidebar-panel">
-<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
-<img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon>
-<p class=site-author-name itemprop=name>Etaon</p>
-<p class="site-description motion-element" itemprop=description>
-Kepp Going!
-</p>
-</div>
-<nav class="site-state motion-element">
-<div class="site-state-item site-state-posts">
-<a href=/post/>
-<span class=site-state-item-count>61</span>
-<span class=site-state-item-name>日志</span>
-</a>
-</div>
-<div class="site-state-item site-state-categories">
-<a href=/categories/>
-<span class=site-state-item-count>13</span>
-<span class=site-state-item-name>分类</span>
-</a>
-</div>
-<div class="site-state-item site-state-tags">
-<a href=/tags/>
-<span class=site-state-item-count>34</span>
-<span class=site-state-item-name>标签</span>
-</a>
-</div>
-</nav>
-<div class="links-of-author motion-element">
-<span class=links-of-author-item>
-<a href=https://github.com/etaon target=_blank title=GitHub>
-<i class="fa fa-fw fa-github"></i>
-GitHub
-</a>
-</span>
-<span class=links-of-author-item>
-<a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN>
-<i class="fa fa-fw fa-CSDN"></i>
-CSDN
-</a>
-</span>
-</div>
-<div class="links-of-blogroll motion-element links-of-blogroll-inline">
-<div class=links-of-blogroll-title>
-<i class="fa fa-fw fa-globe"></i>
-友情链接
-</div>
-<ul class=links-of-blogroll-list>
-<li class=links-of-blogroll-item>
-<a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a>
-</li>
-</ul>
-</div>
-<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
-<div class=tagcloud-of-blogroll-title>
-<i class="fa fa-fw fa-tags"></i>
-标签云
-</div>
-<ul class=tagcloud-of-blogroll-list>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mysql>Mysql</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/aws>Aws</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/dql>Dql</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/hadoop>Hadoop</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/redis>Redis</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/cicd>Cicd</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/git>Git</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/istio>Istio</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mongodb>Mongodb</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/azure>Azure</a>
-</li>
-</ul>
-</div>
-</section>
-<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-<div class=post-toc>
-<div class=post-toc-content><nav id=TableOfContents>
-<ul>
-<li><a href=#概述>概述</a>
-<ul>
-<li><a href=#副本集角色>副本集角色</a></li>
-<li><a href=#副本集成员及容错>副本集成员及容错</a></li>
-<li><a href=#成员最大数>成员最大数</a></li>
-<li><a href=#副本集容错>副本集容错</a></li>
-<li><a href=#主节点选取>主节点选取</a></li>
-<li><a href=#选举规则>选举规则</a></li>
-<li><a href=#优先级>优先级</a></li>
-<li><a href=#连接到副本集>连接到副本集</a></li>
-</ul>
-</li>
-<li><a href=#lab>Lab</a>
-<ul>
-<li><a href=#拓扑说明>拓扑说明</a></li>
-<li><a href=#安装过程>安装过程</a></li>
-<li><a href=#三台mongodb安装mongod-server>三台mongodb安装mongod server</a></li>
-<li><a href=#选择主节点初始化副本集>选择主节点初始化副本集</a></li>
-<li><a href=#向副本集添加辅助成员>向副本集添加辅助成员</a></li>
-<li><a href=#查看副本集状态>查看副本集状态</a></li>
-<li><a href=#副本集的读写操作>副本集的读写操作</a></li>
-<li><a href=#故障模拟>故障模拟</a></li>
-<li><a href=#辅助成员失效>辅助成员失效</a></li>
-<li><a href=#主成员失效>主成员失效</a></li>
-<li><a href=#连接副本集>连接副本集</a></li>
-</ul>
-</li>
-</ul>
-</nav></div>
-</div>
-</section>
-</div>
-</aside>
-</div>
-</main>
-<footer id=footer class=footer>
-<div class=footer-inner>
-<div class=copyright>
-<span class=copyright-year>
-&copy; 2010 - 2022
-</span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id=sidebar class=sidebar><div class=sidebar-inner><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>文章目录</li><li class=sidebar-nav-overview data-target=site-overview>站点概览</li></ul><section class="site-overview sidebar-panel"><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon><p class=site-author-name itemprop=name>Etaon</p><p class="site-description motion-element" itemprop=description>Kepp Going!</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=/post/><span class=site-state-item-count>61</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>13</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>34</span>
+<span class=site-state-item-name>标签</span></a></div></nav><div class="links-of-author motion-element"><span class=links-of-author-item><a href=https://github.com/etaon target=_blank title=GitHub><i class="fa fa-fw fa-github"></i>
+GitHub</a></span>
+<span class=links-of-author-item><a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN><i class="fa fa-fw fa-CSDN"></i>
+CSDN</a></span></div><div class="links-of-blogroll motion-element links-of-blogroll-inline"><div class=links-of-blogroll-title><i class="fa fa-fw fa-globe"></i>
+友情链接</div><ul class=links-of-blogroll-list><li class=links-of-blogroll-item><a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a></li><li class=links-of-blogroll-item><a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a></li><li class=links-of-blogroll-item><a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a></li><li class=links-of-blogroll-item><a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a></li></ul></div><div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline"><div class=tagcloud-of-blogroll-title><i class="fa fa-fw fa-tags"></i>
+标签云</div><ul class=tagcloud-of-blogroll-list><li class=tagcloud-of-blogroll-item><a href=/tags/mysql>Mysql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/aws>Aws</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/dql>Dql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/hadoop>Hadoop</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/redis>Redis</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/cicd>Cicd</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/git>Git</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/istio>Istio</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/mongodb>Mongodb</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/azure>Azure</a></li></ul></div></section><section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active"><div class=post-toc><div class=post-toc-content><nav id=TableOfContents><ul><li><a href=#概述>概述</a><ul><li><a href=#副本集角色>副本集角色</a></li><li><a href=#副本集成员及容错>副本集成员及容错</a></li><li><a href=#成员最大数>成员最大数</a></li><li><a href=#副本集容错>副本集容错</a></li><li><a href=#主节点选取>主节点选取</a></li><li><a href=#选举规则>选举规则</a></li><li><a href=#优先级>优先级</a></li><li><a href=#连接到副本集>连接到副本集</a></li></ul></li><li><a href=#lab>Lab</a><ul><li><a href=#拓扑说明>拓扑说明</a></li><li><a href=#安装过程>安装过程</a></li><li><a href=#三台mongodb安装mongod-server>三台mongodb安装mongod server</a></li><li><a href=#选择主节点初始化副本集>选择主节点初始化副本集</a></li><li><a href=#向副本集添加辅助成员>向副本集添加辅助成员</a></li><li><a href=#查看副本集状态>查看副本集状态</a></li><li><a href=#副本集的读写操作>副本集的读写操作</a></li><li><a href=#故障模拟>故障模拟</a></li><li><a href=#辅助成员失效>辅助成员失效</a></li><li><a href=#主成员失效>主成员失效</a></li><li><a href=#连接副本集>连接副本集</a></li></ul></li></ul></nav></div></div></section></div></aside></div></main><footer id=footer class=footer><div class=footer-inner><div class=copyright><span class=copyright-year>&copy; 2010 - 2022</span>
 <span class=with-love><i class="fa fa-heart"></i></span>
-<span class=copyright-author>路无止境！</span>
-</div>
-<div class=powered-info>
-<span class=powered-by>
-Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.91.2</a>
-</span>
+<span class=copyright-author>路无止境！</span></div><div class=powered-info><span class=powered-by>Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.101.0</a></span>
 <span class=separator-line>/</span>
-<span class=theme-info>
-Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
-</a>
-</span>
-</div>
-<div class=vistor-info>
-<script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
-<span class=site-uv>
-<i class="fa fa-user"></i>
-<span class=busuanzi-value id=busuanzi_value_site_uv></span>
-</span>
+<span class=theme-info>Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank>NexT</a></span></div><div class=vistor-info><script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<span class=site-uv><i class="fa fa-user"></i>
+<span class=busuanzi-value id=busuanzi_value_site_uv></span></span>
 <span class=separator-line>/</span>
-<span class=site-pv>
-<i class="fa fa-eye"></i>
-<span class=busuanzi-value id=busuanzi_value_site_pv></span>
-</span>
-</div>
-<div class=license-info>
-<span class=storage-info>
-Storage by
-<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a>
-</span>
+<span class=site-pv><i class="fa fa-eye"></i>
+<span class=busuanzi-value id=busuanzi_value_site_pv></span></span></div><div class=license-info><span class=storage-info>Storage by
+<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a></span>
 <span class=separator-line>/</span>
-<span class=license-num>
-<a href target=_blank></a>
-</span>
-</div>
-</div>
-</footer>
-<div class=back-to-top>
-<i class="fa fa-arrow-up"></i>
-<span id=scrollpercent><span>0</span>%</span>
-</div>
-</div>
-<script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
+<span class=license-num><a href target=_blank></a></span></div></div></footer><div class=back-to-top><i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span></div></div><script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
 <script type=text/javascript src=/js/search.js></script>
 <script type=text/javascript src=/js/affix.js></script>
 <script type=text/javascript src=/js/scrollspy.js></script>
-<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.main').css('padding-bottom'),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}}),$(document).on('affixed.bs.affix',function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var b=$('.header-inner').height()+10,c,d,a,e;$('#sidebar').css({'margin-top':b}).show(),c=parseInt($('#sidebar').css('margin-top')),d=parseInt($('.sidebar-inner').css('height')),a=c+d,e=$('.content-wrap').height(),e<a&&$('.content-wrap').css('min-height',a),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
-<script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
-<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
-<script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+'//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js',function(){new Waline({el:'#wcomments',visitor:!0,avatar:'wavatar',avatarCDN:'https://sdn.geekzu.org/avatar/',avatarForce:!1,wordLimit:'200',placeholder:' 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ',requiredFields:['nick','mail'],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$('#wcomments').html('抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。')})</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type=text/javascript>function detectIE(){var e=window.navigator.userAgent,t=e.indexOf("MSIE "),n=e.indexOf("Trident/"),s=e.indexOf("Edge/");return t>0||n>0||s>0?-1:1}function getCntViewHeight(){var t=$("#content").height(),e=$(window).height(),n=t>e?t-e:$(document).height()-e;return n}function getScrollbarWidth(){var e=$("<div />").addClass("scrollbar-measure").prependTo("body"),t=e[0],n=t.offsetWidth-t.clientWidth;return e.remove(),n}function registerBackTop(){var t=50,e=$(".back-to-top");$(window).on("scroll",function(){e.toggleClass("back-to-top-on",window.pageYOffset>t);var s=$(window).scrollTop(),o=getCntViewHeight(),i=s/o,n=Math.round(i*100),a=n>100?100:n;$("#scrollpercent>span").html(a)}),e.on("click",function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var e=".post-toc",s=$(e),t=".active-current";s.on("activate.bs.scrollspy",function(){var t=$(e+" .active").last();n(),t.addClass("active-current")}).on("clear.bs.scrollspy",n),$("body").scrollspy({target:e});function n(){$(e+" "+t).removeClass(t.substring(1))}}function initAffix(){var e=$(".header-inner").height(),t=parseInt($(".main").css("padding-bottom"),10),n=e+10;$(".sidebar-inner").affix({offset:{top:n,bottom:t}}),$(document).on("affixed.bs.affix",function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){$(window).on("resize",function(){e&&clearTimeout(e),e=setTimeout(function(){var e=document.body.clientHeight-100;updateTOCHeight(e)},0)}),updateTOCHeight(document.body.clientHeight-100);var e,t=getScrollbarWidth();$(".post-toc").css("width","calc(100% + "+t+"px)")}function updateTOCHeight(e){e=e||"auto",$(".post-toc").css("max-height",e)}$(function(){var e,t,n,s,o=$(".header-inner").height()+10;$("#sidebar").css({"margin-top":o}).show(),t=parseInt($("#sidebar").css("margin-top")),n=parseInt($(".sidebar-inner").css("height")),e=t+n,s=$(".content-wrap").height(),s<e&&$(".content-wrap").css("min-height",e),$(".site-nav-toggle").on("click",function(){var e=$(".site-nav"),o=$(".toggle"),t="site-nav-on",i="toggle-close",n=e.hasClass(t),a=n?"slideUp":"slideDown",s=n?"removeClass":"addClass";e.stop()[a]("normal",function(){e[s](t),o[s](i)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$(".sidebar-nav-toc").click(function(){$(this).addClass("sidebar-nav-active"),$(this).next().removeClass("sidebar-nav-active"),$("."+$(this).next().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)}),$(".sidebar-nav-overview").click(function(){$(this).addClass("sidebar-nav-active"),$(this).prev().removeClass("sidebar-nav-active"),$("."+$(this).prev().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)})})</script><script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$(".post-body").viewer()})</script><script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+"//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js",function(){new Waline({el:"#wcomments",visitor:!0,avatar:"wavatar",avatarCDN:"https://sdn.geekzu.org/avatar/",avatarForce:!1,wordLimit:"200",placeholder:" 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ",requiredFields:["nick","mail"],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$("#wcomments").html("抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。")})</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
 <script type=text/javascript src="//s7.addthis.com/js/300/addthis_widget.js#pubid=Your%20AddthisId"></script>
-<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
-</body>
-</html>
+<script>(function(){var t,e=document.createElement("script"),n=window.location.protocol.split(":")[0];n==="https"?e.src="https://zz.bdstatic.com/linksubmit/push.js":e.src="http://push.zhanzhang.baidu.com/push.js",t=document.getElementsByTagName("script")[0],t.parentNode.insertBefore(e,t)})()</script></body></html>

@@ -1,231 +1,21 @@
-<!doctype html><html lang=zh-cn dir=content/zh-cn>
-<head>
-<meta charset=utf-8>
-<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
-<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
-<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
-<title> Redis Cluster - 路无止境！ </title>
-<meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云">
-<meta name=author content="Etaon">
-<meta property="og:title" content="Redis Cluster">
-<meta property="og:site_name" content="路无止境！">
-<meta property="og:image" content="/img/author.jpg">
-<meta name=title content="Redis Cluster - 路无止境！">
-<meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。">
-<link rel="shortcut icon" href=/img/favicon.ico>
-<link rel=apple-touch-icon href=/img/apple-touch-icon.png>
-<link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png>
-<link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css>
-<link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet>
-<link href=/css/main.css rel=stylesheet type=text/css>
-<link href=/css/syntax.css rel=stylesheet type=text/css>
-</head>
-<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
-<div class="container one-collumn sidebar-position-left page-home">
-<div class=headband></div>
-<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
-<div class=header-inner> <div class=site-brand-container>
-<div class=site-nav-toggle>
-<div class=toggle role=button style=opacity:1;top:0>
+<!doctype html><html lang=zh-cn dir=content/zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=content-security-policy content="upgrade-insecure-requests"><title>Redis Cluster - 路无止境！</title><meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云"><meta name=author content="Etaon"><meta property="og:title" content="Redis Cluster"><meta property="og:site_name" content="路无止境！"><meta property="og:image" content="/img/author.jpg"><meta name=title content="Redis Cluster - 路无止境！"><meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。"><link rel="shortcut icon" href=/img/favicon.ico><link rel=apple-touch-icon href=/img/apple-touch-icon.png><link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png><link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css><link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet><link href=/css/main.css rel=stylesheet type=text/css><link href=/css/syntax.css rel=stylesheet type=text/css></head><body itemscope itemtype=http://schema.org/WebPage lang=zh-hans><div class="container one-collumn sidebar-position-left page-home"><div class=headband></div><header id=header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle role=button style=opacity:1;top:0><span class=toggle-line></span>
 <span class=toggle-line></span>
-<span class=toggle-line></span>
-<span class=toggle-line></span>
-</div>
-</div>
-<div class=site-meta>
-<div class=multi-lang-switch>
-<i class="fa fa-fw fa-language" style=margin-right:5px></i>
-<a class=lang-link id=zh-cn href=#>中文</a>
-</div>
-<div class=custom-logo-site-title>
-<a href=/ class=brand rel=start>
-<span class=logo-line-before><i></i></span>
+<span class=toggle-line></span></div></div><div class=site-meta><div class=multi-lang-switch><i class="fa fa-fw fa-language" style=margin-right:5px></i>
+<a class=lang-link id=zh-cn href=#>中文</a></div><div class=custom-logo-site-title><a href=/ class=brand rel=start><span class=logo-line-before><i></i></span>
 <span class=site-title>路无止境！</span>
-<span class=logo-line-after><i></i></span>
-</a>
-</div>
-<p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p>
-</div>
-<div class=site-nav-right>
-<div class="toggle popup-trigger" style=opacity:1;top:0>
-<i class="fa fa-search fa-fw fa-lg"></i>
-</div>
-</div>
-</div>
-<nav class=site-nav>
-<ul id=menu class=menu>
-<li class=menu-item>
-<a href=/ rel=section>
-<i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页
-</a>
-</li>
-<li class=menu-item>
-<a href=/post rel=section>
-<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档
-</a>
-</li>
-<li class=menu-item>
-<a href=/about.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于我
-</a>
-</li>
-<li class=menu-item>
-<a href=/404.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益404
-</a>
-</li>
-<li class="menu-item menu-item-search">
-<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> 搜索</a>
-</li>
-</ul>
-<div class=site-search>
-<div class="popup search-popup local-search-popup">
-<div class="local-search-header clearfix">
-<span class=search-icon><i class="fa fa-search"></i> </span>
-<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
-<div class=local-search-input-wrapper>
-<input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
-</div>
-</div>
-<div id=local-search-result></div>
-</div>
-</div>
-</nav>
-</div>
-</header>
-<main id=main class=main>
-<div class=main-inner>
-<div class=content-wrap>
-<div id=content class=content>
-<section id=posts class=posts-expand>
-<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
-<header class=post-header>
-<h1 class=post-title itemprop="name headline" style=font-weight:700>
-<a class=post-title-link href=https://www.etaon.link/2021/11/24/redis-cluster.html itemprop=url>
-Redis Cluster
-</a>
-</h1>
-</header>
-<div class=post-body itemprop=articleBody>
-<h1 id=概述>概述</h1>
-<p>单机/单主的性能瓶颈</p>
-<ul>
-<li>IOPS 约100k/s读，20-80k/s写</li>
-<li>单机内存限制</li>
-</ul>
-<p>Cluster</p>
-<ul>
-<li>访问，负载均衡</li>
-<li>内存，扩展</li>
-<li>灾难恢复</li>
-</ul>
-<h1 id=集群存储空间设计>集群存储空间设计</h1>
-<h2 id=设计原理>设计原理</h2>
-<p>Redis cluster 采用虚拟哈希槽分区，所有的键根据哈希函数映射到 0 ~ 16383 整数槽内，每个key通过crc16校验后对16384取模来决定放置哪个槽(slot)，每一个节点负责维护一部分槽以及槽所映射的键值数据。</p>
-<p>计算公式：slot = crc16(key) % 16383。</p>
-<p><img src="https://img-blog.csdnimg.cn/bb98c0ddf9ae4be8b002370231e2a816.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="https://img-blog.csdnimg.cn/bb98c0ddf9ae4be8b002370231e2a816.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16"></p>
-<p>这种结构很容易添加或者删除节点，并且无论是添加删除或者修改某一个节点，都不会造成集群不可用的状态。
+<span class=logo-line-after><i></i></span></a></div><p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p></div><div class=site-nav-right><div class="toggle popup-trigger" style=opacity:1;top:0><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class=site-nav><ul id=menu class=menu><li class=menu-item><a href=/ rel=section><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class=menu-item><a href=/post rel=section><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class=menu-item><a href=/about.html rel=section><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于我</a></li><li class=menu-item><a href=/404.html rel=section><i class="menu-item-icon fa fa-fw fa-heartbeat"></i><br>公益404</a></li><li class="menu-item menu-item-search"><a href=javascript:; class=popup-trigger><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class=site-search><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class=search-icon><i class="fa fa-search"></i></span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span><div class=local-search-input-wrapper><input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off></div></div><div id=local-search-result></div></div></div></nav></div></header><main id=main class=main><div class=main-inner><div class=content-wrap><div id=content class=content><section id=posts class=posts-expand><article class="post post-type-normal" itemscope itemtype=http://schema.org/Article><header class=post-header><h1 class=post-title itemprop="name headline" style=font-weight:700><a class=post-title-link href=https://www.etaon.top/2021/11/24/redis-cluster.html itemprop=url>Redis Cluster</a></h1></header><div class=post-body itemprop=articleBody><h1 id=概述>概述</h1><p>单机/单主的性能瓶颈</p><ul><li>IOPS 约100k/s读，20-80k/s写</li><li>单机内存限制</li></ul><p>Cluster</p><ul><li>访问，负载均衡</li><li>内存，扩展</li><li>灾难恢复</li></ul><h1 id=集群存储空间设计>集群存储空间设计</h1><h2 id=设计原理>设计原理</h2><p>Redis cluster 采用虚拟哈希槽分区，所有的键根据哈希函数映射到 0 ~ 16383 整数槽内，每个key通过crc16校验后对16384取模来决定放置哪个槽(slot)，每一个节点负责维护一部分槽以及槽所映射的键值数据。</p><p>计算公式：slot = crc16(key) % 16383。</p><p><img src="https://img-blog.csdnimg.cn/bb98c0ddf9ae4be8b002370231e2a816.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="https://img-blog.csdnimg.cn/bb98c0ddf9ae4be8b002370231e2a816.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16"></p><p>这种结构很容易添加或者删除节点，并且无论是添加删除或者修改某一个节点，都不会造成集群不可用的状态。
 当需要增加节点时，把其他节点的某些哈希槽挪到新节点；
-当需要移除节点时，把移除节点上的哈希槽挪到其他节点。</p>
-<p>参考文档：<a href=http://www.zzvips.com/article/205769.html>http://www.zzvips.com/article/205769.html</a></p>
-<p>为什么设计成16384（2^14）个槽位，作者给出了解释
-<a href=https://github.com/antirez/redis/issues/2576>https://github.com/antirez/redis/issues/2576</a></p>
-<blockquote>
-<p>1.如果槽位为65536，发送心跳信息的消息头达8k，发送的心跳包过于庞大。</p>
-<p>如上所述，在消息头中，最占空间的是myslots[cluster_slots/8]。 当槽位为65536时，这块的大小是:65536÷8÷1024=8kb因为每秒钟，redis节点需要发送一定数量的ping消息作为心跳包，如果槽位为65536，这个ping消息的消息头太大了，浪费带宽。</p>
-</blockquote>
-<blockquote>
-<p>2.redis的集群主节点数量基本不可能超过1000个。
-如上所述，集群节点越多，心跳包的消息体内携带的数据越多。如果节点过1000个，也会导致网络拥堵。因此redis作者，不建议redis cluster节点数量超过1000个。 那么，对于节点数在1000以内的redis cluster集群，16384个槽位够用了。没有必要拓展到65536个。</p>
-</blockquote>
-<blockquote>
-<p>3.槽位越小，节点少的情况下，压缩率高
+当需要移除节点时，把移除节点上的哈希槽挪到其他节点。</p><p>参考文档：<a href=http://www.zzvips.com/article/205769.html>http://www.zzvips.com/article/205769.html</a></p><p>为什么设计成16384（2^14）个槽位，作者给出了解释
+<a href=https://github.com/antirez/redis/issues/2576>https://github.com/antirez/redis/issues/2576</a></p><blockquote><p>1.如果槽位为65536，发送心跳信息的消息头达8k，发送的心跳包过于庞大。</p><p>如上所述，在消息头中，最占空间的是myslots[cluster_slots/8]。 当槽位为65536时，这块的大小是:65536÷8÷1024=8kb因为每秒钟，redis节点需要发送一定数量的ping消息作为心跳包，如果槽位为65536，这个ping消息的消息头太大了，浪费带宽。</p></blockquote><blockquote><p>2.redis的集群主节点数量基本不可能超过1000个。
+如上所述，集群节点越多，心跳包的消息体内携带的数据越多。如果节点过1000个，也会导致网络拥堵。因此redis作者，不建议redis cluster节点数量超过1000个。 那么，对于节点数在1000以内的redis cluster集群，16384个槽位够用了。没有必要拓展到65536个。</p></blockquote><blockquote><p>3.槽位越小，节点少的情况下，压缩率高
 redis主节点的配置信息中，它所负责的哈希槽是通过一张bitmap的形式来保存的，在传输过程中，会对bitmap进行压缩，但是如果bitmap的填充率slots / n很高的话(n表示节点数)，bitmap的压缩率就很低。 如果节点数很少，而哈希槽数量很多的话，bitmap的压缩率就很低。
-而16384÷8÷1024=2kb</p>
-</blockquote>
-<blockquote>
-<p>综上所述，作者决定取16384个槽。</p>
-</blockquote>
-<h2 id=集群内部通信>集群内部通信</h2>
-<ul>
-<li>每个节点相互通信，保存各自库中槽的编号数据</li>
-<li>一次命中，直接返回</li>
-<li>一次未命中，告知具体位置</li>
-</ul>
-<p><img src=https://img-blog.csdnimg.cn/7d51ff4081534ee4886e753fc1408412.png alt=在这里插入图片描述></p>
-<p>如上图</p>
-<ul>
-<li>在192.168.21.12:6380查询list01时，一次命中</li>
-<li>查询zset01时，未命中，告知并跳转到192.168.21.13:6381，返回结果</li>
-</ul>
-<h1 id=lab实验>Lab实验</h1>
-<h2 id=环境设置>环境设置</h2>
-<p>初始化</p>
-<table>
-<thead>
-<tr>
-<th>Cluster Role</th>
-<th>IP addr</th>
-<th>Port</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Group 1:Master</td>
-<td>192.168.21.11</td>
-<td>6379</td>
-</tr>
-<tr>
-<td>Group 1:Slave</td>
-<td>192.168.21.11</td>
-<td>6382</td>
-</tr>
-<tr>
-<td>Group 2:Master</td>
-<td>192.168.21.12</td>
-<td>6380</td>
-</tr>
-<tr>
-<td>Group 2:Slave</td>
-<td>192.168.21.12</td>
-<td>6383</td>
-</tr>
-<tr>
-<td>Group 3:Master</td>
-<td>192.168.21.13</td>
-<td>6381</td>
-</tr>
-<tr>
-<td>Group 3:Slave</td>
-<td>192.168.21.13</td>
-<td>6384</td>
-</tr>
-</tbody>
-</table>
-<p><img src="https://img-blog.csdnimg.cn/309dbf820a364f8783bbb333264cb4d6.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="https://img-blog.csdnimg.cn/309dbf820a364f8783bbb333264cb4d6.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16"></p>
-<h2 id=配置命令>配置命令</h2>
-<blockquote>
-<p>port 6380
+而16384÷8÷1024=2kb</p></blockquote><blockquote><p>综上所述，作者决定取16384个槽。</p></blockquote><h2 id=集群内部通信>集群内部通信</h2><ul><li>每个节点相互通信，保存各自库中槽的编号数据</li><li>一次命中，直接返回</li><li>一次未命中，告知具体位置</li></ul><p><img src=https://img-blog.csdnimg.cn/7d51ff4081534ee4886e753fc1408412.png alt=在这里插入图片描述></p><p>如上图</p><ul><li>在192.168.21.12:6380查询list01时，一次命中</li><li>查询zset01时，未命中，告知并跳转到192.168.21.13:6381，返回结果</li></ul><h1 id=lab实验>Lab实验</h1><h2 id=环境设置>环境设置</h2><p>初始化</p><table><thead><tr><th>Cluster Role</th><th>IP addr</th><th>Port</th></tr></thead><tbody><tr><td>Group 1:Master</td><td>192.168.21.11</td><td>6379</td></tr><tr><td>Group 1:Slave</td><td>192.168.21.11</td><td>6382</td></tr><tr><td>Group 2:Master</td><td>192.168.21.12</td><td>6380</td></tr><tr><td>Group 2:Slave</td><td>192.168.21.12</td><td>6383</td></tr><tr><td>Group 3:Master</td><td>192.168.21.13</td><td>6381</td></tr><tr><td>Group 3:Slave</td><td>192.168.21.13</td><td>6384</td></tr></tbody></table><p><img src="https://img-blog.csdnimg.cn/309dbf820a364f8783bbb333264cb4d6.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="https://img-blog.csdnimg.cn/309dbf820a364f8783bbb333264cb4d6.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16"></p><h2 id=配置命令>配置命令</h2><blockquote><p>port 6380
 daemonize no
 bind 0.0.0.0
 dir &ldquo;/root/redis-6.0.6/data&rdquo;
 protected-mode no
-cluster-enabled yescluster-config-file node-6380.confcluster-node-timeout 10000</p>
-</blockquote>
-<h2 id=启动集群>启动集群</h2>
-<ol>
-<li>6 Server按conf启动</li>
-<li>命令启动</li>
-</ol>
-<blockquote>
-<p>[root@worker-01 conf]# ../src/redis-cli &ndash;cluster create 192.168.21.11:6379 192.168.21.12:6380 192.168.21.13:6381 192.168.21.12:6383 192.168.21.13:6384 192.168.21.11:6382 &ndash;cluster-replicas 1</p>
-<ul>
-<li>最后的参数 1 表示集群中master的slave数为1</li>
-<li>按照列出的server前后顺序分配master和slave</li>
-</ul>
-</blockquote>
-<blockquote>
-<p>Performing hash slots allocation on 6 nodes&mldr;
+cluster-enabled yescluster-config-file node-6380.confcluster-node-timeout 10000</p></blockquote><h2 id=启动集群>启动集群</h2><ol><li>6 Server按conf启动</li><li>命令启动</li></ol><blockquote><p>[root@worker-01 conf]# ../src/redis-cli &ndash;cluster create 192.168.21.11:6379 192.168.21.12:6380 192.168.21.13:6381 192.168.21.12:6383 192.168.21.13:6384 192.168.21.11:6382 &ndash;cluster-replicas 1</p><ul><li>最后的参数 1 表示集群中master的slave数为1</li><li>按照列出的server前后顺序分配master和slave</li></ul></blockquote><blockquote><p>Performing hash slots allocation on 6 nodes&mldr;
 Master[0] -> Slots 0 - 5460
 Master[1] -> Slots 5461 - 10922
 Master[2] -> Slots 10923 - 16383
@@ -243,19 +33,11 @@ replicates b9b0603f8995f275576f4e9ad2b98708b13ba40e
 S: d5c0f25036222406817bc9bac9bab4f30cdfa86b 192.168.21.13:6384
 replicates e0379031bbe11a1ad523910d9a3d72618331e930
 S: f21a44755356bbaa416f4ee61092f4bb7052ef69 192.168.21.11:6382
-replicates 01215826194d3b2fc182b32465d443a85ad11143</p>
-</blockquote>
-<blockquote>
-<p>Can I set the above configuration? (type &lsquo;yes&rsquo; to accept): yes</p>
-<blockquote>
-<p>Nodes configuration updated
+replicates 01215826194d3b2fc182b32465d443a85ad11143</p></blockquote><blockquote><p>Can I set the above configuration? (type &lsquo;yes&rsquo; to accept): yes</p><blockquote><p>Nodes configuration updated
 Assign a different config epoch to each node
 Sending CLUSTER MEET messages to join the cluster
 Waiting for the cluster to join
-.</p>
-</blockquote>
-<blockquote>
-<p>Performing Cluster Check (using node 192.168.21.11:6379)
+.</p></blockquote><blockquote><p>Performing Cluster Check (using node 192.168.21.11:6379)
 M: b9b0603f8995f275576f4e9ad2b98708b13ba40e 192.168.21.11:6379
 slots:[0-5460] (5461 slots) master
 1 additional replica(s)
@@ -274,265 +56,41 @@ slots:[5461-10922] (5462 slots) master
 S: d5c0f25036222406817bc9bac9bab4f30cdfa86b 192.168.21.13:6384
 slots: (0 slots) slave
 replicates e0379031bbe11a1ad523910d9a3d72618331e930
-All nodes agree about slots configuration.</p>
-</blockquote>
-<blockquote>
-<p>Check for open slots&mldr;
+All nodes agree about slots configuration.</p></blockquote><blockquote><p>Check for open slots&mldr;
 Check slots coverage&mldr;
-All 16384 slots covered.</p>
-</blockquote>
-</blockquote>
-<p>系统自动将Cluster配置好。
-同时，定义好的系统文件被更改，记录下系统配置情况：</p>
-<p><img src=https://img-blog.csdnimg.cn/fd954e09d7384451b898ecbfd3b59eab.png alt=https://img-blog.csdnimg.cn/fd954e09d7384451b898ecbfd3b59eab.png></p>
-<ol start=3>
-<li>查看一组master/slave的log：
-Master-6379：</li>
-</ol>
-<p><img src="https://img-blog.csdnimg.cn/adda5576d65c4a70bb7df8261c6c53ce.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="https://img-blog.csdnimg.cn/adda5576d65c4a70bb7df8261c6c53ce.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16"></p>
-<p>Slave-6383：</p>
-<p><img src="https://img-blog.csdnimg.cn/56e0851270c647619e32e5722a0f5a79.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="https://img-blog.csdnimg.cn/56e0851270c647619e32e5722a0f5a79.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16"></p>
-<h2 id=模拟灾难恢复>模拟灾难恢复</h2>
-<ol>
-<li>
-<p>停止Master-6380</p>
-<p><img src=https://img-blog.csdnimg.cn/8bf39feb311a40e8aa0ae0998e6adcb3.png alt=https://img-blog.csdnimg.cn/8bf39feb311a40e8aa0ae0998e6adcb3.png></p>
-</li>
-<li>
-<p>查看Slave，timeout=10s</p>
-</li>
-</ol>
-<p>10s内找Master同步，过了timeout时间，系统failover机制作用将6384变成Master</p>
-<pre><code>![https://img-blog.csdnimg.cn/848ca172f42648708730c48bf79625c0.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16](https://img-blog.csdnimg.cn/848ca172f42648708730c48bf79625c0.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16)
-</code></pre>
-<ol start=3>
-<li>其他server的配置发生改变</li>
-</ol>
-<p>Master-6380已经标记为fail，6384变为Master</p>
-<pre><code>![https://img-blog.csdnimg.cn/64861c80f2db4190b908b12e2b956d4d.png](https://img-blog.csdnimg.cn/64861c80f2db4190b908b12e2b956d4d.png)
-</code></pre>
-<ol start=4>
-<li>重新启动6380</li>
-</ol>
-<p>发现其连接到Master-6384，成为Slave</p>
-<pre><code>![https://img-blog.csdnimg.cn/b79250bd9b474527b4b44c2beb04002c.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16](https://img-blog.csdnimg.cn/b79250bd9b474527b4b44c2beb04002c.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16)
-</code></pre>
-<p>在配置文件上也反映了这一现象</p>
-<p><img src=https://img-blog.csdnimg.cn/ea5d82f017b647a2a76d976842080c8a.png alt=https://img-blog.csdnimg.cn/ea5d82f017b647a2a76d976842080c8a.png></p>
-<p>6384上的log记录了这一过程</p>
-<p><img src="https://img-blog.csdnimg.cn/8e1ba7b545fe4e899cd45ff7976ce367.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="https://img-blog.csdnimg.cn/8e1ba7b545fe4e899cd45ff7976ce367.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16"></p>
-<p>其他server同步记录下</p>
-<p><img src="https://img-blog.csdnimg.cn/346c6e38ad91440ba3a2d0c0068c1a9e.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="https://img-blog.csdnimg.cn/346c6e38ad91440ba3a2d0c0068c1a9e.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16"></p>
-<p>在redis-cli模式下也可以通过命令查看最终节点情况</p>
-<p><img src=https://img-blog.csdnimg.cn/a5fa408a109d41b5b1232324cc6eb1af.png alt=https://img-blog.csdnimg.cn/a5fa408a109d41b5b1232324cc6eb1af.png></p>
-<ol start=5>
-<li>最终结果</li>
-</ol>
-<p><img src="https://img-blog.csdnimg.cn/0b11c82081ca461aa624a97df136c0b6.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="https://img-blog.csdnimg.cn/0b11c82081ca461aa624a97df136c0b6.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16"></p>
-</div>
-<footer class=post-footer>
-<div id=wcomments></div>
-</footer>
-</article>
-</section>
-</div>
-</div>
-<div class=sidebar-toggle>
-<div class=sidebar-toggle-line-wrap>
-<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+All 16384 slots covered.</p></blockquote></blockquote><p>系统自动将Cluster配置好。
+同时，定义好的系统文件被更改，记录下系统配置情况：</p><p><img src=https://img-blog.csdnimg.cn/fd954e09d7384451b898ecbfd3b59eab.png alt=https://img-blog.csdnimg.cn/fd954e09d7384451b898ecbfd3b59eab.png></p><ol start=3><li>查看一组master/slave的log：
+Master-6379：</li></ol><p><img src="https://img-blog.csdnimg.cn/adda5576d65c4a70bb7df8261c6c53ce.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="https://img-blog.csdnimg.cn/adda5576d65c4a70bb7df8261c6c53ce.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16"></p><p>Slave-6383：</p><p><img src="https://img-blog.csdnimg.cn/56e0851270c647619e32e5722a0f5a79.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="https://img-blog.csdnimg.cn/56e0851270c647619e32e5722a0f5a79.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16"></p><h2 id=模拟灾难恢复>模拟灾难恢复</h2><ol><li><p>停止Master-6380</p><p><img src=https://img-blog.csdnimg.cn/8bf39feb311a40e8aa0ae0998e6adcb3.png alt=https://img-blog.csdnimg.cn/8bf39feb311a40e8aa0ae0998e6adcb3.png></p></li><li><p>查看Slave，timeout=10s</p></li></ol><p>10s内找Master同步，过了timeout时间，系统failover机制作用将6384变成Master</p><pre><code>![https://img-blog.csdnimg.cn/848ca172f42648708730c48bf79625c0.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16](https://img-blog.csdnimg.cn/848ca172f42648708730c48bf79625c0.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16)
+</code></pre><ol start=3><li>其他server的配置发生改变</li></ol><p>Master-6380已经标记为fail，6384变为Master</p><pre><code>![https://img-blog.csdnimg.cn/64861c80f2db4190b908b12e2b956d4d.png](https://img-blog.csdnimg.cn/64861c80f2db4190b908b12e2b956d4d.png)
+</code></pre><ol start=4><li>重新启动6380</li></ol><p>发现其连接到Master-6384，成为Slave</p><pre><code>![https://img-blog.csdnimg.cn/b79250bd9b474527b4b44c2beb04002c.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16](https://img-blog.csdnimg.cn/b79250bd9b474527b4b44c2beb04002c.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16)
+</code></pre><p>在配置文件上也反映了这一现象</p><p><img src=https://img-blog.csdnimg.cn/ea5d82f017b647a2a76d976842080c8a.png alt=https://img-blog.csdnimg.cn/ea5d82f017b647a2a76d976842080c8a.png></p><p>6384上的log记录了这一过程</p><p><img src="https://img-blog.csdnimg.cn/8e1ba7b545fe4e899cd45ff7976ce367.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="https://img-blog.csdnimg.cn/8e1ba7b545fe4e899cd45ff7976ce367.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16"></p><p>其他server同步记录下</p><p><img src="https://img-blog.csdnimg.cn/346c6e38ad91440ba3a2d0c0068c1a9e.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="https://img-blog.csdnimg.cn/346c6e38ad91440ba3a2d0c0068c1a9e.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16"></p><p>在redis-cli模式下也可以通过命令查看最终节点情况</p><p><img src=https://img-blog.csdnimg.cn/a5fa408a109d41b5b1232324cc6eb1af.png alt=https://img-blog.csdnimg.cn/a5fa408a109d41b5b1232324cc6eb1af.png></p><ol start=5><li>最终结果</li></ol><p><img src="https://img-blog.csdnimg.cn/0b11c82081ca461aa624a97df136c0b6.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="https://img-blog.csdnimg.cn/0b11c82081ca461aa624a97df136c0b6.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16"></p></div><footer class=post-footer><div id=wcomments></div></footer></article></section></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
 <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-</div>
-</div>
-<aside id=sidebar class=sidebar>
-<div class=sidebar-inner>
-<ul class="sidebar-nav motion-element">
-<li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>
-文章目录
-</li>
-<li class=sidebar-nav-overview data-target=site-overview>
-站点概览
-</li>
-</ul>
-<section class="site-overview sidebar-panel">
-<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
-<img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon>
-<p class=site-author-name itemprop=name>Etaon</p>
-<p class="site-description motion-element" itemprop=description>
-Kepp Going!
-</p>
-</div>
-<nav class="site-state motion-element">
-<div class="site-state-item site-state-posts">
-<a href=/post/>
-<span class=site-state-item-count>61</span>
-<span class=site-state-item-name>日志</span>
-</a>
-</div>
-<div class="site-state-item site-state-categories">
-<a href=/categories/>
-<span class=site-state-item-count>13</span>
-<span class=site-state-item-name>分类</span>
-</a>
-</div>
-<div class="site-state-item site-state-tags">
-<a href=/tags/>
-<span class=site-state-item-count>34</span>
-<span class=site-state-item-name>标签</span>
-</a>
-</div>
-</nav>
-<div class="links-of-author motion-element">
-<span class=links-of-author-item>
-<a href=https://github.com/etaon target=_blank title=GitHub>
-<i class="fa fa-fw fa-github"></i>
-GitHub
-</a>
-</span>
-<span class=links-of-author-item>
-<a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN>
-<i class="fa fa-fw fa-CSDN"></i>
-CSDN
-</a>
-</span>
-</div>
-<div class="links-of-blogroll motion-element links-of-blogroll-inline">
-<div class=links-of-blogroll-title>
-<i class="fa fa-fw fa-globe"></i>
-友情链接
-</div>
-<ul class=links-of-blogroll-list>
-<li class=links-of-blogroll-item>
-<a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a>
-</li>
-</ul>
-</div>
-<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
-<div class=tagcloud-of-blogroll-title>
-<i class="fa fa-fw fa-tags"></i>
-标签云
-</div>
-<ul class=tagcloud-of-blogroll-list>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mysql>Mysql</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/aws>Aws</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/dql>Dql</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/hadoop>Hadoop</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/redis>Redis</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/cicd>Cicd</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/git>Git</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/istio>Istio</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mongodb>Mongodb</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/azure>Azure</a>
-</li>
-</ul>
-</div>
-</section>
-<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-<div class=post-toc>
-<div class=post-toc-content><nav id=TableOfContents>
-<ul>
-<li><a href=#设计原理>设计原理</a></li>
-<li><a href=#集群内部通信>集群内部通信</a></li>
-</ul>
-<ul>
-<li><a href=#环境设置>环境设置</a></li>
-<li><a href=#配置命令>配置命令</a></li>
-<li><a href=#启动集群>启动集群</a></li>
-<li><a href=#模拟灾难恢复>模拟灾难恢复</a></li>
-</ul>
-</nav></div>
-</div>
-</section>
-</div>
-</aside>
-</div>
-</main>
-<footer id=footer class=footer>
-<div class=footer-inner>
-<div class=copyright>
-<span class=copyright-year>
-&copy; 2010 - 2022
-</span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id=sidebar class=sidebar><div class=sidebar-inner><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>文章目录</li><li class=sidebar-nav-overview data-target=site-overview>站点概览</li></ul><section class="site-overview sidebar-panel"><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon><p class=site-author-name itemprop=name>Etaon</p><p class="site-description motion-element" itemprop=description>Kepp Going!</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=/post/><span class=site-state-item-count>61</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>13</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>34</span>
+<span class=site-state-item-name>标签</span></a></div></nav><div class="links-of-author motion-element"><span class=links-of-author-item><a href=https://github.com/etaon target=_blank title=GitHub><i class="fa fa-fw fa-github"></i>
+GitHub</a></span>
+<span class=links-of-author-item><a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN><i class="fa fa-fw fa-CSDN"></i>
+CSDN</a></span></div><div class="links-of-blogroll motion-element links-of-blogroll-inline"><div class=links-of-blogroll-title><i class="fa fa-fw fa-globe"></i>
+友情链接</div><ul class=links-of-blogroll-list><li class=links-of-blogroll-item><a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a></li><li class=links-of-blogroll-item><a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a></li><li class=links-of-blogroll-item><a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a></li><li class=links-of-blogroll-item><a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a></li></ul></div><div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline"><div class=tagcloud-of-blogroll-title><i class="fa fa-fw fa-tags"></i>
+标签云</div><ul class=tagcloud-of-blogroll-list><li class=tagcloud-of-blogroll-item><a href=/tags/mysql>Mysql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/aws>Aws</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/dql>Dql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/hadoop>Hadoop</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/redis>Redis</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/cicd>Cicd</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/git>Git</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/istio>Istio</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/mongodb>Mongodb</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/azure>Azure</a></li></ul></div></section><section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active"><div class=post-toc><div class=post-toc-content><nav id=TableOfContents><ul><li><a href=#设计原理>设计原理</a></li><li><a href=#集群内部通信>集群内部通信</a></li></ul><ul><li><a href=#环境设置>环境设置</a></li><li><a href=#配置命令>配置命令</a></li><li><a href=#启动集群>启动集群</a></li><li><a href=#模拟灾难恢复>模拟灾难恢复</a></li></ul></nav></div></div></section></div></aside></div></main><footer id=footer class=footer><div class=footer-inner><div class=copyright><span class=copyright-year>&copy; 2010 - 2022</span>
 <span class=with-love><i class="fa fa-heart"></i></span>
-<span class=copyright-author>路无止境！</span>
-</div>
-<div class=powered-info>
-<span class=powered-by>
-Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.91.2</a>
-</span>
+<span class=copyright-author>路无止境！</span></div><div class=powered-info><span class=powered-by>Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.101.0</a></span>
 <span class=separator-line>/</span>
-<span class=theme-info>
-Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
-</a>
-</span>
-</div>
-<div class=vistor-info>
-<script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
-<span class=site-uv>
-<i class="fa fa-user"></i>
-<span class=busuanzi-value id=busuanzi_value_site_uv></span>
-</span>
+<span class=theme-info>Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank>NexT</a></span></div><div class=vistor-info><script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<span class=site-uv><i class="fa fa-user"></i>
+<span class=busuanzi-value id=busuanzi_value_site_uv></span></span>
 <span class=separator-line>/</span>
-<span class=site-pv>
-<i class="fa fa-eye"></i>
-<span class=busuanzi-value id=busuanzi_value_site_pv></span>
-</span>
-</div>
-<div class=license-info>
-<span class=storage-info>
-Storage by
-<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a>
-</span>
+<span class=site-pv><i class="fa fa-eye"></i>
+<span class=busuanzi-value id=busuanzi_value_site_pv></span></span></div><div class=license-info><span class=storage-info>Storage by
+<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a></span>
 <span class=separator-line>/</span>
-<span class=license-num>
-<a href target=_blank></a>
-</span>
-</div>
-</div>
-</footer>
-<div class=back-to-top>
-<i class="fa fa-arrow-up"></i>
-<span id=scrollpercent><span>0</span>%</span>
-</div>
-</div>
-<script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
+<span class=license-num><a href target=_blank></a></span></div></div></footer><div class=back-to-top><i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span></div></div><script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
 <script type=text/javascript src=/js/search.js></script>
 <script type=text/javascript src=/js/affix.js></script>
 <script type=text/javascript src=/js/scrollspy.js></script>
-<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.main').css('padding-bottom'),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}}),$(document).on('affixed.bs.affix',function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var b=$('.header-inner').height()+10,c,d,a,e;$('#sidebar').css({'margin-top':b}).show(),c=parseInt($('#sidebar').css('margin-top')),d=parseInt($('.sidebar-inner').css('height')),a=c+d,e=$('.content-wrap').height(),e<a&&$('.content-wrap').css('min-height',a),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
-<script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
-<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
-<script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+'//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js',function(){new Waline({el:'#wcomments',visitor:!0,avatar:'wavatar',avatarCDN:'https://sdn.geekzu.org/avatar/',avatarForce:!1,wordLimit:'200',placeholder:' 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ',requiredFields:['nick','mail'],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$('#wcomments').html('抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。')})</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type=text/javascript>function detectIE(){var e=window.navigator.userAgent,t=e.indexOf("MSIE "),n=e.indexOf("Trident/"),s=e.indexOf("Edge/");return t>0||n>0||s>0?-1:1}function getCntViewHeight(){var t=$("#content").height(),e=$(window).height(),n=t>e?t-e:$(document).height()-e;return n}function getScrollbarWidth(){var e=$("<div />").addClass("scrollbar-measure").prependTo("body"),t=e[0],n=t.offsetWidth-t.clientWidth;return e.remove(),n}function registerBackTop(){var t=50,e=$(".back-to-top");$(window).on("scroll",function(){e.toggleClass("back-to-top-on",window.pageYOffset>t);var s=$(window).scrollTop(),o=getCntViewHeight(),i=s/o,n=Math.round(i*100),a=n>100?100:n;$("#scrollpercent>span").html(a)}),e.on("click",function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var e=".post-toc",s=$(e),t=".active-current";s.on("activate.bs.scrollspy",function(){var t=$(e+" .active").last();n(),t.addClass("active-current")}).on("clear.bs.scrollspy",n),$("body").scrollspy({target:e});function n(){$(e+" "+t).removeClass(t.substring(1))}}function initAffix(){var e=$(".header-inner").height(),t=parseInt($(".main").css("padding-bottom"),10),n=e+10;$(".sidebar-inner").affix({offset:{top:n,bottom:t}}),$(document).on("affixed.bs.affix",function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){$(window).on("resize",function(){e&&clearTimeout(e),e=setTimeout(function(){var e=document.body.clientHeight-100;updateTOCHeight(e)},0)}),updateTOCHeight(document.body.clientHeight-100);var e,t=getScrollbarWidth();$(".post-toc").css("width","calc(100% + "+t+"px)")}function updateTOCHeight(e){e=e||"auto",$(".post-toc").css("max-height",e)}$(function(){var e,t,n,s,o=$(".header-inner").height()+10;$("#sidebar").css({"margin-top":o}).show(),t=parseInt($("#sidebar").css("margin-top")),n=parseInt($(".sidebar-inner").css("height")),e=t+n,s=$(".content-wrap").height(),s<e&&$(".content-wrap").css("min-height",e),$(".site-nav-toggle").on("click",function(){var e=$(".site-nav"),o=$(".toggle"),t="site-nav-on",i="toggle-close",n=e.hasClass(t),a=n?"slideUp":"slideDown",s=n?"removeClass":"addClass";e.stop()[a]("normal",function(){e[s](t),o[s](i)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$(".sidebar-nav-toc").click(function(){$(this).addClass("sidebar-nav-active"),$(this).next().removeClass("sidebar-nav-active"),$("."+$(this).next().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)}),$(".sidebar-nav-overview").click(function(){$(this).addClass("sidebar-nav-active"),$(this).prev().removeClass("sidebar-nav-active"),$("."+$(this).prev().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)})})</script><script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$(".post-body").viewer()})</script><script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+"//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js",function(){new Waline({el:"#wcomments",visitor:!0,avatar:"wavatar",avatarCDN:"https://sdn.geekzu.org/avatar/",avatarForce:!1,wordLimit:"200",placeholder:" 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ",requiredFields:["nick","mail"],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$("#wcomments").html("抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。")})</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
 <script type=text/javascript src="//s7.addthis.com/js/300/addthis_widget.js#pubid=Your%20AddthisId"></script>
-<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
-</body>
-</html>
+<script>(function(){var t,e=document.createElement("script"),n=window.location.protocol.split(":")[0];n==="https"?e.src="https://zz.bdstatic.com/linksubmit/push.js":e.src="http://push.zhanzhang.baidu.com/push.js",t=document.getElementsByTagName("script")[0],t.parentNode.insertBefore(e,t)})()</script></body></html>

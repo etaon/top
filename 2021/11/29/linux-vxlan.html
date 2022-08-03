@@ -1,210 +1,18 @@
-<!doctype html><html lang=zh-cn dir=content/zh-cn>
-<head>
-<meta charset=utf-8>
-<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
-<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
-<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
-<title> Linux隧道网络VxLAN - 路无止境！ </title>
-<meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云">
-<meta name=author content="Etaon">
-<meta property="og:title" content="Linux隧道网络VxLAN">
-<meta property="og:site_name" content="路无止境！">
-<meta property="og:image" content="/img/author.jpg">
-<meta name=title content="Linux隧道网络VxLAN - 路无止境！">
-<meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。">
-<link rel="shortcut icon" href=/img/favicon.ico>
-<link rel=apple-touch-icon href=/img/apple-touch-icon.png>
-<link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png>
-<link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css>
-<link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet>
-<link href=/css/main.css rel=stylesheet type=text/css>
-<link href=/css/syntax.css rel=stylesheet type=text/css>
-</head>
-<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
-<div class="container one-collumn sidebar-position-left page-home">
-<div class=headband></div>
-<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
-<div class=header-inner> <div class=site-brand-container>
-<div class=site-nav-toggle>
-<div class=toggle role=button style=opacity:1;top:0>
+<!doctype html><html lang=zh-cn dir=content/zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=content-security-policy content="upgrade-insecure-requests"><title>Linux隧道网络VxLAN - 路无止境！</title><meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云"><meta name=author content="Etaon"><meta property="og:title" content="Linux隧道网络VxLAN"><meta property="og:site_name" content="路无止境！"><meta property="og:image" content="/img/author.jpg"><meta name=title content="Linux隧道网络VxLAN - 路无止境！"><meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。"><link rel="shortcut icon" href=/img/favicon.ico><link rel=apple-touch-icon href=/img/apple-touch-icon.png><link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png><link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css><link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet><link href=/css/main.css rel=stylesheet type=text/css><link href=/css/syntax.css rel=stylesheet type=text/css></head><body itemscope itemtype=http://schema.org/WebPage lang=zh-hans><div class="container one-collumn sidebar-position-left page-home"><div class=headband></div><header id=header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle role=button style=opacity:1;top:0><span class=toggle-line></span>
 <span class=toggle-line></span>
-<span class=toggle-line></span>
-<span class=toggle-line></span>
-</div>
-</div>
-<div class=site-meta>
-<div class=multi-lang-switch>
-<i class="fa fa-fw fa-language" style=margin-right:5px></i>
-<a class=lang-link id=zh-cn href=#>中文</a>
-</div>
-<div class=custom-logo-site-title>
-<a href=/ class=brand rel=start>
-<span class=logo-line-before><i></i></span>
+<span class=toggle-line></span></div></div><div class=site-meta><div class=multi-lang-switch><i class="fa fa-fw fa-language" style=margin-right:5px></i>
+<a class=lang-link id=zh-cn href=#>中文</a></div><div class=custom-logo-site-title><a href=/ class=brand rel=start><span class=logo-line-before><i></i></span>
 <span class=site-title>路无止境！</span>
-<span class=logo-line-after><i></i></span>
-</a>
-</div>
-<p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p>
-</div>
-<div class=site-nav-right>
-<div class="toggle popup-trigger" style=opacity:1;top:0>
-<i class="fa fa-search fa-fw fa-lg"></i>
-</div>
-</div>
-</div>
-<nav class=site-nav>
-<ul id=menu class=menu>
-<li class=menu-item>
-<a href=/ rel=section>
-<i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页
-</a>
-</li>
-<li class=menu-item>
-<a href=/post rel=section>
-<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档
-</a>
-</li>
-<li class=menu-item>
-<a href=/about.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于我
-</a>
-</li>
-<li class=menu-item>
-<a href=/404.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益404
-</a>
-</li>
-<li class="menu-item menu-item-search">
-<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> 搜索</a>
-</li>
-</ul>
-<div class=site-search>
-<div class="popup search-popup local-search-popup">
-<div class="local-search-header clearfix">
-<span class=search-icon><i class="fa fa-search"></i> </span>
-<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
-<div class=local-search-input-wrapper>
-<input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
-</div>
-</div>
-<div id=local-search-result></div>
-</div>
-</div>
-</nav>
-</div>
-</header>
-<main id=main class=main>
-<div class=main-inner>
-<div class=content-wrap>
-<div id=content class=content>
-<section id=posts class=posts-expand>
-<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
-<header class=post-header>
-<h1 class=post-title itemprop="name headline" style=font-weight:700>
-<a class=post-title-link href=https://www.etaon.link/2021/11/29/linux-vxlan.html itemprop=url>
-Linux隧道网络VxLAN
-</a>
-</h1>
-</header>
-<div class=post-body itemprop=articleBody>
-<h2 id=linux隧道网络vxlan>Linux隧道网络VxLAN</h2>
-<h2 id=概述>概述</h2>
-<p>VXLAN（Virtual eXtensible LAN，虚拟可扩展的局域网），是一种虚拟化隧道通信技术。它是一种overlay（覆盖网络）技术，通过三层的网络搭建虚拟的二层网络。</p>
-<ul>
-<li>由RFC7348中定义：A framework for overlaying virtualized layer 2 networks over lay 3 networks.</li>
-<li>在底层物理网络（underlay）之上，依托UDP层构建</li>
-<li>逻辑网络与物理网络解耦</li>
-<li>对原有的网络架构影响小</li>
-<li>底层多厂家设备组网需求</li>
-<li>能适配虚拟机和容器环境</li>
-</ul>
-<h2 id=vxlan封装>VXLAN封装</h2>
-<p>VXLAN创建在原来的IP网络（三层）上，只要是三层可达的网络就能部署VXLAN。
+<span class=logo-line-after><i></i></span></a></div><p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p></div><div class=site-nav-right><div class="toggle popup-trigger" style=opacity:1;top:0><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class=site-nav><ul id=menu class=menu><li class=menu-item><a href=/ rel=section><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class=menu-item><a href=/post rel=section><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class=menu-item><a href=/about.html rel=section><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于我</a></li><li class=menu-item><a href=/404.html rel=section><i class="menu-item-icon fa fa-fw fa-heartbeat"></i><br>公益404</a></li><li class="menu-item menu-item-search"><a href=javascript:; class=popup-trigger><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class=site-search><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class=search-icon><i class="fa fa-search"></i></span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span><div class=local-search-input-wrapper><input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off></div></div><div id=local-search-result></div></div></div></nav></div></header><main id=main class=main><div class=main-inner><div class=content-wrap><div id=content class=content><section id=posts class=posts-expand><article class="post post-type-normal" itemscope itemtype=http://schema.org/Article><header class=post-header><h1 class=post-title itemprop="name headline" style=font-weight:700><a class=post-title-link href=https://www.etaon.top/2021/11/29/linux-vxlan.html itemprop=url>Linux隧道网络VxLAN</a></h1></header><div class=post-body itemprop=articleBody><h2 id=linux隧道网络vxlan>Linux隧道网络VxLAN</h2><h2 id=概述>概述</h2><p>VXLAN（Virtual eXtensible LAN，虚拟可扩展的局域网），是一种虚拟化隧道通信技术。它是一种overlay（覆盖网络）技术，通过三层的网络搭建虚拟的二层网络。</p><ul><li>由RFC7348中定义：A framework for overlaying virtualized layer 2 networks over lay 3 networks.</li><li>在底层物理网络（underlay）之上，依托UDP层构建</li><li>逻辑网络与物理网络解耦</li><li>对原有的网络架构影响小</li><li>底层多厂家设备组网需求</li><li>能适配虚拟机和容器环境</li></ul><h2 id=vxlan封装>VXLAN封装</h2><p>VXLAN创建在原来的IP网络（三层）上，只要是三层可达的网络就能部署VXLAN。
 在VXLAN网络的每个端点都有一个VTEP设备，负责VXLAN协议报文的封包和解包，也就是在虚拟报文上封装VTEP通信的报文头部。
-其封装如下</p>
-<p><img src=Linux%E9%9A%A7%E9%81%93%E7%BD%91%E7%BB%9CVxLAN%201ce2a0a6f24a490487e348b3f0a24843/Untitled.png alt=Untitled></p>
-<ul>
-<li>VTEP（VXLAN Tunnel Endpoints）：VXLAN网络的边缘设备，用来进行VXLAN报文的处理（封包和解包）</li>
-<li>VNI（VXLAN Network Identifier）：VNI是每个VXLAN的标识，占24 bits，所以是个24位整数，因此最大值是224=16777216</li>
-</ul>
-<p>Underlay交换机（物理或虚拟）MTU 问题，传统网络 MTU 一般为 1500，这里加上 VXLAN 的封装多出的50 或 54 字节，需要调整 MTU 为 1550 或 1554，防止频繁分包。一般设置为1600+。</p>
-<p>VXLAN通信双方（一般为虚拟机或容器）都认为在直接通信，并不知道底层网络的存在。从整体看，通过Vtep对包进行封装，每个VXLAN网络像是为通信的终端搭建了一个单独的通信通道，也就是隧道。</p>
-<h2 id=linux对vxlan的支持>Linux对VXLAN的支持</h2>
-<p>2012 年 Stephen Hemminger 把相关的工作合并到 kernel 中，并最终出现在 kernel 3.7.0 版本。
-到了 kernel 3.12 版本，Linux 对 VXLAN 的支持已经完备，支持单播和组播，IPv4 和 IPv6。</p>
-<h2 id=实验>实验</h2>
-<p>静态配置vxlan</p>
-<h3 id=环境参数>环境参数</h3>
-<p><img src=Linux%E9%9A%A7%E9%81%93%E7%BD%91%E7%BB%9CVxLAN%201ce2a0a6f24a490487e348b3f0a24843/Untitled%201.png alt=Untitled></p>
-<table>
-<thead>
-<tr>
-<th>Name</th>
-<th>IP Addr</th>
-<th>对端</th>
-<th>备注</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>主机1 ens33</td>
-<td>Host 01</td>
-<td>192.168.21.11/24</td>
-<td>vtep</td>
-</tr>
-<tr>
-<td>主机2 ens33</td>
-<td>Host 02</td>
-<td>192.168.21.12/24</td>
-<td>vtep</td>
-</tr>
-<tr>
-<td>vxlan0@Host 01</td>
-<td>172.19.1.11/24</td>
-<td>vxlan0@Host 02</td>
-<td>单播</td>
-</tr>
-<tr>
-<td>vxlan1@Host 01</td>
-<td>172.19.2.11/24</td>
-<td>vxlan1@Host 02</td>
-<td>单播</td>
-</tr>
-<tr>
-<td>vxlan0@Host 02</td>
-<td>172.19.1.12/24</td>
-<td>vxlan0@Host 01</td>
-<td>组播</td>
-</tr>
-<tr>
-<td>vxlan1@Host 02</td>
-<td>172.19.2.12/24</td>
-<td>vxlan1@Host 01</td>
-<td>组播</td>
-</tr>
-</tbody>
-</table>
-<h3 id=单播模式>单播模式</h3>
-<ul>
-<li>Host 01配置</li>
-</ul>
-<blockquote>
-<p>创建VXLAN接口
+其封装如下</p><p><img src=Linux%E9%9A%A7%E9%81%93%E7%BD%91%E7%BB%9CVxLAN%201ce2a0a6f24a490487e348b3f0a24843/Untitled.png alt=Untitled></p><ul><li>VTEP（VXLAN Tunnel Endpoints）：VXLAN网络的边缘设备，用来进行VXLAN报文的处理（封包和解包）</li><li>VNI（VXLAN Network Identifier）：VNI是每个VXLAN的标识，占24 bits，所以是个24位整数，因此最大值是224=16777216</li></ul><p>Underlay交换机（物理或虚拟）MTU 问题，传统网络 MTU 一般为 1500，这里加上 VXLAN 的封装多出的50 或 54 字节，需要调整 MTU 为 1550 或 1554，防止频繁分包。一般设置为1600+。</p><p>VXLAN通信双方（一般为虚拟机或容器）都认为在直接通信，并不知道底层网络的存在。从整体看，通过Vtep对包进行封装，每个VXLAN网络像是为通信的终端搭建了一个单独的通信通道，也就是隧道。</p><h2 id=linux对vxlan的支持>Linux对VXLAN的支持</h2><p>2012 年 Stephen Hemminger 把相关的工作合并到 kernel 中，并最终出现在 kernel 3.7.0 版本。
+到了 kernel 3.12 版本，Linux 对 VXLAN 的支持已经完备，支持单播和组播，IPv4 和 IPv6。</p><h2 id=实验>实验</h2><p>静态配置vxlan</p><h3 id=环境参数>环境参数</h3><p><img src=Linux%E9%9A%A7%E9%81%93%E7%BD%91%E7%BB%9CVxLAN%201ce2a0a6f24a490487e348b3f0a24843/Untitled%201.png alt=Untitled></p><table><thead><tr><th>Name</th><th>IP Addr</th><th>对端</th><th>备注</th></tr></thead><tbody><tr><td>主机1 ens33</td><td>Host 01</td><td>192.168.21.11/24</td><td>vtep</td></tr><tr><td>主机2 ens33</td><td>Host 02</td><td>192.168.21.12/24</td><td>vtep</td></tr><tr><td>vxlan0@Host 01</td><td>172.19.1.11/24</td><td>vxlan0@Host 02</td><td>单播</td></tr><tr><td>vxlan1@Host 01</td><td>172.19.2.11/24</td><td>vxlan1@Host 02</td><td>单播</td></tr><tr><td>vxlan0@Host 02</td><td>172.19.1.12/24</td><td>vxlan0@Host 01</td><td>组播</td></tr><tr><td>vxlan1@Host 02</td><td>172.19.2.12/24</td><td>vxlan1@Host 01</td><td>组播</td></tr></tbody></table><h3 id=单播模式>单播模式</h3><ul><li>Host 01配置</li></ul><blockquote><p>创建VXLAN接口
 [root@worker-01 ~]# ip link add vxlan0 type vxlan id 42 dstport 4789 remote 192.168.21.12 local 192.168.21.11 dev ens33
 其中，VNI=42，两边要一样
-dstport为vtep通讯端口，IANA - Internet Assigned Numbers Authority定义为4789，不指定将使用Linux定义的8472</p>
-</blockquote>
-<blockquote>
-<p>配置VXLAN接口地址并激活
+dstport为vtep通讯端口，IANA - Internet Assigned Numbers Authority定义为4789，不指定将使用Linux定义的8472</p></blockquote><blockquote><p>配置VXLAN接口地址并激活
 [root@worker-01 ~]# ip addr add 172.19.1.11/24 dev vxlan0
-[root@worker-01 ~]# ip link set vxlan0 up</p>
-</blockquote>
-<ul>
-<li>Host 02配置与Host 01一致，VNI要一致</li>
-<li>查看端口情况</li>
-</ul>
-<blockquote>
-<p>[root@worker-01 ~]# ifconfig vxlan0
+[root@worker-01 ~]# ip link set vxlan0 up</p></blockquote><ul><li>Host 02配置与Host 01一致，VNI要一致</li><li>查看端口情况</li></ul><blockquote><p>[root@worker-01 ~]# ifconfig vxlan0
 vxlan0: flags=4163&lt;UP,BROADCAST,RUNNING,MULTICAST> mtu 1450
 inet 172.19.1.11 netmask 255.255.255.0 broadcast 0.0.0.0
 inet6 fe80::1407:1aff:fe7e:bf23 prefixlen 64 scopeid 0x20<link>
@@ -212,302 +20,88 @@ ether 16:07:1a:7e:bf:23 txqueuelen 1000 (Ethernet)
 RX packets 39 bytes 5097 (4.9 KiB)
 RX errors 0 dropped 0 overruns 0 frame 0
 TX packets 6351 bytes 1067978 (1.0 MiB)
-TX errors 0 dropped 0 overruns 0 carrier 0 collisions 0</p>
-</blockquote>
-<ul>
-<li>路由和FDB表项</li>
-</ul>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@worker-01 ~]# route -n
-Kernel IP routing table
-Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
-0.0.0.0         192.168.21.2    0.0.0.0         UG    100    0        0 ens33
-...
-172.19.1.0      0.0.0.0         255.255.255.0   U     0      0        0 vxlan0
-
-[root@worker-01 ~]# ip route
-default via 192.168.21.2 dev ens33 proto static metric 100
-...
-172.19.1.0/24 dev vxlan0 proto kernel scope link src 172.19.1.11
-
-</code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@worker-01 ~]# bridge fdb
-...
-00:00:00:00:00:00 dev vxlan0 dst 192.168.21.12 via ens33 self permanent
-
-</code></pre></div><ul>
-<li>联通情况</li>
-</ul>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@worker-01 ~]# ping 172.19.1.12
-PING 172.19.1.12 (172.19.1.12) 56(84) bytes of data.
-64 bytes from 172.19.1.12: icmp_seq=1 ttl=64 time=0.620 ms
-64 bytes from 172.19.1.12: icmp_seq=2 ttl=64 time=1.67 ms
-64 bytes from 172.19.1.12: icmp_seq=3 ttl=64 time=1.16 ms
-64 bytes from 172.19.1.12: icmp_seq=4 ttl=64 time=3.13 ms
-^C
---- 172.19.1.12 ping statistics ---
-4 packets transmitted, 4 received, 0% packet loss, time 3010ms
-rtt min/avg/max/mdev = 0.620/1.648/3.137/0.937 ms
-
-</code></pre></div><h3 id=组播模式>组播模式</h3>
-<ul>
-<li>Host 01配置</li>
-</ul>
-<blockquote>
-<p>[root@worker-01 ~]# ip link add vxlan1 type vxlan id 65535 dstport 4789 local 192.168.21.11 group 228.1.1.1 dev ens33
+TX errors 0 dropped 0 overruns 0 carrier 0 collisions 0</p></blockquote><ul><li>路由和FDB表项</li></ul><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[root@worker-01 ~]# route -n
+</span></span><span style=display:flex><span>Kernel IP routing table
+</span></span><span style=display:flex><span>Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+</span></span><span style=display:flex><span>0.0.0.0         192.168.21.2    0.0.0.0         UG    100    0        0 ens33
+</span></span><span style=display:flex><span>...
+</span></span><span style=display:flex><span>172.19.1.0      0.0.0.0         255.255.255.0   U     0      0        0 vxlan0
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>[root@worker-01 ~]# ip route
+</span></span><span style=display:flex><span>default via 192.168.21.2 dev ens33 proto static metric 100
+</span></span><span style=display:flex><span>...
+</span></span><span style=display:flex><span>172.19.1.0/24 dev vxlan0 proto kernel scope link src 172.19.1.11
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[root@worker-01 ~]# bridge fdb
+</span></span><span style=display:flex><span>...
+</span></span><span style=display:flex><span>00:00:00:00:00:00 dev vxlan0 dst 192.168.21.12 via ens33 self permanent
+</span></span></code></pre></div><ul><li>联通情况</li></ul><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[root@worker-01 ~]# ping 172.19.1.12
+</span></span><span style=display:flex><span>PING 172.19.1.12 (172.19.1.12) 56(84) bytes of data.
+</span></span><span style=display:flex><span>64 bytes from 172.19.1.12: icmp_seq=1 ttl=64 time=0.620 ms
+</span></span><span style=display:flex><span>64 bytes from 172.19.1.12: icmp_seq=2 ttl=64 time=1.67 ms
+</span></span><span style=display:flex><span>64 bytes from 172.19.1.12: icmp_seq=3 ttl=64 time=1.16 ms
+</span></span><span style=display:flex><span>64 bytes from 172.19.1.12: icmp_seq=4 ttl=64 time=3.13 ms
+</span></span><span style=display:flex><span>^C
+</span></span><span style=display:flex><span>--- 172.19.1.12 ping statistics ---
+</span></span><span style=display:flex><span>4 packets transmitted, 4 received, 0% packet loss, time 3010ms
+</span></span><span style=display:flex><span>rtt min/avg/max/mdev = 0.620/1.648/3.137/0.937 ms
+</span></span></code></pre></div><h3 id=组播模式>组播模式</h3><ul><li>Host 01配置</li></ul><blockquote><p>[root@worker-01 ~]# ip link add vxlan1 type vxlan id 65535 dstport 4789 local 192.168.21.11 group 228.1.1.1 dev ens33
 [root@worker-01 ~]# ip addr add 172.19.2.11/24 dev vxlan1
-[root@worker-01 ~]# ip link set vxlan1 up</p>
-</blockquote>
-<p>228.1.1.1为组播组，范围为224.0.0.0～239.255.255.255</p>
-<ul>
-<li>Host 02配置和Host 01类似，VNI=65535 group=228.1.1.1</li>
-<li>路由</li>
-</ul>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@worker-01 ~]# ip route
-default via 192.168.21.2 dev ens33 proto static metric 100
-...
-172.19.1.0/24 dev vxlan0 proto kernel scope link src 172.19.1.11
-172.19.2.0/24 dev vxlan1 proto kernel scope link src 172.19.2.11
-
-[root@worker-01 ~]# route -n
-Kernel IP routing table
-Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
-0.0.0.0         192.168.21.2    0.0.0.0         UG    100    0        0 ens33
-...
-172.19.1.0      0.0.0.0         255.255.255.0   U     0      0        0 vxlan0
-172.19.2.0      0.0.0.0         255.255.255.0   U     0      0        0 vxlan1
-
-</code></pre></div><p>路由表看起来和单播模式没有什么区别</p>
-<ul>
-<li>FDB</li>
-</ul>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@worker-01 ~]# bridge fdb
-...
-00:00:00:00:00:00 dev vxlan0 dst 192.168.21.12 via ens33 self permanent
-00:00:00:00:00:00 dev vxlan1 dst 228.1.1.1 via ens33 self permanent
-
-</code></pre></div><p>多播模式下，vxlan的广播包会转发到多播组。
+[root@worker-01 ~]# ip link set vxlan1 up</p></blockquote><p>228.1.1.1为组播组，范围为224.0.0.0～239.255.255.255</p><ul><li>Host 02配置和Host 01类似，VNI=65535 group=228.1.1.1</li><li>路由</li></ul><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[root@worker-01 ~]# ip route
+</span></span><span style=display:flex><span>default via 192.168.21.2 dev ens33 proto static metric 100
+</span></span><span style=display:flex><span>...
+</span></span><span style=display:flex><span>172.19.1.0/24 dev vxlan0 proto kernel scope link src 172.19.1.11
+</span></span><span style=display:flex><span>172.19.2.0/24 dev vxlan1 proto kernel scope link src 172.19.2.11
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>[root@worker-01 ~]# route -n
+</span></span><span style=display:flex><span>Kernel IP routing table
+</span></span><span style=display:flex><span>Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+</span></span><span style=display:flex><span>0.0.0.0         192.168.21.2    0.0.0.0         UG    100    0        0 ens33
+</span></span><span style=display:flex><span>...
+</span></span><span style=display:flex><span>172.19.1.0      0.0.0.0         255.255.255.0   U     0      0        0 vxlan0
+</span></span><span style=display:flex><span>172.19.2.0      0.0.0.0         255.255.255.0   U     0      0        0 vxlan1
+</span></span></code></pre></div><p>路由表看起来和单播模式没有什么区别</p><ul><li>FDB</li></ul><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[root@worker-01 ~]# bridge fdb
+</span></span><span style=display:flex><span>...
+</span></span><span style=display:flex><span>00:00:00:00:00:00 dev vxlan0 dst 192.168.21.12 via ens33 self permanent
+</span></span><span style=display:flex><span>00:00:00:00:00:00 dev vxlan1 dst 228.1.1.1 via ens33 self permanent
+</span></span></code></pre></div><p>多播模式下，vxlan的广播包会转发到多播组。
 一般在事先不知道MAC地址和VTEP IP信息，可以使用多播。
-但是，多播方式会带来报文浪费，在实际生产中VXLAN的多播模式很少被采用。</p>
-<ul>
-<li>联通情况</li>
-</ul>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@worker-01 ~]# ping 172.19.2.12  -c 3
-PING 172.19.2.12 (172.19.2.12) 56(84) bytes of data.
-64 bytes from 172.19.2.12: icmp_seq=1 ttl=64 time=0.404 ms
-64 bytes from 172.19.2.12: icmp_seq=2 ttl=64 time=1.81 ms
-64 bytes from 172.19.2.12: icmp_seq=3 ttl=64 time=0.747 ms
-
---- 172.19.2.12 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 2006ms
-rtt min/avg/max/mdev = 0.404/0.988/1.813/0.599 ms
-
-</code></pre></div><p>以上</p>
-</div>
-<footer class=post-footer>
-<div id=wcomments></div>
-</footer>
-</article>
-</section>
-</div>
-</div>
-<div class=sidebar-toggle>
-<div class=sidebar-toggle-line-wrap>
-<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+但是，多播方式会带来报文浪费，在实际生产中VXLAN的多播模式很少被采用。</p><ul><li>联通情况</li></ul><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[root@worker-01 ~]# ping 172.19.2.12  -c 3
+</span></span><span style=display:flex><span>PING 172.19.2.12 (172.19.2.12) 56(84) bytes of data.
+</span></span><span style=display:flex><span>64 bytes from 172.19.2.12: icmp_seq=1 ttl=64 time=0.404 ms
+</span></span><span style=display:flex><span>64 bytes from 172.19.2.12: icmp_seq=2 ttl=64 time=1.81 ms
+</span></span><span style=display:flex><span>64 bytes from 172.19.2.12: icmp_seq=3 ttl=64 time=0.747 ms
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>--- 172.19.2.12 ping statistics ---
+</span></span><span style=display:flex><span>3 packets transmitted, 3 received, 0% packet loss, time 2006ms
+</span></span><span style=display:flex><span>rtt min/avg/max/mdev = 0.404/0.988/1.813/0.599 ms
+</span></span></code></pre></div><p>以上</p></div><footer class=post-footer><div id=wcomments></div></footer></article></section></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
 <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-</div>
-</div>
-<aside id=sidebar class=sidebar>
-<div class=sidebar-inner>
-<ul class="sidebar-nav motion-element">
-<li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>
-文章目录
-</li>
-<li class=sidebar-nav-overview data-target=site-overview>
-站点概览
-</li>
-</ul>
-<section class="site-overview sidebar-panel">
-<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
-<img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon>
-<p class=site-author-name itemprop=name>Etaon</p>
-<p class="site-description motion-element" itemprop=description>
-Kepp Going!
-</p>
-</div>
-<nav class="site-state motion-element">
-<div class="site-state-item site-state-posts">
-<a href=/post/>
-<span class=site-state-item-count>61</span>
-<span class=site-state-item-name>日志</span>
-</a>
-</div>
-<div class="site-state-item site-state-categories">
-<a href=/categories/>
-<span class=site-state-item-count>13</span>
-<span class=site-state-item-name>分类</span>
-</a>
-</div>
-<div class="site-state-item site-state-tags">
-<a href=/tags/>
-<span class=site-state-item-count>34</span>
-<span class=site-state-item-name>标签</span>
-</a>
-</div>
-</nav>
-<div class="links-of-author motion-element">
-<span class=links-of-author-item>
-<a href=https://github.com/etaon target=_blank title=GitHub>
-<i class="fa fa-fw fa-github"></i>
-GitHub
-</a>
-</span>
-<span class=links-of-author-item>
-<a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN>
-<i class="fa fa-fw fa-CSDN"></i>
-CSDN
-</a>
-</span>
-</div>
-<div class="links-of-blogroll motion-element links-of-blogroll-inline">
-<div class=links-of-blogroll-title>
-<i class="fa fa-fw fa-globe"></i>
-友情链接
-</div>
-<ul class=links-of-blogroll-list>
-<li class=links-of-blogroll-item>
-<a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a>
-</li>
-</ul>
-</div>
-<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
-<div class=tagcloud-of-blogroll-title>
-<i class="fa fa-fw fa-tags"></i>
-标签云
-</div>
-<ul class=tagcloud-of-blogroll-list>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mysql>Mysql</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/aws>Aws</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/dql>Dql</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/hadoop>Hadoop</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/redis>Redis</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/cicd>Cicd</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/git>Git</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/istio>Istio</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mongodb>Mongodb</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/azure>Azure</a>
-</li>
-</ul>
-</div>
-</section>
-<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-<div class=post-toc>
-<div class=post-toc-content><nav id=TableOfContents>
-<ul>
-<li><a href=#linux隧道网络vxlan>Linux隧道网络VxLAN</a></li>
-<li><a href=#概述>概述</a></li>
-<li><a href=#vxlan封装>VXLAN封装</a></li>
-<li><a href=#linux对vxlan的支持>Linux对VXLAN的支持</a></li>
-<li><a href=#实验>实验</a>
-<ul>
-<li><a href=#环境参数>环境参数</a></li>
-<li><a href=#单播模式>单播模式</a></li>
-<li><a href=#组播模式>组播模式</a></li>
-</ul>
-</li>
-</ul>
-</nav></div>
-</div>
-</section>
-</div>
-</aside>
-</div>
-</main>
-<footer id=footer class=footer>
-<div class=footer-inner>
-<div class=copyright>
-<span class=copyright-year>
-&copy; 2010 - 2022
-</span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id=sidebar class=sidebar><div class=sidebar-inner><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>文章目录</li><li class=sidebar-nav-overview data-target=site-overview>站点概览</li></ul><section class="site-overview sidebar-panel"><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon><p class=site-author-name itemprop=name>Etaon</p><p class="site-description motion-element" itemprop=description>Kepp Going!</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=/post/><span class=site-state-item-count>61</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>13</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>34</span>
+<span class=site-state-item-name>标签</span></a></div></nav><div class="links-of-author motion-element"><span class=links-of-author-item><a href=https://github.com/etaon target=_blank title=GitHub><i class="fa fa-fw fa-github"></i>
+GitHub</a></span>
+<span class=links-of-author-item><a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN><i class="fa fa-fw fa-CSDN"></i>
+CSDN</a></span></div><div class="links-of-blogroll motion-element links-of-blogroll-inline"><div class=links-of-blogroll-title><i class="fa fa-fw fa-globe"></i>
+友情链接</div><ul class=links-of-blogroll-list><li class=links-of-blogroll-item><a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a></li><li class=links-of-blogroll-item><a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a></li><li class=links-of-blogroll-item><a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a></li><li class=links-of-blogroll-item><a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a></li></ul></div><div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline"><div class=tagcloud-of-blogroll-title><i class="fa fa-fw fa-tags"></i>
+标签云</div><ul class=tagcloud-of-blogroll-list><li class=tagcloud-of-blogroll-item><a href=/tags/mysql>Mysql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/aws>Aws</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/dql>Dql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/hadoop>Hadoop</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/redis>Redis</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/cicd>Cicd</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/git>Git</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/istio>Istio</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/mongodb>Mongodb</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/azure>Azure</a></li></ul></div></section><section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active"><div class=post-toc><div class=post-toc-content><nav id=TableOfContents><ul><li><a href=#linux隧道网络vxlan>Linux隧道网络VxLAN</a></li><li><a href=#概述>概述</a></li><li><a href=#vxlan封装>VXLAN封装</a></li><li><a href=#linux对vxlan的支持>Linux对VXLAN的支持</a></li><li><a href=#实验>实验</a><ul><li><a href=#环境参数>环境参数</a></li><li><a href=#单播模式>单播模式</a></li><li><a href=#组播模式>组播模式</a></li></ul></li></ul></nav></div></div></section></div></aside></div></main><footer id=footer class=footer><div class=footer-inner><div class=copyright><span class=copyright-year>&copy; 2010 - 2022</span>
 <span class=with-love><i class="fa fa-heart"></i></span>
-<span class=copyright-author>路无止境！</span>
-</div>
-<div class=powered-info>
-<span class=powered-by>
-Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.91.2</a>
-</span>
+<span class=copyright-author>路无止境！</span></div><div class=powered-info><span class=powered-by>Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.101.0</a></span>
 <span class=separator-line>/</span>
-<span class=theme-info>
-Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
-</a>
-</span>
-</div>
-<div class=vistor-info>
-<script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
-<span class=site-uv>
-<i class="fa fa-user"></i>
-<span class=busuanzi-value id=busuanzi_value_site_uv></span>
-</span>
+<span class=theme-info>Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank>NexT</a></span></div><div class=vistor-info><script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<span class=site-uv><i class="fa fa-user"></i>
+<span class=busuanzi-value id=busuanzi_value_site_uv></span></span>
 <span class=separator-line>/</span>
-<span class=site-pv>
-<i class="fa fa-eye"></i>
-<span class=busuanzi-value id=busuanzi_value_site_pv></span>
-</span>
-</div>
-<div class=license-info>
-<span class=storage-info>
-Storage by
-<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a>
-</span>
+<span class=site-pv><i class="fa fa-eye"></i>
+<span class=busuanzi-value id=busuanzi_value_site_pv></span></span></div><div class=license-info><span class=storage-info>Storage by
+<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a></span>
 <span class=separator-line>/</span>
-<span class=license-num>
-<a href target=_blank></a>
-</span>
-</div>
-</div>
-</footer>
-<div class=back-to-top>
-<i class="fa fa-arrow-up"></i>
-<span id=scrollpercent><span>0</span>%</span>
-</div>
-</div>
-<script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
+<span class=license-num><a href target=_blank></a></span></div></div></footer><div class=back-to-top><i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span></div></div><script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
 <script type=text/javascript src=/js/search.js></script>
 <script type=text/javascript src=/js/affix.js></script>
 <script type=text/javascript src=/js/scrollspy.js></script>
-<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.main').css('padding-bottom'),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}}),$(document).on('affixed.bs.affix',function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var b=$('.header-inner').height()+10,c,d,a,e;$('#sidebar').css({'margin-top':b}).show(),c=parseInt($('#sidebar').css('margin-top')),d=parseInt($('.sidebar-inner').css('height')),a=c+d,e=$('.content-wrap').height(),e<a&&$('.content-wrap').css('min-height',a),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
-<script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
-<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
-<script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+'//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js',function(){new Waline({el:'#wcomments',visitor:!0,avatar:'wavatar',avatarCDN:'https://sdn.geekzu.org/avatar/',avatarForce:!1,wordLimit:'200',placeholder:' 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ',requiredFields:['nick','mail'],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$('#wcomments').html('抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。')})</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type=text/javascript>function detectIE(){var e=window.navigator.userAgent,t=e.indexOf("MSIE "),n=e.indexOf("Trident/"),s=e.indexOf("Edge/");return t>0||n>0||s>0?-1:1}function getCntViewHeight(){var t=$("#content").height(),e=$(window).height(),n=t>e?t-e:$(document).height()-e;return n}function getScrollbarWidth(){var e=$("<div />").addClass("scrollbar-measure").prependTo("body"),t=e[0],n=t.offsetWidth-t.clientWidth;return e.remove(),n}function registerBackTop(){var t=50,e=$(".back-to-top");$(window).on("scroll",function(){e.toggleClass("back-to-top-on",window.pageYOffset>t);var s=$(window).scrollTop(),o=getCntViewHeight(),i=s/o,n=Math.round(i*100),a=n>100?100:n;$("#scrollpercent>span").html(a)}),e.on("click",function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var e=".post-toc",s=$(e),t=".active-current";s.on("activate.bs.scrollspy",function(){var t=$(e+" .active").last();n(),t.addClass("active-current")}).on("clear.bs.scrollspy",n),$("body").scrollspy({target:e});function n(){$(e+" "+t).removeClass(t.substring(1))}}function initAffix(){var e=$(".header-inner").height(),t=parseInt($(".main").css("padding-bottom"),10),n=e+10;$(".sidebar-inner").affix({offset:{top:n,bottom:t}}),$(document).on("affixed.bs.affix",function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){$(window).on("resize",function(){e&&clearTimeout(e),e=setTimeout(function(){var e=document.body.clientHeight-100;updateTOCHeight(e)},0)}),updateTOCHeight(document.body.clientHeight-100);var e,t=getScrollbarWidth();$(".post-toc").css("width","calc(100% + "+t+"px)")}function updateTOCHeight(e){e=e||"auto",$(".post-toc").css("max-height",e)}$(function(){var e,t,n,s,o=$(".header-inner").height()+10;$("#sidebar").css({"margin-top":o}).show(),t=parseInt($("#sidebar").css("margin-top")),n=parseInt($(".sidebar-inner").css("height")),e=t+n,s=$(".content-wrap").height(),s<e&&$(".content-wrap").css("min-height",e),$(".site-nav-toggle").on("click",function(){var e=$(".site-nav"),o=$(".toggle"),t="site-nav-on",i="toggle-close",n=e.hasClass(t),a=n?"slideUp":"slideDown",s=n?"removeClass":"addClass";e.stop()[a]("normal",function(){e[s](t),o[s](i)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$(".sidebar-nav-toc").click(function(){$(this).addClass("sidebar-nav-active"),$(this).next().removeClass("sidebar-nav-active"),$("."+$(this).next().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)}),$(".sidebar-nav-overview").click(function(){$(this).addClass("sidebar-nav-active"),$(this).prev().removeClass("sidebar-nav-active"),$("."+$(this).prev().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)})})</script><script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$(".post-body").viewer()})</script><script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+"//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js",function(){new Waline({el:"#wcomments",visitor:!0,avatar:"wavatar",avatarCDN:"https://sdn.geekzu.org/avatar/",avatarForce:!1,wordLimit:"200",placeholder:" 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ",requiredFields:["nick","mail"],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$("#wcomments").html("抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。")})</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
 <script type=text/javascript src="//s7.addthis.com/js/300/addthis_widget.js#pubid=Your%20AddthisId"></script>
-<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
-</body>
-</html>
+<script>(function(){var t,e=document.createElement("script"),n=window.location.protocol.split(":")[0];n==="https"?e.src="https://zz.bdstatic.com/linksubmit/push.js":e.src="http://push.zhanzhang.baidu.com/push.js",t=document.getElementsByTagName("script")[0],t.parentNode.insertBefore(e,t)})()</script></body></html>

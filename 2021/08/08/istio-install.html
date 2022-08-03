@@ -1,1026 +1,510 @@
-<!doctype html><html lang=zh-cn dir=content/zh-cn>
-<head>
-<meta charset=utf-8>
-<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
-<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
-<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
-<title> Istio-Bookinfo Demo安装 - 路无止境！ </title>
-<meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云">
-<meta name=author content="Etaon">
-<meta property="og:title" content="Istio-Bookinfo Demo安装">
-<meta property="og:site_name" content="路无止境！">
-<meta property="og:image" content="/img/author.jpg">
-<meta name=title content="Istio-Bookinfo Demo安装 - 路无止境！">
-<meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。">
-<link rel="shortcut icon" href=/img/favicon.ico>
-<link rel=apple-touch-icon href=/img/apple-touch-icon.png>
-<link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png>
-<link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css>
-<link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet>
-<link href=/css/main.css rel=stylesheet type=text/css>
-<link href=/css/syntax.css rel=stylesheet type=text/css>
-</head>
-<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
-<div class="container one-collumn sidebar-position-left page-home">
-<div class=headband></div>
-<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
-<div class=header-inner> <div class=site-brand-container>
-<div class=site-nav-toggle>
-<div class=toggle role=button style=opacity:1;top:0>
+<!doctype html><html lang=zh-cn dir=content/zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=content-security-policy content="upgrade-insecure-requests"><title>Istio-Bookinfo Demo安装 - 路无止境！</title><meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云"><meta name=author content="Etaon"><meta property="og:title" content="Istio-Bookinfo Demo安装"><meta property="og:site_name" content="路无止境！"><meta property="og:image" content="/img/author.jpg"><meta name=title content="Istio-Bookinfo Demo安装 - 路无止境！"><meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。"><link rel="shortcut icon" href=/img/favicon.ico><link rel=apple-touch-icon href=/img/apple-touch-icon.png><link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png><link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css><link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet><link href=/css/main.css rel=stylesheet type=text/css><link href=/css/syntax.css rel=stylesheet type=text/css></head><body itemscope itemtype=http://schema.org/WebPage lang=zh-hans><div class="container one-collumn sidebar-position-left page-home"><div class=headband></div><header id=header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle role=button style=opacity:1;top:0><span class=toggle-line></span>
 <span class=toggle-line></span>
-<span class=toggle-line></span>
-<span class=toggle-line></span>
-</div>
-</div>
-<div class=site-meta>
-<div class=multi-lang-switch>
-<i class="fa fa-fw fa-language" style=margin-right:5px></i>
-<a class=lang-link id=zh-cn href=#>中文</a>
-</div>
-<div class=custom-logo-site-title>
-<a href=/ class=brand rel=start>
-<span class=logo-line-before><i></i></span>
+<span class=toggle-line></span></div></div><div class=site-meta><div class=multi-lang-switch><i class="fa fa-fw fa-language" style=margin-right:5px></i>
+<a class=lang-link id=zh-cn href=#>中文</a></div><div class=custom-logo-site-title><a href=/ class=brand rel=start><span class=logo-line-before><i></i></span>
 <span class=site-title>路无止境！</span>
-<span class=logo-line-after><i></i></span>
-</a>
-</div>
-<p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p>
-</div>
-<div class=site-nav-right>
-<div class="toggle popup-trigger" style=opacity:1;top:0>
-<i class="fa fa-search fa-fw fa-lg"></i>
-</div>
-</div>
-</div>
-<nav class=site-nav>
-<ul id=menu class=menu>
-<li class=menu-item>
-<a href=/ rel=section>
-<i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页
-</a>
-</li>
-<li class=menu-item>
-<a href=/post rel=section>
-<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档
-</a>
-</li>
-<li class=menu-item>
-<a href=/about.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于我
-</a>
-</li>
-<li class=menu-item>
-<a href=/404.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益404
-</a>
-</li>
-<li class="menu-item menu-item-search">
-<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> 搜索</a>
-</li>
-</ul>
-<div class=site-search>
-<div class="popup search-popup local-search-popup">
-<div class="local-search-header clearfix">
-<span class=search-icon><i class="fa fa-search"></i> </span>
-<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
-<div class=local-search-input-wrapper>
-<input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
-</div>
-</div>
-<div id=local-search-result></div>
-</div>
-</div>
-</nav>
-</div>
-</header>
-<main id=main class=main>
-<div class=main-inner>
-<div class=content-wrap>
-<div id=content class=content>
-<section id=posts class=posts-expand>
-<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
-<header class=post-header>
-<h1 class=post-title itemprop="name headline" style=font-weight:700>
-<a class=post-title-link href=https://www.etaon.link/2021/08/08/istio-install.html itemprop=url>
-Istio-Bookinfo Demo安装
-</a>
-</h1>
-</header>
-<div class=post-body itemprop=articleBody>
-<h2 id=概述>概述</h2>
-<p>这个应用模仿在线书店的一个分类，显示一本书的信息。
-是Istio官方推荐的第一个Demo案例。</p>
-<p>页面上会显示一本书的描述，书籍的细节（ISBN、页数等），以及关于这本书的一些评论。</p>
-<p>Bookinfo 应用分为四个单独的微服务：</p>
-<ul>
-<li>productpage. 这个微服务会调用 details 和 reviews 两个微服务，用来生成页面。</li>
-<li>details. 这个微服务中包含了书籍的信息。</li>
-<li>reviews. 这个微服务中包含了书籍相关的评论。它还会调用 ratings 微服务。</li>
-<li>ratings. 这个微服务中包含了由书籍评价组成的评级信息。</li>
-</ul>
-<p>reviews 微服务有 3 个版本：</p>
-<ul>
-<li>v1 版本不会调用 ratings 服务。</li>
-<li>v2 版本会调用 ratings 服务，并使用 1 到 5 个黑色星形图标来显示评分信息。</li>
-<li>v3 版本会调用 ratings 服务，并使用 1 到 5 个红色星形图标来显示评分信息。</li>
-</ul>
-<p>下图展示了这个应用的端到端架构。
+<span class=logo-line-after><i></i></span></a></div><p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p></div><div class=site-nav-right><div class="toggle popup-trigger" style=opacity:1;top:0><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class=site-nav><ul id=menu class=menu><li class=menu-item><a href=/ rel=section><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class=menu-item><a href=/post rel=section><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class=menu-item><a href=/about.html rel=section><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于我</a></li><li class=menu-item><a href=/404.html rel=section><i class="menu-item-icon fa fa-fw fa-heartbeat"></i><br>公益404</a></li><li class="menu-item menu-item-search"><a href=javascript:; class=popup-trigger><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class=site-search><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class=search-icon><i class="fa fa-search"></i></span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span><div class=local-search-input-wrapper><input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off></div></div><div id=local-search-result></div></div></div></nav></div></header><main id=main class=main><div class=main-inner><div class=content-wrap><div id=content class=content><section id=posts class=posts-expand><article class="post post-type-normal" itemscope itemtype=http://schema.org/Article><header class=post-header><h1 class=post-title itemprop="name headline" style=font-weight:700><a class=post-title-link href=https://www.etaon.top/2021/08/08/istio-install.html itemprop=url>Istio-Bookinfo Demo安装</a></h1></header><div class=post-body itemprop=articleBody><h2 id=概述>概述</h2><p>这个应用模仿在线书店的一个分类，显示一本书的信息。
+是Istio官方推荐的第一个Demo案例。</p><p>页面上会显示一本书的描述，书籍的细节（ISBN、页数等），以及关于这本书的一些评论。</p><p>Bookinfo 应用分为四个单独的微服务：</p><ul><li>productpage. 这个微服务会调用 details 和 reviews 两个微服务，用来生成页面。</li><li>details. 这个微服务中包含了书籍的信息。</li><li>reviews. 这个微服务中包含了书籍相关的评论。它还会调用 ratings 微服务。</li><li>ratings. 这个微服务中包含了由书籍评价组成的评级信息。</li></ul><p>reviews 微服务有 3 个版本：</p><ul><li>v1 版本不会调用 ratings 服务。</li><li>v2 版本会调用 ratings 服务，并使用 1 到 5 个黑色星形图标来显示评分信息。</li><li>v3 版本会调用 ratings 服务，并使用 1 到 5 个红色星形图标来显示评分信息。</li></ul><p>下图展示了这个应用的端到端架构。
 <img src="https://img-blog.csdnimg.cn/55b5d0236a014614bc526c3efcb43376.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述>
-Bookinfo 应用中的几个微服务是由不同的语言编写的。 这些服务对 Istio 并无依赖，但是构成了一个有代表性的服务网格的例子：它由多个服务、多个语言构成，并且 reviews 服务具有多个版本。</p>
-<h2 id=istio-部署>Istio 部署</h2>
-<h3 id=kubernetes集群>Kubernetes集群</h3>
-<p>实验中选用三台CentOS 7.6的虚机作为集群Node，Istio 1.10 测试过的 Kubernetes 发行版包括：1.18, 1.19, 1.20, 1.21.</p>
-<table>
-<thead>
-<tr>
-<th>Name</th>
-<th>Role</th>
-<th>demo</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>master01</td>
-<td>control-plane,master</td>
-<td>192.168.110.70</td>
-</tr>
-<tr>
-<td>worker01</td>
-<td>worker</td>
-<td>192.168.110.71</td>
-</tr>
-<tr>
-<td>worker02</td>
-<td>worker</td>
-<td>192.168.110.72</td>
-</tr>
-<tr>
-<td>docker-ce</td>
-<td>runtime</td>
-<td>20.10.8</td>
-</tr>
-<tr>
-<td>kubernetes</td>
-<td>plane</td>
-<td>1.21.3</td>
-</tr>
-<tr>
-<td>Antrea</td>
-<td>CNI</td>
-<td>1.2.1</td>
-</tr>
-</tbody>
-</table>
-<h3 id=istio安装>Istio安装</h3>
-<p>Istio可以选用多种安装形式，参考<a href=https://istio.io/latest/zh/docs/setup/install/>安装指南</a>
-本实验选用：使用 Helm 安装</p>
-<h3 id=下载istio>下载Istio</h3>
-<ol>
-<li>手动在<a href=https://github.com/istio/istio/releases/tags>Istio Release</a>页面选择版本，本次选择1.10.3，或使用2.中的自动方法</li>
-<li>自动下载Istio和工具</li>
-</ol>
-<blockquote>
-<p>curl -L <a href=https://istio.io/downloadIstio>https://istio.io/downloadIstio</a> | sh -</p>
-</blockquote>
-<ol start=3>
-<li>转到 Istio 包目录。本次的包是 istio-1.10.3</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-mysql data-lang=mysql>total<span style=color:#bbb> </span><span style=color:#666>28</span><span style=color:#bbb>
-</span><span style=color:#bbb></span>drwxr<span style=color:#666>-</span>x<span style=color:#666>---</span>.<span style=color:#bbb>  </span><span style=color:#666>2</span><span style=color:#bbb> </span>root<span style=color:#bbb> </span>root<span style=color:#bbb>    </span><span style=color:#666>22</span><span style=color:#bbb> </span>Jul<span style=color:#bbb> </span><span style=color:#666>15</span><span style=color:#bbb> </span><span style=color:#666>01</span>:<span style=color:#666>32</span><span style=color:#bbb> </span><span style=color:#666>`</span>bin<span style=color:#666>`</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#666>-</span>rw<span style=color:#666>-</span>r<span style=color:#666>--</span>r<span style=color:#666>--</span>.<span style=color:#bbb>  </span><span style=color:#666>1</span><span style=color:#bbb> </span>root<span style=color:#bbb> </span>root<span style=color:#bbb> </span><span style=color:#666>11348</span><span style=color:#bbb> </span>Jul<span style=color:#bbb> </span><span style=color:#666>15</span><span style=color:#bbb> </span><span style=color:#666>01</span>:<span style=color:#666>32</span><span style=color:#bbb> </span>LICENSE<span style=color:#bbb>
-</span><span style=color:#bbb></span>drwxr<span style=color:#666>-</span>xr<span style=color:#666>-</span>x.<span style=color:#bbb>  </span><span style=color:#666>5</span><span style=color:#bbb> </span>root<span style=color:#bbb> </span>root<span style=color:#bbb>    </span><span style=color:#666>52</span><span style=color:#bbb> </span>Jul<span style=color:#bbb> </span><span style=color:#666>15</span><span style=color:#bbb> </span><span style=color:#666>01</span>:<span style=color:#666>32</span><span style=color:#bbb> </span>manifests<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#666>-</span>rw<span style=color:#666>-</span>r<span style=color:#666>-----</span>.<span style=color:#bbb>  </span><span style=color:#666>1</span><span style=color:#bbb> </span>root<span style=color:#bbb> </span>root<span style=color:#bbb>   </span><span style=color:#666>854</span><span style=color:#bbb> </span>Jul<span style=color:#bbb> </span><span style=color:#666>15</span><span style=color:#bbb> </span><span style=color:#666>01</span>:<span style=color:#666>32</span><span style=color:#bbb> </span>manifest.yaml<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#666>-</span>rw<span style=color:#666>-</span>r<span style=color:#666>--</span>r<span style=color:#666>--</span>.<span style=color:#bbb>  </span><span style=color:#666>1</span><span style=color:#bbb> </span>root<span style=color:#bbb> </span>root<span style=color:#bbb>  </span><span style=color:#666>5866</span><span style=color:#bbb> </span>Jul<span style=color:#bbb> </span><span style=color:#666>15</span><span style=color:#bbb> </span><span style=color:#666>01</span>:<span style=color:#666>32</span><span style=color:#bbb> </span>README.md<span style=color:#bbb>
-</span><span style=color:#bbb></span>drwxr<span style=color:#666>-</span>xr<span style=color:#666>-</span>x.<span style=color:#bbb> </span><span style=color:#666>20</span><span style=color:#bbb> </span>root<span style=color:#bbb> </span>root<span style=color:#bbb>  </span><span style=color:#666>4096</span><span style=color:#bbb> </span>Jul<span style=color:#bbb> </span><span style=color:#666>15</span><span style=color:#bbb> </span><span style=color:#666>01</span>:<span style=color:#666>32</span><span style=color:#bbb> </span><span style=color:#666>`</span>samples<span style=color:#666>`</span><span style=color:#bbb>
-</span><span style=color:#bbb></span>drwxr<span style=color:#666>-</span>xr<span style=color:#666>-</span>x.<span style=color:#bbb>  </span><span style=color:#666>3</span><span style=color:#bbb> </span>root<span style=color:#bbb> </span>root<span style=color:#bbb>    </span><span style=color:#666>57</span><span style=color:#bbb> </span>Jul<span style=color:#bbb> </span><span style=color:#666>15</span><span style=color:#bbb> </span><span style=color:#666>01</span>:<span style=color:#666>32</span><span style=color:#bbb> </span>tools<span style=color:#bbb>
-</span></code></pre></div><p>安装目录包含：</p>
-<ul>
-<li>
-<pre><code>samples/ 目录下的示例应用程序
-</code></pre>
-</li>
-<li>
-<pre><code>bin/ 目录下的 istioctl 客户端二进制文件 .
-</code></pre>
-</li>
-</ul>
-<ol start=4>
-<li>将 istioctl 客户端加入搜索路径或拷贝到/usr/local/bin</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>export PATH=$PWD/bin:$PATH
-</code></pre></div><h3 id=helm安装istio>Helm安装Istio</h3>
-<ol>
-<li>为 Istio 组件，创建命名空间 istio-system :</li>
-</ol>
-<blockquote>
-<p>$ kubectl create namespace istio-system</p>
-</blockquote>
-<ol start=2>
-<li>安装 Istio base chart，它包含了 Istio 控制平面用到的集群范围的资源：</li>
-</ol>
-<blockquote>
-<p>$ helm install istio-base manifests/charts/base -n istio-system</p>
-</blockquote>
-<ol start=3>
-<li>安装 Istio discovery chart，它用于部署 istiod 服务：</li>
-</ol>
-<blockquote>
-<p>$ helm install istiod manifests/charts/istio-control/istio-discovery <br>
-&ndash;set global.hub=&ldquo;docker.io/istio&rdquo; <br>
-&ndash;set global.tag=&ldquo;1.10.3&rdquo; <br>
--n istio-system</p>
-</blockquote>
-<ol start=4>
-<li>(可选项) 安装 Istio 的入站网关 chart，它包含入站网关组件：</li>
-</ol>
-<blockquote>
-<p>$ helm install istio-ingress manifests/charts/gateways/istio-ingress <br>
-&ndash;set global.hub=&ldquo;docker.io/istio&rdquo; <br>
-&ndash;set global.tag=&ldquo;1.10.3&rdquo; <br>
--n istio-system</p>
-</blockquote>
-<ol start=5>
-<li>(可选项) 安装 Istio 的出站网关 chart，它包含了出站网关组件：</li>
-</ol>
-<blockquote>
-<p>$ helm install istio-egress manifests/charts/gateways/istio-egress <br>
-&ndash;set global.hub=&ldquo;docker.io/istio&rdquo; <br>
-&ndash;set global.tag=&ldquo;1.10.3&rdquo; <br>
--n istio-system</p>
-</blockquote>
-<ol start=6>
-<li>确认命名空间 istio-system 中所有 Kubernetes pods 均已部署，且返回值中 STATUS 的值为 Running：</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>NAME                                    READY   STATUS    RESTARTS   AGE
-istio-egressgateway-57c94c475f-sxfwc    1/1     Running   1          20h
-istio-ingressgateway-67c99c69bd-4nnj8   1/1     Running   1          20h
-istiod-84d4b8cfbd-fmlx6                 1/1     Running   0          20h
-</code></pre></div><h2 id=部署应用>部署应用</h2>
-<p>在 Istio 中运行这一应用，无需对应用自身做出任何改变。 只要简单的在 Istio 环境中对服务进行配置和运行，具体一点说就是把 Envoy sidecar 注入到每个服务之中。 最终的部署结果将如下图所示：
-<img src="https://img-blog.csdnimg.cn/77b606d7f1554d279cfff4ee317c8cfa.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p>
-<h3 id=启动应用服务>启动应用服务</h3>
-<ol>
-<li>
-<p>进入 Istio 安装目录。</p>
-</li>
-<li>
-<p>Istio 默认自动注入 Sidecar. 请为 default 命名空间打上标签 istio-injection=enabled：</p>
-</li>
-</ol>
-<blockquote>
-<p>$ kubectl label namespace default istio-injection=enabled</p>
-</blockquote>
-<ol start=3>
-<li>使用 kubectl 部署应用：</li>
-</ol>
-<blockquote>
-<p>$ kubectl apply -f samples/bookinfo/platform/kube/bookinfo.yaml</p>
-</blockquote>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#080;font-style:italic># Copyright Istio Authors</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#   Licensed under the Apache License, Version 2.0 (the &#34;License&#34;);</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#   you may not use this file except in compliance with the License.</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#   You may obtain a copy of the License at</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#       http://www.apache.org/licenses/LICENSE-2.0</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#   Unless required by applicable law or agreed to in writing, software</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#   distributed under the License is distributed on an &#34;AS IS&#34; BASIS,</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#   See the License for the specific language governing permissions and</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#   limitations under the License.</span><span style=color:#bbb>
-</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic>##################################################################################################</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic># This file defines the services, service accounts, and deployments for the Bookinfo sample.</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic># To apply all 4 Bookinfo services, their corresponding service accounts, and deployments:</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#   kubectl apply -f samples/bookinfo/platform/kube/bookinfo.yaml</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic># Alternatively, you can deploy any resource separately:</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#   kubectl apply -f samples/bookinfo/platform/kube/bookinfo.yaml -l service=reviews # reviews Service</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#   kubectl apply -f samples/bookinfo/platform/kube/bookinfo.yaml -l account=reviews # reviews ServiceAccount</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#   kubectl apply -f samples/bookinfo/platform/kube/bookinfo.yaml -l app=reviews,version=v3 # reviews-v3 Deployment</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic>##################################################################################################</span><span style=color:#bbb>
-</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic>##################################################################################################</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic># Details service</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic>##################################################################################################</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>Service<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>details<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>details<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>service</span>:<span style=color:#bbb> </span>details<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>ports</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span>- <span style=color:green;font-weight:700>port</span>:<span style=color:#bbb> </span><span style=color:#666>9080</span><span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>http<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>selector</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>details<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#00f;font-weight:700>---</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>ServiceAccount<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>bookinfo-details<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>account</span>:<span style=color:#bbb> </span>details<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#00f;font-weight:700>---</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>apps/v1<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>Deployment<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>details-v1<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>details<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>version</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>replicas</span>:<span style=color:#bbb> </span><span style=color:#666>1</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>selector</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>matchLabels</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>details<span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>version</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>template</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>details<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>version</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>serviceAccountName</span>:<span style=color:#bbb> </span>bookinfo-details<span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>containers</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>      </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>details<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>image</span>:<span style=color:#bbb> </span>docker.io/istio/examples-bookinfo-details-v1:1.16.2<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>imagePullPolicy</span>:<span style=color:#bbb> </span>IfNotPresent<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>ports</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>        </span>- <span style=color:green;font-weight:700>containerPort</span>:<span style=color:#bbb> </span><span style=color:#666>9080</span><span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>securityContext</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>          </span><span style=color:green;font-weight:700>runAsUser</span>:<span style=color:#bbb> </span><span style=color:#666>1000</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#00f;font-weight:700>---</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic>##################################################################################################</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic># Ratings service</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic>##################################################################################################</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>Service<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>ratings<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>ratings<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>service</span>:<span style=color:#bbb> </span>ratings<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>ports</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span>- <span style=color:green;font-weight:700>port</span>:<span style=color:#bbb> </span><span style=color:#666>9080</span><span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>http<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>selector</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>ratings<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#00f;font-weight:700>---</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>ServiceAccount<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>bookinfo-ratings<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>account</span>:<span style=color:#bbb> </span>ratings<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#00f;font-weight:700>---</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>apps/v1<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>Deployment<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>ratings-v1<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>ratings<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>version</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>replicas</span>:<span style=color:#bbb> </span><span style=color:#666>1</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>selector</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>matchLabels</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>ratings<span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>version</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>template</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>ratings<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>version</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>serviceAccountName</span>:<span style=color:#bbb> </span>bookinfo-ratings<span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>containers</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>      </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>ratings<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>image</span>:<span style=color:#bbb> </span>docker.io/istio/examples-bookinfo-ratings-v1:1.16.2<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>imagePullPolicy</span>:<span style=color:#bbb> </span>IfNotPresent<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>ports</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>        </span>- <span style=color:green;font-weight:700>containerPort</span>:<span style=color:#bbb> </span><span style=color:#666>9080</span><span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>securityContext</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>          </span><span style=color:green;font-weight:700>runAsUser</span>:<span style=color:#bbb> </span><span style=color:#666>1000</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#00f;font-weight:700>---</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic>##################################################################################################</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic># Reviews service</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic>##################################################################################################</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>Service<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>reviews<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>reviews<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>service</span>:<span style=color:#bbb> </span>reviews<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>ports</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span>- <span style=color:green;font-weight:700>port</span>:<span style=color:#bbb> </span><span style=color:#666>9080</span><span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>http<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>selector</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>reviews<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#00f;font-weight:700>---</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>ServiceAccount<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>bookinfo-reviews<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>account</span>:<span style=color:#bbb> </span>reviews<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#00f;font-weight:700>---</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>apps/v1<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>Deployment<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>reviews-v1<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>reviews<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>version</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>replicas</span>:<span style=color:#bbb> </span><span style=color:#666>1</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>selector</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>matchLabels</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>reviews<span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>version</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>template</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>reviews<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>version</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>serviceAccountName</span>:<span style=color:#bbb> </span>bookinfo-reviews<span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>containers</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>      </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>reviews<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>image</span>:<span style=color:#bbb> </span>docker.io/istio/examples-bookinfo-reviews-v1:1.16.2<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>imagePullPolicy</span>:<span style=color:#bbb> </span>IfNotPresent<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>env</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>        </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>LOG_DIR<span style=color:#bbb>
-</span><span style=color:#bbb>          </span><span style=color:green;font-weight:700>value</span>:<span style=color:#bbb> </span><span style=color:#b44>&#34;/tmp/logs&#34;</span><span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>ports</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>        </span>- <span style=color:green;font-weight:700>containerPort</span>:<span style=color:#bbb> </span><span style=color:#666>9080</span><span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>volumeMounts</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>        </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>tmp<span style=color:#bbb>
-</span><span style=color:#bbb>          </span><span style=color:green;font-weight:700>mountPath</span>:<span style=color:#bbb> </span>/tmp<span style=color:#bbb>
-</span><span style=color:#bbb>        </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>wlp-output<span style=color:#bbb>
-</span><span style=color:#bbb>          </span><span style=color:green;font-weight:700>mountPath</span>:<span style=color:#bbb> </span>/opt/ibm/wlp/output<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>securityContext</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>          </span><span style=color:green;font-weight:700>runAsUser</span>:<span style=color:#bbb> </span><span style=color:#666>1000</span><span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>volumes</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>      </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>wlp-output<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>emptyDir</span>:<span style=color:#bbb> </span>{}<span style=color:#bbb>
-</span><span style=color:#bbb>      </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>tmp<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>emptyDir</span>:<span style=color:#bbb> </span>{}<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#00f;font-weight:700>---</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>apps/v1<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>Deployment<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>reviews-v2<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>reviews<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>version</span>:<span style=color:#bbb> </span>v2<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>replicas</span>:<span style=color:#bbb> </span><span style=color:#666>1</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>selector</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>matchLabels</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>reviews<span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>version</span>:<span style=color:#bbb> </span>v2<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>template</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>reviews<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>version</span>:<span style=color:#bbb> </span>v2<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>serviceAccountName</span>:<span style=color:#bbb> </span>bookinfo-reviews<span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>containers</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>      </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>reviews<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>image</span>:<span style=color:#bbb> </span>docker.io/istio/examples-bookinfo-reviews-v2:1.16.2<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>imagePullPolicy</span>:<span style=color:#bbb> </span>IfNotPresent<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>env</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>        </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>LOG_DIR<span style=color:#bbb>
-</span><span style=color:#bbb>          </span><span style=color:green;font-weight:700>value</span>:<span style=color:#bbb> </span><span style=color:#b44>&#34;/tmp/logs&#34;</span><span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>ports</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>        </span>- <span style=color:green;font-weight:700>containerPort</span>:<span style=color:#bbb> </span><span style=color:#666>9080</span><span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>volumeMounts</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>        </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>tmp<span style=color:#bbb>
-</span><span style=color:#bbb>          </span><span style=color:green;font-weight:700>mountPath</span>:<span style=color:#bbb> </span>/tmp<span style=color:#bbb>
-</span><span style=color:#bbb>        </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>wlp-output<span style=color:#bbb>
-</span><span style=color:#bbb>          </span><span style=color:green;font-weight:700>mountPath</span>:<span style=color:#bbb> </span>/opt/ibm/wlp/output<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>securityContext</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>          </span><span style=color:green;font-weight:700>runAsUser</span>:<span style=color:#bbb> </span><span style=color:#666>1000</span><span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>volumes</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>      </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>wlp-output<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>emptyDir</span>:<span style=color:#bbb> </span>{}<span style=color:#bbb>
-</span><span style=color:#bbb>      </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>tmp<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>emptyDir</span>:<span style=color:#bbb> </span>{}<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#00f;font-weight:700>---</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>apps/v1<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>Deployment<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>reviews-v3<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>reviews<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>version</span>:<span style=color:#bbb> </span>v3<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>replicas</span>:<span style=color:#bbb> </span><span style=color:#666>1</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>selector</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>matchLabels</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>reviews<span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>version</span>:<span style=color:#bbb> </span>v3<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>template</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>reviews<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>version</span>:<span style=color:#bbb> </span>v3<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>serviceAccountName</span>:<span style=color:#bbb> </span>bookinfo-reviews<span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>containers</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>      </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>reviews<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>image</span>:<span style=color:#bbb> </span>docker.io/istio/examples-bookinfo-reviews-v3:1.16.2<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>imagePullPolicy</span>:<span style=color:#bbb> </span>IfNotPresent<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>env</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>        </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>LOG_DIR<span style=color:#bbb>
-</span><span style=color:#bbb>          </span><span style=color:green;font-weight:700>value</span>:<span style=color:#bbb> </span><span style=color:#b44>&#34;/tmp/logs&#34;</span><span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>ports</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>        </span>- <span style=color:green;font-weight:700>containerPort</span>:<span style=color:#bbb> </span><span style=color:#666>9080</span><span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>volumeMounts</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>        </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>tmp<span style=color:#bbb>
-</span><span style=color:#bbb>          </span><span style=color:green;font-weight:700>mountPath</span>:<span style=color:#bbb> </span>/tmp<span style=color:#bbb>
-</span><span style=color:#bbb>        </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>wlp-output<span style=color:#bbb>
-</span><span style=color:#bbb>          </span><span style=color:green;font-weight:700>mountPath</span>:<span style=color:#bbb> </span>/opt/ibm/wlp/output<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>securityContext</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>          </span><span style=color:green;font-weight:700>runAsUser</span>:<span style=color:#bbb> </span><span style=color:#666>1000</span><span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>volumes</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>      </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>wlp-output<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>emptyDir</span>:<span style=color:#bbb> </span>{}<span style=color:#bbb>
-</span><span style=color:#bbb>      </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>tmp<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>emptyDir</span>:<span style=color:#bbb> </span>{}<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#00f;font-weight:700>---</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic>##################################################################################################</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic># Productpage services</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic>##################################################################################################</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>Service<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>productpage<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>productpage<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>service</span>:<span style=color:#bbb> </span>productpage<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>ports</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span>- <span style=color:green;font-weight:700>port</span>:<span style=color:#bbb> </span><span style=color:#666>9080</span><span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>http<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>selector</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>productpage<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#00f;font-weight:700>---</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>ServiceAccount<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>bookinfo-productpage<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>account</span>:<span style=color:#bbb> </span>productpage<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#00f;font-weight:700>---</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>apps/v1<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>Deployment<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>productpage-v1<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>productpage<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>version</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>replicas</span>:<span style=color:#bbb> </span><span style=color:#666>1</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>selector</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>matchLabels</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>productpage<span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>version</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>template</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>productpage<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>version</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>serviceAccountName</span>:<span style=color:#bbb> </span>bookinfo-productpage<span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>containers</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>      </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>productpage<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>image</span>:<span style=color:#bbb> </span>docker.io/istio/examples-bookinfo-productpage-v1:1.16.2<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>imagePullPolicy</span>:<span style=color:#bbb> </span>IfNotPresent<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>ports</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>        </span>- <span style=color:green;font-weight:700>containerPort</span>:<span style=color:#bbb> </span><span style=color:#666>9080</span><span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>volumeMounts</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>        </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>tmp<span style=color:#bbb>
-</span><span style=color:#bbb>          </span><span style=color:green;font-weight:700>mountPath</span>:<span style=color:#bbb> </span>/tmp<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>securityContext</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>          </span><span style=color:green;font-weight:700>runAsUser</span>:<span style=color:#bbb> </span><span style=color:#666>1000</span><span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>volumes</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>      </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>tmp<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>emptyDir</span>:<span style=color:#bbb> </span>{}<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#00f;font-weight:700>---</span><span style=color:#bbb>
-</span></code></pre></div><table>
-<thead>
-<tr>
-<th>Service</th>
-<th>Image</th>
-<th>port</th>
-<th>container_port</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Details</td>
-<td>examples-bookinfo-ratings-v1:1.16.2</td>
-<td>9080</td>
-<td>9080</td>
-</tr>
-<tr>
-<td>Ratings</td>
-<td>examples-bookinfo-ratings-v1:1.16.2</td>
-<td>9080</td>
-<td>9080</td>
-</tr>
-<tr>
-<td>Reviews</td>
-<td>examples-bookinfo-reviews-v1:1.16.2</td>
-<td>9080</td>
-<td>9080</td>
-</tr>
-<tr>
-<td>Productpage</td>
-<td>examples-bookinfo-productpage-v1:1.16.2</td>
-<td>9080</td>
-<td>9080</td>
-</tr>
-</tbody>
-</table>
-<ol start=4>
-<li>验证服务建立情况</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@master01 istio-1.10.3]# kubectl get svc
-NAME          TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE
-details       ClusterIP   10.102.118.154   &lt;none&gt;        9080/TCP   19h
-kubernetes    ClusterIP   10.96.0.1        &lt;none&gt;        443/TCP    22h
-productpage   ClusterIP   10.105.83.88     &lt;none&gt;        9080/TCP   19h
-ratings       ClusterIP   10.106.171.86    &lt;none&gt;        9080/TCP   19h
-reviews       ClusterIP   10.100.42.119    &lt;none&gt;        9080/TCP   19h
-</code></pre></div><p>Pod的情况</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@master01 istio-1.10.3]# kubectl get po
-NAME                              READY   STATUS    RESTARTS   AGE
-details-v1-79f774bdb9-h8fn8       2/2     Running   0          19h
-productpage-v1-6b746f74dc-w6rsh   2/2     Running   0          19h
-ratings-v1-b6994bb9-xl5dg         2/2     Running   0          19h
-reviews-v1-545db77b95-4vk5g       2/2     Running   0          19h
-reviews-v2-7bf8c9648f-k7mg2       2/2     Running   0          19h
-reviews-v3-84779c7bbc-d6wsc       2/2     Running   0          19h
-</code></pre></div><p>可以看到上面的命令会启动全部的四个服务，其中也包括了 reviews 服务的三个版本（v1、v2 以及 v3）。</p>
-<ol start=5>
-<li>要确认 Bookinfo 应用是否正在运行，请在某个 Pod 中用 curl 命令对应用发送请求，例如 ratings：</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@master01 istio-1.10.3]# kubectl exec -it $(kubectl get pod -l app=ratings -o jsonpath=&#39;{.items[0].metadata.name}&#39;) -c ratings -- curl productpage:9080/productpage | grep -o &#34;&lt;title&gt;.*&lt;/title&gt;&#34;
-&lt;title&gt;Simple Bookstore App&lt;/title&gt;
-</code></pre></div><h3 id=确定外部访问ingress>确定外部访问Ingress</h3>
-<p>现在 Bookinfo 服务启动并运行中，需要使应用程序可以从外部访问 Kubernetes 集群，例如使用浏览器。可以用 Istio Gateway 来实现这个目标。</p>
-<ol>
-<li>为应用程序定义 Ingress 网关：</li>
-</ol>
-<pre><code>$ kubectl apply -f samples/bookinfo/networking/bookinfo-gateway.yaml
-</code></pre>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>networking.istio.io/v1alpha3<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>Gateway<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>bookinfo-gateway<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>selector</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>istio</span>:<span style=color:#bbb> </span>ingressgateway<span style=color:#bbb> </span><span style=color:#080;font-style:italic># use istio default controller</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>servers</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span>- <span style=color:green;font-weight:700>port</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>number</span>:<span style=color:#bbb> </span><span style=color:#666>80</span><span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>http<span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>protocol</span>:<span style=color:#bbb> </span>HTTP<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>hosts</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span>- <span style=color:#b44>&#34;*&#34;</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#00f;font-weight:700>---</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>networking.istio.io/v1alpha3<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>VirtualService<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>bookinfo<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>hosts</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span>- <span style=color:#b44>&#34;*&#34;</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>gateways</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span>- bookinfo-gateway<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>http</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span>- <span style=color:green;font-weight:700>match</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span>- <span style=color:green;font-weight:700>uri</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>exact</span>:<span style=color:#bbb> </span>/productpage<span style=color:#bbb>
-</span><span style=color:#bbb>    </span>- <span style=color:green;font-weight:700>uri</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>prefix</span>:<span style=color:#bbb> </span>/static<span style=color:#bbb>
-</span><span style=color:#bbb>    </span>- <span style=color:green;font-weight:700>uri</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>exact</span>:<span style=color:#bbb> </span>/login<span style=color:#bbb>
-</span><span style=color:#bbb>    </span>- <span style=color:green;font-weight:700>uri</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>exact</span>:<span style=color:#bbb> </span>/logout<span style=color:#bbb>
-</span><span style=color:#bbb>    </span>- <span style=color:green;font-weight:700>uri</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>prefix</span>:<span style=color:#bbb> </span>/api/v1/products<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>route</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span>- <span style=color:green;font-weight:700>destination</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>host</span>:<span style=color:#bbb> </span>productpage<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>port</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>          </span><span style=color:green;font-weight:700>number</span>:<span style=color:#bbb> </span><span style=color:#666>9080</span><span style=color:#bbb>
-</span></code></pre></div><ul>
-<li>使用 hosts 字段列举虚拟服务的主机——即用户指定的目标或是路由规则设定的目标，本例中是<em>所有</em>；</li>
-<li>在 http 字段包含了虚拟服务的路由规则，用来描述匹配条件和路由行为，它们把 HTTP/1.1、HTTP2 和 gRPC 等流量发送到 hosts 字段指定的目标；</li>
-<li>route 部分的 destination 字段指定了符合此条件的流量的实际目标地址，本例中指向productpage:9080</li>
-<li>路由规则按从上到下的顺序选择，虚拟服务中定义的第一条规则有最高优先级</li>
-</ul>
-<ol start=2>
-<li>确认网关创建完成：</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@master01 istio-1.10.3]# kubectl get gateways.networking.istio.io
-NAME               AGE
-bookinfo-gateway   17h
-</code></pre></div><ol start=3>
-<li>查看IngressGateway</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@master01 istio-1.10.3]# kubectl get svc -n istio-system
-NAME                   TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)                                      AGE
-istio-egressgateway    ClusterIP      10.98.141.98     &lt;none&gt;        80/TCP,443/TCP                               22h
-istio-ingressgateway   LoadBalancer   10.98.243.160    &lt;pending&gt;     15021:30499/TCP,80:30047/TCP,443:31601/TCP   22h
-</code></pre></div><p>可以看到外面再上一步配置的Gateway80端口对应的nodePort
+Bookinfo 应用中的几个微服务是由不同的语言编写的。 这些服务对 Istio 并无依赖，但是构成了一个有代表性的服务网格的例子：它由多个服务、多个语言构成，并且 reviews 服务具有多个版本。</p><h2 id=istio-部署>Istio 部署</h2><h3 id=kubernetes集群>Kubernetes集群</h3><p>实验中选用三台CentOS 7.6的虚机作为集群Node，Istio 1.10 测试过的 Kubernetes 发行版包括：1.18, 1.19, 1.20, 1.21.</p><table><thead><tr><th>Name</th><th>Role</th><th>demo</th></tr></thead><tbody><tr><td>master01</td><td>control-plane,master</td><td>192.168.110.70</td></tr><tr><td>worker01</td><td>worker</td><td>192.168.110.71</td></tr><tr><td>worker02</td><td>worker</td><td>192.168.110.72</td></tr><tr><td>docker-ce</td><td>runtime</td><td>20.10.8</td></tr><tr><td>kubernetes</td><td>plane</td><td>1.21.3</td></tr><tr><td>Antrea</td><td>CNI</td><td>1.2.1</td></tr></tbody></table><h3 id=istio安装>Istio安装</h3><p>Istio可以选用多种安装形式，参考<a href=https://istio.io/latest/zh/docs/setup/install/>安装指南</a>
+本实验选用：使用 Helm 安装</p><h3 id=下载istio>下载Istio</h3><ol><li>手动在<a href=https://github.com/istio/istio/releases/tags>Istio Release</a>页面选择版本，本次选择1.10.3，或使用2.中的自动方法</li><li>自动下载Istio和工具</li></ol><blockquote><p>curl -L <a href=https://istio.io/downloadIstio>https://istio.io/downloadIstio</a> | sh -</p></blockquote><ol start=3><li>转到 Istio 包目录。本次的包是 istio-1.10.3</li></ol><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-mysql data-lang=mysql><span style=display:flex><span>total<span style=color:#bbb> </span><span style=color:#666>28</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>drwxr<span style=color:#666>-</span>x<span style=color:#666>---</span>.<span style=color:#bbb>  </span><span style=color:#666>2</span><span style=color:#bbb> </span>root<span style=color:#bbb> </span>root<span style=color:#bbb>    </span><span style=color:#666>22</span><span style=color:#bbb> </span>Jul<span style=color:#bbb> </span><span style=color:#666>15</span><span style=color:#bbb> </span><span style=color:#666>01</span>:<span style=color:#666>32</span><span style=color:#bbb> </span><span style=color:#666>`</span>bin<span style=color:#666>`</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#666>-</span>rw<span style=color:#666>-</span>r<span style=color:#666>--</span>r<span style=color:#666>--</span>.<span style=color:#bbb>  </span><span style=color:#666>1</span><span style=color:#bbb> </span>root<span style=color:#bbb> </span>root<span style=color:#bbb> </span><span style=color:#666>11348</span><span style=color:#bbb> </span>Jul<span style=color:#bbb> </span><span style=color:#666>15</span><span style=color:#bbb> </span><span style=color:#666>01</span>:<span style=color:#666>32</span><span style=color:#bbb> </span>LICENSE<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>drwxr<span style=color:#666>-</span>xr<span style=color:#666>-</span>x.<span style=color:#bbb>  </span><span style=color:#666>5</span><span style=color:#bbb> </span>root<span style=color:#bbb> </span>root<span style=color:#bbb>    </span><span style=color:#666>52</span><span style=color:#bbb> </span>Jul<span style=color:#bbb> </span><span style=color:#666>15</span><span style=color:#bbb> </span><span style=color:#666>01</span>:<span style=color:#666>32</span><span style=color:#bbb> </span>manifests<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#666>-</span>rw<span style=color:#666>-</span>r<span style=color:#666>-----</span>.<span style=color:#bbb>  </span><span style=color:#666>1</span><span style=color:#bbb> </span>root<span style=color:#bbb> </span>root<span style=color:#bbb>   </span><span style=color:#666>854</span><span style=color:#bbb> </span>Jul<span style=color:#bbb> </span><span style=color:#666>15</span><span style=color:#bbb> </span><span style=color:#666>01</span>:<span style=color:#666>32</span><span style=color:#bbb> </span>manifest.yaml<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#666>-</span>rw<span style=color:#666>-</span>r<span style=color:#666>--</span>r<span style=color:#666>--</span>.<span style=color:#bbb>  </span><span style=color:#666>1</span><span style=color:#bbb> </span>root<span style=color:#bbb> </span>root<span style=color:#bbb>  </span><span style=color:#666>5866</span><span style=color:#bbb> </span>Jul<span style=color:#bbb> </span><span style=color:#666>15</span><span style=color:#bbb> </span><span style=color:#666>01</span>:<span style=color:#666>32</span><span style=color:#bbb> </span>README.md<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>drwxr<span style=color:#666>-</span>xr<span style=color:#666>-</span>x.<span style=color:#bbb> </span><span style=color:#666>20</span><span style=color:#bbb> </span>root<span style=color:#bbb> </span>root<span style=color:#bbb>  </span><span style=color:#666>4096</span><span style=color:#bbb> </span>Jul<span style=color:#bbb> </span><span style=color:#666>15</span><span style=color:#bbb> </span><span style=color:#666>01</span>:<span style=color:#666>32</span><span style=color:#bbb> </span><span style=color:#666>`</span>samples<span style=color:#666>`</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>drwxr<span style=color:#666>-</span>xr<span style=color:#666>-</span>x.<span style=color:#bbb>  </span><span style=color:#666>3</span><span style=color:#bbb> </span>root<span style=color:#bbb> </span>root<span style=color:#bbb>    </span><span style=color:#666>57</span><span style=color:#bbb> </span>Jul<span style=color:#bbb> </span><span style=color:#666>15</span><span style=color:#bbb> </span><span style=color:#666>01</span>:<span style=color:#666>32</span><span style=color:#bbb> </span>tools<span style=color:#bbb>
+</span></span></span></code></pre></div><p>安装目录包含：</p><ul><li><pre><code>samples/ 目录下的示例应用程序
+</code></pre></li><li><pre><code>bin/ 目录下的 istioctl 客户端二进制文件 .
+</code></pre></li></ul><ol start=4><li>将 istioctl 客户端加入搜索路径或拷贝到/usr/local/bin</li></ol><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>export PATH=$PWD/bin:$PATH
+</span></span></code></pre></div><h3 id=helm安装istio>Helm安装Istio</h3><ol><li>为 Istio 组件，创建命名空间 istio-system :</li></ol><blockquote><p>$ kubectl create namespace istio-system</p></blockquote><ol start=2><li>安装 Istio base chart，它包含了 Istio 控制平面用到的集群范围的资源：</li></ol><blockquote><p>$ helm install istio-base manifests/charts/base -n istio-system</p></blockquote><ol start=3><li>安装 Istio discovery chart，它用于部署 istiod 服务：</li></ol><blockquote><p>$ helm install istiod manifests/charts/istio-control/istio-discovery<br>&ndash;set global.hub=&ldquo;docker.io/istio&rdquo;<br>&ndash;set global.tag=&ldquo;1.10.3&rdquo;<br>-n istio-system</p></blockquote><ol start=4><li>(可选项) 安装 Istio 的入站网关 chart，它包含入站网关组件：</li></ol><blockquote><p>$ helm install istio-ingress manifests/charts/gateways/istio-ingress<br>&ndash;set global.hub=&ldquo;docker.io/istio&rdquo;<br>&ndash;set global.tag=&ldquo;1.10.3&rdquo;<br>-n istio-system</p></blockquote><ol start=5><li>(可选项) 安装 Istio 的出站网关 chart，它包含了出站网关组件：</li></ol><blockquote><p>$ helm install istio-egress manifests/charts/gateways/istio-egress<br>&ndash;set global.hub=&ldquo;docker.io/istio&rdquo;<br>&ndash;set global.tag=&ldquo;1.10.3&rdquo;<br>-n istio-system</p></blockquote><ol start=6><li>确认命名空间 istio-system 中所有 Kubernetes pods 均已部署，且返回值中 STATUS 的值为 Running：</li></ol><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>NAME                                    READY   STATUS    RESTARTS   AGE
+</span></span><span style=display:flex><span>istio-egressgateway-57c94c475f-sxfwc    1/1     Running   1          20h
+</span></span><span style=display:flex><span>istio-ingressgateway-67c99c69bd-4nnj8   1/1     Running   1          20h
+</span></span><span style=display:flex><span>istiod-84d4b8cfbd-fmlx6                 1/1     Running   0          20h
+</span></span></code></pre></div><h2 id=部署应用>部署应用</h2><p>在 Istio 中运行这一应用，无需对应用自身做出任何改变。 只要简单的在 Istio 环境中对服务进行配置和运行，具体一点说就是把 Envoy sidecar 注入到每个服务之中。 最终的部署结果将如下图所示：
+<img src="https://img-blog.csdnimg.cn/77b606d7f1554d279cfff4ee317c8cfa.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p><h3 id=启动应用服务>启动应用服务</h3><ol><li><p>进入 Istio 安装目录。</p></li><li><p>Istio 默认自动注入 Sidecar. 请为 default 命名空间打上标签 istio-injection=enabled：</p></li></ol><blockquote><p>$ kubectl label namespace default istio-injection=enabled</p></blockquote><ol start=3><li>使用 kubectl 部署应用：</li></ol><blockquote><p>$ kubectl apply -f samples/bookinfo/platform/kube/bookinfo.yaml</p></blockquote><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#080;font-style:italic># Copyright Istio Authors</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#   Licensed under the Apache License, Version 2.0 (the &#34;License&#34;);</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#   you may not use this file except in compliance with the License.</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#   You may obtain a copy of the License at</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#       http://www.apache.org/licenses/LICENSE-2.0</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#   Unless required by applicable law or agreed to in writing, software</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#   distributed under the License is distributed on an &#34;AS IS&#34; BASIS,</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#   See the License for the specific language governing permissions and</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#   limitations under the License.</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic>##################################################################################################</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic># This file defines the services, service accounts, and deployments for the Bookinfo sample.</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic># To apply all 4 Bookinfo services, their corresponding service accounts, and deployments:</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#   kubectl apply -f samples/bookinfo/platform/kube/bookinfo.yaml</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic># Alternatively, you can deploy any resource separately:</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#   kubectl apply -f samples/bookinfo/platform/kube/bookinfo.yaml -l service=reviews # reviews Service</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#   kubectl apply -f samples/bookinfo/platform/kube/bookinfo.yaml -l account=reviews # reviews ServiceAccount</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#   kubectl apply -f samples/bookinfo/platform/kube/bookinfo.yaml -l app=reviews,version=v3 # reviews-v3 Deployment</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic>##################################################################################################</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic>##################################################################################################</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic># Details service</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic>##################################################################################################</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>Service<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>details<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>details<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>service</span>:<span style=color:#bbb> </span>details<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>ports</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span>- <span style=color:green;font-weight:700>port</span>:<span style=color:#bbb> </span><span style=color:#666>9080</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>http<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>selector</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>details<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#00f;font-weight:700>---</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>ServiceAccount<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>bookinfo-details<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>account</span>:<span style=color:#bbb> </span>details<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#00f;font-weight:700>---</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>apps/v1<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>Deployment<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>details-v1<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>details<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>version</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>replicas</span>:<span style=color:#bbb> </span><span style=color:#666>1</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>selector</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>matchLabels</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>details<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>version</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>template</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>details<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>version</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>serviceAccountName</span>:<span style=color:#bbb> </span>bookinfo-details<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>containers</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>details<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>image</span>:<span style=color:#bbb> </span>docker.io/istio/examples-bookinfo-details-v1:1.16.2<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>imagePullPolicy</span>:<span style=color:#bbb> </span>IfNotPresent<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>ports</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span>- <span style=color:green;font-weight:700>containerPort</span>:<span style=color:#bbb> </span><span style=color:#666>9080</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>securityContext</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>          </span><span style=color:green;font-weight:700>runAsUser</span>:<span style=color:#bbb> </span><span style=color:#666>1000</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#00f;font-weight:700>---</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic>##################################################################################################</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic># Ratings service</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic>##################################################################################################</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>Service<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>ratings<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>ratings<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>service</span>:<span style=color:#bbb> </span>ratings<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>ports</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span>- <span style=color:green;font-weight:700>port</span>:<span style=color:#bbb> </span><span style=color:#666>9080</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>http<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>selector</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>ratings<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#00f;font-weight:700>---</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>ServiceAccount<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>bookinfo-ratings<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>account</span>:<span style=color:#bbb> </span>ratings<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#00f;font-weight:700>---</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>apps/v1<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>Deployment<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>ratings-v1<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>ratings<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>version</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>replicas</span>:<span style=color:#bbb> </span><span style=color:#666>1</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>selector</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>matchLabels</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>ratings<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>version</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>template</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>ratings<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>version</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>serviceAccountName</span>:<span style=color:#bbb> </span>bookinfo-ratings<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>containers</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>ratings<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>image</span>:<span style=color:#bbb> </span>docker.io/istio/examples-bookinfo-ratings-v1:1.16.2<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>imagePullPolicy</span>:<span style=color:#bbb> </span>IfNotPresent<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>ports</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span>- <span style=color:green;font-weight:700>containerPort</span>:<span style=color:#bbb> </span><span style=color:#666>9080</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>securityContext</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>          </span><span style=color:green;font-weight:700>runAsUser</span>:<span style=color:#bbb> </span><span style=color:#666>1000</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#00f;font-weight:700>---</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic>##################################################################################################</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic># Reviews service</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic>##################################################################################################</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>Service<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>reviews<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>reviews<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>service</span>:<span style=color:#bbb> </span>reviews<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>ports</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span>- <span style=color:green;font-weight:700>port</span>:<span style=color:#bbb> </span><span style=color:#666>9080</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>http<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>selector</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>reviews<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#00f;font-weight:700>---</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>ServiceAccount<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>bookinfo-reviews<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>account</span>:<span style=color:#bbb> </span>reviews<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#00f;font-weight:700>---</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>apps/v1<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>Deployment<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>reviews-v1<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>reviews<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>version</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>replicas</span>:<span style=color:#bbb> </span><span style=color:#666>1</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>selector</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>matchLabels</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>reviews<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>version</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>template</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>reviews<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>version</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>serviceAccountName</span>:<span style=color:#bbb> </span>bookinfo-reviews<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>containers</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>reviews<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>image</span>:<span style=color:#bbb> </span>docker.io/istio/examples-bookinfo-reviews-v1:1.16.2<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>imagePullPolicy</span>:<span style=color:#bbb> </span>IfNotPresent<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>env</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>LOG_DIR<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>          </span><span style=color:green;font-weight:700>value</span>:<span style=color:#bbb> </span><span style=color:#b44>&#34;/tmp/logs&#34;</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>ports</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span>- <span style=color:green;font-weight:700>containerPort</span>:<span style=color:#bbb> </span><span style=color:#666>9080</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>volumeMounts</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>tmp<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>          </span><span style=color:green;font-weight:700>mountPath</span>:<span style=color:#bbb> </span>/tmp<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>wlp-output<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>          </span><span style=color:green;font-weight:700>mountPath</span>:<span style=color:#bbb> </span>/opt/ibm/wlp/output<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>securityContext</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>          </span><span style=color:green;font-weight:700>runAsUser</span>:<span style=color:#bbb> </span><span style=color:#666>1000</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>volumes</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>wlp-output<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>emptyDir</span>:<span style=color:#bbb> </span>{}<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>tmp<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>emptyDir</span>:<span style=color:#bbb> </span>{}<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#00f;font-weight:700>---</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>apps/v1<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>Deployment<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>reviews-v2<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>reviews<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>version</span>:<span style=color:#bbb> </span>v2<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>replicas</span>:<span style=color:#bbb> </span><span style=color:#666>1</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>selector</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>matchLabels</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>reviews<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>version</span>:<span style=color:#bbb> </span>v2<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>template</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>reviews<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>version</span>:<span style=color:#bbb> </span>v2<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>serviceAccountName</span>:<span style=color:#bbb> </span>bookinfo-reviews<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>containers</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>reviews<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>image</span>:<span style=color:#bbb> </span>docker.io/istio/examples-bookinfo-reviews-v2:1.16.2<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>imagePullPolicy</span>:<span style=color:#bbb> </span>IfNotPresent<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>env</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>LOG_DIR<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>          </span><span style=color:green;font-weight:700>value</span>:<span style=color:#bbb> </span><span style=color:#b44>&#34;/tmp/logs&#34;</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>ports</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span>- <span style=color:green;font-weight:700>containerPort</span>:<span style=color:#bbb> </span><span style=color:#666>9080</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>volumeMounts</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>tmp<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>          </span><span style=color:green;font-weight:700>mountPath</span>:<span style=color:#bbb> </span>/tmp<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>wlp-output<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>          </span><span style=color:green;font-weight:700>mountPath</span>:<span style=color:#bbb> </span>/opt/ibm/wlp/output<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>securityContext</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>          </span><span style=color:green;font-weight:700>runAsUser</span>:<span style=color:#bbb> </span><span style=color:#666>1000</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>volumes</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>wlp-output<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>emptyDir</span>:<span style=color:#bbb> </span>{}<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>tmp<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>emptyDir</span>:<span style=color:#bbb> </span>{}<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#00f;font-weight:700>---</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>apps/v1<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>Deployment<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>reviews-v3<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>reviews<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>version</span>:<span style=color:#bbb> </span>v3<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>replicas</span>:<span style=color:#bbb> </span><span style=color:#666>1</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>selector</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>matchLabels</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>reviews<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>version</span>:<span style=color:#bbb> </span>v3<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>template</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>reviews<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>version</span>:<span style=color:#bbb> </span>v3<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>serviceAccountName</span>:<span style=color:#bbb> </span>bookinfo-reviews<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>containers</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>reviews<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>image</span>:<span style=color:#bbb> </span>docker.io/istio/examples-bookinfo-reviews-v3:1.16.2<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>imagePullPolicy</span>:<span style=color:#bbb> </span>IfNotPresent<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>env</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>LOG_DIR<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>          </span><span style=color:green;font-weight:700>value</span>:<span style=color:#bbb> </span><span style=color:#b44>&#34;/tmp/logs&#34;</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>ports</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span>- <span style=color:green;font-weight:700>containerPort</span>:<span style=color:#bbb> </span><span style=color:#666>9080</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>volumeMounts</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>tmp<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>          </span><span style=color:green;font-weight:700>mountPath</span>:<span style=color:#bbb> </span>/tmp<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>wlp-output<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>          </span><span style=color:green;font-weight:700>mountPath</span>:<span style=color:#bbb> </span>/opt/ibm/wlp/output<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>securityContext</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>          </span><span style=color:green;font-weight:700>runAsUser</span>:<span style=color:#bbb> </span><span style=color:#666>1000</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>volumes</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>wlp-output<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>emptyDir</span>:<span style=color:#bbb> </span>{}<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>tmp<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>emptyDir</span>:<span style=color:#bbb> </span>{}<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#00f;font-weight:700>---</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic>##################################################################################################</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic># Productpage services</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic>##################################################################################################</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>Service<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>productpage<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>productpage<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>service</span>:<span style=color:#bbb> </span>productpage<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>ports</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span>- <span style=color:green;font-weight:700>port</span>:<span style=color:#bbb> </span><span style=color:#666>9080</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>http<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>selector</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>productpage<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#00f;font-weight:700>---</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>ServiceAccount<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>bookinfo-productpage<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>account</span>:<span style=color:#bbb> </span>productpage<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#00f;font-weight:700>---</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>apps/v1<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>Deployment<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>productpage-v1<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>productpage<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>version</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>replicas</span>:<span style=color:#bbb> </span><span style=color:#666>1</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>selector</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>matchLabels</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>productpage<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>version</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>template</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>productpage<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>version</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>serviceAccountName</span>:<span style=color:#bbb> </span>bookinfo-productpage<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>containers</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>productpage<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>image</span>:<span style=color:#bbb> </span>docker.io/istio/examples-bookinfo-productpage-v1:1.16.2<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>imagePullPolicy</span>:<span style=color:#bbb> </span>IfNotPresent<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>ports</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span>- <span style=color:green;font-weight:700>containerPort</span>:<span style=color:#bbb> </span><span style=color:#666>9080</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>volumeMounts</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>tmp<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>          </span><span style=color:green;font-weight:700>mountPath</span>:<span style=color:#bbb> </span>/tmp<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>securityContext</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>          </span><span style=color:green;font-weight:700>runAsUser</span>:<span style=color:#bbb> </span><span style=color:#666>1000</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>volumes</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>tmp<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>emptyDir</span>:<span style=color:#bbb> </span>{}<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#00f;font-weight:700>---</span><span style=color:#bbb>
+</span></span></span></code></pre></div><table><thead><tr><th>Service</th><th>Image</th><th>port</th><th>container_port</th></tr></thead><tbody><tr><td>Details</td><td>examples-bookinfo-ratings-v1:1.16.2</td><td>9080</td><td>9080</td></tr><tr><td>Ratings</td><td>examples-bookinfo-ratings-v1:1.16.2</td><td>9080</td><td>9080</td></tr><tr><td>Reviews</td><td>examples-bookinfo-reviews-v1:1.16.2</td><td>9080</td><td>9080</td></tr><tr><td>Productpage</td><td>examples-bookinfo-productpage-v1:1.16.2</td><td>9080</td><td>9080</td></tr></tbody></table><ol start=4><li>验证服务建立情况</li></ol><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[root@master01 istio-1.10.3]# kubectl get svc
+</span></span><span style=display:flex><span>NAME          TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE
+</span></span><span style=display:flex><span>details       ClusterIP   10.102.118.154   &lt;none&gt;        9080/TCP   19h
+</span></span><span style=display:flex><span>kubernetes    ClusterIP   10.96.0.1        &lt;none&gt;        443/TCP    22h
+</span></span><span style=display:flex><span>productpage   ClusterIP   10.105.83.88     &lt;none&gt;        9080/TCP   19h
+</span></span><span style=display:flex><span>ratings       ClusterIP   10.106.171.86    &lt;none&gt;        9080/TCP   19h
+</span></span><span style=display:flex><span>reviews       ClusterIP   10.100.42.119    &lt;none&gt;        9080/TCP   19h
+</span></span></code></pre></div><p>Pod的情况</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[root@master01 istio-1.10.3]# kubectl get po
+</span></span><span style=display:flex><span>NAME                              READY   STATUS    RESTARTS   AGE
+</span></span><span style=display:flex><span>details-v1-79f774bdb9-h8fn8       2/2     Running   0          19h
+</span></span><span style=display:flex><span>productpage-v1-6b746f74dc-w6rsh   2/2     Running   0          19h
+</span></span><span style=display:flex><span>ratings-v1-b6994bb9-xl5dg         2/2     Running   0          19h
+</span></span><span style=display:flex><span>reviews-v1-545db77b95-4vk5g       2/2     Running   0          19h
+</span></span><span style=display:flex><span>reviews-v2-7bf8c9648f-k7mg2       2/2     Running   0          19h
+</span></span><span style=display:flex><span>reviews-v3-84779c7bbc-d6wsc       2/2     Running   0          19h
+</span></span></code></pre></div><p>可以看到上面的命令会启动全部的四个服务，其中也包括了 reviews 服务的三个版本（v1、v2 以及 v3）。</p><ol start=5><li>要确认 Bookinfo 应用是否正在运行，请在某个 Pod 中用 curl 命令对应用发送请求，例如 ratings：</li></ol><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[root@master01 istio-1.10.3]# kubectl exec -it $(kubectl get pod -l app=ratings -o jsonpath=&#39;{.items[0].metadata.name}&#39;) -c ratings -- curl productpage:9080/productpage | grep -o &#34;&lt;title&gt;.*&lt;/title&gt;&#34;
+</span></span><span style=display:flex><span>&lt;title&gt;Simple Bookstore App&lt;/title&gt;
+</span></span></code></pre></div><h3 id=确定外部访问ingress>确定外部访问Ingress</h3><p>现在 Bookinfo 服务启动并运行中，需要使应用程序可以从外部访问 Kubernetes 集群，例如使用浏览器。可以用 Istio Gateway 来实现这个目标。</p><ol><li>为应用程序定义 Ingress 网关：</li></ol><pre><code>$ kubectl apply -f samples/bookinfo/networking/bookinfo-gateway.yaml
+</code></pre><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>networking.istio.io/v1alpha3<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>Gateway<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>bookinfo-gateway<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>selector</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>istio</span>:<span style=color:#bbb> </span>ingressgateway<span style=color:#bbb> </span><span style=color:#080;font-style:italic># use istio default controller</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>servers</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span>- <span style=color:green;font-weight:700>port</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>number</span>:<span style=color:#bbb> </span><span style=color:#666>80</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>http<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>protocol</span>:<span style=color:#bbb> </span>HTTP<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>hosts</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span>- <span style=color:#b44>&#34;*&#34;</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#00f;font-weight:700>---</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>networking.istio.io/v1alpha3<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>VirtualService<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>bookinfo<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>hosts</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span>- <span style=color:#b44>&#34;*&#34;</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>gateways</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span>- bookinfo-gateway<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>http</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span>- <span style=color:green;font-weight:700>match</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span>- <span style=color:green;font-weight:700>uri</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>exact</span>:<span style=color:#bbb> </span>/productpage<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span>- <span style=color:green;font-weight:700>uri</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>prefix</span>:<span style=color:#bbb> </span>/static<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span>- <span style=color:green;font-weight:700>uri</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>exact</span>:<span style=color:#bbb> </span>/login<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span>- <span style=color:green;font-weight:700>uri</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>exact</span>:<span style=color:#bbb> </span>/logout<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span>- <span style=color:green;font-weight:700>uri</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>prefix</span>:<span style=color:#bbb> </span>/api/v1/products<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>route</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span>- <span style=color:green;font-weight:700>destination</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>host</span>:<span style=color:#bbb> </span>productpage<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>port</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>          </span><span style=color:green;font-weight:700>number</span>:<span style=color:#bbb> </span><span style=color:#666>9080</span><span style=color:#bbb>
+</span></span></span></code></pre></div><ul><li>使用 hosts 字段列举虚拟服务的主机——即用户指定的目标或是路由规则设定的目标，本例中是<em>所有</em>；</li><li>在 http 字段包含了虚拟服务的路由规则，用来描述匹配条件和路由行为，它们把 HTTP/1.1、HTTP2 和 gRPC 等流量发送到 hosts 字段指定的目标；</li><li>route 部分的 destination 字段指定了符合此条件的流量的实际目标地址，本例中指向productpage:9080</li><li>路由规则按从上到下的顺序选择，虚拟服务中定义的第一条规则有最高优先级</li></ul><ol start=2><li>确认网关创建完成：</li></ol><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[root@master01 istio-1.10.3]# kubectl get gateways.networking.istio.io
+</span></span><span style=display:flex><span>NAME               AGE
+</span></span><span style=display:flex><span>bookinfo-gateway   17h
+</span></span></code></pre></div><ol start=3><li>查看IngressGateway</li></ol><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[root@master01 istio-1.10.3]# kubectl get svc -n istio-system
+</span></span><span style=display:flex><span>NAME                   TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)                                      AGE
+</span></span><span style=display:flex><span>istio-egressgateway    ClusterIP      10.98.141.98     &lt;none&gt;        80/TCP,443/TCP                               22h
+</span></span><span style=display:flex><span>istio-ingressgateway   LoadBalancer   10.98.243.160    &lt;pending&gt;     15021:30499/TCP,80:30047/TCP,443:31601/TCP   22h
+</span></span></code></pre></div><p>可以看到外面再上一步配置的Gateway80端口对应的nodePort
 是300047，由于没有配置对外LBer，所以外可以通过http://host:port访问，即http://192.168.110.70:300047
 <img src="https://img-blog.csdnimg.cn/7bc2f9455a0249d88e84871039d02fee.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述>
 刷新<img src="https://img-blog.csdnimg.cn/d056049b85ce4b2f9caae96038346915.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述>
 <img src="https://img-blog.csdnimg.cn/2c496b3b853049369d2fbd6f5e52b5b9.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述>
 页面会轮询v1/v2/v3
-<img src="https://img-blog.csdnimg.cn/71c0d8ec9b194ce5bb1fe826d7cf8664.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p>
-<h3 id=安装kiali>安装Kiali</h3>
-<p>Kiali 最初是由 Red Hat 开源的，用于解决 Service Mesh 中可观察性即微服务的可视性问题。目前已获得 Istio 社区的官方支持。
-Kiali 提供以下功能：</p>
-<ul>
-<li>服务拓扑图</li>
-<li>分布式跟踪</li>
-<li>指标度量收集和图标</li>
-<li>配置校验</li>
-<li>健康检查和显示</li>
-<li>服务发现</li>
-</ul>
-<p>本例中已经给了安装yaml</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@master01 ~]# kubectl apply -f istio-1.10.3/samples/addons/kiali.yaml
-customresourcedefinition.apiextensions.k8s.io/monitoringdashboards.monitoring.kiali.io created
-serviceaccount/kiali created
-configmap/kiali created
-clusterrole.rbac.authorization.k8s.io/kiali-viewer created
-clusterrole.rbac.authorization.k8s.io/kiali created
-clusterrolebinding.rbac.authorization.k8s.io/kiali created
-role.rbac.authorization.k8s.io/kiali-controlplane created
-rolebinding.rbac.authorization.k8s.io/kiali-controlplane created
-service/kiali created
-deployment.apps/kiali created
-monitoringdashboard.monitoring.kiali.io/envoy created
-monitoringdashboard.monitoring.kiali.io/go created
-monitoringdashboard.monitoring.kiali.io/kiali created
-monitoringdashboard.monitoring.kiali.io/micrometer-1.0.6-jvm-pool created
-monitoringdashboard.monitoring.kiali.io/micrometer-1.0.6-jvm created
-monitoringdashboard.monitoring.kiali.io/micrometer-1.1-jvm created
-monitoringdashboard.monitoring.kiali.io/microprofile-1.1 created
-monitoringdashboard.monitoring.kiali.io/microprofile-x.y created
-monitoringdashboard.monitoring.kiali.io/nodejs created
-monitoringdashboard.monitoring.kiali.io/quarkus created
-monitoringdashboard.monitoring.kiali.io/springboot-jvm-pool created
-monitoringdashboard.monitoring.kiali.io/springboot-jvm created
-monitoringdashboard.monitoring.kiali.io/springboot-tomcat created
-monitoringdashboard.monitoring.kiali.io/thorntail created
-monitoringdashboard.monitoring.kiali.io/tomcat created
-monitoringdashboard.monitoring.kiali.io/vertx-client created
-monitoringdashboard.monitoring.kiali.io/vertx-eventbus created
-monitoringdashboard.monitoring.kiali.io/vertx-jvm created
-monitoringdashboard.monitoring.kiali.io/vertx-pool created
-monitoringdashboard.monitoring.kiali.io/vertx-server created
-</code></pre></div><p>查看：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>
-[root@master01 addons]# kubectl get po -n istio-system
-NAME                                    READY   STATUS    RESTARTS   AGE
-......
-kiali-7bdf78768c-9gsvl                  1/1     Running   0          17h
-</code></pre></div><p>配置访问kiali</p>
-<blockquote>
-<p>[root@master01 ~]# kubectl port-forward &ndash;address 0.0.0.0 kiali-7bdf78768c-9gsvl 20001 -n istio-system</p>
-</blockquote>
-<p><img src="https://img-blog.csdnimg.cn/61afd2eedb5f45d8b691b87e7c43d703.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述>
-<img src="https://img-blog.csdnimg.cn/45c9131f582e44548b4d465105d08e05.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p>
-</div>
-<footer class=post-footer>
-<div id=wcomments></div>
-</footer>
-</article>
-</section>
-</div>
-</div>
-<div class=sidebar-toggle>
-<div class=sidebar-toggle-line-wrap>
-<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+<img src="https://img-blog.csdnimg.cn/71c0d8ec9b194ce5bb1fe826d7cf8664.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p><h3 id=安装kiali>安装Kiali</h3><p>Kiali 最初是由 Red Hat 开源的，用于解决 Service Mesh 中可观察性即微服务的可视性问题。目前已获得 Istio 社区的官方支持。
+Kiali 提供以下功能：</p><ul><li>服务拓扑图</li><li>分布式跟踪</li><li>指标度量收集和图标</li><li>配置校验</li><li>健康检查和显示</li><li>服务发现</li></ul><p>本例中已经给了安装yaml</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[root@master01 ~]# kubectl apply -f istio-1.10.3/samples/addons/kiali.yaml
+</span></span><span style=display:flex><span>customresourcedefinition.apiextensions.k8s.io/monitoringdashboards.monitoring.kiali.io created
+</span></span><span style=display:flex><span>serviceaccount/kiali created
+</span></span><span style=display:flex><span>configmap/kiali created
+</span></span><span style=display:flex><span>clusterrole.rbac.authorization.k8s.io/kiali-viewer created
+</span></span><span style=display:flex><span>clusterrole.rbac.authorization.k8s.io/kiali created
+</span></span><span style=display:flex><span>clusterrolebinding.rbac.authorization.k8s.io/kiali created
+</span></span><span style=display:flex><span>role.rbac.authorization.k8s.io/kiali-controlplane created
+</span></span><span style=display:flex><span>rolebinding.rbac.authorization.k8s.io/kiali-controlplane created
+</span></span><span style=display:flex><span>service/kiali created
+</span></span><span style=display:flex><span>deployment.apps/kiali created
+</span></span><span style=display:flex><span>monitoringdashboard.monitoring.kiali.io/envoy created
+</span></span><span style=display:flex><span>monitoringdashboard.monitoring.kiali.io/go created
+</span></span><span style=display:flex><span>monitoringdashboard.monitoring.kiali.io/kiali created
+</span></span><span style=display:flex><span>monitoringdashboard.monitoring.kiali.io/micrometer-1.0.6-jvm-pool created
+</span></span><span style=display:flex><span>monitoringdashboard.monitoring.kiali.io/micrometer-1.0.6-jvm created
+</span></span><span style=display:flex><span>monitoringdashboard.monitoring.kiali.io/micrometer-1.1-jvm created
+</span></span><span style=display:flex><span>monitoringdashboard.monitoring.kiali.io/microprofile-1.1 created
+</span></span><span style=display:flex><span>monitoringdashboard.monitoring.kiali.io/microprofile-x.y created
+</span></span><span style=display:flex><span>monitoringdashboard.monitoring.kiali.io/nodejs created
+</span></span><span style=display:flex><span>monitoringdashboard.monitoring.kiali.io/quarkus created
+</span></span><span style=display:flex><span>monitoringdashboard.monitoring.kiali.io/springboot-jvm-pool created
+</span></span><span style=display:flex><span>monitoringdashboard.monitoring.kiali.io/springboot-jvm created
+</span></span><span style=display:flex><span>monitoringdashboard.monitoring.kiali.io/springboot-tomcat created
+</span></span><span style=display:flex><span>monitoringdashboard.monitoring.kiali.io/thorntail created
+</span></span><span style=display:flex><span>monitoringdashboard.monitoring.kiali.io/tomcat created
+</span></span><span style=display:flex><span>monitoringdashboard.monitoring.kiali.io/vertx-client created
+</span></span><span style=display:flex><span>monitoringdashboard.monitoring.kiali.io/vertx-eventbus created
+</span></span><span style=display:flex><span>monitoringdashboard.monitoring.kiali.io/vertx-jvm created
+</span></span><span style=display:flex><span>monitoringdashboard.monitoring.kiali.io/vertx-pool created
+</span></span><span style=display:flex><span>monitoringdashboard.monitoring.kiali.io/vertx-server created
+</span></span></code></pre></div><p>查看：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>
+</span></span><span style=display:flex><span>[root@master01 addons]# kubectl get po -n istio-system
+</span></span><span style=display:flex><span>NAME                                    READY   STATUS    RESTARTS   AGE
+</span></span><span style=display:flex><span>......
+</span></span><span style=display:flex><span>kiali-7bdf78768c-9gsvl                  1/1     Running   0          17h
+</span></span></code></pre></div><p>配置访问kiali</p><blockquote><p>[root@master01 ~]# kubectl port-forward &ndash;address 0.0.0.0 kiali-7bdf78768c-9gsvl 20001 -n istio-system</p></blockquote><p><img src="https://img-blog.csdnimg.cn/61afd2eedb5f45d8b691b87e7c43d703.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述>
+<img src="https://img-blog.csdnimg.cn/45c9131f582e44548b4d465105d08e05.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p></div><footer class=post-footer><div id=wcomments></div></footer></article></section></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
 <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-</div>
-</div>
-<aside id=sidebar class=sidebar>
-<div class=sidebar-inner>
-<ul class="sidebar-nav motion-element">
-<li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>
-文章目录
-</li>
-<li class=sidebar-nav-overview data-target=site-overview>
-站点概览
-</li>
-</ul>
-<section class="site-overview sidebar-panel">
-<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
-<img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon>
-<p class=site-author-name itemprop=name>Etaon</p>
-<p class="site-description motion-element" itemprop=description>
-Kepp Going!
-</p>
-</div>
-<nav class="site-state motion-element">
-<div class="site-state-item site-state-posts">
-<a href=/post/>
-<span class=site-state-item-count>61</span>
-<span class=site-state-item-name>日志</span>
-</a>
-</div>
-<div class="site-state-item site-state-categories">
-<a href=/categories/>
-<span class=site-state-item-count>13</span>
-<span class=site-state-item-name>分类</span>
-</a>
-</div>
-<div class="site-state-item site-state-tags">
-<a href=/tags/>
-<span class=site-state-item-count>34</span>
-<span class=site-state-item-name>标签</span>
-</a>
-</div>
-</nav>
-<div class="links-of-author motion-element">
-<span class=links-of-author-item>
-<a href=https://github.com/etaon target=_blank title=GitHub>
-<i class="fa fa-fw fa-github"></i>
-GitHub
-</a>
-</span>
-<span class=links-of-author-item>
-<a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN>
-<i class="fa fa-fw fa-CSDN"></i>
-CSDN
-</a>
-</span>
-</div>
-<div class="links-of-blogroll motion-element links-of-blogroll-inline">
-<div class=links-of-blogroll-title>
-<i class="fa fa-fw fa-globe"></i>
-友情链接
-</div>
-<ul class=links-of-blogroll-list>
-<li class=links-of-blogroll-item>
-<a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a>
-</li>
-</ul>
-</div>
-<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
-<div class=tagcloud-of-blogroll-title>
-<i class="fa fa-fw fa-tags"></i>
-标签云
-</div>
-<ul class=tagcloud-of-blogroll-list>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mysql>Mysql</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/aws>Aws</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/dql>Dql</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/hadoop>Hadoop</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/redis>Redis</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/cicd>Cicd</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/git>Git</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/istio>Istio</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mongodb>Mongodb</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/azure>Azure</a>
-</li>
-</ul>
-</div>
-</section>
-<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-<div class=post-toc>
-<div class=post-toc-content><nav id=TableOfContents>
-<ul>
-<li><a href=#概述>概述</a></li>
-<li><a href=#istio-部署>Istio 部署</a>
-<ul>
-<li><a href=#kubernetes集群>Kubernetes集群</a></li>
-<li><a href=#istio安装>Istio安装</a></li>
-<li><a href=#下载istio>下载Istio</a></li>
-<li><a href=#helm安装istio>Helm安装Istio</a></li>
-</ul>
-</li>
-<li><a href=#部署应用>部署应用</a>
-<ul>
-<li><a href=#启动应用服务>启动应用服务</a></li>
-<li><a href=#确定外部访问ingress>确定外部访问Ingress</a></li>
-<li><a href=#安装kiali>安装Kiali</a></li>
-</ul>
-</li>
-</ul>
-</nav></div>
-</div>
-</section>
-</div>
-</aside>
-</div>
-</main>
-<footer id=footer class=footer>
-<div class=footer-inner>
-<div class=copyright>
-<span class=copyright-year>
-&copy; 2010 - 2022
-</span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id=sidebar class=sidebar><div class=sidebar-inner><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>文章目录</li><li class=sidebar-nav-overview data-target=site-overview>站点概览</li></ul><section class="site-overview sidebar-panel"><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon><p class=site-author-name itemprop=name>Etaon</p><p class="site-description motion-element" itemprop=description>Kepp Going!</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=/post/><span class=site-state-item-count>61</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>13</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>34</span>
+<span class=site-state-item-name>标签</span></a></div></nav><div class="links-of-author motion-element"><span class=links-of-author-item><a href=https://github.com/etaon target=_blank title=GitHub><i class="fa fa-fw fa-github"></i>
+GitHub</a></span>
+<span class=links-of-author-item><a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN><i class="fa fa-fw fa-CSDN"></i>
+CSDN</a></span></div><div class="links-of-blogroll motion-element links-of-blogroll-inline"><div class=links-of-blogroll-title><i class="fa fa-fw fa-globe"></i>
+友情链接</div><ul class=links-of-blogroll-list><li class=links-of-blogroll-item><a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a></li><li class=links-of-blogroll-item><a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a></li><li class=links-of-blogroll-item><a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a></li><li class=links-of-blogroll-item><a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a></li></ul></div><div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline"><div class=tagcloud-of-blogroll-title><i class="fa fa-fw fa-tags"></i>
+标签云</div><ul class=tagcloud-of-blogroll-list><li class=tagcloud-of-blogroll-item><a href=/tags/mysql>Mysql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/aws>Aws</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/dql>Dql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/hadoop>Hadoop</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/redis>Redis</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/cicd>Cicd</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/git>Git</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/istio>Istio</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/mongodb>Mongodb</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/azure>Azure</a></li></ul></div></section><section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active"><div class=post-toc><div class=post-toc-content><nav id=TableOfContents><ul><li><a href=#概述>概述</a></li><li><a href=#istio-部署>Istio 部署</a><ul><li><a href=#kubernetes集群>Kubernetes集群</a></li><li><a href=#istio安装>Istio安装</a></li><li><a href=#下载istio>下载Istio</a></li><li><a href=#helm安装istio>Helm安装Istio</a></li></ul></li><li><a href=#部署应用>部署应用</a><ul><li><a href=#启动应用服务>启动应用服务</a></li><li><a href=#确定外部访问ingress>确定外部访问Ingress</a></li><li><a href=#安装kiali>安装Kiali</a></li></ul></li></ul></nav></div></div></section></div></aside></div></main><footer id=footer class=footer><div class=footer-inner><div class=copyright><span class=copyright-year>&copy; 2010 - 2022</span>
 <span class=with-love><i class="fa fa-heart"></i></span>
-<span class=copyright-author>路无止境！</span>
-</div>
-<div class=powered-info>
-<span class=powered-by>
-Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.91.2</a>
-</span>
+<span class=copyright-author>路无止境！</span></div><div class=powered-info><span class=powered-by>Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.101.0</a></span>
 <span class=separator-line>/</span>
-<span class=theme-info>
-Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
-</a>
-</span>
-</div>
-<div class=vistor-info>
-<script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
-<span class=site-uv>
-<i class="fa fa-user"></i>
-<span class=busuanzi-value id=busuanzi_value_site_uv></span>
-</span>
+<span class=theme-info>Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank>NexT</a></span></div><div class=vistor-info><script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<span class=site-uv><i class="fa fa-user"></i>
+<span class=busuanzi-value id=busuanzi_value_site_uv></span></span>
 <span class=separator-line>/</span>
-<span class=site-pv>
-<i class="fa fa-eye"></i>
-<span class=busuanzi-value id=busuanzi_value_site_pv></span>
-</span>
-</div>
-<div class=license-info>
-<span class=storage-info>
-Storage by
-<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a>
-</span>
+<span class=site-pv><i class="fa fa-eye"></i>
+<span class=busuanzi-value id=busuanzi_value_site_pv></span></span></div><div class=license-info><span class=storage-info>Storage by
+<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a></span>
 <span class=separator-line>/</span>
-<span class=license-num>
-<a href target=_blank></a>
-</span>
-</div>
-</div>
-</footer>
-<div class=back-to-top>
-<i class="fa fa-arrow-up"></i>
-<span id=scrollpercent><span>0</span>%</span>
-</div>
-</div>
-<script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
+<span class=license-num><a href target=_blank></a></span></div></div></footer><div class=back-to-top><i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span></div></div><script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
 <script type=text/javascript src=/js/search.js></script>
 <script type=text/javascript src=/js/affix.js></script>
 <script type=text/javascript src=/js/scrollspy.js></script>
-<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.main').css('padding-bottom'),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}}),$(document).on('affixed.bs.affix',function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var b=$('.header-inner').height()+10,c,d,a,e;$('#sidebar').css({'margin-top':b}).show(),c=parseInt($('#sidebar').css('margin-top')),d=parseInt($('.sidebar-inner').css('height')),a=c+d,e=$('.content-wrap').height(),e<a&&$('.content-wrap').css('min-height',a),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
-<script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
-<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
-<script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+'//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js',function(){new Waline({el:'#wcomments',visitor:!0,avatar:'wavatar',avatarCDN:'https://sdn.geekzu.org/avatar/',avatarForce:!1,wordLimit:'200',placeholder:' 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ',requiredFields:['nick','mail'],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$('#wcomments').html('抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。')})</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type=text/javascript>function detectIE(){var e=window.navigator.userAgent,t=e.indexOf("MSIE "),n=e.indexOf("Trident/"),s=e.indexOf("Edge/");return t>0||n>0||s>0?-1:1}function getCntViewHeight(){var t=$("#content").height(),e=$(window).height(),n=t>e?t-e:$(document).height()-e;return n}function getScrollbarWidth(){var e=$("<div />").addClass("scrollbar-measure").prependTo("body"),t=e[0],n=t.offsetWidth-t.clientWidth;return e.remove(),n}function registerBackTop(){var t=50,e=$(".back-to-top");$(window).on("scroll",function(){e.toggleClass("back-to-top-on",window.pageYOffset>t);var s=$(window).scrollTop(),o=getCntViewHeight(),i=s/o,n=Math.round(i*100),a=n>100?100:n;$("#scrollpercent>span").html(a)}),e.on("click",function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var e=".post-toc",s=$(e),t=".active-current";s.on("activate.bs.scrollspy",function(){var t=$(e+" .active").last();n(),t.addClass("active-current")}).on("clear.bs.scrollspy",n),$("body").scrollspy({target:e});function n(){$(e+" "+t).removeClass(t.substring(1))}}function initAffix(){var e=$(".header-inner").height(),t=parseInt($(".main").css("padding-bottom"),10),n=e+10;$(".sidebar-inner").affix({offset:{top:n,bottom:t}}),$(document).on("affixed.bs.affix",function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){$(window).on("resize",function(){e&&clearTimeout(e),e=setTimeout(function(){var e=document.body.clientHeight-100;updateTOCHeight(e)},0)}),updateTOCHeight(document.body.clientHeight-100);var e,t=getScrollbarWidth();$(".post-toc").css("width","calc(100% + "+t+"px)")}function updateTOCHeight(e){e=e||"auto",$(".post-toc").css("max-height",e)}$(function(){var e,t,n,s,o=$(".header-inner").height()+10;$("#sidebar").css({"margin-top":o}).show(),t=parseInt($("#sidebar").css("margin-top")),n=parseInt($(".sidebar-inner").css("height")),e=t+n,s=$(".content-wrap").height(),s<e&&$(".content-wrap").css("min-height",e),$(".site-nav-toggle").on("click",function(){var e=$(".site-nav"),o=$(".toggle"),t="site-nav-on",i="toggle-close",n=e.hasClass(t),a=n?"slideUp":"slideDown",s=n?"removeClass":"addClass";e.stop()[a]("normal",function(){e[s](t),o[s](i)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$(".sidebar-nav-toc").click(function(){$(this).addClass("sidebar-nav-active"),$(this).next().removeClass("sidebar-nav-active"),$("."+$(this).next().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)}),$(".sidebar-nav-overview").click(function(){$(this).addClass("sidebar-nav-active"),$(this).prev().removeClass("sidebar-nav-active"),$("."+$(this).prev().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)})})</script><script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$(".post-body").viewer()})</script><script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+"//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js",function(){new Waline({el:"#wcomments",visitor:!0,avatar:"wavatar",avatarCDN:"https://sdn.geekzu.org/avatar/",avatarForce:!1,wordLimit:"200",placeholder:" 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ",requiredFields:["nick","mail"],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$("#wcomments").html("抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。")})</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
 <script type=text/javascript src="//s7.addthis.com/js/300/addthis_widget.js#pubid=Your%20AddthisId"></script>
-<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
-</body>
-</html>
+<script>(function(){var t,e=document.createElement("script"),n=window.location.protocol.split(":")[0];n==="https"?e.src="https://zz.bdstatic.com/linksubmit/push.js":e.src="http://push.zhanzhang.baidu.com/push.js",t=document.getElementsByTagName("script")[0],t.parentNode.insertBefore(e,t)})()</script></body></html>

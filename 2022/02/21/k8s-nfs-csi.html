@@ -1,851 +1,498 @@
-<!doctype html><html lang=zh-cn dir=content/zh-cn>
-<head>
-<meta charset=utf-8>
-<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
-<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
-<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
-<title> NFS-Volume for K8S - 路无止境！ </title>
-<meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云">
-<meta name=author content="Etaon">
-<meta property="og:title" content="NFS-Volume for K8S">
-<meta property="og:site_name" content="路无止境！">
-<meta property="og:image" content="/img/author.jpg">
-<meta name=title content="NFS-Volume for K8S - 路无止境！">
-<meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。">
-<link rel="shortcut icon" href=/img/favicon.ico>
-<link rel=apple-touch-icon href=/img/apple-touch-icon.png>
-<link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png>
-<link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css>
-<link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet>
-<link href=/css/main.css rel=stylesheet type=text/css>
-<link href=/css/syntax.css rel=stylesheet type=text/css>
-</head>
-<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
-<div class="container one-collumn sidebar-position-left page-home">
-<div class=headband></div>
-<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
-<div class=header-inner> <div class=site-brand-container>
-<div class=site-nav-toggle>
-<div class=toggle role=button style=opacity:1;top:0>
+<!doctype html><html lang=zh-cn dir=content/zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=content-security-policy content="upgrade-insecure-requests"><title>NFS-Volume for K8S - 路无止境！</title><meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云"><meta name=author content="Etaon"><meta property="og:title" content="NFS-Volume for K8S"><meta property="og:site_name" content="路无止境！"><meta property="og:image" content="/img/author.jpg"><meta name=title content="NFS-Volume for K8S - 路无止境！"><meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。"><link rel="shortcut icon" href=/img/favicon.ico><link rel=apple-touch-icon href=/img/apple-touch-icon.png><link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png><link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css><link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet><link href=/css/main.css rel=stylesheet type=text/css><link href=/css/syntax.css rel=stylesheet type=text/css></head><body itemscope itemtype=http://schema.org/WebPage lang=zh-hans><div class="container one-collumn sidebar-position-left page-home"><div class=headband></div><header id=header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle role=button style=opacity:1;top:0><span class=toggle-line></span>
 <span class=toggle-line></span>
-<span class=toggle-line></span>
-<span class=toggle-line></span>
-</div>
-</div>
-<div class=site-meta>
-<div class=multi-lang-switch>
-<i class="fa fa-fw fa-language" style=margin-right:5px></i>
-<a class=lang-link id=zh-cn href=#>中文</a>
-</div>
-<div class=custom-logo-site-title>
-<a href=/ class=brand rel=start>
-<span class=logo-line-before><i></i></span>
+<span class=toggle-line></span></div></div><div class=site-meta><div class=multi-lang-switch><i class="fa fa-fw fa-language" style=margin-right:5px></i>
+<a class=lang-link id=zh-cn href=#>中文</a></div><div class=custom-logo-site-title><a href=/ class=brand rel=start><span class=logo-line-before><i></i></span>
 <span class=site-title>路无止境！</span>
-<span class=logo-line-after><i></i></span>
-</a>
-</div>
-<p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p>
-</div>
-<div class=site-nav-right>
-<div class="toggle popup-trigger" style=opacity:1;top:0>
-<i class="fa fa-search fa-fw fa-lg"></i>
-</div>
-</div>
-</div>
-<nav class=site-nav>
-<ul id=menu class=menu>
-<li class=menu-item>
-<a href=/ rel=section>
-<i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页
-</a>
-</li>
-<li class=menu-item>
-<a href=/post rel=section>
-<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档
-</a>
-</li>
-<li class=menu-item>
-<a href=/about.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于我
-</a>
-</li>
-<li class=menu-item>
-<a href=/404.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益404
-</a>
-</li>
-<li class="menu-item menu-item-search">
-<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> 搜索</a>
-</li>
-</ul>
-<div class=site-search>
-<div class="popup search-popup local-search-popup">
-<div class="local-search-header clearfix">
-<span class=search-icon><i class="fa fa-search"></i> </span>
-<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
-<div class=local-search-input-wrapper>
-<input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
-</div>
-</div>
-<div id=local-search-result></div>
-</div>
-</div>
-</nav>
-</div>
-</header>
-<main id=main class=main>
-<div class=main-inner>
-<div class=content-wrap>
-<div id=content class=content>
-<section id=posts class=posts-expand>
-<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
-<header class=post-header>
-<h1 class=post-title itemprop="name headline" style=font-weight:700>
-<a class=post-title-link href=https://www.etaon.link/2022/02/21/k8s-nfs-csi.html itemprop=url>
-NFS-Volume for K8S
-</a>
-</h1>
-</header>
-<div class=post-body itemprop=articleBody>
-<h2 id=环境>环境</h2>
-<p><img src=NFS-Volume%205719f/Untitled.png alt=Untitled></p>
-<p>Alma：Linux Alma 8.5</p>
-<p>CP/Worker：ubuntu 18.04</p>
-<h3 id=nfs安装>NFS安装</h3>
-<p>Alma：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#080;font-style:italic>#安装</span>
-yum install -y nfs-utils
-
-<span style=color:#080;font-style:italic>#nfs主节点</span>
-<span style=color:#a2f>echo</span> <span style=color:#b44>&#34;/nfs/data/ *(insecure,rw,sync,no_root_squash)&#34;</span> &gt; /etc/exports
-
-mkdir -p /nfs/data
-systemctl <span style=color:#a2f>enable</span> rpcbind --now
-systemctl <span style=color:#a2f>enable</span> nfs-server --now
-<span style=color:#080;font-style:italic>#配置生效</span>
-exportfs -r
-</code></pre></div><p>ubuntu:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#080;font-style:italic>#安装client</span>
-zyi@worker:~$ sudo apt install nfs-common
-
-<span style=color:#080;font-style:italic>#查看nfs</span>
-zyi@worker:~$ showmount -e alma
-Export list <span style=color:#a2f;font-weight:700>for</span> alma:
-/nfs/data *
-</code></pre></div><h2 id=测试步骤>测试步骤</h2>
-<h3 id=原生方式>原生方式</h3>
-<p><code>nfs</code>卷的内容在删除 Pod时会被保存，卷只是被卸载。</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>apiVersion: apps/v1
-kind: Deployment
-metadata:
-  labels:
-    app: nginx-native-storage
-  name: nginx-native-storage
-spec:
-  replicas: <span style=color:#666>2</span>
-  selector:
-    matchLabels:
-      app: nginx-native-storage
-  template:
-    metadata:
-      labels:
-        app: nginx-native-storage
-    spec:
-      containers:
-      - image: networktool:v1.1
-        name: nginx-web
-        volumeMounts:
-        - name: html
-          mountPath: /usr/share/nginx/html
-      volumes:           <span style=color:#080;font-style:italic>#直接在vlumes下nfs参数挂载</span>
-        - name: html
-          nfs:
-            server: alma
-            path: /nfs/data/nginx-pv <span style=color:#080;font-style:italic>#nfs中此文件夹必须事先存在，否则pod建立不了</span>
-</code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#666>[</span>root@Alma ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># echo &#39;POD for Native-Storage&#39; &gt; /nfs/data/nginx-pv/index.html</span>
-
-zyi@cp:~$ kubectl describe po nginx-native-storage-99bd9bd8c-r6r4j
-Name:         nginx-native-storage-99bd9bd8c-r6r4j
-Namespace:    default
-Priority:     <span style=color:#666>0</span>
-Node:         worker/172.16.21.111
-Start Time:   Mon, <span style=color:#666>21</span> Feb <span style=color:#666>2022</span> 02:58:44 +0000
-Labels:       <span style=color:#b8860b>app</span><span style=color:#666>=</span>nginx-native-storage
-              pod-template-hash<span style=color:#666>=</span>99bd9bd8c
-Annotations:  cni.projectcalico.org/containerID: a3211ca74ede2738b4fc6d37456d17e68b53120743f1dc27bb1e7e6aad2dc98e
-              cni.projectcalico.org/podIP: 192.168.171.113/32
-              cni.projectcalico.org/podIPs: 192.168.171.113/32
-Status:       Running
-IP:           192.168.171.113
-IPs:
-  IP:           192.168.171.113
-Controlled By:  ReplicaSet/nginx-native-storage-99bd9bd8c
-Containers:
-  nginx-web:
-    Container ID:   docker://1d6b3194ea115bcc9cd91d36cf4067192a13486c82b9cea6a1f39f43b9774501
-    Image:          networktool:v1.1
-    Image ID:       docker://sha256:293c239dd855827d9037ee498ad57b0e09147fe3324b39e8a48f7d5547d1e7e9
-    Port:           &lt;none&gt;
-    Host Port:      &lt;none&gt;
-    State:          Running
-      Started:      Mon, <span style=color:#666>21</span> Feb <span style=color:#666>2022</span> 02:58:49 +0000
-    Ready:          True
-    Restart Count:  <span style=color:#666>0</span>
-    Environment:    &lt;none&gt;
-    Mounts:
-      /usr/share/nginx/html from html <span style=color:#666>(</span>rw<span style=color:#666>)</span>
-      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-2mf8w <span style=color:#666>(</span>ro<span style=color:#666>)</span>
-Conditions:
-  Type              Status
-  Initialized       True
-  Ready             True
-  ContainersReady   True
-  PodScheduled      True
-Volumes:
-  **html:
-    Type:      NFS <span style=color:#666>(</span>an NFS mount that lasts the lifetime of a pod<span style=color:#666>)</span>
-    Server:    alma
-    Path:      /nfs/data/nginx-pv
-    ReadOnly:  false**
-  kube-api-access-2mf8w:
-    Type:                    Projected <span style=color:#666>(</span>a volume that contains injected data from multiple sources<span style=color:#666>)</span>
-    TokenExpirationSeconds:  <span style=color:#666>3607</span>
-    ConfigMapName:           kube-root-ca.crt
-    ConfigMapOptional:       &lt;nil&gt;
-    DownwardAPI:             <span style=color:#a2f>true</span>
-QoS Class:                   BestEffort
-Node-Selectors:              &lt;none&gt;
-Tolerations:                 node.kubernetes.io/not-ready:NoExecute <span style=color:#b8860b>op</span><span style=color:#666>=</span>Exists <span style=color:#a2f;font-weight:700>for</span> 300s
-                             node.kubernetes.io/unreachable:NoExecute <span style=color:#b8860b>op</span><span style=color:#666>=</span>Exists <span style=color:#a2f;font-weight:700>for</span> 300s
-Events:                      &lt;none&gt;
-
-zyi@cp:~$ curl 192.168.171.113
-POD <span style=color:#a2f;font-weight:700>for</span> Native-Storage
-</code></pre></div><h3 id=静态pv>静态PV</h3>
-<ol>
-<li>创建pv池</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#080;font-style:italic>#Alma</span>
-<span style=color:#666>[</span>root@Alma ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># mkdir /nfs/data/pv01</span>
-<span style=color:#666>[</span>root@Alma ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># mkdir /nfs/data/pv02</span>
-<span style=color:#666>[</span>root@Alma ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># mkdir /nfs/data/pv03</span>
-</code></pre></div><ol start=2>
-<li>创建pv和storageclass</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: pv01-100m
-spec:
-  capacity:
-    storage: 100M
-  accessModes:
-    - ReadWriteMany
-  storageClassName: nfs
-  nfs:
-    path: /nfs/data/pv01
-    server: alma
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: pv02-1gi
-spec:
-  capacity:
-    storage: 1Gi
-  accessModes:
-    - ReadWriteMany
-  storageClassName: nfs
-  nfs:
-    path: /nfs/data/pv02
-    server: alma
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: pv03-3gi
-spec:
-  capacity:
-    storage: 3Gi
-  accessModes:
-    - ReadWriteMany
-  storageClassName: nfs
-  nfs:
-    path: /nfs/data/pv03
-    server: alma
-</code></pre></div><p>storageclass：nfs</p>
-<p>静态pv：</p>
-<ul>
-<li>pv01-100M—>alma:/nfs/data/pv01;</li>
-<li>pv02-1Gi—>alma:/nfs/data/pv02;</li>
-<li>pv03-3Gi—>alma:/nfs/data/pv03</li>
-</ul>
-<ol start=3>
-<li>创建pod并绑定pv</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>apiVersion: apps/v1
-kind: Deployment
-metadata:
-  labels:
-    app: nginx-deploy-pvc
-  name: nginx-deploy-pvc
-spec:
-  replicas: <span style=color:#666>2</span>
-  selector:
-    matchLabels:
-      app: nginx-deploy-pvc
-  template:
-    metadata:
-      labels:
-        app: nginx-deploy-pvc
-    spec:
-      containers:
-      - image: networktool:v1.1
-        name: nginx
-        volumeMounts:
-        - name: html
-          mountPath: /usr/share/nginx/html
-      volumes:
-        - name: html
-          persistentVolumeClaim:
-            claimName: nginx-pvc
----
-kind: PersistentVolumeClaim
-apiVersion: v1
-metadata:
-  name: nginx-pvc
-spec:
-  accessModes:
-    - ReadWriteMany
-  resources:
-    requests:
-      storage: 200Mi
-  storageClassName: nfs
-</code></pre></div><ul>
-<li>以上配置包括pvc建立和pod绑定；</li>
-<li>pvc引用了之前配置的storageclas；</li>
-<li>pvc需要的容量为200m，所有会选用pv02</li>
-</ul>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>zyi@cp:~$ kubectl get pv
-NAME        CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM               STORAGECLASS   REASON   AGE
-pv01-100m   100M       RWX            Retain           Available                       nfs                     16h
-pv02-1gi    1Gi        RWX            Retain           Bound       default/nginx-pvc   nfs                     45m
-pv03-3gi    3Gi        RWX            Retain           Available                       nfs                     16h
-
-zyi@cp:~$ kubectl get pvc
-NAME        STATUS   VOLUME     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
-nginx-pvc   Bound    pv02-1gi   1Gi        RWX            nfs            31s
-</code></pre></div><p>pv的回收策略是：Retain，当pod删除的时候，pv不会被删除。
-如果要删除pv，需要手动介入。</p>
-<p><a href=https://kubernetes.io/zh/docs/concepts/storage/persistent-volumes/>持久卷</a></p>
-<blockquote>
-<p><strong>保留（Retain）</strong>
+<span class=logo-line-after><i></i></span></a></div><p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p></div><div class=site-nav-right><div class="toggle popup-trigger" style=opacity:1;top:0><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class=site-nav><ul id=menu class=menu><li class=menu-item><a href=/ rel=section><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class=menu-item><a href=/post rel=section><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class=menu-item><a href=/about.html rel=section><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于我</a></li><li class=menu-item><a href=/404.html rel=section><i class="menu-item-icon fa fa-fw fa-heartbeat"></i><br>公益404</a></li><li class="menu-item menu-item-search"><a href=javascript:; class=popup-trigger><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class=site-search><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class=search-icon><i class="fa fa-search"></i></span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span><div class=local-search-input-wrapper><input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off></div></div><div id=local-search-result></div></div></div></nav></div></header><main id=main class=main><div class=main-inner><div class=content-wrap><div id=content class=content><section id=posts class=posts-expand><article class="post post-type-normal" itemscope itemtype=http://schema.org/Article><header class=post-header><h1 class=post-title itemprop="name headline" style=font-weight:700><a class=post-title-link href=https://www.etaon.top/2022/02/21/k8s-nfs-csi.html itemprop=url>NFS-Volume for K8S</a></h1></header><div class=post-body itemprop=articleBody><h2 id=环境>环境</h2><p><img src=NFS-Volume%205719f/Untitled.png alt=Untitled></p><p>Alma：Linux Alma 8.5</p><p>CP/Worker：ubuntu 18.04</p><h3 id=nfs安装>NFS安装</h3><p>Alma：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:#080;font-style:italic>#安装</span>
+</span></span><span style=display:flex><span>yum install -y nfs-utils
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic>#nfs主节点</span>
+</span></span><span style=display:flex><span><span style=color:#a2f>echo</span> <span style=color:#b44>&#34;/nfs/data/ *(insecure,rw,sync,no_root_squash)&#34;</span> &gt; /etc/exports
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>mkdir -p /nfs/data
+</span></span><span style=display:flex><span>systemctl <span style=color:#a2f>enable</span> rpcbind --now
+</span></span><span style=display:flex><span>systemctl <span style=color:#a2f>enable</span> nfs-server --now
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic>#配置生效</span>
+</span></span><span style=display:flex><span>exportfs -r
+</span></span></code></pre></div><p>ubuntu:</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:#080;font-style:italic>#安装client</span>
+</span></span><span style=display:flex><span>zyi@worker:~$ sudo apt install nfs-common
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic>#查看nfs</span>
+</span></span><span style=display:flex><span>zyi@worker:~$ showmount -e alma
+</span></span><span style=display:flex><span>Export list <span style=color:#a2f;font-weight:700>for</span> alma:
+</span></span><span style=display:flex><span>/nfs/data *
+</span></span></code></pre></div><h2 id=测试步骤>测试步骤</h2><h3 id=原生方式>原生方式</h3><p><code>nfs</code>卷的内容在删除 Pod时会被保存，卷只是被卸载。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>apiVersion: apps/v1
+</span></span><span style=display:flex><span>kind: Deployment
+</span></span><span style=display:flex><span>metadata:
+</span></span><span style=display:flex><span>  labels:
+</span></span><span style=display:flex><span>    app: nginx-native-storage
+</span></span><span style=display:flex><span>  name: nginx-native-storage
+</span></span><span style=display:flex><span>spec:
+</span></span><span style=display:flex><span>  replicas: <span style=color:#666>2</span>
+</span></span><span style=display:flex><span>  selector:
+</span></span><span style=display:flex><span>    matchLabels:
+</span></span><span style=display:flex><span>      app: nginx-native-storage
+</span></span><span style=display:flex><span>  template:
+</span></span><span style=display:flex><span>    metadata:
+</span></span><span style=display:flex><span>      labels:
+</span></span><span style=display:flex><span>        app: nginx-native-storage
+</span></span><span style=display:flex><span>    spec:
+</span></span><span style=display:flex><span>      containers:
+</span></span><span style=display:flex><span>      - image: networktool:v1.1
+</span></span><span style=display:flex><span>        name: nginx-web
+</span></span><span style=display:flex><span>        volumeMounts:
+</span></span><span style=display:flex><span>        - name: html
+</span></span><span style=display:flex><span>          mountPath: /usr/share/nginx/html
+</span></span><span style=display:flex><span>      volumes:           <span style=color:#080;font-style:italic>#直接在vlumes下nfs参数挂载</span>
+</span></span><span style=display:flex><span>        - name: html
+</span></span><span style=display:flex><span>          nfs:
+</span></span><span style=display:flex><span>            server: alma
+</span></span><span style=display:flex><span>            path: /nfs/data/nginx-pv <span style=color:#080;font-style:italic>#nfs中此文件夹必须事先存在，否则pod建立不了</span>
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:#666>[</span>root@Alma ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># echo &#39;POD for Native-Storage&#39; &gt; /nfs/data/nginx-pv/index.html</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>zyi@cp:~$ kubectl describe po nginx-native-storage-99bd9bd8c-r6r4j
+</span></span><span style=display:flex><span>Name:         nginx-native-storage-99bd9bd8c-r6r4j
+</span></span><span style=display:flex><span>Namespace:    default
+</span></span><span style=display:flex><span>Priority:     <span style=color:#666>0</span>
+</span></span><span style=display:flex><span>Node:         worker/172.16.21.111
+</span></span><span style=display:flex><span>Start Time:   Mon, <span style=color:#666>21</span> Feb <span style=color:#666>2022</span> 02:58:44 +0000
+</span></span><span style=display:flex><span>Labels:       <span style=color:#b8860b>app</span><span style=color:#666>=</span>nginx-native-storage
+</span></span><span style=display:flex><span>              pod-template-hash<span style=color:#666>=</span>99bd9bd8c
+</span></span><span style=display:flex><span>Annotations:  cni.projectcalico.org/containerID: a3211ca74ede2738b4fc6d37456d17e68b53120743f1dc27bb1e7e6aad2dc98e
+</span></span><span style=display:flex><span>              cni.projectcalico.org/podIP: 192.168.171.113/32
+</span></span><span style=display:flex><span>              cni.projectcalico.org/podIPs: 192.168.171.113/32
+</span></span><span style=display:flex><span>Status:       Running
+</span></span><span style=display:flex><span>IP:           192.168.171.113
+</span></span><span style=display:flex><span>IPs:
+</span></span><span style=display:flex><span>  IP:           192.168.171.113
+</span></span><span style=display:flex><span>Controlled By:  ReplicaSet/nginx-native-storage-99bd9bd8c
+</span></span><span style=display:flex><span>Containers:
+</span></span><span style=display:flex><span>  nginx-web:
+</span></span><span style=display:flex><span>    Container ID:   docker://1d6b3194ea115bcc9cd91d36cf4067192a13486c82b9cea6a1f39f43b9774501
+</span></span><span style=display:flex><span>    Image:          networktool:v1.1
+</span></span><span style=display:flex><span>    Image ID:       docker://sha256:293c239dd855827d9037ee498ad57b0e09147fe3324b39e8a48f7d5547d1e7e9
+</span></span><span style=display:flex><span>    Port:           &lt;none&gt;
+</span></span><span style=display:flex><span>    Host Port:      &lt;none&gt;
+</span></span><span style=display:flex><span>    State:          Running
+</span></span><span style=display:flex><span>      Started:      Mon, <span style=color:#666>21</span> Feb <span style=color:#666>2022</span> 02:58:49 +0000
+</span></span><span style=display:flex><span>    Ready:          True
+</span></span><span style=display:flex><span>    Restart Count:  <span style=color:#666>0</span>
+</span></span><span style=display:flex><span>    Environment:    &lt;none&gt;
+</span></span><span style=display:flex><span>    Mounts:
+</span></span><span style=display:flex><span>      /usr/share/nginx/html from html <span style=color:#666>(</span>rw<span style=color:#666>)</span>
+</span></span><span style=display:flex><span>      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-2mf8w <span style=color:#666>(</span>ro<span style=color:#666>)</span>
+</span></span><span style=display:flex><span>Conditions:
+</span></span><span style=display:flex><span>  Type              Status
+</span></span><span style=display:flex><span>  Initialized       True
+</span></span><span style=display:flex><span>  Ready             True
+</span></span><span style=display:flex><span>  ContainersReady   True
+</span></span><span style=display:flex><span>  PodScheduled      True
+</span></span><span style=display:flex><span>Volumes:
+</span></span><span style=display:flex><span>  **html:
+</span></span><span style=display:flex><span>    Type:      NFS <span style=color:#666>(</span>an NFS mount that lasts the lifetime of a pod<span style=color:#666>)</span>
+</span></span><span style=display:flex><span>    Server:    alma
+</span></span><span style=display:flex><span>    Path:      /nfs/data/nginx-pv
+</span></span><span style=display:flex><span>    ReadOnly:  false**
+</span></span><span style=display:flex><span>  kube-api-access-2mf8w:
+</span></span><span style=display:flex><span>    Type:                    Projected <span style=color:#666>(</span>a volume that contains injected data from multiple sources<span style=color:#666>)</span>
+</span></span><span style=display:flex><span>    TokenExpirationSeconds:  <span style=color:#666>3607</span>
+</span></span><span style=display:flex><span>    ConfigMapName:           kube-root-ca.crt
+</span></span><span style=display:flex><span>    ConfigMapOptional:       &lt;nil&gt;
+</span></span><span style=display:flex><span>    DownwardAPI:             <span style=color:#a2f>true</span>
+</span></span><span style=display:flex><span>QoS Class:                   BestEffort
+</span></span><span style=display:flex><span>Node-Selectors:              &lt;none&gt;
+</span></span><span style=display:flex><span>Tolerations:                 node.kubernetes.io/not-ready:NoExecute <span style=color:#b8860b>op</span><span style=color:#666>=</span>Exists <span style=color:#a2f;font-weight:700>for</span> 300s
+</span></span><span style=display:flex><span>                             node.kubernetes.io/unreachable:NoExecute <span style=color:#b8860b>op</span><span style=color:#666>=</span>Exists <span style=color:#a2f;font-weight:700>for</span> 300s
+</span></span><span style=display:flex><span>Events:                      &lt;none&gt;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>zyi@cp:~$ curl 192.168.171.113
+</span></span><span style=display:flex><span>POD <span style=color:#a2f;font-weight:700>for</span> Native-Storage
+</span></span></code></pre></div><h3 id=静态pv>静态PV</h3><ol><li>创建pv池</li></ol><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:#080;font-style:italic>#Alma</span>
+</span></span><span style=display:flex><span><span style=color:#666>[</span>root@Alma ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># mkdir /nfs/data/pv01</span>
+</span></span><span style=display:flex><span><span style=color:#666>[</span>root@Alma ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># mkdir /nfs/data/pv02</span>
+</span></span><span style=display:flex><span><span style=color:#666>[</span>root@Alma ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># mkdir /nfs/data/pv03</span>
+</span></span></code></pre></div><ol start=2><li>创建pv和storageclass</li></ol><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>apiVersion: v1
+</span></span><span style=display:flex><span>kind: PersistentVolume
+</span></span><span style=display:flex><span>metadata:
+</span></span><span style=display:flex><span>  name: pv01-100m
+</span></span><span style=display:flex><span>spec:
+</span></span><span style=display:flex><span>  capacity:
+</span></span><span style=display:flex><span>    storage: 100M
+</span></span><span style=display:flex><span>  accessModes:
+</span></span><span style=display:flex><span>    - ReadWriteMany
+</span></span><span style=display:flex><span>  storageClassName: nfs
+</span></span><span style=display:flex><span>  nfs:
+</span></span><span style=display:flex><span>    path: /nfs/data/pv01
+</span></span><span style=display:flex><span>    server: alma
+</span></span><span style=display:flex><span>---
+</span></span><span style=display:flex><span>apiVersion: v1
+</span></span><span style=display:flex><span>kind: PersistentVolume
+</span></span><span style=display:flex><span>metadata:
+</span></span><span style=display:flex><span>  name: pv02-1gi
+</span></span><span style=display:flex><span>spec:
+</span></span><span style=display:flex><span>  capacity:
+</span></span><span style=display:flex><span>    storage: 1Gi
+</span></span><span style=display:flex><span>  accessModes:
+</span></span><span style=display:flex><span>    - ReadWriteMany
+</span></span><span style=display:flex><span>  storageClassName: nfs
+</span></span><span style=display:flex><span>  nfs:
+</span></span><span style=display:flex><span>    path: /nfs/data/pv02
+</span></span><span style=display:flex><span>    server: alma
+</span></span><span style=display:flex><span>---
+</span></span><span style=display:flex><span>apiVersion: v1
+</span></span><span style=display:flex><span>kind: PersistentVolume
+</span></span><span style=display:flex><span>metadata:
+</span></span><span style=display:flex><span>  name: pv03-3gi
+</span></span><span style=display:flex><span>spec:
+</span></span><span style=display:flex><span>  capacity:
+</span></span><span style=display:flex><span>    storage: 3Gi
+</span></span><span style=display:flex><span>  accessModes:
+</span></span><span style=display:flex><span>    - ReadWriteMany
+</span></span><span style=display:flex><span>  storageClassName: nfs
+</span></span><span style=display:flex><span>  nfs:
+</span></span><span style=display:flex><span>    path: /nfs/data/pv03
+</span></span><span style=display:flex><span>    server: alma
+</span></span></code></pre></div><p>storageclass：nfs</p><p>静态pv：</p><ul><li>pv01-100M—>alma:/nfs/data/pv01;</li><li>pv02-1Gi—>alma:/nfs/data/pv02;</li><li>pv03-3Gi—>alma:/nfs/data/pv03</li></ul><ol start=3><li>创建pod并绑定pv</li></ol><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>apiVersion: apps/v1
+</span></span><span style=display:flex><span>kind: Deployment
+</span></span><span style=display:flex><span>metadata:
+</span></span><span style=display:flex><span>  labels:
+</span></span><span style=display:flex><span>    app: nginx-deploy-pvc
+</span></span><span style=display:flex><span>  name: nginx-deploy-pvc
+</span></span><span style=display:flex><span>spec:
+</span></span><span style=display:flex><span>  replicas: <span style=color:#666>2</span>
+</span></span><span style=display:flex><span>  selector:
+</span></span><span style=display:flex><span>    matchLabels:
+</span></span><span style=display:flex><span>      app: nginx-deploy-pvc
+</span></span><span style=display:flex><span>  template:
+</span></span><span style=display:flex><span>    metadata:
+</span></span><span style=display:flex><span>      labels:
+</span></span><span style=display:flex><span>        app: nginx-deploy-pvc
+</span></span><span style=display:flex><span>    spec:
+</span></span><span style=display:flex><span>      containers:
+</span></span><span style=display:flex><span>      - image: networktool:v1.1
+</span></span><span style=display:flex><span>        name: nginx
+</span></span><span style=display:flex><span>        volumeMounts:
+</span></span><span style=display:flex><span>        - name: html
+</span></span><span style=display:flex><span>          mountPath: /usr/share/nginx/html
+</span></span><span style=display:flex><span>      volumes:
+</span></span><span style=display:flex><span>        - name: html
+</span></span><span style=display:flex><span>          persistentVolumeClaim:
+</span></span><span style=display:flex><span>            claimName: nginx-pvc
+</span></span><span style=display:flex><span>---
+</span></span><span style=display:flex><span>kind: PersistentVolumeClaim
+</span></span><span style=display:flex><span>apiVersion: v1
+</span></span><span style=display:flex><span>metadata:
+</span></span><span style=display:flex><span>  name: nginx-pvc
+</span></span><span style=display:flex><span>spec:
+</span></span><span style=display:flex><span>  accessModes:
+</span></span><span style=display:flex><span>    - ReadWriteMany
+</span></span><span style=display:flex><span>  resources:
+</span></span><span style=display:flex><span>    requests:
+</span></span><span style=display:flex><span>      storage: 200Mi
+</span></span><span style=display:flex><span>  storageClassName: nfs
+</span></span></code></pre></div><ul><li>以上配置包括pvc建立和pod绑定；</li><li>pvc引用了之前配置的storageclas；</li><li>pvc需要的容量为200m，所有会选用pv02</li></ul><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>zyi@cp:~$ kubectl get pv
+</span></span><span style=display:flex><span>NAME        CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM               STORAGECLASS   REASON   AGE
+</span></span><span style=display:flex><span>pv01-100m   100M       RWX            Retain           Available                       nfs                     16h
+</span></span><span style=display:flex><span>pv02-1gi    1Gi        RWX            Retain           Bound       default/nginx-pvc   nfs                     45m
+</span></span><span style=display:flex><span>pv03-3gi    3Gi        RWX            Retain           Available                       nfs                     16h
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>zyi@cp:~$ kubectl get pvc
+</span></span><span style=display:flex><span>NAME        STATUS   VOLUME     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+</span></span><span style=display:flex><span>nginx-pvc   Bound    pv02-1gi   1Gi        RWX            nfs            31s
+</span></span></code></pre></div><p>pv的回收策略是：Retain，当pod删除的时候，pv不会被删除。
+如果要删除pv，需要手动介入。</p><p><a href=https://kubernetes.io/zh/docs/concepts/storage/persistent-volumes/>持久卷</a></p><blockquote><p><strong>保留（Retain）</strong>
 回收策略 <code>Retain</code> 使得用户可以手动回收资源。
 当 PersistentVolumeClaim 对象被删除时，PersistentVolume 卷仍然存在，对应的数据卷被视为"已释放（released）"。
-由于卷上仍然存在这前一申领人的数据，该卷还不能用于其他申领。</p>
-</blockquote>
-<p>管理员可以通过下面的步骤来手动回收该卷：</p>
-<ul>
-<li>删除 PersistentVolume 对象。与之相关的、位于外部基础设施中的存储资产（例如 AWS EBS、GCE PD、Azure Disk 或 Cinder 卷）在 PV 删除之后仍然存在。</li>
-<li>根据情况，手动清除所关联的存储资产上的数据。</li>
-<li>手动删除所关联的存储资产。</li>
-</ul>
-<p>如果你希望重用该存储资产，可以基于存储资产的定义创建新的 PersistentVolume 卷对象。</p>
-<blockquote>
-</blockquote>
-<h3 id=动态pv>动态PV</h3>
-<ol>
-<li>创建storageclass</li>
-</ol>
-<p><a href=https://kubernetes.io/zh/docs/concepts/storage/storage-classes/#nfs>存储类</a></p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#080;font-style:italic>#设置ServiceAccount</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>ServiceAccount<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>nfs-client-provisioner<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:#080;font-style:italic># replace with namespace where provisioner is deployed</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>namespace</span>:<span style=color:#bbb> </span>default       <span style=color:#bbb> </span><span style=color:#080;font-style:italic>#根据实际环境设定namespace,下面类同</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#00f;font-weight:700>---</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>ClusterRole<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>rbac.authorization.k8s.io/v1<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>nfs-client-provisioner-runner<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>rules</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span>- <span style=color:green;font-weight:700>apiGroups</span>:<span style=color:#bbb> </span>[<span style=color:#b44>&#34;&#34;</span>]<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>resources</span>:<span style=color:#bbb> </span>[<span style=color:#b44>&#34;persistentvolumes&#34;</span>]<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>verbs</span>:<span style=color:#bbb> </span>[<span style=color:#b44>&#34;get&#34;</span>,<span style=color:#bbb> </span><span style=color:#b44>&#34;list&#34;</span>,<span style=color:#bbb> </span><span style=color:#b44>&#34;watch&#34;</span>,<span style=color:#bbb> </span><span style=color:#b44>&#34;create&#34;</span>,<span style=color:#bbb> </span><span style=color:#b44>&#34;delete&#34;</span>]<span style=color:#bbb>
-</span><span style=color:#bbb>  </span>- <span style=color:green;font-weight:700>apiGroups</span>:<span style=color:#bbb> </span>[<span style=color:#b44>&#34;&#34;</span>]<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>resources</span>:<span style=color:#bbb> </span>[<span style=color:#b44>&#34;persistentvolumeclaims&#34;</span>]<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>verbs</span>:<span style=color:#bbb> </span>[<span style=color:#b44>&#34;get&#34;</span>,<span style=color:#bbb> </span><span style=color:#b44>&#34;list&#34;</span>,<span style=color:#bbb> </span><span style=color:#b44>&#34;watch&#34;</span>,<span style=color:#bbb> </span><span style=color:#b44>&#34;update&#34;</span>]<span style=color:#bbb>
-</span><span style=color:#bbb>  </span>- <span style=color:green;font-weight:700>apiGroups</span>:<span style=color:#bbb> </span>[<span style=color:#b44>&#34;storage.k8s.io&#34;</span>]<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>resources</span>:<span style=color:#bbb> </span>[<span style=color:#b44>&#34;storageclasses&#34;</span>]<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>verbs</span>:<span style=color:#bbb> </span>[<span style=color:#b44>&#34;get&#34;</span>,<span style=color:#bbb> </span><span style=color:#b44>&#34;list&#34;</span>,<span style=color:#bbb> </span><span style=color:#b44>&#34;watch&#34;</span>]<span style=color:#bbb>
-</span><span style=color:#bbb>  </span>- <span style=color:green;font-weight:700>apiGroups</span>:<span style=color:#bbb> </span>[<span style=color:#b44>&#34;&#34;</span>]<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>resources</span>:<span style=color:#bbb> </span>[<span style=color:#b44>&#34;events&#34;</span>]<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>verbs</span>:<span style=color:#bbb> </span>[<span style=color:#b44>&#34;create&#34;</span>,<span style=color:#bbb> </span><span style=color:#b44>&#34;update&#34;</span>,<span style=color:#bbb> </span><span style=color:#b44>&#34;patch&#34;</span>]<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#00f;font-weight:700>---</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>ClusterRoleBinding<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>rbac.authorization.k8s.io/v1<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>run-nfs-client-provisioner<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>subjects</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span>- <span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>ServiceAccount<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>nfs-client-provisioner<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:#080;font-style:italic># replace with namespace where provisioner is deployed</span><span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>namespace</span>:<span style=color:#bbb> </span>default<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>roleRef</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>ClusterRole<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>nfs-client-provisioner-runner<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>apiGroup</span>:<span style=color:#bbb> </span>rbac.authorization.k8s.io<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#00f;font-weight:700>---</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>Role<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>rbac.authorization.k8s.io/v1<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>leader-locking-nfs-client-provisioner<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:#080;font-style:italic># replace with namespace where provisioner is deployed</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>namespace</span>:<span style=color:#bbb> </span>default<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>rules</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span>- <span style=color:green;font-weight:700>apiGroups</span>:<span style=color:#bbb> </span>[<span style=color:#b44>&#34;&#34;</span>]<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>resources</span>:<span style=color:#bbb> </span>[<span style=color:#b44>&#34;endpoints&#34;</span>]<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>verbs</span>:<span style=color:#bbb> </span>[<span style=color:#b44>&#34;get&#34;</span>,<span style=color:#bbb> </span><span style=color:#b44>&#34;list&#34;</span>,<span style=color:#bbb> </span><span style=color:#b44>&#34;watch&#34;</span>,<span style=color:#bbb> </span><span style=color:#b44>&#34;create&#34;</span>,<span style=color:#bbb> </span><span style=color:#b44>&#34;update&#34;</span>,<span style=color:#bbb> </span><span style=color:#b44>&#34;patch&#34;</span>]<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#00f;font-weight:700>---</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>RoleBinding<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>rbac.authorization.k8s.io/v1<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>leader-locking-nfs-client-provisioner<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>subjects</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span>- <span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>ServiceAccount<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>nfs-client-provisioner<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:#080;font-style:italic># replace with namespace where provisioner is deployed</span><span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>namespace</span>:<span style=color:#bbb> </span>default<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>roleRef</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>Role<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>leader-locking-nfs-client-provisioner<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>apiGroup</span>:<span style=color:#bbb> </span>rbac.authorization.k8s.io<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#00f;font-weight:700>---</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#配置StorageClass</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>storage.k8s.io/v1<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>StorageClass<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>alma-nfs-sc<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>provisioner</span>:<span style=color:#bbb> </span>alma-nfs<span style=color:#bbb> </span><span style=color:#080;font-style:italic>#这里的名称要和provisioner配置中的环境变量PROVISIONER_NAME保持一致</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>parameters</span>:<span style=color:#bbb>  
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>archiveOnDelete</span>:<span style=color:#bbb> </span><span style=color:#b44>&#34;false&#34;</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#00f;font-weight:700>---</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#配置provisioner</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>apps/v1<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>Deployment<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>nfs-client-provisioner<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>nfs-client-provisioner<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:#080;font-style:italic># replace with namespace where provisioner is deployed</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>namespace</span>:<span style=color:#bbb> </span>default <span style=color:#bbb> </span><span style=color:#080;font-style:italic>#与RBAC中的namespace保持一致</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>replicas</span>:<span style=color:#bbb> </span><span style=color:#666>1</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>selector</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>matchLabels</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>nfs-client-provisioner<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>strategy</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>type</span>:<span style=color:#bbb> </span>Recreate<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>selector</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>matchLabels</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>nfs-client-provisioner<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>template</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>nfs-client-provisioner<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>serviceAccountName</span>:<span style=color:#bbb> </span>nfs-client-provisioner<span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>containers</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>        </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>nfs-client-provisioner<span style=color:#bbb>
-</span><span style=color:#bbb>          </span><span style=color:green;font-weight:700>image</span>:<span style=color:#bbb> </span>quay.io/external_storage/nfs-client-provisioner:latest<span style=color:#bbb>
-</span><span style=color:#bbb>          </span><span style=color:green;font-weight:700>volumeMounts</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>            </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>nfs-client-root<span style=color:#bbb>
-</span><span style=color:#bbb>              </span><span style=color:green;font-weight:700>mountPath</span>:<span style=color:#bbb> </span>/persistentvolumes<span style=color:#bbb>
-</span><span style=color:#bbb>          </span><span style=color:green;font-weight:700>env</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>            </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>PROVISIONER_NAME<span style=color:#bbb>
-</span><span style=color:#bbb>              </span><span style=color:green;font-weight:700>value</span>:<span style=color:#bbb> </span>alma-nfs <span style=color:#bbb> </span><span style=color:#080;font-style:italic>#provisioner名称,请确保该名称与 nfs-StorageClass配置中的provisioner名称保持一致</span><span style=color:#bbb>
-</span><span style=color:#bbb>            </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>NFS_SERVER<span style=color:#bbb>
-</span><span style=color:#bbb>              </span><span style=color:green;font-weight:700>value</span>:<span style=color:#bbb> </span>alma  <span style=color:#bbb> </span><span style=color:#080;font-style:italic>#NFS Server IP地址</span><span style=color:#bbb>
-</span><span style=color:#bbb>            </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>NFS_PATH  <span style=color:#bbb>
-</span><span style=color:#bbb>              </span><span style=color:green;font-weight:700>value</span>:<span style=color:#bbb> </span>/nfs/data/sc   <span style=color:#bbb> </span><span style=color:#080;font-style:italic>#NFS挂载卷</span><span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>volumes</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>        </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>nfs-client-root<span style=color:#bbb>
-</span><span style=color:#bbb>          </span><span style=color:green;font-weight:700>nfs</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>            </span><span style=color:green;font-weight:700>server</span>:<span style=color:#bbb> </span>alma <span style=color:#bbb> </span><span style=color:#080;font-style:italic>#NFS Server IP地址</span><span style=color:#bbb>
-</span><span style=color:#bbb>            </span><span style=color:green;font-weight:700>path</span>:<span style=color:#bbb> </span>/nfs/data/sc    <span style=color:#bbb> </span><span style=color:#080;font-style:italic>#NFS 挂载卷</span><span style=color:#bbb>
-</span></code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>zyi@cp:~$ kubectl get sc
-NAME          PROVISIONER   RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
-alma-nfs-sc   alma-nfs      Delete          Immediate           <span style=color:#a2f>false</span>                  4s
-</code></pre></div><ol start=2>
-<li>修改default storageclass</li>
-</ol>
-<p><a href=https://kubernetes.io/zh/docs/tasks/administer-cluster/change-default-storage-class/>改变默认 StorageClass</a></p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>zyi@cp:~$ kubectl patch storageclass alma-nfs-sc -p <span style=color:#b44>&#39;{&#34;metadata&#34;: {&#34;annotations&#34;:{&#34;storageclass.kubernetes.io/is-default-class&#34;:&#34;true&#34;}}}&#39;</span>
-storageclass.storage.k8s.io/alma-nfs-sc patched
-zyi@cp:~$ kubectl get sc
-NAME                    PROVISIONER   RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
-**alma-nfs-sc <span style=color:#666>(</span>default<span style=color:#666>)</span>**   alma-nfs      Delete          Immediate           <span style=color:#a2f>false</span>                  7m6s
-zyi@cp:~$ kubectl describe sc alma-nfs-sc
-Name:            alma-nfs-sc
-IsDefaultClass:  Yes
-Annotations:     kubectl.kubernetes.io/last-applied-configuration<span style=color:#666>={</span><span style=color:#b44>&#34;apiVersion&#34;</span>:<span style=color:#b44>&#34;storage.k8s.io/v1&#34;</span>,<span style=color:#b44>&#34;kind&#34;</span>:<span style=color:#b44>&#34;StorageClass&#34;</span>,<span style=color:#b44>&#34;metadata&#34;</span>:<span style=color:#666>{</span><span style=color:#b44>&#34;annotations&#34;</span>:<span style=color:#666>{}</span>,<span style=color:#b44>&#34;name&#34;</span>:<span style=color:#b44>&#34;alma-nfs-sc&#34;</span><span style=color:#666>}</span>,<span style=color:#b44>&#34;parameters&#34;</span>:<span style=color:#666>{</span><span style=color:#b44>&#34;archiveOnDelete&#34;</span>:<span style=color:#b44>&#34;false&#34;</span><span style=color:#666>}</span>,<span style=color:#b44>&#34;provisioner&#34;</span>:<span style=color:#b44>&#34;alma-nfs&#34;</span><span style=color:#666>}</span>
-,**storageclass.kubernetes.io/is-default-class<span style=color:#666>=</span>true**
-Provisioner:           alma-nfs
-Parameters:            <span style=color:#b8860b>archiveOnDelete</span><span style=color:#666>=</span><span style=color:#a2f>false</span>
-AllowVolumeExpansion:  &lt;unset&gt;
-MountOptions:          &lt;none&gt;
-ReclaimPolicy:         Delete
-VolumeBindingMode:     Immediate
-Events:                &lt;none&gt;
-zyi@cp:~$
-</code></pre></div><ol start=3>
-<li>测试StorageClass</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>kind: PersistentVolumeClaim
-apiVersion: v1
-metadata:
-  name: test-claim
-  annotations:
-    volume.beta.kubernetes.io/storage-class: <span style=color:#b44>&#34;alma-nfs-sc&#34;</span>   <span style=color:#080;font-style:italic>#与nfs-StorageClass的 metadata.name保持一致</span>
-spec:
-  accessModes:
-    - ReadWriteMany
-  resources:
-    requests:
-      storage: 1Mi
-</code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>zyi@cp:~$ kubectl get pvc
-NAME         STATUS    VOLUME     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
-nginx-pvc    Bound     pv02-1gi   1Gi        RWX            nfs            138m
-test-claim   Pending                                        alma-nfs-sc    16m
-</code></pre></div><p>查看logs for nfs-pod</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>zyi@cp:~$ kubectl logs nfs-client-provisioner-c9f8dbb58-pdngj
-I0221 05:31:26.150158       <span style=color:#666>1</span> leaderelection.go:185<span style=color:#666>]</span> attempting to acquire leader lease  default/alma-nfs...
-E0221 05:31:43.632142       <span style=color:#666>1</span> event.go:259<span style=color:#666>]</span> Could not construct reference to: <span style=color:#b44>&#39;&amp;v1.Endpoints{TypeMeta:v1.TypeMeta{Kind:&#34;&#34;, APIVersion:&#34;&#34;}, ObjectMeta:v1.ObjectMeta{Name:&#34;alma-nfs&#34;, GenerateName:&#34;&#34;, Namespace:&#34;default&#34;, SelfLink:&#34;&#34;, UID:&#34;62fda3da-1914-4287-949f-fbe9a81746e2&#34;, ResourceVersion:&#34;1188463&#34;, Generation:0, CreationTimestamp:v1.Time{Time:time.Time{wall:0x0, ext:63781017992, loc:(*time.Location)(0x1956800)}}, DeletionTimestamp:(*v1.Time)(nil), DeletionGracePeriodSeconds:(*int64)(nil), Labels:map[string]string(nil), Annotations:map[string]string{&#34;control-plane.alpha.kubernetes.io/leader&#34;:&#34;{\&#34;holderIdentity\&#34;:\&#34;nfs-client-provisioner-c9f8dbb58-pdngj_8361e4a2-92d7-11ec-9b02-4277e0456c6e\&#34;,\&#34;leaseDurationSeconds\&#34;:15,\&#34;acquireTime\&#34;:\&#34;2022-02-21T05:31:43Z\&#34;,\&#34;renewTime\&#34;:\&#34;2022-02-21T05:31:43Z\&#34;,\&#34;leaderTransitions\&#34;:1}&#34;}, OwnerReferences:[]v1.OwnerReference(nil), Initializers:(*v1.Initializers)(nil), Finalizers:[]string(nil), ClusterName:&#34;&#34;}, Subsets:[]v1.EndpointSubset(nil)}&#39;</span> due to: <span style=color:#b44>&#39;selfLink was empty, can&#39;</span>t make reference<span style=color:#b44>&#39;. Will not report event: &#39;</span>Normal<span style=color:#b44>&#39; &#39;</span>LeaderElection<span style=color:#b44>&#39; &#39;</span>nfs-client-provisioner-c9f8dbb58-pdngj_8361e4a2-92d7-11ec-9b02-4277e0456c6e became leader<span style=color:#b44>&#39;
-</span><span style=color:#b44>I0221 05:31:43.632308       1 leaderelection.go:194] successfully acquired lease default/alma-nfs
-</span><span style=color:#b44>I0221 05:31:43.633958       1 controller.go:631] Starting provisioner controller alma-nfs_nfs-client-provisioner-c9f8dbb58-pdngj_8361e4a2-92d7-11ec-9b02-4277e0456c6e!
-</span><span style=color:#b44>I0221 05:31:43.734591       1 controller.go:680] Started provisioner controller alma-nfs_nfs-client-provisioner-c9f8dbb58-pdngj_8361e4a2-92d7-11ec-9b02-4277e0456c6e!
-</span><span style=color:#b44>I0221 06:03:32.316844       1 controller.go:987] provision &#34;default/nginx-sc&#34; class &#34;alma-nfs-sc&#34;: started
-</span><span style=color:#b44>E0221 06:03:32.358963       1 controller.go:1004] provision &#34;default/nginx-sc&#34; class &#34;alma-nfs-sc&#34;: unexpected error getting claim reference: selfLink was empty, can&#39;</span>t make reference
-I0221 06:16:43.646567       <span style=color:#666>1</span> controller.go:987<span style=color:#666>]</span> provision <span style=color:#b44>&#34;default/nginx-sc&#34;</span> class <span style=color:#b44>&#34;alma-nfs-sc&#34;</span>: started
-E0221 06:16:43.654139       <span style=color:#666>1</span> controller.go:1004<span style=color:#666>]</span> provision <span style=color:#b44>&#34;default/nginx-sc&#34;</span> class <span style=color:#b44>&#34;alma-nfs-sc&#34;</span>: unexpected error getting claim reference: selfLink was empty, can<span style=color:#b44>&#39;t make reference
-</span><span style=color:#b44>I0221 06:18:35.976603       1 controller.go:987] provision &#34;default/test-claim&#34; class &#34;alma-nfs-sc&#34;: started
-</span><span style=color:#b44>E0221 06:18:35.998650       1 controller.go:1004] provision &#34;default/test-claim&#34; class &#34;alma-nfs-sc&#34;: unexpected error getting claim reference: selfLink was empty, can&#39;</span>t make reference
-I0221 06:31:43.647355       <span style=color:#666>1</span> controller.go:987<span style=color:#666>]</span> provision <span style=color:#b44>&#34;default/nginx-sc&#34;</span> class <span style=color:#b44>&#34;alma-nfs-sc&#34;</span>: started
-I0221 06:31:43.647862       <span style=color:#666>1</span> controller.go:987<span style=color:#666>]</span> provision <span style=color:#b44>&#34;default/test-claim&#34;</span> class <span style=color:#b44>&#34;alma-nfs-sc&#34;</span>: started
-E0221 06:31:43.656246       <span style=color:#666>1</span> controller.go:1004<span style=color:#666>]</span> provision <span style=color:#b44>&#34;default/nginx-sc&#34;</span> class <span style=color:#b44>&#34;alma-nfs-sc&#34;</span>: unexpected error getting claim reference: selfLink was empty, can<span style=color:#b44>&#39;t make reference
-</span><span style=color:#b44>E0221 06:31:43.661489       1 controller.go:1004] provision &#34;default/test-claim&#34; class &#34;alma-nfs-sc&#34;: unexpected error getting claim reference: selfLink was empty, can&#39;</span>t make reference
-</code></pre></div><p>找了找资料发现，kubernetes 1.20版本 禁用了 selfLink。</p>
-<p>资料连接：</p>
-<p><a href=https://stackoverflow.com/questions/65376314/kubernetes-nfs-provider-selflink-was-empty>https://stackoverflow.com/questions/65376314/kubernetes-nfs-provider-selflink-was-empty</a></p>
-<p><a href=https://github.com/kubernetes-sigs/nfs-subdir-external-provisioner/issues/25>https://github.com/kubernetes-sigs/nfs-subdir-external-provisioner/issues/25</a></p>
-<p>当前的解决方法是编辑/etc/kubernetes/manifests/kube-apiserver.yaml</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#080;font-style:italic>#Under here:</span>
-
-spec:
-  containers:
-  - command:
-    - kube-apiserver
-<span style=color:#080;font-style:italic>#Add this line:</span>
-- --feature-gates<span style=color:#666>=</span><span style=color:#b8860b>RemoveSelfLink</span><span style=color:#666>=</span><span style=color:#a2f>false</span>
-</code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>zyi@cp:~$ sudo systemctl restart kubelet.service
-zyi@cp:~$ kubectl get pvc
-NAME         STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
-nginx-pvc    Bound    pv02-1gi                                   1Gi        RWX            nfs            143m
-test-claim   Bound    pvc-3fc64d8f-5821-4e4e-a4e4-193cc4ef7878   1Mi        RWX            alma-nfs-sc    21m
-</code></pre></div><ol start=4>
-<li>在Deployment/Pod引用storageclass</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>apiVersion: apps/v1
-kind: Deployment
-metadata:
-  labels:
-    app: nginx-deploy-sc
-  name: nginx-deploy-sc
-spec:
-  replicas: <span style=color:#666>2</span>
-  selector:
-    matchLabels:
-      app: nginx-deploy-sc
-  template:
-    metadata:
-      labels:
-        app: nginx-deploy-sc
-    spec:
-      containers:
-      - image: networktool:v1.1
-        name: nginx
-        volumeMounts:
-        - name: html
-          mountPath: /usr/share/nginx/html
-      volumes:
-        - name: html
-          persistentVolumeClaim:
-            claimName: nginx-sc
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: nginx-sc
-  labels:
-    app: nginx-sc
-spec:
-  accessModes:
-    - ReadWriteMany
-  storageClassName:  alma-nfs-sc  <span style=color:#080;font-style:italic>#增加本环境的存储类</span>
-  resources:
-    requests:
-      storage: 2Gi
-</code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>zyi@cp:~$ kubectl apply -f  deployment-sc.yaml
-deployment.apps/nginx-deploy-sc created
-persistentvolumeclaim/nginx-sc created
-zyi@cp:~$ kubectl get pv
-NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM               STORAGECLASS   REASON   AGE
-pv01-100m                                  100M       RWX            Retain           Available                       nfs                     19h
-pv02-1gi                                   1Gi        RWX            Retain           Bound       default/nginx-pvc   nfs                     3h21m
-pv03-3gi                                   3Gi        RWX            Retain           Available                       nfs                     19h
-**pvc-3447bc4d-7029-497b-871a-7800a95fe823   2Gi        RWX            Delete           Bound       default/nginx-sc    alma-nfs-sc             11s**
-zyi@cp:~$ kubectl get pvc
-NAME        STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
-nginx-pvc   Bound    pv02-1gi                                   1Gi        RWX            nfs            156m
-**nginx-sc    Bound    pvc-3447bc4d-7029-497b-871a-7800a95fe823   2Gi        RWX            alma-nfs-sc    13s**
-zyi@cp:~$ kubectl get po -owide
-NAME                                     READY   STATUS    RESTARTS   AGE     IP                NODE     NOMINATED NODE   READINESS GATES
-back-app-6b5f87d447-d4dgj                1/1     Running   <span style=color:#666>0</span>          3d19h   192.168.171.109   worker   &lt;none&gt;           &lt;none&gt;
-back-app-6b5f87d447-v8tqz                1/1     Running   <span style=color:#666>0</span>          3d19h   192.168.171.108   worker   &lt;none&gt;           &lt;none&gt;
-front-app-544b8cdb7f-7hnf7               1/1     Running   <span style=color:#666>0</span>          3d21h   192.168.171.103   worker   &lt;none&gt;           &lt;none&gt;
-front-app-544b8cdb7f-dmdvz               1/1     Running   <span style=color:#666>0</span>          3d21h   192.168.171.104   worker   &lt;none&gt;           &lt;none&gt;
-front-app-544b8cdb7f-kf9x9               1/1     Running   <span style=color:#666>0</span>          3d21h   192.168.171.102   worker   &lt;none&gt;           &lt;none&gt;
-nfs-client-provisioner-c9f8dbb58-pdngj   1/1     Running   <span style=color:#666>3</span>          82m     192.168.171.117   worker   &lt;none&gt;           &lt;none&gt;
-nginx-deploy-pvc-756dcd469-gsjg2         1/1     Running   <span style=color:#666>0</span>          156m    192.168.171.115   worker   &lt;none&gt;           &lt;none&gt;
-nginx-deploy-pvc-756dcd469-h2c74         1/1     Running   <span style=color:#666>0</span>          156m    192.168.242.82    cp       &lt;none&gt;           &lt;none&gt;
-**nginx-deploy-sc-798f6f5cd5-8225r         1/1     Running   <span style=color:#666>0</span>          29s     192.168.171.119   worker   &lt;none&gt;           &lt;none&gt;
-nginx-deploy-sc-798f6f5cd5-bk44c         1/1     Running   <span style=color:#666>0</span>          29s     192.168.242.84    cp       &lt;none&gt;           &lt;none&gt;**
-nginx-native-storage-99bd9bd8c-lvdkl     1/1     Running   <span style=color:#666>0</span>          3h54m   192.168.171.112   worker   &lt;none&gt;           &lt;none&gt;
-nginx-native-storage-99bd9bd8c-r6r4j     1/1     Running   <span style=color:#666>0</span>          3h54m   192.168.171.113   worker   &lt;none&gt;           &lt;none&gt;
-</code></pre></div><p>在nfs的共享目录下发现了k8s新建的文件夹：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#666>[</span>root@Alma ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># ls /nfs/data/sc/ -l</span>
-total <span style=color:#666>4</span>
-drwxrwxrwx. <span style=color:#666>2</span> root root  <span style=color:#666>6</span> Feb <span style=color:#666>21</span> 14:52 default-nginx-sc-pvc-3447bc4d-7029-497b-871a-7800a95fe823
-<span style=color:#666>[</span>root@Alma ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># ll /nfs/data/sc/default-nginx-sc-pvc-3447bc4d-7029-497b-871a-7800a95fe823/</span>
-total <span style=color:#666>0</span>
-
-<span style=color:#666>[</span>root@Alma ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># echo &#39;POD for StorageClass alma-nfs-sc!&#39; &gt; /nfs/data/sc/default-nginx-sc-pvc-3447bc4d-7029-497b-871a-7800a95fe823/index.html</span>
-</code></pre></div><p>更新了index.html内容后就可以看到:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>zyi@cp:~$ curl 192.168.242.84
-POD <span style=color:#a2f;font-weight:700>for</span> StorageClass alma-nfs-sc!
-zyi@cp:~$ curl 192.168.171.119
-POD <span style=color:#a2f;font-weight:700>for</span> StorageClass alma-nfs-sc!
-</code></pre></div>
-</div>
-<footer class=post-footer>
-<div id=wcomments></div>
-</footer>
-</article>
-</section>
-</div>
-</div>
-<div class=sidebar-toggle>
-<div class=sidebar-toggle-line-wrap>
-<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+由于卷上仍然存在这前一申领人的数据，该卷还不能用于其他申领。</p></blockquote><p>管理员可以通过下面的步骤来手动回收该卷：</p><ul><li>删除 PersistentVolume 对象。与之相关的、位于外部基础设施中的存储资产（例如 AWS EBS、GCE PD、Azure Disk 或 Cinder 卷）在 PV 删除之后仍然存在。</li><li>根据情况，手动清除所关联的存储资产上的数据。</li><li>手动删除所关联的存储资产。</li></ul><p>如果你希望重用该存储资产，可以基于存储资产的定义创建新的 PersistentVolume 卷对象。</p><blockquote></blockquote><h3 id=动态pv>动态PV</h3><ol><li>创建storageclass</li></ol><p><a href=https://kubernetes.io/zh/docs/concepts/storage/storage-classes/#nfs>存储类</a></p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#080;font-style:italic>#设置ServiceAccount</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>ServiceAccount<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>nfs-client-provisioner<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:#080;font-style:italic># replace with namespace where provisioner is deployed</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>namespace</span>:<span style=color:#bbb> </span>default       <span style=color:#bbb> </span><span style=color:#080;font-style:italic>#根据实际环境设定namespace,下面类同</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#00f;font-weight:700>---</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>ClusterRole<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>rbac.authorization.k8s.io/v1<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>nfs-client-provisioner-runner<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>rules</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span>- <span style=color:green;font-weight:700>apiGroups</span>:<span style=color:#bbb> </span>[<span style=color:#b44>&#34;&#34;</span>]<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>resources</span>:<span style=color:#bbb> </span>[<span style=color:#b44>&#34;persistentvolumes&#34;</span>]<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>verbs</span>:<span style=color:#bbb> </span>[<span style=color:#b44>&#34;get&#34;</span>,<span style=color:#bbb> </span><span style=color:#b44>&#34;list&#34;</span>,<span style=color:#bbb> </span><span style=color:#b44>&#34;watch&#34;</span>,<span style=color:#bbb> </span><span style=color:#b44>&#34;create&#34;</span>,<span style=color:#bbb> </span><span style=color:#b44>&#34;delete&#34;</span>]<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span>- <span style=color:green;font-weight:700>apiGroups</span>:<span style=color:#bbb> </span>[<span style=color:#b44>&#34;&#34;</span>]<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>resources</span>:<span style=color:#bbb> </span>[<span style=color:#b44>&#34;persistentvolumeclaims&#34;</span>]<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>verbs</span>:<span style=color:#bbb> </span>[<span style=color:#b44>&#34;get&#34;</span>,<span style=color:#bbb> </span><span style=color:#b44>&#34;list&#34;</span>,<span style=color:#bbb> </span><span style=color:#b44>&#34;watch&#34;</span>,<span style=color:#bbb> </span><span style=color:#b44>&#34;update&#34;</span>]<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span>- <span style=color:green;font-weight:700>apiGroups</span>:<span style=color:#bbb> </span>[<span style=color:#b44>&#34;storage.k8s.io&#34;</span>]<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>resources</span>:<span style=color:#bbb> </span>[<span style=color:#b44>&#34;storageclasses&#34;</span>]<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>verbs</span>:<span style=color:#bbb> </span>[<span style=color:#b44>&#34;get&#34;</span>,<span style=color:#bbb> </span><span style=color:#b44>&#34;list&#34;</span>,<span style=color:#bbb> </span><span style=color:#b44>&#34;watch&#34;</span>]<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span>- <span style=color:green;font-weight:700>apiGroups</span>:<span style=color:#bbb> </span>[<span style=color:#b44>&#34;&#34;</span>]<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>resources</span>:<span style=color:#bbb> </span>[<span style=color:#b44>&#34;events&#34;</span>]<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>verbs</span>:<span style=color:#bbb> </span>[<span style=color:#b44>&#34;create&#34;</span>,<span style=color:#bbb> </span><span style=color:#b44>&#34;update&#34;</span>,<span style=color:#bbb> </span><span style=color:#b44>&#34;patch&#34;</span>]<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#00f;font-weight:700>---</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>ClusterRoleBinding<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>rbac.authorization.k8s.io/v1<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>run-nfs-client-provisioner<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>subjects</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span>- <span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>ServiceAccount<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>nfs-client-provisioner<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:#080;font-style:italic># replace with namespace where provisioner is deployed</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>namespace</span>:<span style=color:#bbb> </span>default<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>roleRef</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>ClusterRole<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>nfs-client-provisioner-runner<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>apiGroup</span>:<span style=color:#bbb> </span>rbac.authorization.k8s.io<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#00f;font-weight:700>---</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>Role<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>rbac.authorization.k8s.io/v1<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>leader-locking-nfs-client-provisioner<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:#080;font-style:italic># replace with namespace where provisioner is deployed</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>namespace</span>:<span style=color:#bbb> </span>default<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>rules</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span>- <span style=color:green;font-weight:700>apiGroups</span>:<span style=color:#bbb> </span>[<span style=color:#b44>&#34;&#34;</span>]<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>resources</span>:<span style=color:#bbb> </span>[<span style=color:#b44>&#34;endpoints&#34;</span>]<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>verbs</span>:<span style=color:#bbb> </span>[<span style=color:#b44>&#34;get&#34;</span>,<span style=color:#bbb> </span><span style=color:#b44>&#34;list&#34;</span>,<span style=color:#bbb> </span><span style=color:#b44>&#34;watch&#34;</span>,<span style=color:#bbb> </span><span style=color:#b44>&#34;create&#34;</span>,<span style=color:#bbb> </span><span style=color:#b44>&#34;update&#34;</span>,<span style=color:#bbb> </span><span style=color:#b44>&#34;patch&#34;</span>]<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#00f;font-weight:700>---</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>RoleBinding<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>rbac.authorization.k8s.io/v1<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>leader-locking-nfs-client-provisioner<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>subjects</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span>- <span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>ServiceAccount<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>nfs-client-provisioner<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:#080;font-style:italic># replace with namespace where provisioner is deployed</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>namespace</span>:<span style=color:#bbb> </span>default<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>roleRef</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>Role<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>leader-locking-nfs-client-provisioner<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>apiGroup</span>:<span style=color:#bbb> </span>rbac.authorization.k8s.io<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#00f;font-weight:700>---</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#配置StorageClass</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>storage.k8s.io/v1<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>StorageClass<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>alma-nfs-sc<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>provisioner</span>:<span style=color:#bbb> </span>alma-nfs<span style=color:#bbb> </span><span style=color:#080;font-style:italic>#这里的名称要和provisioner配置中的环境变量PROVISIONER_NAME保持一致</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>parameters</span>:<span style=color:#bbb>  
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>archiveOnDelete</span>:<span style=color:#bbb> </span><span style=color:#b44>&#34;false&#34;</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#00f;font-weight:700>---</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#配置provisioner</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>apps/v1<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>Deployment<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>nfs-client-provisioner<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>nfs-client-provisioner<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:#080;font-style:italic># replace with namespace where provisioner is deployed</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>namespace</span>:<span style=color:#bbb> </span>default <span style=color:#bbb> </span><span style=color:#080;font-style:italic>#与RBAC中的namespace保持一致</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>replicas</span>:<span style=color:#bbb> </span><span style=color:#666>1</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>selector</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>matchLabels</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>nfs-client-provisioner<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>strategy</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>type</span>:<span style=color:#bbb> </span>Recreate<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>selector</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>matchLabels</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>nfs-client-provisioner<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>template</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>nfs-client-provisioner<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>serviceAccountName</span>:<span style=color:#bbb> </span>nfs-client-provisioner<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>containers</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>nfs-client-provisioner<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>          </span><span style=color:green;font-weight:700>image</span>:<span style=color:#bbb> </span>quay.io/external_storage/nfs-client-provisioner:latest<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>          </span><span style=color:green;font-weight:700>volumeMounts</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>            </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>nfs-client-root<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>              </span><span style=color:green;font-weight:700>mountPath</span>:<span style=color:#bbb> </span>/persistentvolumes<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>          </span><span style=color:green;font-weight:700>env</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>            </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>PROVISIONER_NAME<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>              </span><span style=color:green;font-weight:700>value</span>:<span style=color:#bbb> </span>alma-nfs <span style=color:#bbb> </span><span style=color:#080;font-style:italic>#provisioner名称,请确保该名称与 nfs-StorageClass配置中的provisioner名称保持一致</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>            </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>NFS_SERVER<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>              </span><span style=color:green;font-weight:700>value</span>:<span style=color:#bbb> </span>alma  <span style=color:#bbb> </span><span style=color:#080;font-style:italic>#NFS Server IP地址</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>            </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>NFS_PATH  <span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>              </span><span style=color:green;font-weight:700>value</span>:<span style=color:#bbb> </span>/nfs/data/sc   <span style=color:#bbb> </span><span style=color:#080;font-style:italic>#NFS挂载卷</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>volumes</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>nfs-client-root<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>          </span><span style=color:green;font-weight:700>nfs</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>            </span><span style=color:green;font-weight:700>server</span>:<span style=color:#bbb> </span>alma <span style=color:#bbb> </span><span style=color:#080;font-style:italic>#NFS Server IP地址</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>            </span><span style=color:green;font-weight:700>path</span>:<span style=color:#bbb> </span>/nfs/data/sc    <span style=color:#bbb> </span><span style=color:#080;font-style:italic>#NFS 挂载卷</span><span style=color:#bbb>
+</span></span></span></code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>zyi@cp:~$ kubectl get sc
+</span></span><span style=display:flex><span>NAME          PROVISIONER   RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
+</span></span><span style=display:flex><span>alma-nfs-sc   alma-nfs      Delete          Immediate           <span style=color:#a2f>false</span>                  4s
+</span></span></code></pre></div><ol start=2><li>修改default storageclass</li></ol><p><a href=https://kubernetes.io/zh/docs/tasks/administer-cluster/change-default-storage-class/>改变默认 StorageClass</a></p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>zyi@cp:~$ kubectl patch storageclass alma-nfs-sc -p <span style=color:#b44>&#39;{&#34;metadata&#34;: {&#34;annotations&#34;:{&#34;storageclass.kubernetes.io/is-default-class&#34;:&#34;true&#34;}}}&#39;</span>
+</span></span><span style=display:flex><span>storageclass.storage.k8s.io/alma-nfs-sc patched
+</span></span><span style=display:flex><span>zyi@cp:~$ kubectl get sc
+</span></span><span style=display:flex><span>NAME                    PROVISIONER   RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
+</span></span><span style=display:flex><span>**alma-nfs-sc <span style=color:#666>(</span>default<span style=color:#666>)</span>**   alma-nfs      Delete          Immediate           <span style=color:#a2f>false</span>                  7m6s
+</span></span><span style=display:flex><span>zyi@cp:~$ kubectl describe sc alma-nfs-sc
+</span></span><span style=display:flex><span>Name:            alma-nfs-sc
+</span></span><span style=display:flex><span>IsDefaultClass:  Yes
+</span></span><span style=display:flex><span>Annotations:     kubectl.kubernetes.io/last-applied-configuration<span style=color:#666>={</span><span style=color:#b44>&#34;apiVersion&#34;</span>:<span style=color:#b44>&#34;storage.k8s.io/v1&#34;</span>,<span style=color:#b44>&#34;kind&#34;</span>:<span style=color:#b44>&#34;StorageClass&#34;</span>,<span style=color:#b44>&#34;metadata&#34;</span>:<span style=color:#666>{</span><span style=color:#b44>&#34;annotations&#34;</span>:<span style=color:#666>{}</span>,<span style=color:#b44>&#34;name&#34;</span>:<span style=color:#b44>&#34;alma-nfs-sc&#34;</span><span style=color:#666>}</span>,<span style=color:#b44>&#34;parameters&#34;</span>:<span style=color:#666>{</span><span style=color:#b44>&#34;archiveOnDelete&#34;</span>:<span style=color:#b44>&#34;false&#34;</span><span style=color:#666>}</span>,<span style=color:#b44>&#34;provisioner&#34;</span>:<span style=color:#b44>&#34;alma-nfs&#34;</span><span style=color:#666>}</span>
+</span></span><span style=display:flex><span>,**storageclass.kubernetes.io/is-default-class<span style=color:#666>=</span>true**
+</span></span><span style=display:flex><span>Provisioner:           alma-nfs
+</span></span><span style=display:flex><span>Parameters:            <span style=color:#b8860b>archiveOnDelete</span><span style=color:#666>=</span><span style=color:#a2f>false</span>
+</span></span><span style=display:flex><span>AllowVolumeExpansion:  &lt;unset&gt;
+</span></span><span style=display:flex><span>MountOptions:          &lt;none&gt;
+</span></span><span style=display:flex><span>ReclaimPolicy:         Delete
+</span></span><span style=display:flex><span>VolumeBindingMode:     Immediate
+</span></span><span style=display:flex><span>Events:                &lt;none&gt;
+</span></span><span style=display:flex><span>zyi@cp:~$
+</span></span></code></pre></div><ol start=3><li>测试StorageClass</li></ol><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>kind: PersistentVolumeClaim
+</span></span><span style=display:flex><span>apiVersion: v1
+</span></span><span style=display:flex><span>metadata:
+</span></span><span style=display:flex><span>  name: test-claim
+</span></span><span style=display:flex><span>  annotations:
+</span></span><span style=display:flex><span>    volume.beta.kubernetes.io/storage-class: <span style=color:#b44>&#34;alma-nfs-sc&#34;</span>   <span style=color:#080;font-style:italic>#与nfs-StorageClass的 metadata.name保持一致</span>
+</span></span><span style=display:flex><span>spec:
+</span></span><span style=display:flex><span>  accessModes:
+</span></span><span style=display:flex><span>    - ReadWriteMany
+</span></span><span style=display:flex><span>  resources:
+</span></span><span style=display:flex><span>    requests:
+</span></span><span style=display:flex><span>      storage: 1Mi
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>zyi@cp:~$ kubectl get pvc
+</span></span><span style=display:flex><span>NAME         STATUS    VOLUME     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+</span></span><span style=display:flex><span>nginx-pvc    Bound     pv02-1gi   1Gi        RWX            nfs            138m
+</span></span><span style=display:flex><span>test-claim   Pending                                        alma-nfs-sc    16m
+</span></span></code></pre></div><p>查看logs for nfs-pod</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>zyi@cp:~$ kubectl logs nfs-client-provisioner-c9f8dbb58-pdngj
+</span></span><span style=display:flex><span>I0221 05:31:26.150158       <span style=color:#666>1</span> leaderelection.go:185<span style=color:#666>]</span> attempting to acquire leader lease  default/alma-nfs...
+</span></span><span style=display:flex><span>E0221 05:31:43.632142       <span style=color:#666>1</span> event.go:259<span style=color:#666>]</span> Could not construct reference to: <span style=color:#b44>&#39;&amp;v1.Endpoints{TypeMeta:v1.TypeMeta{Kind:&#34;&#34;, APIVersion:&#34;&#34;}, ObjectMeta:v1.ObjectMeta{Name:&#34;alma-nfs&#34;, GenerateName:&#34;&#34;, Namespace:&#34;default&#34;, SelfLink:&#34;&#34;, UID:&#34;62fda3da-1914-4287-949f-fbe9a81746e2&#34;, ResourceVersion:&#34;1188463&#34;, Generation:0, CreationTimestamp:v1.Time{Time:time.Time{wall:0x0, ext:63781017992, loc:(*time.Location)(0x1956800)}}, DeletionTimestamp:(*v1.Time)(nil), DeletionGracePeriodSeconds:(*int64)(nil), Labels:map[string]string(nil), Annotations:map[string]string{&#34;control-plane.alpha.kubernetes.io/leader&#34;:&#34;{\&#34;holderIdentity\&#34;:\&#34;nfs-client-provisioner-c9f8dbb58-pdngj_8361e4a2-92d7-11ec-9b02-4277e0456c6e\&#34;,\&#34;leaseDurationSeconds\&#34;:15,\&#34;acquireTime\&#34;:\&#34;2022-02-21T05:31:43Z\&#34;,\&#34;renewTime\&#34;:\&#34;2022-02-21T05:31:43Z\&#34;,\&#34;leaderTransitions\&#34;:1}&#34;}, OwnerReferences:[]v1.OwnerReference(nil), Initializers:(*v1.Initializers)(nil), Finalizers:[]string(nil), ClusterName:&#34;&#34;}, Subsets:[]v1.EndpointSubset(nil)}&#39;</span> due to: <span style=color:#b44>&#39;selfLink was empty, can&#39;</span>t make reference<span style=color:#b44>&#39;. Will not report event: &#39;</span>Normal<span style=color:#b44>&#39; &#39;</span>LeaderElection<span style=color:#b44>&#39; &#39;</span>nfs-client-provisioner-c9f8dbb58-pdngj_8361e4a2-92d7-11ec-9b02-4277e0456c6e became leader<span style=color:#b44>&#39;
+</span></span></span><span style=display:flex><span><span style=color:#b44>I0221 05:31:43.632308       1 leaderelection.go:194] successfully acquired lease default/alma-nfs
+</span></span></span><span style=display:flex><span><span style=color:#b44>I0221 05:31:43.633958       1 controller.go:631] Starting provisioner controller alma-nfs_nfs-client-provisioner-c9f8dbb58-pdngj_8361e4a2-92d7-11ec-9b02-4277e0456c6e!
+</span></span></span><span style=display:flex><span><span style=color:#b44>I0221 05:31:43.734591       1 controller.go:680] Started provisioner controller alma-nfs_nfs-client-provisioner-c9f8dbb58-pdngj_8361e4a2-92d7-11ec-9b02-4277e0456c6e!
+</span></span></span><span style=display:flex><span><span style=color:#b44>I0221 06:03:32.316844       1 controller.go:987] provision &#34;default/nginx-sc&#34; class &#34;alma-nfs-sc&#34;: started
+</span></span></span><span style=display:flex><span><span style=color:#b44>E0221 06:03:32.358963       1 controller.go:1004] provision &#34;default/nginx-sc&#34; class &#34;alma-nfs-sc&#34;: unexpected error getting claim reference: selfLink was empty, can&#39;</span>t make reference
+</span></span><span style=display:flex><span>I0221 06:16:43.646567       <span style=color:#666>1</span> controller.go:987<span style=color:#666>]</span> provision <span style=color:#b44>&#34;default/nginx-sc&#34;</span> class <span style=color:#b44>&#34;alma-nfs-sc&#34;</span>: started
+</span></span><span style=display:flex><span>E0221 06:16:43.654139       <span style=color:#666>1</span> controller.go:1004<span style=color:#666>]</span> provision <span style=color:#b44>&#34;default/nginx-sc&#34;</span> class <span style=color:#b44>&#34;alma-nfs-sc&#34;</span>: unexpected error getting claim reference: selfLink was empty, can<span style=color:#b44>&#39;t make reference
+</span></span></span><span style=display:flex><span><span style=color:#b44>I0221 06:18:35.976603       1 controller.go:987] provision &#34;default/test-claim&#34; class &#34;alma-nfs-sc&#34;: started
+</span></span></span><span style=display:flex><span><span style=color:#b44>E0221 06:18:35.998650       1 controller.go:1004] provision &#34;default/test-claim&#34; class &#34;alma-nfs-sc&#34;: unexpected error getting claim reference: selfLink was empty, can&#39;</span>t make reference
+</span></span><span style=display:flex><span>I0221 06:31:43.647355       <span style=color:#666>1</span> controller.go:987<span style=color:#666>]</span> provision <span style=color:#b44>&#34;default/nginx-sc&#34;</span> class <span style=color:#b44>&#34;alma-nfs-sc&#34;</span>: started
+</span></span><span style=display:flex><span>I0221 06:31:43.647862       <span style=color:#666>1</span> controller.go:987<span style=color:#666>]</span> provision <span style=color:#b44>&#34;default/test-claim&#34;</span> class <span style=color:#b44>&#34;alma-nfs-sc&#34;</span>: started
+</span></span><span style=display:flex><span>E0221 06:31:43.656246       <span style=color:#666>1</span> controller.go:1004<span style=color:#666>]</span> provision <span style=color:#b44>&#34;default/nginx-sc&#34;</span> class <span style=color:#b44>&#34;alma-nfs-sc&#34;</span>: unexpected error getting claim reference: selfLink was empty, can<span style=color:#b44>&#39;t make reference
+</span></span></span><span style=display:flex><span><span style=color:#b44>E0221 06:31:43.661489       1 controller.go:1004] provision &#34;default/test-claim&#34; class &#34;alma-nfs-sc&#34;: unexpected error getting claim reference: selfLink was empty, can&#39;</span>t make reference
+</span></span></code></pre></div><p>找了找资料发现，kubernetes 1.20版本 禁用了 selfLink。</p><p>资料连接：</p><p><a href=https://stackoverflow.com/questions/65376314/kubernetes-nfs-provider-selflink-was-empty>https://stackoverflow.com/questions/65376314/kubernetes-nfs-provider-selflink-was-empty</a></p><p><a href=https://github.com/kubernetes-sigs/nfs-subdir-external-provisioner/issues/25>https://github.com/kubernetes-sigs/nfs-subdir-external-provisioner/issues/25</a></p><p>当前的解决方法是编辑/etc/kubernetes/manifests/kube-apiserver.yaml</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:#080;font-style:italic>#Under here:</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>spec:
+</span></span><span style=display:flex><span>  containers:
+</span></span><span style=display:flex><span>  - command:
+</span></span><span style=display:flex><span>    - kube-apiserver
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic>#Add this line:</span>
+</span></span><span style=display:flex><span>- --feature-gates<span style=color:#666>=</span><span style=color:#b8860b>RemoveSelfLink</span><span style=color:#666>=</span><span style=color:#a2f>false</span>
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>zyi@cp:~$ sudo systemctl restart kubelet.service
+</span></span><span style=display:flex><span>zyi@cp:~$ kubectl get pvc
+</span></span><span style=display:flex><span>NAME         STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+</span></span><span style=display:flex><span>nginx-pvc    Bound    pv02-1gi                                   1Gi        RWX            nfs            143m
+</span></span><span style=display:flex><span>test-claim   Bound    pvc-3fc64d8f-5821-4e4e-a4e4-193cc4ef7878   1Mi        RWX            alma-nfs-sc    21m
+</span></span></code></pre></div><ol start=4><li>在Deployment/Pod引用storageclass</li></ol><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>apiVersion: apps/v1
+</span></span><span style=display:flex><span>kind: Deployment
+</span></span><span style=display:flex><span>metadata:
+</span></span><span style=display:flex><span>  labels:
+</span></span><span style=display:flex><span>    app: nginx-deploy-sc
+</span></span><span style=display:flex><span>  name: nginx-deploy-sc
+</span></span><span style=display:flex><span>spec:
+</span></span><span style=display:flex><span>  replicas: <span style=color:#666>2</span>
+</span></span><span style=display:flex><span>  selector:
+</span></span><span style=display:flex><span>    matchLabels:
+</span></span><span style=display:flex><span>      app: nginx-deploy-sc
+</span></span><span style=display:flex><span>  template:
+</span></span><span style=display:flex><span>    metadata:
+</span></span><span style=display:flex><span>      labels:
+</span></span><span style=display:flex><span>        app: nginx-deploy-sc
+</span></span><span style=display:flex><span>    spec:
+</span></span><span style=display:flex><span>      containers:
+</span></span><span style=display:flex><span>      - image: networktool:v1.1
+</span></span><span style=display:flex><span>        name: nginx
+</span></span><span style=display:flex><span>        volumeMounts:
+</span></span><span style=display:flex><span>        - name: html
+</span></span><span style=display:flex><span>          mountPath: /usr/share/nginx/html
+</span></span><span style=display:flex><span>      volumes:
+</span></span><span style=display:flex><span>        - name: html
+</span></span><span style=display:flex><span>          persistentVolumeClaim:
+</span></span><span style=display:flex><span>            claimName: nginx-sc
+</span></span><span style=display:flex><span>---
+</span></span><span style=display:flex><span>apiVersion: v1
+</span></span><span style=display:flex><span>kind: PersistentVolumeClaim
+</span></span><span style=display:flex><span>metadata:
+</span></span><span style=display:flex><span>  name: nginx-sc
+</span></span><span style=display:flex><span>  labels:
+</span></span><span style=display:flex><span>    app: nginx-sc
+</span></span><span style=display:flex><span>spec:
+</span></span><span style=display:flex><span>  accessModes:
+</span></span><span style=display:flex><span>    - ReadWriteMany
+</span></span><span style=display:flex><span>  storageClassName:  alma-nfs-sc  <span style=color:#080;font-style:italic>#增加本环境的存储类</span>
+</span></span><span style=display:flex><span>  resources:
+</span></span><span style=display:flex><span>    requests:
+</span></span><span style=display:flex><span>      storage: 2Gi
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>zyi@cp:~$ kubectl apply -f  deployment-sc.yaml
+</span></span><span style=display:flex><span>deployment.apps/nginx-deploy-sc created
+</span></span><span style=display:flex><span>persistentvolumeclaim/nginx-sc created
+</span></span><span style=display:flex><span>zyi@cp:~$ kubectl get pv
+</span></span><span style=display:flex><span>NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM               STORAGECLASS   REASON   AGE
+</span></span><span style=display:flex><span>pv01-100m                                  100M       RWX            Retain           Available                       nfs                     19h
+</span></span><span style=display:flex><span>pv02-1gi                                   1Gi        RWX            Retain           Bound       default/nginx-pvc   nfs                     3h21m
+</span></span><span style=display:flex><span>pv03-3gi                                   3Gi        RWX            Retain           Available                       nfs                     19h
+</span></span><span style=display:flex><span>**pvc-3447bc4d-7029-497b-871a-7800a95fe823   2Gi        RWX            Delete           Bound       default/nginx-sc    alma-nfs-sc             11s**
+</span></span><span style=display:flex><span>zyi@cp:~$ kubectl get pvc
+</span></span><span style=display:flex><span>NAME        STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+</span></span><span style=display:flex><span>nginx-pvc   Bound    pv02-1gi                                   1Gi        RWX            nfs            156m
+</span></span><span style=display:flex><span>**nginx-sc    Bound    pvc-3447bc4d-7029-497b-871a-7800a95fe823   2Gi        RWX            alma-nfs-sc    13s**
+</span></span><span style=display:flex><span>zyi@cp:~$ kubectl get po -owide
+</span></span><span style=display:flex><span>NAME                                     READY   STATUS    RESTARTS   AGE     IP                NODE     NOMINATED NODE   READINESS GATES
+</span></span><span style=display:flex><span>back-app-6b5f87d447-d4dgj                1/1     Running   <span style=color:#666>0</span>          3d19h   192.168.171.109   worker   &lt;none&gt;           &lt;none&gt;
+</span></span><span style=display:flex><span>back-app-6b5f87d447-v8tqz                1/1     Running   <span style=color:#666>0</span>          3d19h   192.168.171.108   worker   &lt;none&gt;           &lt;none&gt;
+</span></span><span style=display:flex><span>front-app-544b8cdb7f-7hnf7               1/1     Running   <span style=color:#666>0</span>          3d21h   192.168.171.103   worker   &lt;none&gt;           &lt;none&gt;
+</span></span><span style=display:flex><span>front-app-544b8cdb7f-dmdvz               1/1     Running   <span style=color:#666>0</span>          3d21h   192.168.171.104   worker   &lt;none&gt;           &lt;none&gt;
+</span></span><span style=display:flex><span>front-app-544b8cdb7f-kf9x9               1/1     Running   <span style=color:#666>0</span>          3d21h   192.168.171.102   worker   &lt;none&gt;           &lt;none&gt;
+</span></span><span style=display:flex><span>nfs-client-provisioner-c9f8dbb58-pdngj   1/1     Running   <span style=color:#666>3</span>          82m     192.168.171.117   worker   &lt;none&gt;           &lt;none&gt;
+</span></span><span style=display:flex><span>nginx-deploy-pvc-756dcd469-gsjg2         1/1     Running   <span style=color:#666>0</span>          156m    192.168.171.115   worker   &lt;none&gt;           &lt;none&gt;
+</span></span><span style=display:flex><span>nginx-deploy-pvc-756dcd469-h2c74         1/1     Running   <span style=color:#666>0</span>          156m    192.168.242.82    cp       &lt;none&gt;           &lt;none&gt;
+</span></span><span style=display:flex><span>**nginx-deploy-sc-798f6f5cd5-8225r         1/1     Running   <span style=color:#666>0</span>          29s     192.168.171.119   worker   &lt;none&gt;           &lt;none&gt;
+</span></span><span style=display:flex><span>nginx-deploy-sc-798f6f5cd5-bk44c         1/1     Running   <span style=color:#666>0</span>          29s     192.168.242.84    cp       &lt;none&gt;           &lt;none&gt;**
+</span></span><span style=display:flex><span>nginx-native-storage-99bd9bd8c-lvdkl     1/1     Running   <span style=color:#666>0</span>          3h54m   192.168.171.112   worker   &lt;none&gt;           &lt;none&gt;
+</span></span><span style=display:flex><span>nginx-native-storage-99bd9bd8c-r6r4j     1/1     Running   <span style=color:#666>0</span>          3h54m   192.168.171.113   worker   &lt;none&gt;           &lt;none&gt;
+</span></span></code></pre></div><p>在nfs的共享目录下发现了k8s新建的文件夹：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:#666>[</span>root@Alma ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># ls /nfs/data/sc/ -l</span>
+</span></span><span style=display:flex><span>total <span style=color:#666>4</span>
+</span></span><span style=display:flex><span>drwxrwxrwx. <span style=color:#666>2</span> root root  <span style=color:#666>6</span> Feb <span style=color:#666>21</span> 14:52 default-nginx-sc-pvc-3447bc4d-7029-497b-871a-7800a95fe823
+</span></span><span style=display:flex><span><span style=color:#666>[</span>root@Alma ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># ll /nfs/data/sc/default-nginx-sc-pvc-3447bc4d-7029-497b-871a-7800a95fe823/</span>
+</span></span><span style=display:flex><span>total <span style=color:#666>0</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#666>[</span>root@Alma ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># echo &#39;POD for StorageClass alma-nfs-sc!&#39; &gt; /nfs/data/sc/default-nginx-sc-pvc-3447bc4d-7029-497b-871a-7800a95fe823/index.html</span>
+</span></span></code></pre></div><p>更新了index.html内容后就可以看到:</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>zyi@cp:~$ curl 192.168.242.84
+</span></span><span style=display:flex><span>POD <span style=color:#a2f;font-weight:700>for</span> StorageClass alma-nfs-sc!
+</span></span><span style=display:flex><span>zyi@cp:~$ curl 192.168.171.119
+</span></span><span style=display:flex><span>POD <span style=color:#a2f;font-weight:700>for</span> StorageClass alma-nfs-sc!
+</span></span></code></pre></div></div><footer class=post-footer><div id=wcomments></div></footer></article></section></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
 <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-</div>
-</div>
-<aside id=sidebar class=sidebar>
-<div class=sidebar-inner>
-<ul class="sidebar-nav motion-element">
-<li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>
-文章目录
-</li>
-<li class=sidebar-nav-overview data-target=site-overview>
-站点概览
-</li>
-</ul>
-<section class="site-overview sidebar-panel">
-<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
-<img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon>
-<p class=site-author-name itemprop=name>Etaon</p>
-<p class="site-description motion-element" itemprop=description>
-Kepp Going!
-</p>
-</div>
-<nav class="site-state motion-element">
-<div class="site-state-item site-state-posts">
-<a href=/post/>
-<span class=site-state-item-count>61</span>
-<span class=site-state-item-name>日志</span>
-</a>
-</div>
-<div class="site-state-item site-state-categories">
-<a href=/categories/>
-<span class=site-state-item-count>13</span>
-<span class=site-state-item-name>分类</span>
-</a>
-</div>
-<div class="site-state-item site-state-tags">
-<a href=/tags/>
-<span class=site-state-item-count>34</span>
-<span class=site-state-item-name>标签</span>
-</a>
-</div>
-</nav>
-<div class="links-of-author motion-element">
-<span class=links-of-author-item>
-<a href=https://github.com/etaon target=_blank title=GitHub>
-<i class="fa fa-fw fa-github"></i>
-GitHub
-</a>
-</span>
-<span class=links-of-author-item>
-<a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN>
-<i class="fa fa-fw fa-CSDN"></i>
-CSDN
-</a>
-</span>
-</div>
-<div class="links-of-blogroll motion-element links-of-blogroll-inline">
-<div class=links-of-blogroll-title>
-<i class="fa fa-fw fa-globe"></i>
-友情链接
-</div>
-<ul class=links-of-blogroll-list>
-<li class=links-of-blogroll-item>
-<a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a>
-</li>
-</ul>
-</div>
-<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
-<div class=tagcloud-of-blogroll-title>
-<i class="fa fa-fw fa-tags"></i>
-标签云
-</div>
-<ul class=tagcloud-of-blogroll-list>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mysql>Mysql</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/aws>Aws</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/dql>Dql</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/hadoop>Hadoop</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/redis>Redis</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/cicd>Cicd</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/git>Git</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/istio>Istio</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mongodb>Mongodb</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/azure>Azure</a>
-</li>
-</ul>
-</div>
-</section>
-<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-<div class=post-toc>
-<div class=post-toc-content><nav id=TableOfContents>
-<ul>
-<li><a href=#环境>环境</a>
-<ul>
-<li><a href=#nfs安装>NFS安装</a></li>
-</ul>
-</li>
-<li><a href=#测试步骤>测试步骤</a>
-<ul>
-<li><a href=#原生方式>原生方式</a></li>
-<li><a href=#静态pv>静态PV</a></li>
-<li><a href=#动态pv>动态PV</a></li>
-</ul>
-</li>
-</ul>
-</nav></div>
-</div>
-</section>
-</div>
-</aside>
-</div>
-</main>
-<footer id=footer class=footer>
-<div class=footer-inner>
-<div class=copyright>
-<span class=copyright-year>
-&copy; 2010 - 2022
-</span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id=sidebar class=sidebar><div class=sidebar-inner><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>文章目录</li><li class=sidebar-nav-overview data-target=site-overview>站点概览</li></ul><section class="site-overview sidebar-panel"><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon><p class=site-author-name itemprop=name>Etaon</p><p class="site-description motion-element" itemprop=description>Kepp Going!</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=/post/><span class=site-state-item-count>61</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>13</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>34</span>
+<span class=site-state-item-name>标签</span></a></div></nav><div class="links-of-author motion-element"><span class=links-of-author-item><a href=https://github.com/etaon target=_blank title=GitHub><i class="fa fa-fw fa-github"></i>
+GitHub</a></span>
+<span class=links-of-author-item><a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN><i class="fa fa-fw fa-CSDN"></i>
+CSDN</a></span></div><div class="links-of-blogroll motion-element links-of-blogroll-inline"><div class=links-of-blogroll-title><i class="fa fa-fw fa-globe"></i>
+友情链接</div><ul class=links-of-blogroll-list><li class=links-of-blogroll-item><a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a></li><li class=links-of-blogroll-item><a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a></li><li class=links-of-blogroll-item><a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a></li><li class=links-of-blogroll-item><a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a></li></ul></div><div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline"><div class=tagcloud-of-blogroll-title><i class="fa fa-fw fa-tags"></i>
+标签云</div><ul class=tagcloud-of-blogroll-list><li class=tagcloud-of-blogroll-item><a href=/tags/mysql>Mysql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/aws>Aws</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/dql>Dql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/hadoop>Hadoop</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/redis>Redis</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/cicd>Cicd</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/git>Git</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/istio>Istio</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/mongodb>Mongodb</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/azure>Azure</a></li></ul></div></section><section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active"><div class=post-toc><div class=post-toc-content><nav id=TableOfContents><ul><li><a href=#环境>环境</a><ul><li><a href=#nfs安装>NFS安装</a></li></ul></li><li><a href=#测试步骤>测试步骤</a><ul><li><a href=#原生方式>原生方式</a></li><li><a href=#静态pv>静态PV</a></li><li><a href=#动态pv>动态PV</a></li></ul></li></ul></nav></div></div></section></div></aside></div></main><footer id=footer class=footer><div class=footer-inner><div class=copyright><span class=copyright-year>&copy; 2010 - 2022</span>
 <span class=with-love><i class="fa fa-heart"></i></span>
-<span class=copyright-author>路无止境！</span>
-</div>
-<div class=powered-info>
-<span class=powered-by>
-Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.91.2</a>
-</span>
+<span class=copyright-author>路无止境！</span></div><div class=powered-info><span class=powered-by>Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.101.0</a></span>
 <span class=separator-line>/</span>
-<span class=theme-info>
-Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
-</a>
-</span>
-</div>
-<div class=vistor-info>
-<script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
-<span class=site-uv>
-<i class="fa fa-user"></i>
-<span class=busuanzi-value id=busuanzi_value_site_uv></span>
-</span>
+<span class=theme-info>Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank>NexT</a></span></div><div class=vistor-info><script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<span class=site-uv><i class="fa fa-user"></i>
+<span class=busuanzi-value id=busuanzi_value_site_uv></span></span>
 <span class=separator-line>/</span>
-<span class=site-pv>
-<i class="fa fa-eye"></i>
-<span class=busuanzi-value id=busuanzi_value_site_pv></span>
-</span>
-</div>
-<div class=license-info>
-<span class=storage-info>
-Storage by
-<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a>
-</span>
+<span class=site-pv><i class="fa fa-eye"></i>
+<span class=busuanzi-value id=busuanzi_value_site_pv></span></span></div><div class=license-info><span class=storage-info>Storage by
+<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a></span>
 <span class=separator-line>/</span>
-<span class=license-num>
-<a href target=_blank></a>
-</span>
-</div>
-</div>
-</footer>
-<div class=back-to-top>
-<i class="fa fa-arrow-up"></i>
-<span id=scrollpercent><span>0</span>%</span>
-</div>
-</div>
-<script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
+<span class=license-num><a href target=_blank></a></span></div></div></footer><div class=back-to-top><i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span></div></div><script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
 <script type=text/javascript src=/js/search.js></script>
 <script type=text/javascript src=/js/affix.js></script>
 <script type=text/javascript src=/js/scrollspy.js></script>
-<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.main').css('padding-bottom'),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}}),$(document).on('affixed.bs.affix',function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var b=$('.header-inner').height()+10,c,d,a,e;$('#sidebar').css({'margin-top':b}).show(),c=parseInt($('#sidebar').css('margin-top')),d=parseInt($('.sidebar-inner').css('height')),a=c+d,e=$('.content-wrap').height(),e<a&&$('.content-wrap').css('min-height',a),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
-<script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
-<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
-<script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+'//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js',function(){new Waline({el:'#wcomments',visitor:!0,avatar:'wavatar',avatarCDN:'https://sdn.geekzu.org/avatar/',avatarForce:!1,wordLimit:'200',placeholder:' 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ',requiredFields:['nick','mail'],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$('#wcomments').html('抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。')})</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type=text/javascript>function detectIE(){var e=window.navigator.userAgent,t=e.indexOf("MSIE "),n=e.indexOf("Trident/"),s=e.indexOf("Edge/");return t>0||n>0||s>0?-1:1}function getCntViewHeight(){var t=$("#content").height(),e=$(window).height(),n=t>e?t-e:$(document).height()-e;return n}function getScrollbarWidth(){var e=$("<div />").addClass("scrollbar-measure").prependTo("body"),t=e[0],n=t.offsetWidth-t.clientWidth;return e.remove(),n}function registerBackTop(){var t=50,e=$(".back-to-top");$(window).on("scroll",function(){e.toggleClass("back-to-top-on",window.pageYOffset>t);var s=$(window).scrollTop(),o=getCntViewHeight(),i=s/o,n=Math.round(i*100),a=n>100?100:n;$("#scrollpercent>span").html(a)}),e.on("click",function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var e=".post-toc",s=$(e),t=".active-current";s.on("activate.bs.scrollspy",function(){var t=$(e+" .active").last();n(),t.addClass("active-current")}).on("clear.bs.scrollspy",n),$("body").scrollspy({target:e});function n(){$(e+" "+t).removeClass(t.substring(1))}}function initAffix(){var e=$(".header-inner").height(),t=parseInt($(".main").css("padding-bottom"),10),n=e+10;$(".sidebar-inner").affix({offset:{top:n,bottom:t}}),$(document).on("affixed.bs.affix",function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){$(window).on("resize",function(){e&&clearTimeout(e),e=setTimeout(function(){var e=document.body.clientHeight-100;updateTOCHeight(e)},0)}),updateTOCHeight(document.body.clientHeight-100);var e,t=getScrollbarWidth();$(".post-toc").css("width","calc(100% + "+t+"px)")}function updateTOCHeight(e){e=e||"auto",$(".post-toc").css("max-height",e)}$(function(){var e,t,n,s,o=$(".header-inner").height()+10;$("#sidebar").css({"margin-top":o}).show(),t=parseInt($("#sidebar").css("margin-top")),n=parseInt($(".sidebar-inner").css("height")),e=t+n,s=$(".content-wrap").height(),s<e&&$(".content-wrap").css("min-height",e),$(".site-nav-toggle").on("click",function(){var e=$(".site-nav"),o=$(".toggle"),t="site-nav-on",i="toggle-close",n=e.hasClass(t),a=n?"slideUp":"slideDown",s=n?"removeClass":"addClass";e.stop()[a]("normal",function(){e[s](t),o[s](i)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$(".sidebar-nav-toc").click(function(){$(this).addClass("sidebar-nav-active"),$(this).next().removeClass("sidebar-nav-active"),$("."+$(this).next().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)}),$(".sidebar-nav-overview").click(function(){$(this).addClass("sidebar-nav-active"),$(this).prev().removeClass("sidebar-nav-active"),$("."+$(this).prev().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)})})</script><script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$(".post-body").viewer()})</script><script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+"//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js",function(){new Waline({el:"#wcomments",visitor:!0,avatar:"wavatar",avatarCDN:"https://sdn.geekzu.org/avatar/",avatarForce:!1,wordLimit:"200",placeholder:" 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ",requiredFields:["nick","mail"],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$("#wcomments").html("抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。")})</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
 <script type=text/javascript src="//s7.addthis.com/js/300/addthis_widget.js#pubid=Your%20AddthisId"></script>
-<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
-</body>
-</html>
+<script>(function(){var t,e=document.createElement("script"),n=window.location.protocol.split(":")[0];n==="https"?e.src="https://zz.bdstatic.com/linksubmit/push.js":e.src="http://push.zhanzhang.baidu.com/push.js",t=document.getElementsByTagName("script")[0],t.parentNode.insertBefore(e,t)})()</script></body></html>

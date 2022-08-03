@@ -1,518 +1,94 @@
-<!doctype html><html lang=zh-cn dir=content/zh-cn>
-<head>
-<meta charset=utf-8>
-<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
-<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
-<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
-<title> AWS-案例分析02（DX&BGP） - 路无止境！ </title>
-<meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云">
-<meta name=author content="Etaon">
-<meta property="og:title" content="AWS-案例分析02（DX&BGP）">
-<meta property="og:site_name" content="路无止境！">
-<meta property="og:image" content="/img/author.jpg">
-<meta name=title content="AWS-案例分析02（DX&BGP） - 路无止境！">
-<meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。">
-<link rel="shortcut icon" href=/img/favicon.ico>
-<link rel=apple-touch-icon href=/img/apple-touch-icon.png>
-<link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png>
-<link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css>
-<link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet>
-<link href=/css/main.css rel=stylesheet type=text/css>
-<link href=/css/syntax.css rel=stylesheet type=text/css>
-</head>
-<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
-<div class="container one-collumn sidebar-position-left page-home">
-<div class=headband></div>
-<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
-<div class=header-inner> <div class=site-brand-container>
-<div class=site-nav-toggle>
-<div class=toggle role=button style=opacity:1;top:0>
+<!doctype html><html lang=zh-cn dir=content/zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=content-security-policy content="upgrade-insecure-requests"><title>AWS-案例分析02（DX&BGP） - 路无止境！</title><meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云"><meta name=author content="Etaon"><meta property="og:title" content="AWS-案例分析02（DX&BGP）"><meta property="og:site_name" content="路无止境！"><meta property="og:image" content="/img/author.jpg"><meta name=title content="AWS-案例分析02（DX&BGP） - 路无止境！"><meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。"><link rel="shortcut icon" href=/img/favicon.ico><link rel=apple-touch-icon href=/img/apple-touch-icon.png><link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png><link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css><link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet><link href=/css/main.css rel=stylesheet type=text/css><link href=/css/syntax.css rel=stylesheet type=text/css></head><body itemscope itemtype=http://schema.org/WebPage lang=zh-hans><div class="container one-collumn sidebar-position-left page-home"><div class=headband></div><header id=header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle role=button style=opacity:1;top:0><span class=toggle-line></span>
 <span class=toggle-line></span>
-<span class=toggle-line></span>
-<span class=toggle-line></span>
-</div>
-</div>
-<div class=site-meta>
-<div class=multi-lang-switch>
-<i class="fa fa-fw fa-language" style=margin-right:5px></i>
-<a class=lang-link id=zh-cn href=#>中文</a>
-</div>
-<div class=custom-logo-site-title>
-<a href=/ class=brand rel=start>
-<span class=logo-line-before><i></i></span>
+<span class=toggle-line></span></div></div><div class=site-meta><div class=multi-lang-switch><i class="fa fa-fw fa-language" style=margin-right:5px></i>
+<a class=lang-link id=zh-cn href=#>中文</a></div><div class=custom-logo-site-title><a href=/ class=brand rel=start><span class=logo-line-before><i></i></span>
 <span class=site-title>路无止境！</span>
-<span class=logo-line-after><i></i></span>
-</a>
-</div>
-<p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p>
-</div>
-<div class=site-nav-right>
-<div class="toggle popup-trigger" style=opacity:1;top:0>
-<i class="fa fa-search fa-fw fa-lg"></i>
-</div>
-</div>
-</div>
-<nav class=site-nav>
-<ul id=menu class=menu>
-<li class=menu-item>
-<a href=/ rel=section>
-<i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页
-</a>
-</li>
-<li class=menu-item>
-<a href=/post rel=section>
-<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档
-</a>
-</li>
-<li class=menu-item>
-<a href=/about.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于我
-</a>
-</li>
-<li class=menu-item>
-<a href=/404.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益404
-</a>
-</li>
-<li class="menu-item menu-item-search">
-<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> 搜索</a>
-</li>
-</ul>
-<div class=site-search>
-<div class="popup search-popup local-search-popup">
-<div class="local-search-header clearfix">
-<span class=search-icon><i class="fa fa-search"></i> </span>
-<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
-<div class=local-search-input-wrapper>
-<input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
-</div>
-</div>
-<div id=local-search-result></div>
-</div>
-</div>
-</nav>
-</div>
-</header>
-<main id=main class=main>
-<div class=main-inner>
-<div class=content-wrap>
-<div id=content class=content>
-<section id=posts class=posts-expand>
-<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
-<header class=post-header>
-<h1 class=post-title itemprop="name headline" style=font-weight:700>
-<a class=post-title-link href=https://www.etaon.link/2021/10/15/awsinfra02.html itemprop=url>
-AWS-案例分析02（DX&BGP）
-</a>
-</h1>
-</header>
-<div class=post-body itemprop=articleBody>
-<h2 id=假设>假设：</h2>
-<p>您的公司已设置AWS Direct Connect以将本地连接到Amazon VPC实例。</p>
-<p>两个直接连接在两个不同的位置终止直接连接位置。您正在本地使用两个路由器，R1和R2（每个直接连接一个）。R1和R2它们之间的没有连通性。两个路由器通过BGP向VGW播发相同的路由。每个路由器上都有一个有状态防火墙。现在的情况是路由器丢弃来自专有网络的部分流量。</p>
-<p>应该在本地采取什么措施来解决此问题？</p>
-<p>考虑使用BGP属性：AS_Path，Local_Pref和MED（Multi_Exit_Disc）</p>
-<h2 id=网络拓扑>网络拓扑</h2>
-<p><img src="https://img-blog.csdnimg.cn/0e4e1c0b2b2a4e50829caa91ad7183ce.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center" alt=在这里插入图片描述></p>
-<h2 id=设计需要考虑的事项>设计需要考虑的事项</h2>
-<ol>
-<li>有状态的防火墙：这就要求在设计上对流量的主用在同一链路进出，在本案例中要不考虑使用R1-DX路径，要不考虑R2-DX路径</li>
-<li>路由选择：在本案例中需要在本地路由器上做配置，那么要影响公布给VPC的路由路径</li>
-</ol>
-<h2 id=bgp属性分析>BGP属性分析</h2>
-<h3 id=bgp-路径属性>BGP 路径属性</h3>
-<p>路径属性是已公布的BGP路由的一个特点。除了提供基本路由功能的必须的信息，路径属性允许BGP设置和互通路由策略。
-每一个路径属性可能是下面四种中的一种：</p>
-<ul>
-<li>公认必选</li>
-<li>公认自选</li>
-<li>任选可透明传送</li>
-<li>任选非可透明传送</li>
-</ul>
-<blockquote>
-<p>公认属性可以是强制性的，意味着所有的BGP Update 消息都要包括该属性，该属性也可以是任选的，也就是说在规定的更新消息中既可以包括它也可以不包括它。</p>
-</blockquote>
-<blockquote>
-<p>如果一个任选属性是可传递的，即使BGP过程不支持该属性，它也应当接受包含该属性的路由并且把这个路径传送它的对端。</p>
-</blockquote>
-<blockquote>
-<p>如果一个任选属性是不可传递的，不识别该属性的 BGP 过程可以忽略包含这个属性的Update 消息并且不向它的对端公布这条路径。</p>
-</blockquote>
-<p><strong>主要的属性及类别</strong></p>
-<table>
-<thead>
-<tr>
-<th>属性</th>
-<th>类别</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>ORIGIN</td>
-<td>公认必选</td>
-</tr>
-<tr>
-<td>AS_PATH</td>
-<td>公认必选</td>
-</tr>
-<tr>
-<td>NEXT_HOP</td>
-<td>公认必选</td>
-</tr>
-<tr>
-<td>LOCAL_PREF</td>
-<td>公认自选</td>
-</tr>
-<tr>
-<td>ATOMIC_AFFREGATE</td>
-<td>公认自选</td>
-</tr>
-<tr>
-<td>AGGREGATOR</td>
-<td>任选可透明传送</td>
-</tr>
-<tr>
-<td>COMMUNITY</td>
-<td>任选可透明传送</td>
-</tr>
-<tr>
-<td>MULTI_EXIT_DISC（MED）</td>
-<td>任选非可透明传送</td>
-</tr>
-<tr>
-<td>ORIGINATOR_ID</td>
-<td>任选非可透明传送</td>
-</tr>
-<tr>
-<td>CLUSTER_LIST</td>
-<td>任选非可透明传送</td>
-</tr>
-</tbody>
-</table>
-<h3 id=选路的准则>选路的准则</h3>
-<ol>
-<li>首选具有最高管理权值的路由。该功能是Cisco特有的。</li>
-<li>如果权值相同，首选具有最高LOCAL_PREF值的路由。</li>
-<li>如果LOCAL_PREF值相同，首选逻辑上在该路由器上发起的路由。也就是说，首选从同一个路由器上的IGP学习到的路由。</li>
-<li>如果 LOCALPREF 值相同，而且没有逻辑上发起的路由，首选具有最短 AS_PATH的路由。</li>
-<li>如果AS_PATH长度相同，首选具有最低原码（ORIGIN CODE）的路由。IGP低于EGP，EGP低于Incomplete。</li>
-<li>如果源代码相同，首选具有最低 MULTI_EXIT_DISC 值的路由。只有当要考虑的所有路由的AS号都相同时，才会进行此项比较。</li>
-<li>如果MED相同，在EBGP路由和联盟 EBGP路由中，首选EBGP路由，在联盟 EBGP路由和IBGP路由中首选联盟EBGP路由。</li>
-<li>如果路由相同，首选到BGP下一跳最短的路径。这是一条到下一跳路由器的具有最低IGP度量的路由。</li>
-<li>如果路由相同，它们来自相同的相邻AS并且通过maximum-paths命令使BGP多条路径可用，那么将所有开销相同的路由安装到Loc-RIB中。</li>
-<li>如果多条路径不可用，首选具有最低BGP路由器ID的路由。</li>
-</ol>
-<p>本案例中，我们需要考虑Origin、AS_Path、LOCAL_PREF和MULTI_EXIT_DISC（MED），其选路优先级为LOCAL_PREF>AS_Path>MULTI_EXIT_DISC（MED）。</p>
-<h3 id=1-origin-属性>1. ORIGIN 属性</h3>
-<p>ORIGIN是一个公认必选的属性，它明确了路由更新消息的来源。当BGP有多条路由时，它会将ORIGIN当作一个决定较优路由的因素。
-它规定了下面几种源：</p>
-<ul>
-<li><strong>IGP</strong>&ndash;从发起者AS的一个内部协议可以学习到网络层可到达信息（NLRI）。一个IGP源会得到ORIGIN值中最佳的选项。如果BGP路由是从IGP路由表通过 network 命令学到的</li>
-<li><strong>EGP</strong>&ndash;NLRI是从EGP学习到的。相对于IGP，EGP是第二选择。</li>
-<li><strong>Incomplete</strong>&ndash;NLRI是通过其他手段学习到的。Incomplete 是ORIGIN 值的最低的选择。<em>Incomplete 并不代表路由在任何情况下都有故障</em>，只代表决定路由来源的信息不完整。
+<span class=logo-line-after><i></i></span></a></div><p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p></div><div class=site-nav-right><div class="toggle popup-trigger" style=opacity:1;top:0><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class=site-nav><ul id=menu class=menu><li class=menu-item><a href=/ rel=section><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class=menu-item><a href=/post rel=section><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class=menu-item><a href=/about.html rel=section><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于我</a></li><li class=menu-item><a href=/404.html rel=section><i class="menu-item-icon fa fa-fw fa-heartbeat"></i><br>公益404</a></li><li class="menu-item menu-item-search"><a href=javascript:; class=popup-trigger><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class=site-search><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class=search-icon><i class="fa fa-search"></i></span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span><div class=local-search-input-wrapper><input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off></div></div><div id=local-search-result></div></div></div></nav></div></header><main id=main class=main><div class=main-inner><div class=content-wrap><div id=content class=content><section id=posts class=posts-expand><article class="post post-type-normal" itemscope itemtype=http://schema.org/Article><header class=post-header><h1 class=post-title itemprop="name headline" style=font-weight:700><a class=post-title-link href=https://www.etaon.top/2021/10/15/awsinfra02.html itemprop=url>AWS-案例分析02（DX&BGP）</a></h1></header><div class=post-body itemprop=articleBody><h2 id=假设>假设：</h2><p>您的公司已设置AWS Direct Connect以将本地连接到Amazon VPC实例。</p><p>两个直接连接在两个不同的位置终止直接连接位置。您正在本地使用两个路由器，R1和R2（每个直接连接一个）。R1和R2它们之间的没有连通性。两个路由器通过BGP向VGW播发相同的路由。每个路由器上都有一个有状态防火墙。现在的情况是路由器丢弃来自专有网络的部分流量。</p><p>应该在本地采取什么措施来解决此问题？</p><p>考虑使用BGP属性：AS_Path，Local_Pref和MED（Multi_Exit_Disc）</p><h2 id=网络拓扑>网络拓扑</h2><p><img src="https://img-blog.csdnimg.cn/0e4e1c0b2b2a4e50829caa91ad7183ce.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center" alt=在这里插入图片描述></p><h2 id=设计需要考虑的事项>设计需要考虑的事项</h2><ol><li>有状态的防火墙：这就要求在设计上对流量的主用在同一链路进出，在本案例中要不考虑使用R1-DX路径，要不考虑R2-DX路径</li><li>路由选择：在本案例中需要在本地路由器上做配置，那么要影响公布给VPC的路由路径</li></ol><h2 id=bgp属性分析>BGP属性分析</h2><h3 id=bgp-路径属性>BGP 路径属性</h3><p>路径属性是已公布的BGP路由的一个特点。除了提供基本路由功能的必须的信息，路径属性允许BGP设置和互通路由策略。
+每一个路径属性可能是下面四种中的一种：</p><ul><li>公认必选</li><li>公认自选</li><li>任选可透明传送</li><li>任选非可透明传送</li></ul><blockquote><p>公认属性可以是强制性的，意味着所有的BGP Update 消息都要包括该属性，该属性也可以是任选的，也就是说在规定的更新消息中既可以包括它也可以不包括它。</p></blockquote><blockquote><p>如果一个任选属性是可传递的，即使BGP过程不支持该属性，它也应当接受包含该属性的路由并且把这个路径传送它的对端。</p></blockquote><blockquote><p>如果一个任选属性是不可传递的，不识别该属性的 BGP 过程可以忽略包含这个属性的Update 消息并且不向它的对端公布这条路径。</p></blockquote><p><strong>主要的属性及类别</strong></p><table><thead><tr><th>属性</th><th>类别</th></tr></thead><tbody><tr><td>ORIGIN</td><td>公认必选</td></tr><tr><td>AS_PATH</td><td>公认必选</td></tr><tr><td>NEXT_HOP</td><td>公认必选</td></tr><tr><td>LOCAL_PREF</td><td>公认自选</td></tr><tr><td>ATOMIC_AFFREGATE</td><td>公认自选</td></tr><tr><td>AGGREGATOR</td><td>任选可透明传送</td></tr><tr><td>COMMUNITY</td><td>任选可透明传送</td></tr><tr><td>MULTI_EXIT_DISC（MED）</td><td>任选非可透明传送</td></tr><tr><td>ORIGINATOR_ID</td><td>任选非可透明传送</td></tr><tr><td>CLUSTER_LIST</td><td>任选非可透明传送</td></tr></tbody></table><h3 id=选路的准则>选路的准则</h3><ol><li>首选具有最高管理权值的路由。该功能是Cisco特有的。</li><li>如果权值相同，首选具有最高LOCAL_PREF值的路由。</li><li>如果LOCAL_PREF值相同，首选逻辑上在该路由器上发起的路由。也就是说，首选从同一个路由器上的IGP学习到的路由。</li><li>如果 LOCALPREF 值相同，而且没有逻辑上发起的路由，首选具有最短 AS_PATH的路由。</li><li>如果AS_PATH长度相同，首选具有最低原码（ORIGIN CODE）的路由。IGP低于EGP，EGP低于Incomplete。</li><li>如果源代码相同，首选具有最低 MULTI_EXIT_DISC 值的路由。只有当要考虑的所有路由的AS号都相同时，才会进行此项比较。</li><li>如果MED相同，在EBGP路由和联盟 EBGP路由中，首选EBGP路由，在联盟 EBGP路由和IBGP路由中首选联盟EBGP路由。</li><li>如果路由相同，首选到BGP下一跳最短的路径。这是一条到下一跳路由器的具有最低IGP度量的路由。</li><li>如果路由相同，它们来自相同的相邻AS并且通过maximum-paths命令使BGP多条路径可用，那么将所有开销相同的路由安装到Loc-RIB中。</li><li>如果多条路径不可用，首选具有最低BGP路由器ID的路由。</li></ol><p>本案例中，我们需要考虑Origin、AS_Path、LOCAL_PREF和MULTI_EXIT_DISC（MED），其选路优先级为LOCAL_PREF>AS_Path>MULTI_EXIT_DISC（MED）。</p><h3 id=1-origin-属性>1. ORIGIN 属性</h3><p>ORIGIN是一个公认必选的属性，它明确了路由更新消息的来源。当BGP有多条路由时，它会将ORIGIN当作一个决定较优路由的因素。
+它规定了下面几种源：</p><ul><li><strong>IGP</strong>&ndash;从发起者AS的一个内部协议可以学习到网络层可到达信息（NLRI）。一个IGP源会得到ORIGIN值中最佳的选项。如果BGP路由是从IGP路由表通过 network 命令学到的</li><li><strong>EGP</strong>&ndash;NLRI是从EGP学习到的。相对于IGP，EGP是第二选择。</li><li><strong>Incomplete</strong>&ndash;NLRI是通过其他手段学习到的。Incomplete 是ORIGIN 值的最低的选择。<em>Incomplete 并不代表路由在任何情况下都有故障</em>，只代表决定路由来源的信息不完整。
 BGP通过再分发学习到的路由会携带不完整的源属性，因为在这种情况下无法决定路由的初始源。
-如在使用MED属性后，看到的bgp的Origin属性就是Incomplete：</li>
-</ul>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>Innsbruck#show ip bgp 172.16.0.0
-BGP routing table entry for 172.16.0.0/16,version 10
-Paths:(2 available,best #2)
-  Advertised to non peer-group peers:
-    10.50.250.1 10.75.100.1
-  30
-    172.30.255.254 from 172.30.255.254(172.30.255.254)
-      Origin incomplete, metric 200, localpref 100, valid, external,ref 2
-  30
-    10.100.65.1 from 10.100.65.1 (10.100.65.1)
-      Origin incomplete,metric 100,localpref 100,valid, internal, best,ref 2
-</code></pre></div><h3 id=2-as_path-属性>2. AS_PATH 属性</h3>
-<p>AS_PATH是一个公认必选（Well-Known Mandatory）属性，它用AS号的顺序来描述 AS间的路径或者到NLRI所明确的目的地的路由。</p>
-<p>运行BGP的路由器在BGP路由表发现同一条路由信息如果有多个路径，会选择AS_PATH属性较短的路径。</p>
-<blockquote>
-<p>当一个运行BGP的路由器发起一条路由（它在自己的AS域内公布一个有关目的地的NLRI），它会将自己的AS号加到AS_PATH中。</p>
-<p>而后续的运行BGP的路由器向外部的对端公布路由，它们将自己的AS号附加到AS_PATH中。</p>
-<p>结果是AS_PATH可以描述所有它经过的自治系统，以最近的AS开始，以发起者的AS结束。</p>
-<p><code>注意，只有将Update 消息发送给在另外一个AS域内的邻居时，BGP路由器才将它的AS号加到AS_PATH中。</code>
-也就是说，只有在两个EBGP对等实体之间公布路由时，AS号才被附加到AS_PATH中。如果路由是在IBGP对等实体之间公布（对等实体在相同的自治系统内）不加入任何AS号。</p>
-</blockquote>
-<p><strong>AS_PATH Prepend</strong>
+如在使用MED属性后，看到的bgp的Origin属性就是Incomplete：</li></ul><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>Innsbruck#show ip bgp 172.16.0.0
+</span></span><span style=display:flex><span>BGP routing table entry for 172.16.0.0/16,version 10
+</span></span><span style=display:flex><span>Paths:(2 available,best #2)
+</span></span><span style=display:flex><span>  Advertised to non peer-group peers:
+</span></span><span style=display:flex><span>    10.50.250.1 10.75.100.1
+</span></span><span style=display:flex><span>  30
+</span></span><span style=display:flex><span>    172.30.255.254 from 172.30.255.254(172.30.255.254)
+</span></span><span style=display:flex><span>      Origin incomplete, metric 200, localpref 100, valid, external,ref 2
+</span></span><span style=display:flex><span>  30
+</span></span><span style=display:flex><span>    10.100.65.1 from 10.100.65.1 (10.100.65.1)
+</span></span><span style=display:flex><span>      Origin incomplete,metric 100,localpref 100,valid, internal, best,ref 2
+</span></span></code></pre></div><h3 id=2-as_path-属性>2. AS_PATH 属性</h3><p>AS_PATH是一个公认必选（Well-Known Mandatory）属性，它用AS号的顺序来描述 AS间的路径或者到NLRI所明确的目的地的路由。</p><p>运行BGP的路由器在BGP路由表发现同一条路由信息如果有多个路径，会选择AS_PATH属性较短的路径。</p><blockquote><p>当一个运行BGP的路由器发起一条路由（它在自己的AS域内公布一个有关目的地的NLRI），它会将自己的AS号加到AS_PATH中。</p><p>而后续的运行BGP的路由器向外部的对端公布路由，它们将自己的AS号附加到AS_PATH中。</p><p>结果是AS_PATH可以描述所有它经过的自治系统，以最近的AS开始，以发起者的AS结束。</p><p><code>注意，只有将Update 消息发送给在另外一个AS域内的邻居时，BGP路由器才将它的AS号加到AS_PATH中。</code>
+也就是说，只有在两个EBGP对等实体之间公布路由时，AS号才被附加到AS_PATH中。如果路由是在IBGP对等实体之间公布（对等实体在相同的自治系统内）不加入任何AS号。</p></blockquote><p><strong>AS_PATH Prepend</strong>
 BGP可以通过改变AS_PATH来影响进站流量，而使用的增加出站AS_Path 的ID方式达到目的。如下面的情况
 <img src="https://img-blog.csdnimg.cn/1e0cfbac458f413c9295f9c96eccefce.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center" alt=在这里插入图片描述>
-NAP到AS 100的路由通常应该是NAP->AS 300->AS 100。</p>
-<p>如果我们出于某种原因（AS 200提供更大带宽，Cost更便宜等），我们可以使用以下配置将AS 100 对201.126.0.0/16出站AS_PATH进行修改</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>router bgp 100
-no synchronization
-neighbor 10.100.82.1 remote-as 200
-neighbor 10.100.83.1 remote-as 300
-Loopbacko neighbor 10.100.83.1 route-map PATH out
-....
-no auto-summary
-！
-access-list 3 permit 201.126.0.0
-！
-route-map PATH permit 10
-match ip address 3
-set as-path prepend 100 100
-！
-route-map PATH permit 20
-</code></pre></div><p>修改之后
+NAP到AS 100的路由通常应该是NAP->AS 300->AS 100。</p><p>如果我们出于某种原因（AS 200提供更大带宽，Cost更便宜等），我们可以使用以下配置将AS 100 对201.126.0.0/16出站AS_PATH进行修改</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>router bgp 100
+</span></span><span style=display:flex><span>no synchronization
+</span></span><span style=display:flex><span>neighbor 10.100.82.1 remote-as 200
+</span></span><span style=display:flex><span>neighbor 10.100.83.1 remote-as 300
+</span></span><span style=display:flex><span>Loopbacko neighbor 10.100.83.1 route-map PATH out
+</span></span><span style=display:flex><span>....
+</span></span><span style=display:flex><span>no auto-summary
+</span></span><span style=display:flex><span>！
+</span></span><span style=display:flex><span>access-list 3 permit 201.126.0.0
+</span></span><span style=display:flex><span>！
+</span></span><span style=display:flex><span>route-map PATH permit 10
+</span></span><span style=display:flex><span>match ip address 3
+</span></span><span style=display:flex><span>set as-path prepend 100 100
+</span></span><span style=display:flex><span>！
+</span></span><span style=display:flex><span>route-map PATH permit 20
+</span></span></code></pre></div><p>修改之后
 <img src="https://img-blog.csdnimg.cn/01d2d26e5dc84a768fddaaf9d1638b78.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center" alt=在这里插入图片描述>
-NAP到AS100 的两条路径的AS_PATH分别为：500-200-100和300-100-100-100，NAP会选择前者。</p>
-<h3 id=3-local_pref-属性>3. LOCAL_PREF 属性</h3>
-<p>LOCAL_PREF是本地首选项的简写。</p>
-<p>这个公认自选属性只用在<strong>内部网关对端之间</strong>的更新消息中；它<strong>不会传递给其他的自治系统</strong>。</p>
-<p>该属性用于对一条已公布路由的BGP路由器的首选项等级进行交流。如果一个内部运行BGP的路由器收到了到一个目的地的多条路由，它将这些路由的LOCAL_PREF属性进行比较。选择具有最高的LOCAL_PREF的路由。</p>
-<p>下图显示了如何使用LOCAL_PREF属性。
-<img src="https://img-blog.csdnimg.cn/aaaf1641abb849fab552a74b60c82f38.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center" alt=在这里插入图片描述></p>
-<p>AS2101从两个ISP获得路由，需要把ISP1为首选服务提供商。
+NAP到AS100 的两条路径的AS_PATH分别为：500-200-100和300-100-100-100，NAP会选择前者。</p><h3 id=3-local_pref-属性>3. LOCAL_PREF 属性</h3><p>LOCAL_PREF是本地首选项的简写。</p><p>这个公认自选属性只用在<strong>内部网关对端之间</strong>的更新消息中；它<strong>不会传递给其他的自治系统</strong>。</p><p>该属性用于对一条已公布路由的BGP路由器的首选项等级进行交流。如果一个内部运行BGP的路由器收到了到一个目的地的多条路由，它将这些路由的LOCAL_PREF属性进行比较。选择具有最高的LOCAL_PREF的路由。</p><p>下图显示了如何使用LOCAL_PREF属性。
+<img src="https://img-blog.csdnimg.cn/aaaf1641abb849fab552a74b60c82f38.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center" alt=在这里插入图片描述></p><p>AS2101从两个ISP获得路由，需要把ISP1为首选服务提供商。
 配置连接到ISP1路由器宣告路由的LOCAL_PREF为200，连接到ISP2的路由器宣告的路由的LOCAL_PREF为100（默认值），其值为4字节的数，0~4294967295。
-所有的内部对等实体，包括连接到ISP2的路由器，对于同一目的，就会更优先选用从ISP1学到的路由。</p>
-<p>我们可以看到，利用LOCAL_PREF属性可以影响离开AS的业务流量，限制就是仅仅在IGBP间作用。</p>
-<h3 id=4-multi_exit_disc-属性>4. MULTI_EXIT_DISC 属性</h3>
-<p>上面提到的LOCAL_PREF 属性只影响离开 AS 域的业务量。如果想影响入业务量，应该使用MULTI_EXIT_DISC 属性，它的简写是MED。</p>
-<p>这个任选非传递属性于EBGP的Update 消息中携带，它允许一个AS将它首选的入口点通知另外一个AS。如果其他的参数都相同，收到到同一个目的地的多条路由的AS将这些路由的MED进行比较。</p>
-<p>与选用最高LOCAL_PREF值的路由不同，具有最低MED值的路由是首选。这是因为将MED看作是一个度量，并且最低的度量（最短的距离）是首选。</p>
-<p>如下图AS 525偏向于入业务量使用DS-3链路，而DS-1链路只用于备用。
-<img src="https://img-blog.csdnimg.cn/29977c09d4c04940b3bb9980c8daff0d.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center" alt=在这里插入图片描述></p>
-<p>MED DS-3传送的更新消息中，MED被置为0（缺省值），而通过DS-1传送的更新消息中，MED被置为100。
-如两条路由没有其他不同的选项，ISP就会优先选择具有较低MED值的DS-3链路。</p>
-<p>配置参考：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback> AS 525 R2:
-router bgp 525
-...
-neighbor 10.100.83.1 remote-as 300
-...
-neighbor 10.100.83.1 route-map MED out
-!
-access-list 1 permit 206.25.160.0/19
-
-route-map MED permit 10
-match ip address 1
-set metric 100
-!
-route-map MED permit
-</code></pre></div><p>注意，在ISP内，路由器之间使用IBGP。在内部的对等实体之间传递来自 AS 525的MED，从而使它们都知道优选的路由。
-但是，<strong>不会在接收AS范围之外的地方传递MED</strong>。</p>
-<p>例如，如果ISP向另外一个AS公布206.25.160.0/19，它不会将发起AS所置的MED传递给那个AS。这也就是说，<strong>MED只是在直接相连的自治系统间影响业务量</strong>。</p>
-<p>为了影响相邻AS以外的路由选项，就像前面所描述的，必须对AS_PATH属性进行处理。</p>
-<p>另外，如果到同一个目的地的两条路由来自两个不同的自治系统，也不进行 MED值的比较。
-例如，如果上图中的ISP不仅从AS 525收到关于206.25.160.0/19的路由宣告，而且还从另外一个AS收到关于它的路由宣告，那么来自不同的自治系统的MED不会进行比较。</p>
-<p>MED只对单一的AS有意义，当该AS有多个入口点时，它用来说明首选项的等级。</p>
-<h2 id=案例详细设计>案例详细设计</h2>
-<ol>
-<li>On premise的两台路由器之间没有连接，不能建立IBGP连接，所以不能选择Local_pref属性；</li>
-<li>可以选择<strong>AS_PATH</strong>属性，参考前面<strong>AS_PATH Prepend</strong>的例子。可以将R1的出口AS_Path设置增加AS ID，以使得R2为VGW的首选。</li>
-<li>可以使用 <strong>MULTI_EXIT_DISC</strong> 属性，如果选择R2作为首选，可以将R1对VGW发布的本地路由的MED值改为100。</li>
-</ol>
-</div>
-<footer class=post-footer>
-<div id=wcomments></div>
-</footer>
-</article>
-</section>
-</div>
-</div>
-<div class=sidebar-toggle>
-<div class=sidebar-toggle-line-wrap>
-<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+所有的内部对等实体，包括连接到ISP2的路由器，对于同一目的，就会更优先选用从ISP1学到的路由。</p><p>我们可以看到，利用LOCAL_PREF属性可以影响离开AS的业务流量，限制就是仅仅在IGBP间作用。</p><h3 id=4-multi_exit_disc-属性>4. MULTI_EXIT_DISC 属性</h3><p>上面提到的LOCAL_PREF 属性只影响离开 AS 域的业务量。如果想影响入业务量，应该使用MULTI_EXIT_DISC 属性，它的简写是MED。</p><p>这个任选非传递属性于EBGP的Update 消息中携带，它允许一个AS将它首选的入口点通知另外一个AS。如果其他的参数都相同，收到到同一个目的地的多条路由的AS将这些路由的MED进行比较。</p><p>与选用最高LOCAL_PREF值的路由不同，具有最低MED值的路由是首选。这是因为将MED看作是一个度量，并且最低的度量（最短的距离）是首选。</p><p>如下图AS 525偏向于入业务量使用DS-3链路，而DS-1链路只用于备用。
+<img src="https://img-blog.csdnimg.cn/29977c09d4c04940b3bb9980c8daff0d.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center" alt=在这里插入图片描述></p><p>MED DS-3传送的更新消息中，MED被置为0（缺省值），而通过DS-1传送的更新消息中，MED被置为100。
+如两条路由没有其他不同的选项，ISP就会优先选择具有较低MED值的DS-3链路。</p><p>配置参考：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span> AS 525 R2:
+</span></span><span style=display:flex><span>router bgp 525
+</span></span><span style=display:flex><span>...
+</span></span><span style=display:flex><span>neighbor 10.100.83.1 remote-as 300
+</span></span><span style=display:flex><span>...
+</span></span><span style=display:flex><span>neighbor 10.100.83.1 route-map MED out
+</span></span><span style=display:flex><span>!
+</span></span><span style=display:flex><span>access-list 1 permit 206.25.160.0/19
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>route-map MED permit 10
+</span></span><span style=display:flex><span>match ip address 1
+</span></span><span style=display:flex><span>set metric 100
+</span></span><span style=display:flex><span>!
+</span></span><span style=display:flex><span>route-map MED permit
+</span></span></code></pre></div><p>注意，在ISP内，路由器之间使用IBGP。在内部的对等实体之间传递来自 AS 525的MED，从而使它们都知道优选的路由。
+但是，<strong>不会在接收AS范围之外的地方传递MED</strong>。</p><p>例如，如果ISP向另外一个AS公布206.25.160.0/19，它不会将发起AS所置的MED传递给那个AS。这也就是说，<strong>MED只是在直接相连的自治系统间影响业务量</strong>。</p><p>为了影响相邻AS以外的路由选项，就像前面所描述的，必须对AS_PATH属性进行处理。</p><p>另外，如果到同一个目的地的两条路由来自两个不同的自治系统，也不进行 MED值的比较。
+例如，如果上图中的ISP不仅从AS 525收到关于206.25.160.0/19的路由宣告，而且还从另外一个AS收到关于它的路由宣告，那么来自不同的自治系统的MED不会进行比较。</p><p>MED只对单一的AS有意义，当该AS有多个入口点时，它用来说明首选项的等级。</p><h2 id=案例详细设计>案例详细设计</h2><ol><li>On premise的两台路由器之间没有连接，不能建立IBGP连接，所以不能选择Local_pref属性；</li><li>可以选择<strong>AS_PATH</strong>属性，参考前面<strong>AS_PATH Prepend</strong>的例子。可以将R1的出口AS_Path设置增加AS ID，以使得R2为VGW的首选。</li><li>可以使用 <strong>MULTI_EXIT_DISC</strong> 属性，如果选择R2作为首选，可以将R1对VGW发布的本地路由的MED值改为100。</li></ol></div><footer class=post-footer><div id=wcomments></div></footer></article></section></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
 <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-</div>
-</div>
-<aside id=sidebar class=sidebar>
-<div class=sidebar-inner>
-<ul class="sidebar-nav motion-element">
-<li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>
-文章目录
-</li>
-<li class=sidebar-nav-overview data-target=site-overview>
-站点概览
-</li>
-</ul>
-<section class="site-overview sidebar-panel">
-<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
-<img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon>
-<p class=site-author-name itemprop=name>Etaon</p>
-<p class="site-description motion-element" itemprop=description>
-Kepp Going!
-</p>
-</div>
-<nav class="site-state motion-element">
-<div class="site-state-item site-state-posts">
-<a href=/post/>
-<span class=site-state-item-count>61</span>
-<span class=site-state-item-name>日志</span>
-</a>
-</div>
-<div class="site-state-item site-state-categories">
-<a href=/categories/>
-<span class=site-state-item-count>13</span>
-<span class=site-state-item-name>分类</span>
-</a>
-</div>
-<div class="site-state-item site-state-tags">
-<a href=/tags/>
-<span class=site-state-item-count>34</span>
-<span class=site-state-item-name>标签</span>
-</a>
-</div>
-</nav>
-<div class="links-of-author motion-element">
-<span class=links-of-author-item>
-<a href=https://github.com/etaon target=_blank title=GitHub>
-<i class="fa fa-fw fa-github"></i>
-GitHub
-</a>
-</span>
-<span class=links-of-author-item>
-<a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN>
-<i class="fa fa-fw fa-CSDN"></i>
-CSDN
-</a>
-</span>
-</div>
-<div class="links-of-blogroll motion-element links-of-blogroll-inline">
-<div class=links-of-blogroll-title>
-<i class="fa fa-fw fa-globe"></i>
-友情链接
-</div>
-<ul class=links-of-blogroll-list>
-<li class=links-of-blogroll-item>
-<a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a>
-</li>
-</ul>
-</div>
-<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
-<div class=tagcloud-of-blogroll-title>
-<i class="fa fa-fw fa-tags"></i>
-标签云
-</div>
-<ul class=tagcloud-of-blogroll-list>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mysql>Mysql</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/aws>Aws</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/dql>Dql</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/hadoop>Hadoop</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/redis>Redis</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/cicd>Cicd</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/git>Git</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/istio>Istio</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mongodb>Mongodb</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/azure>Azure</a>
-</li>
-</ul>
-</div>
-</section>
-<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-<div class=post-toc>
-<div class=post-toc-content><nav id=TableOfContents>
-<ul>
-<li><a href=#假设>假设：</a></li>
-<li><a href=#网络拓扑>网络拓扑</a></li>
-<li><a href=#设计需要考虑的事项>设计需要考虑的事项</a></li>
-<li><a href=#bgp属性分析>BGP属性分析</a>
-<ul>
-<li><a href=#bgp-路径属性>BGP 路径属性</a></li>
-<li><a href=#选路的准则>选路的准则</a></li>
-<li><a href=#1-origin-属性>1. ORIGIN 属性</a></li>
-<li><a href=#2-as_path-属性>2. AS_PATH 属性</a></li>
-<li><a href=#3-local_pref-属性>3. LOCAL_PREF 属性</a></li>
-<li><a href=#4-multi_exit_disc-属性>4. MULTI_EXIT_DISC 属性</a></li>
-</ul>
-</li>
-<li><a href=#案例详细设计>案例详细设计</a></li>
-</ul>
-</nav></div>
-</div>
-</section>
-</div>
-</aside>
-</div>
-</main>
-<footer id=footer class=footer>
-<div class=footer-inner>
-<div class=copyright>
-<span class=copyright-year>
-&copy; 2010 - 2022
-</span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id=sidebar class=sidebar><div class=sidebar-inner><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>文章目录</li><li class=sidebar-nav-overview data-target=site-overview>站点概览</li></ul><section class="site-overview sidebar-panel"><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon><p class=site-author-name itemprop=name>Etaon</p><p class="site-description motion-element" itemprop=description>Kepp Going!</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=/post/><span class=site-state-item-count>61</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>13</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>34</span>
+<span class=site-state-item-name>标签</span></a></div></nav><div class="links-of-author motion-element"><span class=links-of-author-item><a href=https://github.com/etaon target=_blank title=GitHub><i class="fa fa-fw fa-github"></i>
+GitHub</a></span>
+<span class=links-of-author-item><a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN><i class="fa fa-fw fa-CSDN"></i>
+CSDN</a></span></div><div class="links-of-blogroll motion-element links-of-blogroll-inline"><div class=links-of-blogroll-title><i class="fa fa-fw fa-globe"></i>
+友情链接</div><ul class=links-of-blogroll-list><li class=links-of-blogroll-item><a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a></li><li class=links-of-blogroll-item><a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a></li><li class=links-of-blogroll-item><a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a></li><li class=links-of-blogroll-item><a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a></li></ul></div><div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline"><div class=tagcloud-of-blogroll-title><i class="fa fa-fw fa-tags"></i>
+标签云</div><ul class=tagcloud-of-blogroll-list><li class=tagcloud-of-blogroll-item><a href=/tags/mysql>Mysql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/aws>Aws</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/dql>Dql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/hadoop>Hadoop</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/redis>Redis</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/cicd>Cicd</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/git>Git</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/istio>Istio</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/mongodb>Mongodb</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/azure>Azure</a></li></ul></div></section><section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active"><div class=post-toc><div class=post-toc-content><nav id=TableOfContents><ul><li><a href=#假设>假设：</a></li><li><a href=#网络拓扑>网络拓扑</a></li><li><a href=#设计需要考虑的事项>设计需要考虑的事项</a></li><li><a href=#bgp属性分析>BGP属性分析</a><ul><li><a href=#bgp-路径属性>BGP 路径属性</a></li><li><a href=#选路的准则>选路的准则</a></li><li><a href=#1-origin-属性>1. ORIGIN 属性</a></li><li><a href=#2-as_path-属性>2. AS_PATH 属性</a></li><li><a href=#3-local_pref-属性>3. LOCAL_PREF 属性</a></li><li><a href=#4-multi_exit_disc-属性>4. MULTI_EXIT_DISC 属性</a></li></ul></li><li><a href=#案例详细设计>案例详细设计</a></li></ul></nav></div></div></section></div></aside></div></main><footer id=footer class=footer><div class=footer-inner><div class=copyright><span class=copyright-year>&copy; 2010 - 2022</span>
 <span class=with-love><i class="fa fa-heart"></i></span>
-<span class=copyright-author>路无止境！</span>
-</div>
-<div class=powered-info>
-<span class=powered-by>
-Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.91.2</a>
-</span>
+<span class=copyright-author>路无止境！</span></div><div class=powered-info><span class=powered-by>Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.101.0</a></span>
 <span class=separator-line>/</span>
-<span class=theme-info>
-Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
-</a>
-</span>
-</div>
-<div class=vistor-info>
-<script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
-<span class=site-uv>
-<i class="fa fa-user"></i>
-<span class=busuanzi-value id=busuanzi_value_site_uv></span>
-</span>
+<span class=theme-info>Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank>NexT</a></span></div><div class=vistor-info><script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<span class=site-uv><i class="fa fa-user"></i>
+<span class=busuanzi-value id=busuanzi_value_site_uv></span></span>
 <span class=separator-line>/</span>
-<span class=site-pv>
-<i class="fa fa-eye"></i>
-<span class=busuanzi-value id=busuanzi_value_site_pv></span>
-</span>
-</div>
-<div class=license-info>
-<span class=storage-info>
-Storage by
-<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a>
-</span>
+<span class=site-pv><i class="fa fa-eye"></i>
+<span class=busuanzi-value id=busuanzi_value_site_pv></span></span></div><div class=license-info><span class=storage-info>Storage by
+<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a></span>
 <span class=separator-line>/</span>
-<span class=license-num>
-<a href target=_blank></a>
-</span>
-</div>
-</div>
-</footer>
-<div class=back-to-top>
-<i class="fa fa-arrow-up"></i>
-<span id=scrollpercent><span>0</span>%</span>
-</div>
-</div>
-<script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
+<span class=license-num><a href target=_blank></a></span></div></div></footer><div class=back-to-top><i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span></div></div><script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
 <script type=text/javascript src=/js/search.js></script>
 <script type=text/javascript src=/js/affix.js></script>
 <script type=text/javascript src=/js/scrollspy.js></script>
-<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.main').css('padding-bottom'),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}}),$(document).on('affixed.bs.affix',function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var b=$('.header-inner').height()+10,c,d,a,e;$('#sidebar').css({'margin-top':b}).show(),c=parseInt($('#sidebar').css('margin-top')),d=parseInt($('.sidebar-inner').css('height')),a=c+d,e=$('.content-wrap').height(),e<a&&$('.content-wrap').css('min-height',a),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
-<script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
-<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
-<script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+'//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js',function(){new Waline({el:'#wcomments',visitor:!0,avatar:'wavatar',avatarCDN:'https://sdn.geekzu.org/avatar/',avatarForce:!1,wordLimit:'200',placeholder:' 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ',requiredFields:['nick','mail'],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$('#wcomments').html('抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。')})</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type=text/javascript>function detectIE(){var e=window.navigator.userAgent,t=e.indexOf("MSIE "),n=e.indexOf("Trident/"),s=e.indexOf("Edge/");return t>0||n>0||s>0?-1:1}function getCntViewHeight(){var t=$("#content").height(),e=$(window).height(),n=t>e?t-e:$(document).height()-e;return n}function getScrollbarWidth(){var e=$("<div />").addClass("scrollbar-measure").prependTo("body"),t=e[0],n=t.offsetWidth-t.clientWidth;return e.remove(),n}function registerBackTop(){var t=50,e=$(".back-to-top");$(window).on("scroll",function(){e.toggleClass("back-to-top-on",window.pageYOffset>t);var s=$(window).scrollTop(),o=getCntViewHeight(),i=s/o,n=Math.round(i*100),a=n>100?100:n;$("#scrollpercent>span").html(a)}),e.on("click",function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var e=".post-toc",s=$(e),t=".active-current";s.on("activate.bs.scrollspy",function(){var t=$(e+" .active").last();n(),t.addClass("active-current")}).on("clear.bs.scrollspy",n),$("body").scrollspy({target:e});function n(){$(e+" "+t).removeClass(t.substring(1))}}function initAffix(){var e=$(".header-inner").height(),t=parseInt($(".main").css("padding-bottom"),10),n=e+10;$(".sidebar-inner").affix({offset:{top:n,bottom:t}}),$(document).on("affixed.bs.affix",function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){$(window).on("resize",function(){e&&clearTimeout(e),e=setTimeout(function(){var e=document.body.clientHeight-100;updateTOCHeight(e)},0)}),updateTOCHeight(document.body.clientHeight-100);var e,t=getScrollbarWidth();$(".post-toc").css("width","calc(100% + "+t+"px)")}function updateTOCHeight(e){e=e||"auto",$(".post-toc").css("max-height",e)}$(function(){var e,t,n,s,o=$(".header-inner").height()+10;$("#sidebar").css({"margin-top":o}).show(),t=parseInt($("#sidebar").css("margin-top")),n=parseInt($(".sidebar-inner").css("height")),e=t+n,s=$(".content-wrap").height(),s<e&&$(".content-wrap").css("min-height",e),$(".site-nav-toggle").on("click",function(){var e=$(".site-nav"),o=$(".toggle"),t="site-nav-on",i="toggle-close",n=e.hasClass(t),a=n?"slideUp":"slideDown",s=n?"removeClass":"addClass";e.stop()[a]("normal",function(){e[s](t),o[s](i)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$(".sidebar-nav-toc").click(function(){$(this).addClass("sidebar-nav-active"),$(this).next().removeClass("sidebar-nav-active"),$("."+$(this).next().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)}),$(".sidebar-nav-overview").click(function(){$(this).addClass("sidebar-nav-active"),$(this).prev().removeClass("sidebar-nav-active"),$("."+$(this).prev().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)})})</script><script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$(".post-body").viewer()})</script><script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+"//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js",function(){new Waline({el:"#wcomments",visitor:!0,avatar:"wavatar",avatarCDN:"https://sdn.geekzu.org/avatar/",avatarForce:!1,wordLimit:"200",placeholder:" 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ",requiredFields:["nick","mail"],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$("#wcomments").html("抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。")})</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
 <script type=text/javascript src="//s7.addthis.com/js/300/addthis_widget.js#pubid=Your%20AddthisId"></script>
-<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
-</body>
-</html>
+<script>(function(){var t,e=document.createElement("script"),n=window.location.protocol.split(":")[0];n==="https"?e.src="https://zz.bdstatic.com/linksubmit/push.js":e.src="http://push.zhanzhang.baidu.com/push.js",t=document.getElementsByTagName("script")[0],t.parentNode.insertBefore(e,t)})()</script></body></html>

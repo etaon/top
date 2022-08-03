@@ -1,505 +1,67 @@
-<!doctype html><html lang=zh-cn dir=content/zh-cn>
-<head>
-<meta charset=utf-8>
-<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
-<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
-<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
-<title> Istio-概念 - 路无止境！ </title>
-<meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云">
-<meta name=author content="Etaon">
-<meta property="og:title" content="Istio-概念">
-<meta property="og:site_name" content="路无止境！">
-<meta property="og:image" content="/img/author.jpg">
-<meta name=title content="Istio-概念 - 路无止境！">
-<meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。">
-<link rel="shortcut icon" href=/img/favicon.ico>
-<link rel=apple-touch-icon href=/img/apple-touch-icon.png>
-<link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png>
-<link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css>
-<link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet>
-<link href=/css/main.css rel=stylesheet type=text/css>
-<link href=/css/syntax.css rel=stylesheet type=text/css>
-</head>
-<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
-<div class="container one-collumn sidebar-position-left page-home">
-<div class=headband></div>
-<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
-<div class=header-inner> <div class=site-brand-container>
-<div class=site-nav-toggle>
-<div class=toggle role=button style=opacity:1;top:0>
+<!doctype html><html lang=zh-cn dir=content/zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=content-security-policy content="upgrade-insecure-requests"><title>Istio-概念 - 路无止境！</title><meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云"><meta name=author content="Etaon"><meta property="og:title" content="Istio-概念"><meta property="og:site_name" content="路无止境！"><meta property="og:image" content="/img/author.jpg"><meta name=title content="Istio-概念 - 路无止境！"><meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。"><link rel="shortcut icon" href=/img/favicon.ico><link rel=apple-touch-icon href=/img/apple-touch-icon.png><link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png><link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css><link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet><link href=/css/main.css rel=stylesheet type=text/css><link href=/css/syntax.css rel=stylesheet type=text/css></head><body itemscope itemtype=http://schema.org/WebPage lang=zh-hans><div class="container one-collumn sidebar-position-left page-home"><div class=headband></div><header id=header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle role=button style=opacity:1;top:0><span class=toggle-line></span>
 <span class=toggle-line></span>
-<span class=toggle-line></span>
-<span class=toggle-line></span>
-</div>
-</div>
-<div class=site-meta>
-<div class=multi-lang-switch>
-<i class="fa fa-fw fa-language" style=margin-right:5px></i>
-<a class=lang-link id=zh-cn href=#>中文</a>
-</div>
-<div class=custom-logo-site-title>
-<a href=/ class=brand rel=start>
-<span class=logo-line-before><i></i></span>
+<span class=toggle-line></span></div></div><div class=site-meta><div class=multi-lang-switch><i class="fa fa-fw fa-language" style=margin-right:5px></i>
+<a class=lang-link id=zh-cn href=#>中文</a></div><div class=custom-logo-site-title><a href=/ class=brand rel=start><span class=logo-line-before><i></i></span>
 <span class=site-title>路无止境！</span>
-<span class=logo-line-after><i></i></span>
-</a>
-</div>
-<p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p>
-</div>
-<div class=site-nav-right>
-<div class="toggle popup-trigger" style=opacity:1;top:0>
-<i class="fa fa-search fa-fw fa-lg"></i>
-</div>
-</div>
-</div>
-<nav class=site-nav>
-<ul id=menu class=menu>
-<li class=menu-item>
-<a href=/ rel=section>
-<i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页
-</a>
-</li>
-<li class=menu-item>
-<a href=/post rel=section>
-<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档
-</a>
-</li>
-<li class=menu-item>
-<a href=/about.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于我
-</a>
-</li>
-<li class=menu-item>
-<a href=/404.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益404
-</a>
-</li>
-<li class="menu-item menu-item-search">
-<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> 搜索</a>
-</li>
-</ul>
-<div class=site-search>
-<div class="popup search-popup local-search-popup">
-<div class="local-search-header clearfix">
-<span class=search-icon><i class="fa fa-search"></i> </span>
-<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
-<div class=local-search-input-wrapper>
-<input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
-</div>
-</div>
-<div id=local-search-result></div>
-</div>
-</div>
-</nav>
-</div>
-</header>
-<main id=main class=main>
-<div class=main-inner>
-<div class=content-wrap>
-<div id=content class=content>
-<section id=posts class=posts-expand>
-<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
-<header class=post-header>
-<h1 class=post-title itemprop="name headline" style=font-weight:700>
-<a class=post-title-link href=https://www.etaon.link/2021/08/08/istio-basic.html itemprop=url>
-Istio-概念
-</a>
-</h1>
-</header>
-<div class=post-body itemprop=articleBody>
-<h2 id=服务网格>服务网格</h2>
-<p>服务网格用来描述组成应用程序的微服务网络以及它们之间的交互。随着服务网格的规模和复杂性不断的增长，它将会变得越来越难以理解和管理。
-其需求包括<em>服务发现</em>、<em>负载均衡</em>、<em>故障恢复</em>、<em>度量和监控</em>等。服务网格通常还有更复杂的<em>运维需求</em>，比如 A/B 测试、金丝雀发布、速率限制、访问控制和端到端认证。</p>
-<h2 id=istio-是什么>Istio 是什么</h2>
-<p>Istio 提供了对整个服务网格的行为洞察和操作控制的能力，以及一个完整的满足微服务应用各种需求的解决方案。
+<span class=logo-line-after><i></i></span></a></div><p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p></div><div class=site-nav-right><div class="toggle popup-trigger" style=opacity:1;top:0><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class=site-nav><ul id=menu class=menu><li class=menu-item><a href=/ rel=section><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class=menu-item><a href=/post rel=section><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class=menu-item><a href=/about.html rel=section><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于我</a></li><li class=menu-item><a href=/404.html rel=section><i class="menu-item-icon fa fa-fw fa-heartbeat"></i><br>公益404</a></li><li class="menu-item menu-item-search"><a href=javascript:; class=popup-trigger><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class=site-search><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class=search-icon><i class="fa fa-search"></i></span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span><div class=local-search-input-wrapper><input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off></div></div><div id=local-search-result></div></div></div></nav></div></header><main id=main class=main><div class=main-inner><div class=content-wrap><div id=content class=content><section id=posts class=posts-expand><article class="post post-type-normal" itemscope itemtype=http://schema.org/Article><header class=post-header><h1 class=post-title itemprop="name headline" style=font-weight:700><a class=post-title-link href=https://www.etaon.top/2021/08/08/istio-basic.html itemprop=url>Istio-概念</a></h1></header><div class=post-body itemprop=articleBody><h2 id=服务网格>服务网格</h2><p>服务网格用来描述组成应用程序的微服务网络以及它们之间的交互。随着服务网格的规模和复杂性不断的增长，它将会变得越来越难以理解和管理。
+其需求包括<em>服务发现</em>、<em>负载均衡</em>、<em>故障恢复</em>、<em>度量和监控</em>等。服务网格通常还有更复杂的<em>运维需求</em>，比如 A/B 测试、金丝雀发布、速率限制、访问控制和端到端认证。</p><h2 id=istio-是什么>Istio 是什么</h2><p>Istio 提供了对整个服务网格的行为洞察和操作控制的能力，以及一个完整的满足微服务应用各种需求的解决方案。
 通过负载均衡、服务间的身份验证、监控等方法，Istio 可以轻松地创建一个已经部署了服务的网络，而服务的代码只需很少更改甚至无需更改。
-通过在整个环境中部署一个特殊的 sidecar 代理为服务添加 Istio 的支持，而代理会拦截微服务之间的所有网络通信，然后使用其控制平面的功能来配置和管理 Istio。</p>
-<h3 id=核心特性>核心特性</h3>
-<h4 id=流量管理>流量管理</h4>
-<p>Istio 简单的规则配置和流量路由允许您控制服务之间的流量和 API 调用过程。Istio 简化了服务级属性（如熔断器、超时和重试）的配置，并且让它轻而易举的执行重要的任务（如 A/B 测试、金丝雀发布和按流量百分比划分的分阶段发布）。</p>
-<h4 id=安全>安全</h4>
-<p>Istio 的安全特性解放了开发人员，使其只需要专注于应用程序级别的安全。Istio 提供了底层的安全通信通道，并为大规模的服务通信管理认证、授权和加密。</p>
-<h4 id=可观察性>可观察性</h4>
-<p>Istio 健壮的追踪、监控和日志特性让您能够深入的了解服务网格部署。通过 Istio 的监控能力，可以真正的了解到服务的性能是如何影响上游和下游的；而它的定制 Dashboard 提供了对所有服务性能的可视化能力，并让您看到它如何影响其他进程。</p>
-<p>Istio 的 Mixer 组件负责策略控制和遥测数据收集。它提供了后端抽象和中介，将一部分 Istio 与后端的基础设施实现细节隔离开来，并为运维人员提供了对网格与后端基础实施之间交互的细粒度控制。</p>
-<p>所有这些特性都使您能够更有效地设置、监控和加强服务的 SLO。</p>
-<h3 id=平台支持>平台支持</h3>
-<p>Istio 独立于平台，被设计为可以在各种环境中运行，包括跨云、内部环境、Kubernetes、Mesos 等等。可以在 Kubernetes 或是装有 Consul 的 Nomad 环境上部署 Istio。
-Istio 目前支持：</p>
-<ul>
-<li>
-<pre><code>Kubernetes 上的服务部署
-</code></pre>
-</li>
-<li>
-<pre><code>基于 Consul 的服务注册
-</code></pre>
-</li>
-<li>
-<pre><code>服务运行在独立的虚拟机上
-</code></pre>
-</li>
-</ul>
-<h3 id=整合和定制>整合和定制</h3>
-<p>Istio 的策略实施组件可以扩展和定制，与现有的 ACL、日志、监控、配额、审查等解决方案集成。</p>
-<h2 id=架构>架构</h2>
-<p>Istio 服务网格从逻辑上分为数据平面和控制平面。
-<img src="https://img-blog.csdnimg.cn/1ae2e8fdfd3f4bb48877c53ad2dbe759.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p>
-<ul>
-<li>
-<p>数据平面 由一组智能代理（Envoy）组成，被部署为 Sidecar。这些代理负责协调和控制微服务之间的所有网络通信。它们还收集和报告所有网格流量的遥测数据。</p>
-</li>
-<li>
-<p>控制平面 管理并配置代理来进行流量路由。</p>
-</li>
-</ul>
-<h3 id=组件>组件</h3>
-<h4 id=envoy>Envoy</h4>
-<p>Istio 使用 Envoy 代理的扩展版本。Envoy 是用 C++ 开发的高性能代理，用于协调服务网格中所有服务的入站和出站流量。Envoy 代理是唯一与数据平面流量交互的 Istio 组件。</p>
-<p>Envoy在Service Mesh世界中被广泛运用，除了Istio外，VMware Tanzu Service Mesh和AWS的App Mesh也使用它作为Sidecar组件。</p>
-<p>Envoy 代理被部署为服务的 Sidecar，在逻辑上为服务增加了 Envoy 的许多<strong>内置特性</strong>，例如：</p>
-<ul>
-<li>动态服务发现</li>
-<li>负载均衡</li>
-<li>TLS 终端</li>
-<li>HTTP/2 与 gRPC 代理</li>
-<li>熔断器</li>
-<li>健康检查</li>
-<li>基于百分比流量分割的分阶段发布</li>
-<li>故障注入</li>
-<li>丰富的指标</li>
-</ul>
-<p>由 Envoy <strong>代理启用</strong>的一些 Istio 的功能和任务包括：</p>
-<ul>
-<li>流量控制功能：通过丰富的 HTTP、gRPC、WebSocket 和 TCP 流量路由规则来执行细粒度的流量控制。</li>
-<li>网络弹性特性：重试设置、故障转移、熔断器和故障注入。</li>
-<li>安全性和身份认证特性：执行安全性策略，并强制实行通过配置 API 定义的访问控制和速率限制。</li>
-<li>基于 WebAssembly 的可插拔扩展模型，允许通过自定义策略执行和生成网格流量的遥测。</li>
-</ul>
-<h4 id=istiod>Istiod</h4>
-<p>Istiod 提供<strong>服务发现、配置和证书管理</strong>。</p>
-<ul>
-<li>
-<p>Istiod 将控制流量行为的高级路由规则转换为 Envoy 特定的配置，并在运行时将其传播给 Sidecar。Pilot 提取了特定平台的服务发现机制，并将其综合为一种标准格式。</p>
-</li>
-<li>
-<p>Istiod 安全通过内置的身份和凭证管理，实现了强大的服务对服务和终端用户认证。</p>
-</li>
-<li>
-<p>Istiod 充当证书授权（CA），并生成证书以允许在数据平面中进行安全的 mTLS 通信。</p>
-</li>
-</ul>
-<h2 id=部署模型>部署模型</h2>
-<p>Istio 部署的独立配置维度：</p>
-<ul>
-<li>单一或多个集群</li>
-<li>单一或多个网络</li>
-<li>单一或多控制平面</li>
-<li>单一或多个网格</li>
-</ul>
-<p>在涉及多个集群的生产环境部署中，部署可能使用多种模式。</p>
-<p>例如，基于 3 个集群实现多控制平面的高可用部署，可以通过使用单一控制平面部署 2 个集群，然后再添加第 3 个集群和 第 2 个控制平面来实现这一点，最后，再将所有 3 个集群配置为共享 2 个控制平面，以确保所有集群都有 2 个控制源来确保 HA。</p>
-<h3 id=集群模型>集群模型</h3>
-<p>应用程序的工作负载实例运行在一个或多个集群中。 针对隔离性、性能和高可用的需求，也可以将集群限制在可用区和地域中。</p>
-<p>根据需求，生产系统可以跨多个集群（基于多可用区、多地域）运行， 借助云负载均衡器来处理诸如本地、区域或地域性故障转移之类的问题。</p>
-<p>大多数情况下，集群代表着配置和端点发现的边界。</p>
-<h4 id=单一集群>单一集群</h4>
-<p>单一集群和单一网络模型包括一个控制平面，这是最简单的 Istio 部署。<img src="https://img-blog.csdnimg.cn/21ce56dd004b402982bb5f721b5ac86f.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p>
-<h4 id=多集群>多集群</h4>
-<p>可以将<strong>单个网格</strong>配置为包括多集群。 在单一网格中使用多集群部署，与单一集群部署相比其具备以下更多能力：</p>
-<ul>
-<li>故障隔离和故障转移：当 cluster-1 下线，业务将转移至 cluster-2。</li>
-<li>位置感知路由和故障转移：将请求发送到最近的服务。</li>
-<li>多种控制平面模型：支持不同级别的可用性。</li>
-<li>团队或项目隔离：每个团队仅运行自己的集群。
+通过在整个环境中部署一个特殊的 sidecar 代理为服务添加 Istio 的支持，而代理会拦截微服务之间的所有网络通信，然后使用其控制平面的功能来配置和管理 Istio。</p><h3 id=核心特性>核心特性</h3><h4 id=流量管理>流量管理</h4><p>Istio 简单的规则配置和流量路由允许您控制服务之间的流量和 API 调用过程。Istio 简化了服务级属性（如熔断器、超时和重试）的配置，并且让它轻而易举的执行重要的任务（如 A/B 测试、金丝雀发布和按流量百分比划分的分阶段发布）。</p><h4 id=安全>安全</h4><p>Istio 的安全特性解放了开发人员，使其只需要专注于应用程序级别的安全。Istio 提供了底层的安全通信通道，并为大规模的服务通信管理认证、授权和加密。</p><h4 id=可观察性>可观察性</h4><p>Istio 健壮的追踪、监控和日志特性让您能够深入的了解服务网格部署。通过 Istio 的监控能力，可以真正的了解到服务的性能是如何影响上游和下游的；而它的定制 Dashboard 提供了对所有服务性能的可视化能力，并让您看到它如何影响其他进程。</p><p>Istio 的 Mixer 组件负责策略控制和遥测数据收集。它提供了后端抽象和中介，将一部分 Istio 与后端的基础设施实现细节隔离开来，并为运维人员提供了对网格与后端基础实施之间交互的细粒度控制。</p><p>所有这些特性都使您能够更有效地设置、监控和加强服务的 SLO。</p><h3 id=平台支持>平台支持</h3><p>Istio 独立于平台，被设计为可以在各种环境中运行，包括跨云、内部环境、Kubernetes、Mesos 等等。可以在 Kubernetes 或是装有 Consul 的 Nomad 环境上部署 Istio。
+Istio 目前支持：</p><ul><li><pre><code>Kubernetes 上的服务部署
+</code></pre></li><li><pre><code>基于 Consul 的服务注册
+</code></pre></li><li><pre><code>服务运行在独立的虚拟机上
+</code></pre></li></ul><h3 id=整合和定制>整合和定制</h3><p>Istio 的策略实施组件可以扩展和定制，与现有的 ACL、日志、监控、配额、审查等解决方案集成。</p><h2 id=架构>架构</h2><p>Istio 服务网格从逻辑上分为数据平面和控制平面。
+<img src="https://img-blog.csdnimg.cn/1ae2e8fdfd3f4bb48877c53ad2dbe759.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p><ul><li><p>数据平面 由一组智能代理（Envoy）组成，被部署为 Sidecar。这些代理负责协调和控制微服务之间的所有网络通信。它们还收集和报告所有网格流量的遥测数据。</p></li><li><p>控制平面 管理并配置代理来进行流量路由。</p></li></ul><h3 id=组件>组件</h3><h4 id=envoy>Envoy</h4><p>Istio 使用 Envoy 代理的扩展版本。Envoy 是用 C++ 开发的高性能代理，用于协调服务网格中所有服务的入站和出站流量。Envoy 代理是唯一与数据平面流量交互的 Istio 组件。</p><p>Envoy在Service Mesh世界中被广泛运用，除了Istio外，VMware Tanzu Service Mesh和AWS的App Mesh也使用它作为Sidecar组件。</p><p>Envoy 代理被部署为服务的 Sidecar，在逻辑上为服务增加了 Envoy 的许多<strong>内置特性</strong>，例如：</p><ul><li>动态服务发现</li><li>负载均衡</li><li>TLS 终端</li><li>HTTP/2 与 gRPC 代理</li><li>熔断器</li><li>健康检查</li><li>基于百分比流量分割的分阶段发布</li><li>故障注入</li><li>丰富的指标</li></ul><p>由 Envoy <strong>代理启用</strong>的一些 Istio 的功能和任务包括：</p><ul><li>流量控制功能：通过丰富的 HTTP、gRPC、WebSocket 和 TCP 流量路由规则来执行细粒度的流量控制。</li><li>网络弹性特性：重试设置、故障转移、熔断器和故障注入。</li><li>安全性和身份认证特性：执行安全性策略，并强制实行通过配置 API 定义的访问控制和速率限制。</li><li>基于 WebAssembly 的可插拔扩展模型，允许通过自定义策略执行和生成网格流量的遥测。</li></ul><h4 id=istiod>Istiod</h4><p>Istiod 提供<strong>服务发现、配置和证书管理</strong>。</p><ul><li><p>Istiod 将控制流量行为的高级路由规则转换为 Envoy 特定的配置，并在运行时将其传播给 Sidecar。Pilot 提取了特定平台的服务发现机制，并将其综合为一种标准格式。</p></li><li><p>Istiod 安全通过内置的身份和凭证管理，实现了强大的服务对服务和终端用户认证。</p></li><li><p>Istiod 充当证书授权（CA），并生成证书以允许在数据平面中进行安全的 mTLS 通信。</p></li></ul><h2 id=部署模型>部署模型</h2><p>Istio 部署的独立配置维度：</p><ul><li>单一或多个集群</li><li>单一或多个网络</li><li>单一或多控制平面</li><li>单一或多个网格</li></ul><p>在涉及多个集群的生产环境部署中，部署可能使用多种模式。</p><p>例如，基于 3 个集群实现多控制平面的高可用部署，可以通过使用单一控制平面部署 2 个集群，然后再添加第 3 个集群和 第 2 个控制平面来实现这一点，最后，再将所有 3 个集群配置为共享 2 个控制平面，以确保所有集群都有 2 个控制源来确保 HA。</p><h3 id=集群模型>集群模型</h3><p>应用程序的工作负载实例运行在一个或多个集群中。 针对隔离性、性能和高可用的需求，也可以将集群限制在可用区和地域中。</p><p>根据需求，生产系统可以跨多个集群（基于多可用区、多地域）运行， 借助云负载均衡器来处理诸如本地、区域或地域性故障转移之类的问题。</p><p>大多数情况下，集群代表着配置和端点发现的边界。</p><h4 id=单一集群>单一集群</h4><p>单一集群和单一网络模型包括一个控制平面，这是最简单的 Istio 部署。<img src="https://img-blog.csdnimg.cn/21ce56dd004b402982bb5f721b5ac86f.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p><h4 id=多集群>多集群</h4><p>可以将<strong>单个网格</strong>配置为包括多集群。 在单一网格中使用多集群部署，与单一集群部署相比其具备以下更多能力：</p><ul><li>故障隔离和故障转移：当 cluster-1 下线，业务将转移至 cluster-2。</li><li>位置感知路由和故障转移：将请求发送到最近的服务。</li><li>多种控制平面模型：支持不同级别的可用性。</li><li>团队或项目隔离：每个团队仅运行自己的集群。
 <img src="https://img-blog.csdnimg.cn/707d626f96be44d1a2d6bb4aa4e1f355.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述>
 如上图中的Cluster01A/02A和01B。
-多集群部署可为您提供更大程度的隔离和可用性，但会增加复杂性。</li>
-</ul>
-<p>如果系统具有高可用性要求，则可能需要集群跨多个可用区和地域。
+多集群部署可为您提供更大程度的隔离和可用性，但会增加复杂性。</li></ul><p>如果系统具有高可用性要求，则可能需要集群跨多个可用区和地域。
 对于应用变更或新的版本，可以在一个集群中配置金丝雀发布，这有助于把对用户的影响降到最低。
-此外，如果某个集群有问题，可以暂时将流量路由到附近的集群，直到解决该问题为止。</p>
-<h3 id=网络模型>网络模型</h3>
-<p>许多生产系统需要多个网络或子网来实现隔离和高可用性。 Istio 支持跨多种网络拓扑扩展服务网格。</p>
-<h4 id=单一网络>单一网络</h4>
-<p>在最简单的情况下，服务网格在单个完全连接的网络上运行。 在单一网络模型中，工作负载实例 都可以直接相互访问，而无需 Istio 网关。
+此外，如果某个集群有问题，可以暂时将流量路由到附近的集群，直到解决该问题为止。</p><h3 id=网络模型>网络模型</h3><p>许多生产系统需要多个网络或子网来实现隔离和高可用性。 Istio 支持跨多种网络拓扑扩展服务网格。</p><h4 id=单一网络>单一网络</h4><p>在最简单的情况下，服务网格在单个完全连接的网络上运行。 在单一网络模型中，工作负载实例 都可以直接相互访问，而无需 Istio 网关。
 如下图非阴影部分，服务流量见红色连接
-<img src="https://img-blog.csdnimg.cn/886847c7980c469ab9f18f4902ddff82.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p>
-<h4 id=多网络>多网络</h4>
-<p>配置单个服务网格跨多个网络，这样的配置称为多网络。</p>
-<p>多网络模型提供了单一网络之外的以下功能：</p>
-<ul>
-<li>服务端点范围的 IP 或 VIP 重叠</li>
-<li>跨越管理边界</li>
-<li>容错能力</li>
-<li>网络地址扩展</li>
-<li>符合网络分段要求的标准
-<img src="https://img-blog.csdnimg.cn/f992b532f135431b8cb2429d15e3ffc7.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></li>
-</ul>
-<p>在此模型中，不同网络中的工作负载实例只能通过一个或多个 Istio 网关（黄底）相互访问。在单一网络内的服务流量可以直接访问。</p>
-<h3 id=控制平面模型>控制平面模型</h3>
-<p>Istio 网格使用控制平面来配置网格内工作负载实例之间的所有通信。</p>
-<h4 id=单一控制平面服务网格>单一控制平面服务网格</h4>
-<p>在最简单的情况下，可以在单一集群上使用控制平面运行网格。
-<img src="https://img-blog.csdnimg.cn/21ce56dd004b402982bb5f721b5ac86f.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p>
-<h4 id=多集群部署共享控制平面实例>多集群部署共享控制平面实例</h4>
-<p>在这种情况下，控制平面实例可以驻留在一个或多个集群中。
-<img src="https://img-blog.csdnimg.cn/707d626f96be44d1a2d6bb4aa4e1f355.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p>
-<h4 id=多个集群区或地域之间部署控制平面>多个集群、区或地域之间部署控制平面</h4>
-<p>该模型具有以下优点：</p>
-<ul>
-<li>
-<p>更强的可用性：如果控制平面不可用，则不可用范围仅限于该控制平面。</p>
-</li>
-<li>
-<p>配置隔离：您可以在一个集群、区域或地域中进行配置更改，而不会影响其他集群、区或或地域。
-<img src="https://img-blog.csdnimg.cn/a72ce5e0214d4fd997ee5d5ad43b87ac.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p>
-</li>
-</ul>
-<p>可以通过故障转移来提高控制平面的可用性。当控制平面实例不可用时，工作负载实例可以连接到另一个可用的控制平面实例。 故障转移可能发生在集群、区域或地域之间。
-<img src="https://img-blog.csdnimg.cn/7058c83da0cd460f9bcaf89212a166b4.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p>
-<p>可用性对控制平面部署进行了排名：</p>
-<pre><code>每个地域一个集群（最低可用性）
+<img src="https://img-blog.csdnimg.cn/886847c7980c469ab9f18f4902ddff82.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p><h4 id=多网络>多网络</h4><p>配置单个服务网格跨多个网络，这样的配置称为多网络。</p><p>多网络模型提供了单一网络之外的以下功能：</p><ul><li>服务端点范围的 IP 或 VIP 重叠</li><li>跨越管理边界</li><li>容错能力</li><li>网络地址扩展</li><li>符合网络分段要求的标准
+<img src="https://img-blog.csdnimg.cn/f992b532f135431b8cb2429d15e3ffc7.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></li></ul><p>在此模型中，不同网络中的工作负载实例只能通过一个或多个 Istio 网关（黄底）相互访问。在单一网络内的服务流量可以直接访问。</p><h3 id=控制平面模型>控制平面模型</h3><p>Istio 网格使用控制平面来配置网格内工作负载实例之间的所有通信。</p><h4 id=单一控制平面服务网格>单一控制平面服务网格</h4><p>在最简单的情况下，可以在单一集群上使用控制平面运行网格。
+<img src="https://img-blog.csdnimg.cn/21ce56dd004b402982bb5f721b5ac86f.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p><h4 id=多集群部署共享控制平面实例>多集群部署共享控制平面实例</h4><p>在这种情况下，控制平面实例可以驻留在一个或多个集群中。
+<img src="https://img-blog.csdnimg.cn/707d626f96be44d1a2d6bb4aa4e1f355.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p><h4 id=多个集群区或地域之间部署控制平面>多个集群、区或地域之间部署控制平面</h4><p>该模型具有以下优点：</p><ul><li><p>更强的可用性：如果控制平面不可用，则不可用范围仅限于该控制平面。</p></li><li><p>配置隔离：您可以在一个集群、区域或地域中进行配置更改，而不会影响其他集群、区或或地域。
+<img src="https://img-blog.csdnimg.cn/a72ce5e0214d4fd997ee5d5ad43b87ac.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p></li></ul><p>可以通过故障转移来提高控制平面的可用性。当控制平面实例不可用时，工作负载实例可以连接到另一个可用的控制平面实例。 故障转移可能发生在集群、区域或地域之间。
+<img src="https://img-blog.csdnimg.cn/7058c83da0cd460f9bcaf89212a166b4.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p><p>可用性对控制平面部署进行了排名：</p><pre><code>每个地域一个集群（最低可用性）
 每个地域多个集群
 每个区域一个集群
 每个区域多个集群
 每个集群（最高可用性）
-</code></pre>
-<h3 id=网格模型>网格模型</h3>
-<h4 id=单一网格>单一网格</h4>
-<p>最简单的 Istio 部署是单一网格。
-网格内，服务名称是唯一的。例如，在命名空间 foo 中只能存在一个名为 mysvc 的服务。 此外，工作负载实例具有相同的标识，因为服务帐户名称在命名空间中也是唯一的，就像服务名称一样。</p>
-<p>单一网格可以跨越一个或多个集群和一个或多个网络。
-网格内部，命名空间用于多租户。</p>
-<h4 id=多网格>多网格</h4>
-<ul>
-<li>网格联邦是在网格之间公开服务的一种行为，并且能跨越网格边界进行通信。每一个网格或许会公开其一部分的服务，使一个或多个其他网格使用此公开的服务。 可以使用网格联邦来启用网格之间的通信。</li>
-<li>通过网格联邦可以实现多网格部署。</li>
-</ul>
-<p>多网格具备以下更多功能：</p>
-<pre><code>组织边界：业务范围
+</code></pre><h3 id=网格模型>网格模型</h3><h4 id=单一网格>单一网格</h4><p>最简单的 Istio 部署是单一网格。
+网格内，服务名称是唯一的。例如，在命名空间 foo 中只能存在一个名为 mysvc 的服务。 此外，工作负载实例具有相同的标识，因为服务帐户名称在命名空间中也是唯一的，就像服务名称一样。</p><p>单一网格可以跨越一个或多个集群和一个或多个网络。
+网格内部，命名空间用于多租户。</p><h4 id=多网格>多网格</h4><ul><li>网格联邦是在网格之间公开服务的一种行为，并且能跨越网格边界进行通信。每一个网格或许会公开其一部分的服务，使一个或多个其他网格使用此公开的服务。 可以使用网格联邦来启用网格之间的通信。</li><li>通过网格联邦可以实现多网格部署。</li></ul><p>多网格具备以下更多功能：</p><pre><code>组织边界：业务范围
 服务名称或命名空间复用：比如 default 的使用
 加强隔离：将测试工作负载与生产工作负载隔离
-</code></pre>
-<p>为避免服务命名冲突，可以为每个网格赋予全局唯一的 mesh ID，以确保每个服务的完全限定域名（FQDN）是不同的。</p>
-<p>联合两个不共享同一信任域的网格时，必须 联合身份标识和它们之间的 trust bundles。</p>
-</div>
-<footer class=post-footer>
-<div id=wcomments></div>
-</footer>
-</article>
-</section>
-</div>
-</div>
-<div class=sidebar-toggle>
-<div class=sidebar-toggle-line-wrap>
-<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+</code></pre><p>为避免服务命名冲突，可以为每个网格赋予全局唯一的 mesh ID，以确保每个服务的完全限定域名（FQDN）是不同的。</p><p>联合两个不共享同一信任域的网格时，必须 联合身份标识和它们之间的 trust bundles。</p></div><footer class=post-footer><div id=wcomments></div></footer></article></section></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
 <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-</div>
-</div>
-<aside id=sidebar class=sidebar>
-<div class=sidebar-inner>
-<ul class="sidebar-nav motion-element">
-<li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>
-文章目录
-</li>
-<li class=sidebar-nav-overview data-target=site-overview>
-站点概览
-</li>
-</ul>
-<section class="site-overview sidebar-panel">
-<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
-<img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon>
-<p class=site-author-name itemprop=name>Etaon</p>
-<p class="site-description motion-element" itemprop=description>
-Kepp Going!
-</p>
-</div>
-<nav class="site-state motion-element">
-<div class="site-state-item site-state-posts">
-<a href=/post/>
-<span class=site-state-item-count>61</span>
-<span class=site-state-item-name>日志</span>
-</a>
-</div>
-<div class="site-state-item site-state-categories">
-<a href=/categories/>
-<span class=site-state-item-count>13</span>
-<span class=site-state-item-name>分类</span>
-</a>
-</div>
-<div class="site-state-item site-state-tags">
-<a href=/tags/>
-<span class=site-state-item-count>34</span>
-<span class=site-state-item-name>标签</span>
-</a>
-</div>
-</nav>
-<div class="links-of-author motion-element">
-<span class=links-of-author-item>
-<a href=https://github.com/etaon target=_blank title=GitHub>
-<i class="fa fa-fw fa-github"></i>
-GitHub
-</a>
-</span>
-<span class=links-of-author-item>
-<a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN>
-<i class="fa fa-fw fa-CSDN"></i>
-CSDN
-</a>
-</span>
-</div>
-<div class="links-of-blogroll motion-element links-of-blogroll-inline">
-<div class=links-of-blogroll-title>
-<i class="fa fa-fw fa-globe"></i>
-友情链接
-</div>
-<ul class=links-of-blogroll-list>
-<li class=links-of-blogroll-item>
-<a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a>
-</li>
-</ul>
-</div>
-<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
-<div class=tagcloud-of-blogroll-title>
-<i class="fa fa-fw fa-tags"></i>
-标签云
-</div>
-<ul class=tagcloud-of-blogroll-list>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mysql>Mysql</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/aws>Aws</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/dql>Dql</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/hadoop>Hadoop</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/redis>Redis</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/cicd>Cicd</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/git>Git</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/istio>Istio</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mongodb>Mongodb</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/azure>Azure</a>
-</li>
-</ul>
-</div>
-</section>
-<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-<div class=post-toc>
-<div class=post-toc-content><nav id=TableOfContents>
-<ul>
-<li><a href=#服务网格>服务网格</a></li>
-<li><a href=#istio-是什么>Istio 是什么</a>
-<ul>
-<li><a href=#核心特性>核心特性</a></li>
-<li><a href=#平台支持>平台支持</a></li>
-<li><a href=#整合和定制>整合和定制</a></li>
-</ul>
-</li>
-<li><a href=#架构>架构</a>
-<ul>
-<li><a href=#组件>组件</a></li>
-</ul>
-</li>
-<li><a href=#部署模型>部署模型</a>
-<ul>
-<li><a href=#集群模型>集群模型</a></li>
-<li><a href=#网络模型>网络模型</a></li>
-<li><a href=#控制平面模型>控制平面模型</a></li>
-<li><a href=#网格模型>网格模型</a></li>
-</ul>
-</li>
-</ul>
-</nav></div>
-</div>
-</section>
-</div>
-</aside>
-</div>
-</main>
-<footer id=footer class=footer>
-<div class=footer-inner>
-<div class=copyright>
-<span class=copyright-year>
-&copy; 2010 - 2022
-</span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id=sidebar class=sidebar><div class=sidebar-inner><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>文章目录</li><li class=sidebar-nav-overview data-target=site-overview>站点概览</li></ul><section class="site-overview sidebar-panel"><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon><p class=site-author-name itemprop=name>Etaon</p><p class="site-description motion-element" itemprop=description>Kepp Going!</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=/post/><span class=site-state-item-count>61</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>13</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>34</span>
+<span class=site-state-item-name>标签</span></a></div></nav><div class="links-of-author motion-element"><span class=links-of-author-item><a href=https://github.com/etaon target=_blank title=GitHub><i class="fa fa-fw fa-github"></i>
+GitHub</a></span>
+<span class=links-of-author-item><a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN><i class="fa fa-fw fa-CSDN"></i>
+CSDN</a></span></div><div class="links-of-blogroll motion-element links-of-blogroll-inline"><div class=links-of-blogroll-title><i class="fa fa-fw fa-globe"></i>
+友情链接</div><ul class=links-of-blogroll-list><li class=links-of-blogroll-item><a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a></li><li class=links-of-blogroll-item><a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a></li><li class=links-of-blogroll-item><a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a></li><li class=links-of-blogroll-item><a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a></li></ul></div><div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline"><div class=tagcloud-of-blogroll-title><i class="fa fa-fw fa-tags"></i>
+标签云</div><ul class=tagcloud-of-blogroll-list><li class=tagcloud-of-blogroll-item><a href=/tags/mysql>Mysql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/aws>Aws</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/dql>Dql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/hadoop>Hadoop</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/redis>Redis</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/cicd>Cicd</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/git>Git</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/istio>Istio</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/mongodb>Mongodb</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/azure>Azure</a></li></ul></div></section><section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active"><div class=post-toc><div class=post-toc-content><nav id=TableOfContents><ul><li><a href=#服务网格>服务网格</a></li><li><a href=#istio-是什么>Istio 是什么</a><ul><li><a href=#核心特性>核心特性</a></li><li><a href=#平台支持>平台支持</a></li><li><a href=#整合和定制>整合和定制</a></li></ul></li><li><a href=#架构>架构</a><ul><li><a href=#组件>组件</a></li></ul></li><li><a href=#部署模型>部署模型</a><ul><li><a href=#集群模型>集群模型</a></li><li><a href=#网络模型>网络模型</a></li><li><a href=#控制平面模型>控制平面模型</a></li><li><a href=#网格模型>网格模型</a></li></ul></li></ul></nav></div></div></section></div></aside></div></main><footer id=footer class=footer><div class=footer-inner><div class=copyright><span class=copyright-year>&copy; 2010 - 2022</span>
 <span class=with-love><i class="fa fa-heart"></i></span>
-<span class=copyright-author>路无止境！</span>
-</div>
-<div class=powered-info>
-<span class=powered-by>
-Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.91.2</a>
-</span>
+<span class=copyright-author>路无止境！</span></div><div class=powered-info><span class=powered-by>Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.101.0</a></span>
 <span class=separator-line>/</span>
-<span class=theme-info>
-Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
-</a>
-</span>
-</div>
-<div class=vistor-info>
-<script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
-<span class=site-uv>
-<i class="fa fa-user"></i>
-<span class=busuanzi-value id=busuanzi_value_site_uv></span>
-</span>
+<span class=theme-info>Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank>NexT</a></span></div><div class=vistor-info><script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<span class=site-uv><i class="fa fa-user"></i>
+<span class=busuanzi-value id=busuanzi_value_site_uv></span></span>
 <span class=separator-line>/</span>
-<span class=site-pv>
-<i class="fa fa-eye"></i>
-<span class=busuanzi-value id=busuanzi_value_site_pv></span>
-</span>
-</div>
-<div class=license-info>
-<span class=storage-info>
-Storage by
-<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a>
-</span>
+<span class=site-pv><i class="fa fa-eye"></i>
+<span class=busuanzi-value id=busuanzi_value_site_pv></span></span></div><div class=license-info><span class=storage-info>Storage by
+<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a></span>
 <span class=separator-line>/</span>
-<span class=license-num>
-<a href target=_blank></a>
-</span>
-</div>
-</div>
-</footer>
-<div class=back-to-top>
-<i class="fa fa-arrow-up"></i>
-<span id=scrollpercent><span>0</span>%</span>
-</div>
-</div>
-<script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
+<span class=license-num><a href target=_blank></a></span></div></div></footer><div class=back-to-top><i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span></div></div><script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
 <script type=text/javascript src=/js/search.js></script>
 <script type=text/javascript src=/js/affix.js></script>
 <script type=text/javascript src=/js/scrollspy.js></script>
-<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.main').css('padding-bottom'),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}}),$(document).on('affixed.bs.affix',function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var b=$('.header-inner').height()+10,c,d,a,e;$('#sidebar').css({'margin-top':b}).show(),c=parseInt($('#sidebar').css('margin-top')),d=parseInt($('.sidebar-inner').css('height')),a=c+d,e=$('.content-wrap').height(),e<a&&$('.content-wrap').css('min-height',a),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
-<script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
-<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
-<script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+'//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js',function(){new Waline({el:'#wcomments',visitor:!0,avatar:'wavatar',avatarCDN:'https://sdn.geekzu.org/avatar/',avatarForce:!1,wordLimit:'200',placeholder:' 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ',requiredFields:['nick','mail'],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$('#wcomments').html('抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。')})</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type=text/javascript>function detectIE(){var e=window.navigator.userAgent,t=e.indexOf("MSIE "),n=e.indexOf("Trident/"),s=e.indexOf("Edge/");return t>0||n>0||s>0?-1:1}function getCntViewHeight(){var t=$("#content").height(),e=$(window).height(),n=t>e?t-e:$(document).height()-e;return n}function getScrollbarWidth(){var e=$("<div />").addClass("scrollbar-measure").prependTo("body"),t=e[0],n=t.offsetWidth-t.clientWidth;return e.remove(),n}function registerBackTop(){var t=50,e=$(".back-to-top");$(window).on("scroll",function(){e.toggleClass("back-to-top-on",window.pageYOffset>t);var s=$(window).scrollTop(),o=getCntViewHeight(),i=s/o,n=Math.round(i*100),a=n>100?100:n;$("#scrollpercent>span").html(a)}),e.on("click",function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var e=".post-toc",s=$(e),t=".active-current";s.on("activate.bs.scrollspy",function(){var t=$(e+" .active").last();n(),t.addClass("active-current")}).on("clear.bs.scrollspy",n),$("body").scrollspy({target:e});function n(){$(e+" "+t).removeClass(t.substring(1))}}function initAffix(){var e=$(".header-inner").height(),t=parseInt($(".main").css("padding-bottom"),10),n=e+10;$(".sidebar-inner").affix({offset:{top:n,bottom:t}}),$(document).on("affixed.bs.affix",function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){$(window).on("resize",function(){e&&clearTimeout(e),e=setTimeout(function(){var e=document.body.clientHeight-100;updateTOCHeight(e)},0)}),updateTOCHeight(document.body.clientHeight-100);var e,t=getScrollbarWidth();$(".post-toc").css("width","calc(100% + "+t+"px)")}function updateTOCHeight(e){e=e||"auto",$(".post-toc").css("max-height",e)}$(function(){var e,t,n,s,o=$(".header-inner").height()+10;$("#sidebar").css({"margin-top":o}).show(),t=parseInt($("#sidebar").css("margin-top")),n=parseInt($(".sidebar-inner").css("height")),e=t+n,s=$(".content-wrap").height(),s<e&&$(".content-wrap").css("min-height",e),$(".site-nav-toggle").on("click",function(){var e=$(".site-nav"),o=$(".toggle"),t="site-nav-on",i="toggle-close",n=e.hasClass(t),a=n?"slideUp":"slideDown",s=n?"removeClass":"addClass";e.stop()[a]("normal",function(){e[s](t),o[s](i)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$(".sidebar-nav-toc").click(function(){$(this).addClass("sidebar-nav-active"),$(this).next().removeClass("sidebar-nav-active"),$("."+$(this).next().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)}),$(".sidebar-nav-overview").click(function(){$(this).addClass("sidebar-nav-active"),$(this).prev().removeClass("sidebar-nav-active"),$("."+$(this).prev().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)})})</script><script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$(".post-body").viewer()})</script><script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+"//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js",function(){new Waline({el:"#wcomments",visitor:!0,avatar:"wavatar",avatarCDN:"https://sdn.geekzu.org/avatar/",avatarForce:!1,wordLimit:"200",placeholder:" 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ",requiredFields:["nick","mail"],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$("#wcomments").html("抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。")})</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
 <script type=text/javascript src="//s7.addthis.com/js/300/addthis_widget.js#pubid=Your%20AddthisId"></script>
-<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
-</body>
-</html>
+<script>(function(){var t,e=document.createElement("script"),n=window.location.protocol.split(":")[0];n==="https"?e.src="https://zz.bdstatic.com/linksubmit/push.js":e.src="http://push.zhanzhang.baidu.com/push.js",t=document.getElementsByTagName("script")[0],t.parentNode.insertBefore(e,t)})()</script></body></html>

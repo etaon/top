@@ -1,366 +1,168 @@
-<!doctype html><html lang=zh-cn dir=content/zh-cn>
-<head>
-<meta charset=utf-8>
-<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
-<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
-<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
-<title> AWS-boto3 Python input - 路无止境！ </title>
-<meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云">
-<meta name=author content="Etaon">
-<meta property="og:title" content="AWS-boto3 Python input">
-<meta property="og:site_name" content="路无止境！">
-<meta property="og:image" content="/img/author.jpg">
-<meta name=title content="AWS-boto3 Python input - 路无止境！">
-<meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。">
-<link rel="shortcut icon" href=/img/favicon.ico>
-<link rel=apple-touch-icon href=/img/apple-touch-icon.png>
-<link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png>
-<link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css>
-<link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet>
-<link href=/css/main.css rel=stylesheet type=text/css>
-<link href=/css/syntax.css rel=stylesheet type=text/css>
-</head>
-<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
-<div class="container one-collumn sidebar-position-left page-home">
-<div class=headband></div>
-<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
-<div class=header-inner> <div class=site-brand-container>
-<div class=site-nav-toggle>
-<div class=toggle role=button style=opacity:1;top:0>
+<!doctype html><html lang=zh-cn dir=content/zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=content-security-policy content="upgrade-insecure-requests"><title>AWS-boto3 Python input - 路无止境！</title><meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云"><meta name=author content="Etaon"><meta property="og:title" content="AWS-boto3 Python input"><meta property="og:site_name" content="路无止境！"><meta property="og:image" content="/img/author.jpg"><meta name=title content="AWS-boto3 Python input - 路无止境！"><meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。"><link rel="shortcut icon" href=/img/favicon.ico><link rel=apple-touch-icon href=/img/apple-touch-icon.png><link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png><link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css><link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet><link href=/css/main.css rel=stylesheet type=text/css><link href=/css/syntax.css rel=stylesheet type=text/css></head><body itemscope itemtype=http://schema.org/WebPage lang=zh-hans><div class="container one-collumn sidebar-position-left page-home"><div class=headband></div><header id=header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle role=button style=opacity:1;top:0><span class=toggle-line></span>
 <span class=toggle-line></span>
-<span class=toggle-line></span>
-<span class=toggle-line></span>
-</div>
-</div>
-<div class=site-meta>
-<div class=multi-lang-switch>
-<i class="fa fa-fw fa-language" style=margin-right:5px></i>
-<a class=lang-link id=zh-cn href=#>中文</a>
-</div>
-<div class=custom-logo-site-title>
-<a href=/ class=brand rel=start>
-<span class=logo-line-before><i></i></span>
+<span class=toggle-line></span></div></div><div class=site-meta><div class=multi-lang-switch><i class="fa fa-fw fa-language" style=margin-right:5px></i>
+<a class=lang-link id=zh-cn href=#>中文</a></div><div class=custom-logo-site-title><a href=/ class=brand rel=start><span class=logo-line-before><i></i></span>
 <span class=site-title>路无止境！</span>
-<span class=logo-line-after><i></i></span>
-</a>
-</div>
-<p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p>
-</div>
-<div class=site-nav-right>
-<div class="toggle popup-trigger" style=opacity:1;top:0>
-<i class="fa fa-search fa-fw fa-lg"></i>
-</div>
-</div>
-</div>
-<nav class=site-nav>
-<ul id=menu class=menu>
-<li class=menu-item>
-<a href=/ rel=section>
-<i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页
-</a>
-</li>
-<li class=menu-item>
-<a href=/post rel=section>
-<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档
-</a>
-</li>
-<li class=menu-item>
-<a href=/about.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于我
-</a>
-</li>
-<li class=menu-item>
-<a href=/404.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益404
-</a>
-</li>
-<li class="menu-item menu-item-search">
-<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> 搜索</a>
-</li>
-</ul>
-<div class=site-search>
-<div class="popup search-popup local-search-popup">
-<div class="local-search-header clearfix">
-<span class=search-icon><i class="fa fa-search"></i> </span>
-<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
-<div class=local-search-input-wrapper>
-<input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
-</div>
-</div>
-<div id=local-search-result></div>
-</div>
-</div>
-</nav>
-</div>
-</header>
-<main id=main class=main>
-<div class=main-inner>
-<div class=content-wrap>
-<div id=content class=content>
-<section id=posts class=posts-expand>
-<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
-<header class=post-header>
-<h1 class=post-title itemprop="name headline" style=font-weight:700>
-<a class=post-title-link href=https://www.etaon.link/2021/11/01/awsboto3pythoninput.html itemprop=url>
-AWS-boto3 Python input
-</a>
-</h1>
-</header>
-<div class=post-body itemprop=articleBody>
-<h2 id=概述>概述</h2>
-<p>本实验来自于<a href=https://learn-to-code.workshop.aws/>https://learn-to-code.workshop.aws/</a></p>
-<p>实验中，也涉及有关如何在程序中使用translate服务。</p>
-<p>本文主要讨论Python中不同的Input方式</p>
-<h2 id=实验环境>实验环境</h2>
-<p>依然使用Cloud 9，具体方法请参考：<a href=https://blog.csdn.net/weixin_43394724/article/details/120882845>https://blog.csdn.net/weixin_43394724/article/details/120882845</a></p>
-<h2 id=实验步骤>实验步骤</h2>
-<h3 id=cli方式>CLI方式</h3>
-<p>前面我们通过**kwargs来做字符串的输入，原始代码如下：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#a2f;font-weight:700>import</span> <span style=color:#00f;font-weight:700>boto3</span>
-
-<span style=color:#a2f;font-weight:700>def</span> <span style=color:#00a000>translate_text</span>(<span style=color:#666>**</span>kwargs):
-    client <span style=color:#666>=</span> boto3<span style=color:#666>.</span>client(<span style=color:#b44>&#39;translate&#39;</span>)
-    response <span style=color:#666>=</span> client<span style=color:#666>.</span>translate_text(<span style=color:#666>**</span>kwargs)
-    <span style=color:#a2f>print</span>(response)
-
-<span style=color:#080;font-style:italic>### Change below this line only ###</span>
-
-kwargs<span style=color:#666>=</span>{
-    <span style=color:#b44>&#34;Text&#34;</span>:<span style=color:#b44>&#34;I am learning to code in AWS&#34;</span>,
-    <span style=color:#b44>&#34;SourceLanguageCode&#34;</span>:<span style=color:#b44>&#34;en&#34;</span>,
-    <span style=color:#b44>&#34;TargetLanguageCode&#34;</span>:<span style=color:#b44>&#34;zh&#34;</span>
-    }
-
-<span style=color:#a2f;font-weight:700>def</span> <span style=color:#00a000>main</span>():
-    translate_text(<span style=color:#666>**</span>kwargs)
-
-<span style=color:#a2f;font-weight:700>if</span> __name__<span style=color:#666>==</span><span style=color:#b44>&#34;__main__&#34;</span>:
-    main()
-</code></pre></div><h4 id=input函数>input()函数</h4>
-<p>利用input()函数，我们可以实现从命令行输入代码所需的内容，将上一节代码改变为：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#a2f;font-weight:700>import</span> <span style=color:#00f;font-weight:700>boto3</span>
-
-<span style=color:#a2f;font-weight:700>def</span> <span style=color:#00a000>translate_text</span>(<span style=color:#666>**</span>kwargs):
-    client <span style=color:#666>=</span> boto3<span style=color:#666>.</span>client(<span style=color:#b44>&#39;translate&#39;</span>)
-    response <span style=color:#666>=</span> client<span style=color:#666>.</span>translate_text(<span style=color:#666>**</span>kwargs)
-    <span style=color:#a2f>print</span>(response)
-
-<span style=color:#080;font-style:italic>### Change below this line only ###</span>
-
-text <span style=color:#666>=</span> <span style=color:#a2f>input</span>(<span style=color:#b44>&#34;Provide the text you want translating: &#34;</span>)
-source_language_code <span style=color:#666>=</span> <span style=color:#a2f>input</span>(<span style=color:#b44>&#34;Provide the two letter source language code: &#34;</span>)
-target_language_code <span style=color:#666>=</span> <span style=color:#a2f>input</span>(<span style=color:#b44>&#34;Provide the two letter target language code: &#34;</span>)
-
-<span style=color:#a2f;font-weight:700>def</span> <span style=color:#00a000>main</span>():
-    translate_text(
-        Text<span style=color:#666>=</span>text,
-        SourceLanguageCode<span style=color:#666>=</span>source_language_code,
-        TargetLanguageCode<span style=color:#666>=</span>target_language_code
-        )
-
-<span style=color:#a2f;font-weight:700>if</span> __name__<span style=color:#666>==</span><span style=color:#b44>&#34;__main__&#34;</span>:
-    main()
-</code></pre></div><p>运行结果：</p>
-<blockquote>
-<p>Provide the text you want translating: <code>学习雷锋好榜样</code>
+<span class=logo-line-after><i></i></span></a></div><p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p></div><div class=site-nav-right><div class="toggle popup-trigger" style=opacity:1;top:0><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class=site-nav><ul id=menu class=menu><li class=menu-item><a href=/ rel=section><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class=menu-item><a href=/post rel=section><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class=menu-item><a href=/about.html rel=section><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于我</a></li><li class=menu-item><a href=/404.html rel=section><i class="menu-item-icon fa fa-fw fa-heartbeat"></i><br>公益404</a></li><li class="menu-item menu-item-search"><a href=javascript:; class=popup-trigger><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class=site-search><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class=search-icon><i class="fa fa-search"></i></span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span><div class=local-search-input-wrapper><input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off></div></div><div id=local-search-result></div></div></div></nav></div></header><main id=main class=main><div class=main-inner><div class=content-wrap><div id=content class=content><section id=posts class=posts-expand><article class="post post-type-normal" itemscope itemtype=http://schema.org/Article><header class=post-header><h1 class=post-title itemprop="name headline" style=font-weight:700><a class=post-title-link href=https://www.etaon.top/2021/11/01/awsboto3pythoninput.html itemprop=url>AWS-boto3 Python input</a></h1></header><div class=post-body itemprop=articleBody><h2 id=概述>概述</h2><p>本实验来自于<a href=https://learn-to-code.workshop.aws/>https://learn-to-code.workshop.aws/</a></p><p>实验中，也涉及有关如何在程序中使用translate服务。</p><p>本文主要讨论Python中不同的Input方式</p><h2 id=实验环境>实验环境</h2><p>依然使用Cloud 9，具体方法请参考：<a href=https://blog.csdn.net/weixin_43394724/article/details/120882845>https://blog.csdn.net/weixin_43394724/article/details/120882845</a></p><h2 id=实验步骤>实验步骤</h2><h3 id=cli方式>CLI方式</h3><p>前面我们通过**kwargs来做字符串的输入，原始代码如下：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#a2f;font-weight:700>import</span> <span style=color:#00f;font-weight:700>boto3</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>def</span> <span style=color:#00a000>translate_text</span>(<span style=color:#666>**</span>kwargs):
+</span></span><span style=display:flex><span>    client <span style=color:#666>=</span> boto3<span style=color:#666>.</span>client(<span style=color:#b44>&#39;translate&#39;</span>)
+</span></span><span style=display:flex><span>    response <span style=color:#666>=</span> client<span style=color:#666>.</span>translate_text(<span style=color:#666>**</span>kwargs)
+</span></span><span style=display:flex><span>    <span style=color:#a2f>print</span>(response)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic>### Change below this line only ###</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>kwargs<span style=color:#666>=</span>{
+</span></span><span style=display:flex><span>    <span style=color:#b44>&#34;Text&#34;</span>:<span style=color:#b44>&#34;I am learning to code in AWS&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#b44>&#34;SourceLanguageCode&#34;</span>:<span style=color:#b44>&#34;en&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#b44>&#34;TargetLanguageCode&#34;</span>:<span style=color:#b44>&#34;zh&#34;</span>
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>def</span> <span style=color:#00a000>main</span>():
+</span></span><span style=display:flex><span>    translate_text(<span style=color:#666>**</span>kwargs)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>if</span> __name__<span style=color:#666>==</span><span style=color:#b44>&#34;__main__&#34;</span>:
+</span></span><span style=display:flex><span>    main()
+</span></span></code></pre></div><h4 id=input函数>input()函数</h4><p>利用input()函数，我们可以实现从命令行输入代码所需的内容，将上一节代码改变为：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#a2f;font-weight:700>import</span> <span style=color:#00f;font-weight:700>boto3</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>def</span> <span style=color:#00a000>translate_text</span>(<span style=color:#666>**</span>kwargs):
+</span></span><span style=display:flex><span>    client <span style=color:#666>=</span> boto3<span style=color:#666>.</span>client(<span style=color:#b44>&#39;translate&#39;</span>)
+</span></span><span style=display:flex><span>    response <span style=color:#666>=</span> client<span style=color:#666>.</span>translate_text(<span style=color:#666>**</span>kwargs)
+</span></span><span style=display:flex><span>    <span style=color:#a2f>print</span>(response)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic>### Change below this line only ###</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>text <span style=color:#666>=</span> <span style=color:#a2f>input</span>(<span style=color:#b44>&#34;Provide the text you want translating: &#34;</span>)
+</span></span><span style=display:flex><span>source_language_code <span style=color:#666>=</span> <span style=color:#a2f>input</span>(<span style=color:#b44>&#34;Provide the two letter source language code: &#34;</span>)
+</span></span><span style=display:flex><span>target_language_code <span style=color:#666>=</span> <span style=color:#a2f>input</span>(<span style=color:#b44>&#34;Provide the two letter target language code: &#34;</span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>def</span> <span style=color:#00a000>main</span>():
+</span></span><span style=display:flex><span>    translate_text(
+</span></span><span style=display:flex><span>        Text<span style=color:#666>=</span>text,
+</span></span><span style=display:flex><span>        SourceLanguageCode<span style=color:#666>=</span>source_language_code,
+</span></span><span style=display:flex><span>        TargetLanguageCode<span style=color:#666>=</span>target_language_code
+</span></span><span style=display:flex><span>        )
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>if</span> __name__<span style=color:#666>==</span><span style=color:#b44>&#34;__main__&#34;</span>:
+</span></span><span style=display:flex><span>    main()
+</span></span></code></pre></div><p>运行结果：</p><blockquote><p>Provide the text you want translating: <code>学习雷锋好榜样</code>
 Provide the two letter source language code: <code>zh</code>
 Provide the two letter target language code: <code>en</code>
-{&lsquo;TranslatedText&rsquo;: <code>"Learn from Lei Feng's good example"</code>, &lsquo;SourceLanguageCode&rsquo;:<code>'zh'</code>, &lsquo;TargetLanguageCode&rsquo;: <code>'en'</code>, &lsquo;ResponseMetadata&rsquo;: {&lsquo;RequestId&rsquo;: &lsquo;ffa73286-4d9c-4daa-9105-6aa0521254da&rsquo;, &lsquo;HTTPStatusCode&rsquo;: 200, &lsquo;HTTPHeaders&rsquo;: {&lsquo;x-amzn-requestid&rsquo;: &lsquo;ffa73286-4d9c-4daa-9105-6aa0521254da&rsquo;, &lsquo;cache-control&rsquo;: &lsquo;no-cache&rsquo;, &lsquo;content-type&rsquo;: &lsquo;application/x-amz-json-1.1&rsquo;, &lsquo;content-length&rsquo;: &lsquo;107&rsquo;, &lsquo;date&rsquo;: &lsquo;Mon, 01 Nov 2021 03:19:40 GMT&rsquo;}, &lsquo;RetryAttempts&rsquo;: 0}}
-Process exited with code: 0</p>
-</blockquote>
-<p>很显然，这种方式对于人机交互方式，在命令提示下提供输入时非常有用；但是，它对于由程序、方法、API或脚本提供的输入就显得不太有用。</p>
-<h4 id=cli-arguments>CLI ARGUMENTS</h4>
-<p>Python有一个名为argparse的内置参数解析器。它可以非常容易的编写用户友好的命令行界面。
-更为详细的参考：<a href=https://docs.python.org/zh-cn/3/howto/argparse.html>https://docs.python.org/zh-cn/3/howto/argparse.html</a></p>
-<p>将代码进行改造：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#a2f;font-weight:700>import</span> <span style=color:#00f;font-weight:700>argparse</span> <span style=color:#080;font-style:italic># argparse is a built in python package, we add it with an import statement</span>
-<span style=color:#a2f;font-weight:700>import</span> <span style=color:#00f;font-weight:700>boto3</span>
-
-<span style=color:#080;font-style:italic># Define the parser variable to equal argparse.ArgumentParser()</span>
-parser <span style=color:#666>=</span> argparse<span style=color:#666>.</span>ArgumentParser(description<span style=color:#666>=</span><span style=color:#b44>&#34;Provides translation between one source language and another of the same set of languages.&#34;</span>)
-
-<span style=color:#080;font-style:italic># Add each of the arguments using the parser.add_argument() method</span>
-parser<span style=color:#666>.</span>add_argument(
-    <span style=color:#b44>&#39;--text&#39;</span>,
-    dest<span style=color:#666>=</span><span style=color:#b44>&#34;Text&#34;</span>,
-    <span style=color:#a2f>type</span><span style=color:#666>=</span><span style=color:#a2f>str</span>,
-    help<span style=color:#666>=</span><span style=color:#b44>&#34;The text to translate. The text string can be a maximum of 5,000 bytes long. Depending on your character set, this may be fewer than 5,000 characters&#34;</span>,
-    required<span style=color:#666>=</span><span style=color:#a2f;font-weight:700>True</span>
-    )
-
-parser<span style=color:#666>.</span>add_argument(
-    <span style=color:#b44>&#39;--source-language-code&#39;</span>,
-    dest<span style=color:#666>=</span><span style=color:#b44>&#34;SourceLanguageCode&#34;</span>,
-    <span style=color:#a2f>type</span><span style=color:#666>=</span><span style=color:#a2f>str</span>,
-    help<span style=color:#666>=</span><span style=color:#b44>&#34;The language code for the language of the source text. The language must be a language supported by Amazon Translate.&#34;</span>,
-    required<span style=color:#666>=</span><span style=color:#a2f;font-weight:700>True</span>
-    )
-
-parser<span style=color:#666>.</span>add_argument(
-    <span style=color:#b44>&#39;--target-language-code&#39;</span>,
-    dest<span style=color:#666>=</span><span style=color:#b44>&#34;TargetLanguageCode&#34;</span>,
-    <span style=color:#a2f>type</span><span style=color:#666>=</span><span style=color:#a2f>str</span>,
-    help<span style=color:#666>=</span><span style=color:#b44>&#34;The language code requested for the language of the target text. The language must be a language support by Amazon Translate.&#34;</span>,
-    required<span style=color:#666>=</span><span style=color:#a2f;font-weight:700>True</span>
-    )
-
-<span style=color:#080;font-style:italic># This will inspect the command line, convert each argument to the appropriate type and then invoke the appropriate action.</span>
-args <span style=color:#666>=</span> parser<span style=color:#666>.</span>parse_args()
-
-<span style=color:#a2f;font-weight:700>def</span> <span style=color:#00a000>translate_text</span>(<span style=color:#666>**</span>kwargs):
-    client <span style=color:#666>=</span> boto3<span style=color:#666>.</span>client(<span style=color:#b44>&#39;translate&#39;</span>)
-    response <span style=color:#666>=</span> client<span style=color:#666>.</span>translate_text(<span style=color:#666>**</span>kwargs)
-    <span style=color:#a2f>print</span>(response)
-
-<span style=color:#a2f;font-weight:700>def</span> <span style=color:#00a000>main</span>():
-    <span style=color:#080;font-style:italic># vars() is an inbuilt function which returns a dictionary object</span>
-    translate_text(<span style=color:#666>**</span><span style=color:#a2f>vars</span>(args))
-
-<span style=color:#a2f;font-weight:700>if</span> __name__<span style=color:#666>==</span><span style=color:#b44>&#34;__main__&#34;</span>:
-    main()
-</code></pre></div><ul>
-<li>我们使用import argparse导入了一个名为argparse的python包</li>
-<li>我们创建了一个ArgumentParser对象，它保存将命令行解析为python数据类型所需的信息</li>
-<li>我们使用parser.add_argument（）来添加每个参数。这有以下语法</li>
-</ul>
-<blockquote>
-<p>参数名称，例如&ndash;text
+{&lsquo;TranslatedText&rsquo;: <code>"Learn from Lei Feng's good example"</code>, &lsquo;SourceLanguageCode&rsquo;:<code>'zh'</code>, &lsquo;TargetLanguageCode&rsquo;: <code>'en'</code>, &lsquo;ResponseMetadata&rsquo;: {&lsquo;RequestId&rsquo;: &lsquo;ffa73286-4d9c-4daa-9105-6aa0521254da&rsquo;, &lsquo;HTTPStatusCode&rsquo;: 200, &lsquo;HTTPHeaders&rsquo;: {&lsquo;x-amzn-requestid&rsquo;: &lsquo;ffa73286-4d9c-4daa-9105-6aa0521254da&rsquo;, &lsquo;cache-control&rsquo;: &rsquo;no-cache&rsquo;, &lsquo;content-type&rsquo;: &lsquo;application/x-amz-json-1.1&rsquo;, &lsquo;content-length&rsquo;: &lsquo;107&rsquo;, &lsquo;date&rsquo;: &lsquo;Mon, 01 Nov 2021 03:19:40 GMT&rsquo;}, &lsquo;RetryAttempts&rsquo;: 0}}
+Process exited with code: 0</p></blockquote><p>很显然，这种方式对于人机交互方式，在命令提示下提供输入时非常有用；但是，它对于由程序、方法、API或脚本提供的输入就显得不太有用。</p><h4 id=cli-arguments>CLI ARGUMENTS</h4><p>Python有一个名为argparse的内置参数解析器。它可以非常容易的编写用户友好的命令行界面。
+更为详细的参考：<a href=https://docs.python.org/zh-cn/3/howto/argparse.html>https://docs.python.org/zh-cn/3/howto/argparse.html</a></p><p>将代码进行改造：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#a2f;font-weight:700>import</span> <span style=color:#00f;font-weight:700>argparse</span> <span style=color:#080;font-style:italic># argparse is a built in python package, we add it with an import statement</span>
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>import</span> <span style=color:#00f;font-weight:700>boto3</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic># Define the parser variable to equal argparse.ArgumentParser()</span>
+</span></span><span style=display:flex><span>parser <span style=color:#666>=</span> argparse<span style=color:#666>.</span>ArgumentParser(description<span style=color:#666>=</span><span style=color:#b44>&#34;Provides translation between one source language and another of the same set of languages.&#34;</span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic># Add each of the arguments using the parser.add_argument() method</span>
+</span></span><span style=display:flex><span>parser<span style=color:#666>.</span>add_argument(
+</span></span><span style=display:flex><span>    <span style=color:#b44>&#39;--text&#39;</span>,
+</span></span><span style=display:flex><span>    dest<span style=color:#666>=</span><span style=color:#b44>&#34;Text&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#a2f>type</span><span style=color:#666>=</span><span style=color:#a2f>str</span>,
+</span></span><span style=display:flex><span>    help<span style=color:#666>=</span><span style=color:#b44>&#34;The text to translate. The text string can be a maximum of 5,000 bytes long. Depending on your character set, this may be fewer than 5,000 characters&#34;</span>,
+</span></span><span style=display:flex><span>    required<span style=color:#666>=</span><span style=color:#a2f;font-weight:700>True</span>
+</span></span><span style=display:flex><span>    )
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>parser<span style=color:#666>.</span>add_argument(
+</span></span><span style=display:flex><span>    <span style=color:#b44>&#39;--source-language-code&#39;</span>,
+</span></span><span style=display:flex><span>    dest<span style=color:#666>=</span><span style=color:#b44>&#34;SourceLanguageCode&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#a2f>type</span><span style=color:#666>=</span><span style=color:#a2f>str</span>,
+</span></span><span style=display:flex><span>    help<span style=color:#666>=</span><span style=color:#b44>&#34;The language code for the language of the source text. The language must be a language supported by Amazon Translate.&#34;</span>,
+</span></span><span style=display:flex><span>    required<span style=color:#666>=</span><span style=color:#a2f;font-weight:700>True</span>
+</span></span><span style=display:flex><span>    )
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>parser<span style=color:#666>.</span>add_argument(
+</span></span><span style=display:flex><span>    <span style=color:#b44>&#39;--target-language-code&#39;</span>,
+</span></span><span style=display:flex><span>    dest<span style=color:#666>=</span><span style=color:#b44>&#34;TargetLanguageCode&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#a2f>type</span><span style=color:#666>=</span><span style=color:#a2f>str</span>,
+</span></span><span style=display:flex><span>    help<span style=color:#666>=</span><span style=color:#b44>&#34;The language code requested for the language of the target text. The language must be a language support by Amazon Translate.&#34;</span>,
+</span></span><span style=display:flex><span>    required<span style=color:#666>=</span><span style=color:#a2f;font-weight:700>True</span>
+</span></span><span style=display:flex><span>    )
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic># This will inspect the command line, convert each argument to the appropriate type and then invoke the appropriate action.</span>
+</span></span><span style=display:flex><span>args <span style=color:#666>=</span> parser<span style=color:#666>.</span>parse_args()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>def</span> <span style=color:#00a000>translate_text</span>(<span style=color:#666>**</span>kwargs):
+</span></span><span style=display:flex><span>    client <span style=color:#666>=</span> boto3<span style=color:#666>.</span>client(<span style=color:#b44>&#39;translate&#39;</span>)
+</span></span><span style=display:flex><span>    response <span style=color:#666>=</span> client<span style=color:#666>.</span>translate_text(<span style=color:#666>**</span>kwargs)
+</span></span><span style=display:flex><span>    <span style=color:#a2f>print</span>(response)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>def</span> <span style=color:#00a000>main</span>():
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic># vars() is an inbuilt function which returns a dictionary object</span>
+</span></span><span style=display:flex><span>    translate_text(<span style=color:#666>**</span><span style=color:#a2f>vars</span>(args))
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>if</span> __name__<span style=color:#666>==</span><span style=color:#b44>&#34;__main__&#34;</span>:
+</span></span><span style=display:flex><span>    main()
+</span></span></code></pre></div><ul><li>我们使用import argparse导入了一个名为argparse的python包</li><li>我们创建了一个ArgumentParser对象，它保存将命令行解析为python数据类型所需的信息</li><li>我们使用parser.add_argument（）来添加每个参数。这有以下语法</li></ul><blockquote><p>参数名称，例如&ndash;text
 dest必须使其成为参数接受的value关键字参数，否则它将使用默认参数text=“value”
 type是数据类型，在本例中是字符串（str）
-help是显示的帮助文本</p>
-</blockquote>
-<ul>
-<li>args=parser.parse_args（）将检查命令行，将每个参数转换为适当的类型，然后调用适当的操作</li>
-<li>现在，当我们调用translate_text（）函数时，我们需要使用**vars（args）。**vars将args=parser.parse_args（）创建的对象转换为字典对象，我们可以将其作为key：value对传递给函数</li>
-</ul>
-<p>使用&ndash;help运行代码可以看到：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>zyi:~/environment/python-01 $ python lab_5_step_2_cli_arguments.py --help
-usage: lab_5_step_2_cli_arguments.py [-h] --text TEXT --source-language-code
-                                     SOURCELANGUAGECODE --target-language-code
-                                     TARGETLANGUAGECODE
-
-Provides translation between one source language and another of the same set
-of languages.
-
-optional arguments:
-  -h, --help            show this help message and exit
-  --text TEXT           The text to translate. The text string can be a
-                        maximum of 5,000 bytes long. Depending on your
-                        character set, this may be fewer than 5,000 characters
-  --source-language-code SOURCELANGUAGECODE
-                        The language code for the language of the source text.
-                        The language must be a language supported by Amazon
-                        Translate.
-  --target-language-code TARGETLANGUAGECODE
-                        The language code requested for the language of the
-                        target text. The language must be a language support
-                        by Amazon Translate.
-</code></pre></div><p>按照我们设计列出了参数和帮助信息。</p>
-<p>完整的执行代码：</p>
-<blockquote>
-<p>zyi:~/environment/python-01 $ python lab_5_step_2_cli_arguments.py &ndash;text &ldquo;we are learning python on AWS&rdquo; &ndash;source-language-code en &ndash;target-language-code zh
-{&lsquo;TranslatedText&rsquo;: <code>'我们正在 AWS 上学习 python'</code>, &lsquo;SourceLanguageCode&rsquo;:<code> 'en'</code>, &lsquo;TargetLanguageCode&rsquo;:<code> 'zh'</code>, &lsquo;ResponseMetadata&rsquo;: {&lsquo;RequestId&rsquo;: &lsquo;76dea3c1-b0bb-4401-9a22-026c5d61a0d0&rsquo;, &lsquo;HTTPStatusCode&rsquo;: 200, &lsquo;HTTPHeaders&rsquo;: {&lsquo;x-amzn-requestid&rsquo;: &lsquo;76dea3c1-b0bb-4401-9a22-026c5d61a0d0&rsquo;, &lsquo;cache-control&rsquo;: &lsquo;no-cache&rsquo;, &lsquo;content-type&rsquo;: &lsquo;application/x-amz-json-1.1&rsquo;, &lsquo;content-length&rsquo;: &lsquo;106&rsquo;, &lsquo;date&rsquo;: &lsquo;Mon, 01 Nov 2021 03:56:23 GMT&rsquo;}, &lsquo;RetryAttempts&rsquo;: 0}}</p>
-</blockquote>
-<h4 id=从文件input>从文件input</h4>
-<p>open函数是一个内置函数。
+help是显示的帮助文本</p></blockquote><ul><li>args=parser.parse_args（）将检查命令行，将每个参数转换为适当的类型，然后调用适当的操作</li><li>现在，当我们调用translate_text（）函数时，我们需要使用**vars（args）。**vars将args=parser.parse_args（）创建的对象转换为字典对象，我们可以将其作为key：value对传递给函数</li></ul><p>使用&ndash;help运行代码可以看到：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>zyi:~/environment/python-01 $ python lab_5_step_2_cli_arguments.py --help
+</span></span><span style=display:flex><span>usage: lab_5_step_2_cli_arguments.py [-h] --text TEXT --source-language-code
+</span></span><span style=display:flex><span>                                     SOURCELANGUAGECODE --target-language-code
+</span></span><span style=display:flex><span>                                     TARGETLANGUAGECODE
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Provides translation between one source language and another of the same set
+</span></span><span style=display:flex><span>of languages.
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>optional arguments:
+</span></span><span style=display:flex><span>  -h, --help            show this help message and exit
+</span></span><span style=display:flex><span>  --text TEXT           The text to translate. The text string can be a
+</span></span><span style=display:flex><span>                        maximum of 5,000 bytes long. Depending on your
+</span></span><span style=display:flex><span>                        character set, this may be fewer than 5,000 characters
+</span></span><span style=display:flex><span>  --source-language-code SOURCELANGUAGECODE
+</span></span><span style=display:flex><span>                        The language code for the language of the source text.
+</span></span><span style=display:flex><span>                        The language must be a language supported by Amazon
+</span></span><span style=display:flex><span>                        Translate.
+</span></span><span style=display:flex><span>  --target-language-code TARGETLANGUAGECODE
+</span></span><span style=display:flex><span>                        The language code requested for the language of the
+</span></span><span style=display:flex><span>                        target text. The language must be a language support
+</span></span><span style=display:flex><span>                        by Amazon Translate.
+</span></span></code></pre></div><p>按照我们设计列出了参数和帮助信息。</p><p>完整的执行代码：</p><blockquote><p>zyi:~/environment/python-01 $ python lab_5_step_2_cli_arguments.py &ndash;text &ldquo;we are learning python on AWS&rdquo; &ndash;source-language-code en &ndash;target-language-code zh
+{&lsquo;TranslatedText&rsquo;: <code>'我们正在 AWS 上学习 python'</code>, &lsquo;SourceLanguageCode&rsquo;:<code> 'en'</code>, &lsquo;TargetLanguageCode&rsquo;:<code> 'zh'</code>, &lsquo;ResponseMetadata&rsquo;: {&lsquo;RequestId&rsquo;: &lsquo;76dea3c1-b0bb-4401-9a22-026c5d61a0d0&rsquo;, &lsquo;HTTPStatusCode&rsquo;: 200, &lsquo;HTTPHeaders&rsquo;: {&lsquo;x-amzn-requestid&rsquo;: &lsquo;76dea3c1-b0bb-4401-9a22-026c5d61a0d0&rsquo;, &lsquo;cache-control&rsquo;: &rsquo;no-cache&rsquo;, &lsquo;content-type&rsquo;: &lsquo;application/x-amz-json-1.1&rsquo;, &lsquo;content-length&rsquo;: &lsquo;106&rsquo;, &lsquo;date&rsquo;: &lsquo;Mon, 01 Nov 2021 03:56:23 GMT&rsquo;}, &lsquo;RetryAttempts&rsquo;: 0}}</p></blockquote><h4 id=从文件input>从文件input</h4><p>open函数是一个内置函数。
 文档可以传入一个可选模式。在下面的例子中，我们传入r。这表示该文件以只读方式打开。要写入文件，则使用w。
-文件使用cloud9的readme.md</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#a2f;font-weight:700>def</span> <span style=color:#00a000>open_input</span>(file):
-    <span style=color:#a2f;font-weight:700>with</span> <span style=color:#a2f>open</span>(file, <span style=color:#b44>&#39;r&#39;</span>) <span style=color:#a2f;font-weight:700>as</span> f:
-        text <span style=color:#666>=</span> f<span style=color:#666>.</span>read() <span style=color:#080;font-style:italic>#We use read() to read the actual contents of the file</span>
-        <span style=color:#a2f>print</span>(text)
-
-<span style=color:#a2f;font-weight:700>def</span> <span style=color:#00a000>main</span>():
-    open_input(<span style=color:#b44>&#34;README.md&#34;</span>)
-
-<span style=color:#a2f;font-weight:700>if</span> __name__<span style=color:#666>==</span><span style=color:#b44>&#34;__main__&#34;</span>:
-    main()
-</code></pre></div><ul>
-<li>Python使用README.md作为文件的输入参数。</li>
-<li>与open（）一起使用以只读方式打开文件和r。</li>
-<li>使用.read（）方法读取文件内容并将其分配给变量text。</li>
-<li>打印变量以返回句子。</li>
-</ul>
-<p>运行结果：
-<img src="https://img-blog.csdnimg.cn/b9d1d61f51b5497787a8a9720fe043c0.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p>
-<h4 id=json>Json</h4>
-<p>JSON代表Javascript对象表示法，发音为“jason”。它的结构与python字典和列表非常相似，只有少数例外。在使用应用程序编程接口（API）时，计算机程序交换信息是一种非常常见的格式。</p>
-<p>对比Json和Python的参数定义，还有一些不同：</p>
-<table>
-<thead>
-<tr>
-<th>Python</th>
-<th>JSON</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>dict</td>
-<td>object</td>
-</tr>
-<tr>
-<td>list,tuple</td>
-<td>array</td>
-</tr>
-<tr>
-<td>str</td>
-<td>string</td>
-</tr>
-<tr>
-<td>int, float</td>
-<td>number</td>
-</tr>
-<tr>
-<td>True</td>
-<td>true</td>
-</tr>
-<tr>
-<td>False</td>
-<td>false</td>
-</tr>
-<tr>
-<td>None</td>
-<td>null</td>
-</tr>
-</tbody>
-</table>
-<p>这两个方法使用JSON字符串。在学习操作JSON时，很容易混淆:
-JSON.loads() JSON.dumps()和JSON.load() JSON.dump()</p>
-<p>json.load()& json.dump() -用于从<strong>文件到文件</strong>中输入和输出json。
-json.loads()& json.dumps()-用于输入和输出<strong>字符串</strong>中的json和字符串中的json。</p>
-<p>创建一个json文件并使用json.loads()输入和json.dumps()输出：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#a2f;font-weight:700>import</span> <span style=color:#00f;font-weight:700>json</span>
-
-<span style=color:#080;font-style:italic># This uses a json string as an input</span>
-
-json_string <span style=color:#666>=</span> <span style=color:#b44>&#34;&#34;&#34;
-</span><span style=color:#b44>{
-</span><span style=color:#b44>    &#34;Input&#34;:[
-</span><span style=color:#b44>        {
-</span><span style=color:#b44>        &#34;Text&#34;:&#34;I am learning to code in AWS&#34;,
-</span><span style=color:#b44>        &#34;SourceLanguageCode&#34;:&#34;en&#34;,
-</span><span style=color:#b44>        &#34;TargetLanguageCode&#34;:&#34;zh&#34;,
-</span><span style=color:#b44>        &#34;Required&#34;: true
-</span><span style=color:#b44>        }
-</span><span style=color:#b44>    ]
-</span><span style=color:#b44>}
-</span><span style=color:#b44>&#34;&#34;&#34;</span>
-
-<span style=color:#a2f;font-weight:700>def</span> <span style=color:#00a000>main</span>():
-    json_input <span style=color:#666>=</span> json<span style=color:#666>.</span>loads(json_string)
-    indented_format <span style=color:#666>=</span> json<span style=color:#666>.</span>dumps(json_input, indent<span style=color:#666>=</span><span style=color:#666>2</span>)
-    <span style=color:#a2f>print</span>(json_input)
-    <span style=color:#a2f>print</span>(<span style=color:#b44>&#34;</span><span style=color:#b62;font-weight:700>\n</span><span style=color:#b44>&#34;</span>)
-    <span style=color:#a2f>print</span>(indented_format)
-
-<span style=color:#a2f;font-weight:700>if</span> __name__<span style=color:#666>==</span><span style=color:#b44>&#34;__main__&#34;</span>:
-    main()
-</code></pre></div><p>运行结果：</p>
-<blockquote>
-<p>{&lsquo;Input&rsquo;: [{&lsquo;Text&rsquo;: &lsquo;I am learning to code in AWS&rsquo;, &lsquo;SourceLanguageCode&rsquo;: &lsquo;en&rsquo;, &lsquo;TargetLanguageCode&rsquo;: &lsquo;zh&rsquo;, &lsquo;Required&rsquo;: <code>True</code>}]}</p>
-</blockquote>
-<blockquote>
-<p>{
+文件使用cloud9的readme.md</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#a2f;font-weight:700>def</span> <span style=color:#00a000>open_input</span>(file):
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>with</span> <span style=color:#a2f>open</span>(file, <span style=color:#b44>&#39;r&#39;</span>) <span style=color:#a2f;font-weight:700>as</span> f:
+</span></span><span style=display:flex><span>        text <span style=color:#666>=</span> f<span style=color:#666>.</span>read() <span style=color:#080;font-style:italic>#We use read() to read the actual contents of the file</span>
+</span></span><span style=display:flex><span>        <span style=color:#a2f>print</span>(text)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>def</span> <span style=color:#00a000>main</span>():
+</span></span><span style=display:flex><span>    open_input(<span style=color:#b44>&#34;README.md&#34;</span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>if</span> __name__<span style=color:#666>==</span><span style=color:#b44>&#34;__main__&#34;</span>:
+</span></span><span style=display:flex><span>    main()
+</span></span></code></pre></div><ul><li>Python使用README.md作为文件的输入参数。</li><li>与open（）一起使用以只读方式打开文件和r。</li><li>使用.read（）方法读取文件内容并将其分配给变量text。</li><li>打印变量以返回句子。</li></ul><p>运行结果：
+<img src="https://img-blog.csdnimg.cn/b9d1d61f51b5497787a8a9720fe043c0.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p><h4 id=json>Json</h4><p>JSON代表Javascript对象表示法，发音为“jason”。它的结构与python字典和列表非常相似，只有少数例外。在使用应用程序编程接口（API）时，计算机程序交换信息是一种非常常见的格式。</p><p>对比Json和Python的参数定义，还有一些不同：</p><table><thead><tr><th>Python</th><th>JSON</th></tr></thead><tbody><tr><td>dict</td><td>object</td></tr><tr><td>list,tuple</td><td>array</td></tr><tr><td>str</td><td>string</td></tr><tr><td>int, float</td><td>number</td></tr><tr><td>True</td><td>true</td></tr><tr><td>False</td><td>false</td></tr><tr><td>None</td><td>null</td></tr></tbody></table><p>这两个方法使用JSON字符串。在学习操作JSON时，很容易混淆:
+JSON.loads() JSON.dumps()和JSON.load() JSON.dump()</p><p>json.load()& json.dump() -用于从<strong>文件到文件</strong>中输入和输出json。
+json.loads()& json.dumps()-用于输入和输出<strong>字符串</strong>中的json和字符串中的json。</p><p>创建一个json文件并使用json.loads()输入和json.dumps()输出：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#a2f;font-weight:700>import</span> <span style=color:#00f;font-weight:700>json</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic># This uses a json string as an input</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>json_string <span style=color:#666>=</span> <span style=color:#b44>&#34;&#34;&#34;
+</span></span></span><span style=display:flex><span><span style=color:#b44>{
+</span></span></span><span style=display:flex><span><span style=color:#b44>    &#34;Input&#34;:[
+</span></span></span><span style=display:flex><span><span style=color:#b44>        {
+</span></span></span><span style=display:flex><span><span style=color:#b44>        &#34;Text&#34;:&#34;I am learning to code in AWS&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#b44>        &#34;SourceLanguageCode&#34;:&#34;en&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#b44>        &#34;TargetLanguageCode&#34;:&#34;zh&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#b44>        &#34;Required&#34;: true
+</span></span></span><span style=display:flex><span><span style=color:#b44>        }
+</span></span></span><span style=display:flex><span><span style=color:#b44>    ]
+</span></span></span><span style=display:flex><span><span style=color:#b44>}
+</span></span></span><span style=display:flex><span><span style=color:#b44>&#34;&#34;&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>def</span> <span style=color:#00a000>main</span>():
+</span></span><span style=display:flex><span>    json_input <span style=color:#666>=</span> json<span style=color:#666>.</span>loads(json_string)
+</span></span><span style=display:flex><span>    indented_format <span style=color:#666>=</span> json<span style=color:#666>.</span>dumps(json_input, indent<span style=color:#666>=</span><span style=color:#666>2</span>)
+</span></span><span style=display:flex><span>    <span style=color:#a2f>print</span>(json_input)
+</span></span><span style=display:flex><span>    <span style=color:#a2f>print</span>(<span style=color:#b44>&#34;</span><span style=color:#b62;font-weight:700>\n</span><span style=color:#b44>&#34;</span>)
+</span></span><span style=display:flex><span>    <span style=color:#a2f>print</span>(indented_format)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>if</span> __name__<span style=color:#666>==</span><span style=color:#b44>&#34;__main__&#34;</span>:
+</span></span><span style=display:flex><span>    main()
+</span></span></code></pre></div><p>运行结果：</p><blockquote><p>{&lsquo;Input&rsquo;: [{&lsquo;Text&rsquo;: &lsquo;I am learning to code in AWS&rsquo;, &lsquo;SourceLanguageCode&rsquo;: &rsquo;en&rsquo;, &lsquo;TargetLanguageCode&rsquo;: &lsquo;zh&rsquo;, &lsquo;Required&rsquo;: <code>True</code>}]}</p></blockquote><blockquote><p>{
 &ldquo;Input&rdquo;: [
 {
 &ldquo;Text&rdquo;: &ldquo;I am learning to code in AWS&rdquo;,
@@ -369,310 +171,111 @@ json_string <span style=color:#666>=</span> <span style=color:#b44>&#34;&#34;&#3
 &ldquo;Required&rdquo;: <code>true</code>
 }
 ]
-}</p>
-</blockquote>
-<p>标红部分显示着两者的差别。</p>
-<p>上面的例子我们可以看到Json文件到Python以后是一个字典结构，如果要给不同参数赋值，采用切片方法：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#a2f;font-weight:700>import</span> <span style=color:#00f;font-weight:700>json</span>
-
-<span style=color:#080;font-style:italic># This uses a json string as an input</span>
-
-json_string <span style=color:#666>=</span> <span style=color:#b44>&#34;&#34;&#34;
-</span><span style=color:#b44>{
-</span><span style=color:#b44>    &#34;Input&#34;:[
-</span><span style=color:#b44>        {
-</span><span style=color:#b44>        &#34;Text&#34;:&#34;I am learning to code in AWS&#34;,
-</span><span style=color:#b44>        &#34;SourceLanguageCode&#34;:&#34;en&#34;,
-</span><span style=color:#b44>        &#34;TargetLanguageCode&#34;:&#34;zh&#34;,
-</span><span style=color:#b44>        &#34;Required&#34;: true
-</span><span style=color:#b44>        }
-</span><span style=color:#b44>    ]
-</span><span style=color:#b44>}
-</span><span style=color:#b44>&#34;&#34;&#34;</span>
-<span style=color:#080;font-style:italic># Modify below this line</span>
-<span style=color:#a2f;font-weight:700>def</span> <span style=color:#00a000>main</span>():
-    json_input <span style=color:#666>=</span> json<span style=color:#666>.</span>loads(json_string)
-    text <span style=color:#666>=</span> json_input[<span style=color:#b44>&#39;Input&#39;</span>][<span style=color:#666>0</span>][<span style=color:#b44>&#39;Text&#39;</span>]
-    source_language_code <span style=color:#666>=</span> json_input[<span style=color:#b44>&#39;Input&#39;</span>][<span style=color:#666>0</span>][<span style=color:#b44>&#39;SourceLanguageCode&#39;</span>]
-    target_language_code <span style=color:#666>=</span> json_input[<span style=color:#b44>&#39;Input&#39;</span>][<span style=color:#666>0</span>][<span style=color:#b44>&#39;TargetLanguageCode&#39;</span>]
-    <span style=color:#a2f>print</span>(text, source_language_code, target_language_code)
-
-<span style=color:#a2f;font-weight:700>if</span> __name__<span style=color:#666>==</span><span style=color:#b44>&#34;__main__&#34;</span>:
-    main()
-</code></pre></div><p>其中赋值为：</p>
-<blockquote>
-<p>text = json_input[&lsquo;Input&rsquo;][0][&lsquo;Text&rsquo;]
+}</p></blockquote><p>标红部分显示着两者的差别。</p><p>上面的例子我们可以看到Json文件到Python以后是一个字典结构，如果要给不同参数赋值，采用切片方法：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#a2f;font-weight:700>import</span> <span style=color:#00f;font-weight:700>json</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic># This uses a json string as an input</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>json_string <span style=color:#666>=</span> <span style=color:#b44>&#34;&#34;&#34;
+</span></span></span><span style=display:flex><span><span style=color:#b44>{
+</span></span></span><span style=display:flex><span><span style=color:#b44>    &#34;Input&#34;:[
+</span></span></span><span style=display:flex><span><span style=color:#b44>        {
+</span></span></span><span style=display:flex><span><span style=color:#b44>        &#34;Text&#34;:&#34;I am learning to code in AWS&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#b44>        &#34;SourceLanguageCode&#34;:&#34;en&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#b44>        &#34;TargetLanguageCode&#34;:&#34;zh&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#b44>        &#34;Required&#34;: true
+</span></span></span><span style=display:flex><span><span style=color:#b44>        }
+</span></span></span><span style=display:flex><span><span style=color:#b44>    ]
+</span></span></span><span style=display:flex><span><span style=color:#b44>}
+</span></span></span><span style=display:flex><span><span style=color:#b44>&#34;&#34;&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic># Modify below this line</span>
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>def</span> <span style=color:#00a000>main</span>():
+</span></span><span style=display:flex><span>    json_input <span style=color:#666>=</span> json<span style=color:#666>.</span>loads(json_string)
+</span></span><span style=display:flex><span>    text <span style=color:#666>=</span> json_input[<span style=color:#b44>&#39;Input&#39;</span>][<span style=color:#666>0</span>][<span style=color:#b44>&#39;Text&#39;</span>]
+</span></span><span style=display:flex><span>    source_language_code <span style=color:#666>=</span> json_input[<span style=color:#b44>&#39;Input&#39;</span>][<span style=color:#666>0</span>][<span style=color:#b44>&#39;SourceLanguageCode&#39;</span>]
+</span></span><span style=display:flex><span>    target_language_code <span style=color:#666>=</span> json_input[<span style=color:#b44>&#39;Input&#39;</span>][<span style=color:#666>0</span>][<span style=color:#b44>&#39;TargetLanguageCode&#39;</span>]
+</span></span><span style=display:flex><span>    <span style=color:#a2f>print</span>(text, source_language_code, target_language_code)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>if</span> __name__<span style=color:#666>==</span><span style=color:#b44>&#34;__main__&#34;</span>:
+</span></span><span style=display:flex><span>    main()
+</span></span></code></pre></div><p>其中赋值为：</p><blockquote><p>text = json_input[&lsquo;Input&rsquo;][0][&lsquo;Text&rsquo;]
 source_language_code = json_input[&lsquo;Input&rsquo;][0][&lsquo;SourceLanguageCode&rsquo;]
-target_language_code = json_input[&lsquo;Input&rsquo;][0][&lsquo;TargetLanguageCode&rsquo;]</p>
-</blockquote>
-<p>运行结果：</p>
-<blockquote>
-<p>I am learning to code in AWS en zh
-Process exited with code: 0</p>
-</blockquote>
-<p><strong>json.load() & json.dump()</strong>
-正如前面所说，json.load() & json.dump()操作的对象是文件，我们实验前先建立一个json文件</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>{
-    <span style=color:green;font-weight:700>&#34;Input&#34;</span>:[
-        {
-        <span style=color:green;font-weight:700>&#34;Text&#34;</span>:<span style=color:#b44>&#34;Amazon RDS is a web service that makes it easier to set up, operate, and scale a relational database in the AWS Cloud. &#34;</span>,
-        <span style=color:green;font-weight:700>&#34;SourceLanguageCode&#34;</span>:<span style=color:#b44>&#34;en&#34;</span>,
-        <span style=color:green;font-weight:700>&#34;TargetLanguageCode&#34;</span>:<span style=color:#b44>&#34;zh&#34;</span>
-        }
-    ]
-}
-</code></pre></div><p>结合Boto3，我们使用以下代码：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#080;font-style:italic># Standard Imports</span>
-<span style=color:#a2f;font-weight:700>import</span> <span style=color:#00f;font-weight:700>argparse</span>
-<span style=color:#a2f;font-weight:700>import</span> <span style=color:#00f;font-weight:700>json</span>
-
-<span style=color:#080;font-style:italic># 3rd Party Imports</span>
-<span style=color:#a2f;font-weight:700>import</span> <span style=color:#00f;font-weight:700>boto3</span>
-
-<span style=color:#080;font-style:italic># Arguments</span>
-parser <span style=color:#666>=</span> argparse<span style=color:#666>.</span>ArgumentParser(description<span style=color:#666>=</span><span style=color:#b44>&#34;Provides translation  between one source language and another of the same set of languages.&#34;</span>)
-parser<span style=color:#666>.</span>add_argument(
-    <span style=color:#b44>&#39;--file&#39;</span>,
-    dest<span style=color:#666>=</span><span style=color:#b44>&#39;filename&#39;</span>,
-    help<span style=color:#666>=</span><span style=color:#b44>&#34;The path to the input file. The file should be valid json&#34;</span>,
-    required<span style=color:#666>=</span><span style=color:#a2f;font-weight:700>True</span>)
-
-args <span style=color:#666>=</span> parser<span style=color:#666>.</span>parse_args()
-
-<span style=color:#080;font-style:italic># Functions</span>
-<span style=color:#a2f;font-weight:700>def</span> <span style=color:#00a000>open_input</span>():
-    <span style=color:#a2f;font-weight:700>with</span> <span style=color:#a2f>open</span>(args<span style=color:#666>.</span>filename) <span style=color:#a2f;font-weight:700>as</span> file_object:
-        contents <span style=color:#666>=</span> json<span style=color:#666>.</span>load(file_object)
-        <span style=color:#a2f;font-weight:700>return</span> contents[<span style=color:#b44>&#39;Input&#39;</span>][<span style=color:#666>0</span>]
-
-<span style=color:#a2f;font-weight:700>def</span> <span style=color:#00a000>translate_text</span>(<span style=color:#666>**</span>kwargs):
-    client <span style=color:#666>=</span> boto3<span style=color:#666>.</span>client(<span style=color:#b44>&#39;translate&#39;</span>)
-    response <span style=color:#666>=</span> client<span style=color:#666>.</span>translate_text(<span style=color:#666>**</span>kwargs)
-    <span style=color:#a2f>print</span>(response)
-
-<span style=color:#080;font-style:italic># Main Function - use to call other functions</span>
-<span style=color:#a2f;font-weight:700>def</span> <span style=color:#00a000>main</span>():
-    kwargs <span style=color:#666>=</span> open_input()
-    translate_text(<span style=color:#666>**</span>kwargs)
-
-<span style=color:#a2f;font-weight:700>if</span> __name__ <span style=color:#666>==</span> <span style=color:#b44>&#34;__main__&#34;</span>:
-    main()
-</code></pre></div><p>首先，我们定义了import。内置软件包一起分组，然后是已安装的。
+target_language_code = json_input[&lsquo;Input&rsquo;][0][&lsquo;TargetLanguageCode&rsquo;]</p></blockquote><p>运行结果：</p><blockquote><p>I am learning to code in AWS en zh
+Process exited with code: 0</p></blockquote><p><strong>json.load() & json.dump()</strong>
+正如前面所说，json.load() & json.dump()操作的对象是文件，我们实验前先建立一个json文件</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:green;font-weight:700>&#34;Input&#34;</span>:[
+</span></span><span style=display:flex><span>        {
+</span></span><span style=display:flex><span>        <span style=color:green;font-weight:700>&#34;Text&#34;</span>:<span style=color:#b44>&#34;Amazon RDS is a web service that makes it easier to set up, operate, and scale a relational database in the AWS Cloud. &#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:green;font-weight:700>&#34;SourceLanguageCode&#34;</span>:<span style=color:#b44>&#34;en&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:green;font-weight:700>&#34;TargetLanguageCode&#34;</span>:<span style=color:#b44>&#34;zh&#34;</span>
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    ]
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>结合Boto3，我们使用以下代码：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#080;font-style:italic># Standard Imports</span>
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>import</span> <span style=color:#00f;font-weight:700>argparse</span>
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>import</span> <span style=color:#00f;font-weight:700>json</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic># 3rd Party Imports</span>
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>import</span> <span style=color:#00f;font-weight:700>boto3</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic># Arguments</span>
+</span></span><span style=display:flex><span>parser <span style=color:#666>=</span> argparse<span style=color:#666>.</span>ArgumentParser(description<span style=color:#666>=</span><span style=color:#b44>&#34;Provides translation  between one source language and another of the same set of languages.&#34;</span>)
+</span></span><span style=display:flex><span>parser<span style=color:#666>.</span>add_argument(
+</span></span><span style=display:flex><span>    <span style=color:#b44>&#39;--file&#39;</span>,
+</span></span><span style=display:flex><span>    dest<span style=color:#666>=</span><span style=color:#b44>&#39;filename&#39;</span>,
+</span></span><span style=display:flex><span>    help<span style=color:#666>=</span><span style=color:#b44>&#34;The path to the input file. The file should be valid json&#34;</span>,
+</span></span><span style=display:flex><span>    required<span style=color:#666>=</span><span style=color:#a2f;font-weight:700>True</span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>args <span style=color:#666>=</span> parser<span style=color:#666>.</span>parse_args()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic># Functions</span>
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>def</span> <span style=color:#00a000>open_input</span>():
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>with</span> <span style=color:#a2f>open</span>(args<span style=color:#666>.</span>filename) <span style=color:#a2f;font-weight:700>as</span> file_object:
+</span></span><span style=display:flex><span>        contents <span style=color:#666>=</span> json<span style=color:#666>.</span>load(file_object)
+</span></span><span style=display:flex><span>        <span style=color:#a2f;font-weight:700>return</span> contents[<span style=color:#b44>&#39;Input&#39;</span>][<span style=color:#666>0</span>]
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>def</span> <span style=color:#00a000>translate_text</span>(<span style=color:#666>**</span>kwargs):
+</span></span><span style=display:flex><span>    client <span style=color:#666>=</span> boto3<span style=color:#666>.</span>client(<span style=color:#b44>&#39;translate&#39;</span>)
+</span></span><span style=display:flex><span>    response <span style=color:#666>=</span> client<span style=color:#666>.</span>translate_text(<span style=color:#666>**</span>kwargs)
+</span></span><span style=display:flex><span>    <span style=color:#a2f>print</span>(response)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic># Main Function - use to call other functions</span>
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>def</span> <span style=color:#00a000>main</span>():
+</span></span><span style=display:flex><span>    kwargs <span style=color:#666>=</span> open_input()
+</span></span><span style=display:flex><span>    translate_text(<span style=color:#666>**</span>kwargs)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>if</span> __name__ <span style=color:#666>==</span> <span style=color:#b44>&#34;__main__&#34;</span>:
+</span></span><span style=display:flex><span>    main()
+</span></span></code></pre></div><p>首先，我们定义了import。内置软件包一起分组，然后是已安装的。
 接下来，为了提供命令行输入，我们定义了一个参数.argparse&ndash;file
-然后，我们定义三个函数。</p>
-<ul>
-<li>第一个函数使用open()打开文件，并使其成为名为的python对象。然后，我们使用json.load()以获取所需的信息，然后返回该值</li>
-<li>第二个函数是我们的标准Amazon Translate函数，它接受任意数量的关键字参数。</li>
-<li>第三个函数是我们的主要函数。此函数用于按指定顺序调用其他函数。这将使用变量kwargs调用函数，该函数从函数返回值。然后调用translate_text（）函数，并使用kwargs变量提供参数作为translate_text（）函数的输入。</li>
-</ul>
-<p>运行结果：</p>
-<blockquote>
-<p>zyi:~/environment/python-01 $ python lab_5_step_5_json_input.py &ndash;file translate_input.json
-{&lsquo;TranslatedText&rsquo;: &lsquo;Amazon RDS 是一项 Web 服务，可让您更轻松地在 AWS 云中设置、操作和扩展关系数据库。 &lsquo;, &lsquo;SourceLanguageCode&rsquo;: &lsquo;en&rsquo;, &lsquo;TargetLanguageCode&rsquo;: &lsquo;zh&rsquo;, &lsquo;ResponseMetadata&rsquo;: {&lsquo;RequestId&rsquo;: &lsquo;9f8c7d8a-24c7-4095-b48c-5ec5ac468efc&rsquo;, &lsquo;HTTPStatusCode&rsquo;: 200, &lsquo;HTTPHeaders&rsquo;: {&lsquo;x-amzn-requestid&rsquo;: &lsquo;9f8c7d8a-24c7-4095-b48c-5ec5ac468efc&rsquo;, &lsquo;cache-control&rsquo;: &lsquo;no-cache&rsquo;, &lsquo;content-type&rsquo;: &lsquo;application/x-amz-json-1.1&rsquo;, &lsquo;content-length&rsquo;: &lsquo;185&rsquo;, &lsquo;date&rsquo;: &lsquo;Mon, 01 Nov 2021 08:57:16 GMT&rsquo;}, &lsquo;RetryAttempts&rsquo;: 0}}</p>
-</blockquote>
-</div>
-<footer class=post-footer>
-<div id=wcomments></div>
-</footer>
-</article>
-</section>
-</div>
-</div>
-<div class=sidebar-toggle>
-<div class=sidebar-toggle-line-wrap>
-<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+然后，我们定义三个函数。</p><ul><li>第一个函数使用open()打开文件，并使其成为名为的python对象。然后，我们使用json.load()以获取所需的信息，然后返回该值</li><li>第二个函数是我们的标准Amazon Translate函数，它接受任意数量的关键字参数。</li><li>第三个函数是我们的主要函数。此函数用于按指定顺序调用其他函数。这将使用变量kwargs调用函数，该函数从函数返回值。然后调用translate_text（）函数，并使用kwargs变量提供参数作为translate_text（）函数的输入。</li></ul><p>运行结果：</p><blockquote><p>zyi:~/environment/python-01 $ python lab_5_step_5_json_input.py &ndash;file translate_input.json
+{&lsquo;TranslatedText&rsquo;: &lsquo;Amazon RDS 是一项 Web 服务，可让您更轻松地在 AWS 云中设置、操作和扩展关系数据库。 &lsquo;, &lsquo;SourceLanguageCode&rsquo;: &rsquo;en&rsquo;, &lsquo;TargetLanguageCode&rsquo;: &lsquo;zh&rsquo;, &lsquo;ResponseMetadata&rsquo;: {&lsquo;RequestId&rsquo;: &lsquo;9f8c7d8a-24c7-4095-b48c-5ec5ac468efc&rsquo;, &lsquo;HTTPStatusCode&rsquo;: 200, &lsquo;HTTPHeaders&rsquo;: {&lsquo;x-amzn-requestid&rsquo;: &lsquo;9f8c7d8a-24c7-4095-b48c-5ec5ac468efc&rsquo;, &lsquo;cache-control&rsquo;: &rsquo;no-cache&rsquo;, &lsquo;content-type&rsquo;: &lsquo;application/x-amz-json-1.1&rsquo;, &lsquo;content-length&rsquo;: &lsquo;185&rsquo;, &lsquo;date&rsquo;: &lsquo;Mon, 01 Nov 2021 08:57:16 GMT&rsquo;}, &lsquo;RetryAttempts&rsquo;: 0}}</p></blockquote></div><footer class=post-footer><div id=wcomments></div></footer></article></section></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
 <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-</div>
-</div>
-<aside id=sidebar class=sidebar>
-<div class=sidebar-inner>
-<ul class="sidebar-nav motion-element">
-<li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>
-文章目录
-</li>
-<li class=sidebar-nav-overview data-target=site-overview>
-站点概览
-</li>
-</ul>
-<section class="site-overview sidebar-panel">
-<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
-<img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon>
-<p class=site-author-name itemprop=name>Etaon</p>
-<p class="site-description motion-element" itemprop=description>
-Kepp Going!
-</p>
-</div>
-<nav class="site-state motion-element">
-<div class="site-state-item site-state-posts">
-<a href=/post/>
-<span class=site-state-item-count>61</span>
-<span class=site-state-item-name>日志</span>
-</a>
-</div>
-<div class="site-state-item site-state-categories">
-<a href=/categories/>
-<span class=site-state-item-count>13</span>
-<span class=site-state-item-name>分类</span>
-</a>
-</div>
-<div class="site-state-item site-state-tags">
-<a href=/tags/>
-<span class=site-state-item-count>34</span>
-<span class=site-state-item-name>标签</span>
-</a>
-</div>
-</nav>
-<div class="links-of-author motion-element">
-<span class=links-of-author-item>
-<a href=https://github.com/etaon target=_blank title=GitHub>
-<i class="fa fa-fw fa-github"></i>
-GitHub
-</a>
-</span>
-<span class=links-of-author-item>
-<a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN>
-<i class="fa fa-fw fa-CSDN"></i>
-CSDN
-</a>
-</span>
-</div>
-<div class="links-of-blogroll motion-element links-of-blogroll-inline">
-<div class=links-of-blogroll-title>
-<i class="fa fa-fw fa-globe"></i>
-友情链接
-</div>
-<ul class=links-of-blogroll-list>
-<li class=links-of-blogroll-item>
-<a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a>
-</li>
-</ul>
-</div>
-<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
-<div class=tagcloud-of-blogroll-title>
-<i class="fa fa-fw fa-tags"></i>
-标签云
-</div>
-<ul class=tagcloud-of-blogroll-list>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mysql>Mysql</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/aws>Aws</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/dql>Dql</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/hadoop>Hadoop</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/redis>Redis</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/cicd>Cicd</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/git>Git</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/istio>Istio</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mongodb>Mongodb</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/azure>Azure</a>
-</li>
-</ul>
-</div>
-</section>
-<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-<div class=post-toc>
-<div class=post-toc-content><nav id=TableOfContents>
-<ul>
-<li><a href=#概述>概述</a></li>
-<li><a href=#实验环境>实验环境</a></li>
-<li><a href=#实验步骤>实验步骤</a>
-<ul>
-<li><a href=#cli方式>CLI方式</a></li>
-</ul>
-</li>
-</ul>
-</nav></div>
-</div>
-</section>
-</div>
-</aside>
-</div>
-</main>
-<footer id=footer class=footer>
-<div class=footer-inner>
-<div class=copyright>
-<span class=copyright-year>
-&copy; 2010 - 2022
-</span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id=sidebar class=sidebar><div class=sidebar-inner><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>文章目录</li><li class=sidebar-nav-overview data-target=site-overview>站点概览</li></ul><section class="site-overview sidebar-panel"><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon><p class=site-author-name itemprop=name>Etaon</p><p class="site-description motion-element" itemprop=description>Kepp Going!</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=/post/><span class=site-state-item-count>61</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>13</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>34</span>
+<span class=site-state-item-name>标签</span></a></div></nav><div class="links-of-author motion-element"><span class=links-of-author-item><a href=https://github.com/etaon target=_blank title=GitHub><i class="fa fa-fw fa-github"></i>
+GitHub</a></span>
+<span class=links-of-author-item><a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN><i class="fa fa-fw fa-CSDN"></i>
+CSDN</a></span></div><div class="links-of-blogroll motion-element links-of-blogroll-inline"><div class=links-of-blogroll-title><i class="fa fa-fw fa-globe"></i>
+友情链接</div><ul class=links-of-blogroll-list><li class=links-of-blogroll-item><a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a></li><li class=links-of-blogroll-item><a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a></li><li class=links-of-blogroll-item><a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a></li><li class=links-of-blogroll-item><a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a></li></ul></div><div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline"><div class=tagcloud-of-blogroll-title><i class="fa fa-fw fa-tags"></i>
+标签云</div><ul class=tagcloud-of-blogroll-list><li class=tagcloud-of-blogroll-item><a href=/tags/mysql>Mysql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/aws>Aws</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/dql>Dql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/hadoop>Hadoop</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/redis>Redis</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/cicd>Cicd</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/git>Git</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/istio>Istio</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/mongodb>Mongodb</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/azure>Azure</a></li></ul></div></section><section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active"><div class=post-toc><div class=post-toc-content><nav id=TableOfContents><ul><li><a href=#概述>概述</a></li><li><a href=#实验环境>实验环境</a></li><li><a href=#实验步骤>实验步骤</a><ul><li><a href=#cli方式>CLI方式</a></li></ul></li></ul></nav></div></div></section></div></aside></div></main><footer id=footer class=footer><div class=footer-inner><div class=copyright><span class=copyright-year>&copy; 2010 - 2022</span>
 <span class=with-love><i class="fa fa-heart"></i></span>
-<span class=copyright-author>路无止境！</span>
-</div>
-<div class=powered-info>
-<span class=powered-by>
-Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.91.2</a>
-</span>
+<span class=copyright-author>路无止境！</span></div><div class=powered-info><span class=powered-by>Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.101.0</a></span>
 <span class=separator-line>/</span>
-<span class=theme-info>
-Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
-</a>
-</span>
-</div>
-<div class=vistor-info>
-<script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
-<span class=site-uv>
-<i class="fa fa-user"></i>
-<span class=busuanzi-value id=busuanzi_value_site_uv></span>
-</span>
+<span class=theme-info>Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank>NexT</a></span></div><div class=vistor-info><script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<span class=site-uv><i class="fa fa-user"></i>
+<span class=busuanzi-value id=busuanzi_value_site_uv></span></span>
 <span class=separator-line>/</span>
-<span class=site-pv>
-<i class="fa fa-eye"></i>
-<span class=busuanzi-value id=busuanzi_value_site_pv></span>
-</span>
-</div>
-<div class=license-info>
-<span class=storage-info>
-Storage by
-<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a>
-</span>
+<span class=site-pv><i class="fa fa-eye"></i>
+<span class=busuanzi-value id=busuanzi_value_site_pv></span></span></div><div class=license-info><span class=storage-info>Storage by
+<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a></span>
 <span class=separator-line>/</span>
-<span class=license-num>
-<a href target=_blank></a>
-</span>
-</div>
-</div>
-</footer>
-<div class=back-to-top>
-<i class="fa fa-arrow-up"></i>
-<span id=scrollpercent><span>0</span>%</span>
-</div>
-</div>
-<script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
+<span class=license-num><a href target=_blank></a></span></div></div></footer><div class=back-to-top><i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span></div></div><script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
 <script type=text/javascript src=/js/search.js></script>
 <script type=text/javascript src=/js/affix.js></script>
 <script type=text/javascript src=/js/scrollspy.js></script>
-<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.main').css('padding-bottom'),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}}),$(document).on('affixed.bs.affix',function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var b=$('.header-inner').height()+10,c,d,a,e;$('#sidebar').css({'margin-top':b}).show(),c=parseInt($('#sidebar').css('margin-top')),d=parseInt($('.sidebar-inner').css('height')),a=c+d,e=$('.content-wrap').height(),e<a&&$('.content-wrap').css('min-height',a),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
-<script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
-<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
-<script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+'//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js',function(){new Waline({el:'#wcomments',visitor:!0,avatar:'wavatar',avatarCDN:'https://sdn.geekzu.org/avatar/',avatarForce:!1,wordLimit:'200',placeholder:' 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ',requiredFields:['nick','mail'],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$('#wcomments').html('抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。')})</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type=text/javascript>function detectIE(){var e=window.navigator.userAgent,t=e.indexOf("MSIE "),n=e.indexOf("Trident/"),s=e.indexOf("Edge/");return t>0||n>0||s>0?-1:1}function getCntViewHeight(){var t=$("#content").height(),e=$(window).height(),n=t>e?t-e:$(document).height()-e;return n}function getScrollbarWidth(){var e=$("<div />").addClass("scrollbar-measure").prependTo("body"),t=e[0],n=t.offsetWidth-t.clientWidth;return e.remove(),n}function registerBackTop(){var t=50,e=$(".back-to-top");$(window).on("scroll",function(){e.toggleClass("back-to-top-on",window.pageYOffset>t);var s=$(window).scrollTop(),o=getCntViewHeight(),i=s/o,n=Math.round(i*100),a=n>100?100:n;$("#scrollpercent>span").html(a)}),e.on("click",function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var e=".post-toc",s=$(e),t=".active-current";s.on("activate.bs.scrollspy",function(){var t=$(e+" .active").last();n(),t.addClass("active-current")}).on("clear.bs.scrollspy",n),$("body").scrollspy({target:e});function n(){$(e+" "+t).removeClass(t.substring(1))}}function initAffix(){var e=$(".header-inner").height(),t=parseInt($(".main").css("padding-bottom"),10),n=e+10;$(".sidebar-inner").affix({offset:{top:n,bottom:t}}),$(document).on("affixed.bs.affix",function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){$(window).on("resize",function(){e&&clearTimeout(e),e=setTimeout(function(){var e=document.body.clientHeight-100;updateTOCHeight(e)},0)}),updateTOCHeight(document.body.clientHeight-100);var e,t=getScrollbarWidth();$(".post-toc").css("width","calc(100% + "+t+"px)")}function updateTOCHeight(e){e=e||"auto",$(".post-toc").css("max-height",e)}$(function(){var e,t,n,s,o=$(".header-inner").height()+10;$("#sidebar").css({"margin-top":o}).show(),t=parseInt($("#sidebar").css("margin-top")),n=parseInt($(".sidebar-inner").css("height")),e=t+n,s=$(".content-wrap").height(),s<e&&$(".content-wrap").css("min-height",e),$(".site-nav-toggle").on("click",function(){var e=$(".site-nav"),o=$(".toggle"),t="site-nav-on",i="toggle-close",n=e.hasClass(t),a=n?"slideUp":"slideDown",s=n?"removeClass":"addClass";e.stop()[a]("normal",function(){e[s](t),o[s](i)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$(".sidebar-nav-toc").click(function(){$(this).addClass("sidebar-nav-active"),$(this).next().removeClass("sidebar-nav-active"),$("."+$(this).next().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)}),$(".sidebar-nav-overview").click(function(){$(this).addClass("sidebar-nav-active"),$(this).prev().removeClass("sidebar-nav-active"),$("."+$(this).prev().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)})})</script><script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$(".post-body").viewer()})</script><script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+"//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js",function(){new Waline({el:"#wcomments",visitor:!0,avatar:"wavatar",avatarCDN:"https://sdn.geekzu.org/avatar/",avatarForce:!1,wordLimit:"200",placeholder:" 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ",requiredFields:["nick","mail"],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$("#wcomments").html("抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。")})</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
 <script type=text/javascript src="//s7.addthis.com/js/300/addthis_widget.js#pubid=Your%20AddthisId"></script>
-<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
-</body>
-</html>
+<script>(function(){var t,e=document.createElement("script"),n=window.location.protocol.split(":")[0];n==="https"?e.src="https://zz.bdstatic.com/linksubmit/push.js":e.src="http://push.zhanzhang.baidu.com/push.js",t=document.getElementsByTagName("script")[0],t.parentNode.insertBefore(e,t)})()</script></body></html>

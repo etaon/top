@@ -1,467 +1,56 @@
-<!doctype html><html lang=zh-cn dir=content/zh-cn>
-<head>
-<meta charset=utf-8>
-<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
-<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
-<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
-<title> HADOOP-Yarn - 路无止境！ </title>
-<meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云">
-<meta name=author content="Etaon">
-<meta property="og:title" content="HADOOP-Yarn">
-<meta property="og:site_name" content="路无止境！">
-<meta property="og:image" content="/img/author.jpg">
-<meta name=title content="HADOOP-Yarn - 路无止境！">
-<meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。">
-<link rel="shortcut icon" href=/img/favicon.ico>
-<link rel=apple-touch-icon href=/img/apple-touch-icon.png>
-<link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png>
-<link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css>
-<link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet>
-<link href=/css/main.css rel=stylesheet type=text/css>
-<link href=/css/syntax.css rel=stylesheet type=text/css>
-</head>
-<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
-<div class="container one-collumn sidebar-position-left page-home">
-<div class=headband></div>
-<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
-<div class=header-inner> <div class=site-brand-container>
-<div class=site-nav-toggle>
-<div class=toggle role=button style=opacity:1;top:0>
+<!doctype html><html lang=zh-cn dir=content/zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=content-security-policy content="upgrade-insecure-requests"><title>HADOOP-Yarn - 路无止境！</title><meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云"><meta name=author content="Etaon"><meta property="og:title" content="HADOOP-Yarn"><meta property="og:site_name" content="路无止境！"><meta property="og:image" content="/img/author.jpg"><meta name=title content="HADOOP-Yarn - 路无止境！"><meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。"><link rel="shortcut icon" href=/img/favicon.ico><link rel=apple-touch-icon href=/img/apple-touch-icon.png><link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png><link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css><link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet><link href=/css/main.css rel=stylesheet type=text/css><link href=/css/syntax.css rel=stylesheet type=text/css></head><body itemscope itemtype=http://schema.org/WebPage lang=zh-hans><div class="container one-collumn sidebar-position-left page-home"><div class=headband></div><header id=header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle role=button style=opacity:1;top:0><span class=toggle-line></span>
 <span class=toggle-line></span>
-<span class=toggle-line></span>
-<span class=toggle-line></span>
-</div>
-</div>
-<div class=site-meta>
-<div class=multi-lang-switch>
-<i class="fa fa-fw fa-language" style=margin-right:5px></i>
-<a class=lang-link id=zh-cn href=#>中文</a>
-</div>
-<div class=custom-logo-site-title>
-<a href=/ class=brand rel=start>
-<span class=logo-line-before><i></i></span>
+<span class=toggle-line></span></div></div><div class=site-meta><div class=multi-lang-switch><i class="fa fa-fw fa-language" style=margin-right:5px></i>
+<a class=lang-link id=zh-cn href=#>中文</a></div><div class=custom-logo-site-title><a href=/ class=brand rel=start><span class=logo-line-before><i></i></span>
 <span class=site-title>路无止境！</span>
-<span class=logo-line-after><i></i></span>
-</a>
-</div>
-<p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p>
-</div>
-<div class=site-nav-right>
-<div class="toggle popup-trigger" style=opacity:1;top:0>
-<i class="fa fa-search fa-fw fa-lg"></i>
-</div>
-</div>
-</div>
-<nav class=site-nav>
-<ul id=menu class=menu>
-<li class=menu-item>
-<a href=/ rel=section>
-<i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页
-</a>
-</li>
-<li class=menu-item>
-<a href=/post rel=section>
-<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档
-</a>
-</li>
-<li class=menu-item>
-<a href=/about.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于我
-</a>
-</li>
-<li class=menu-item>
-<a href=/404.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益404
-</a>
-</li>
-<li class="menu-item menu-item-search">
-<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> 搜索</a>
-</li>
-</ul>
-<div class=site-search>
-<div class="popup search-popup local-search-popup">
-<div class="local-search-header clearfix">
-<span class=search-icon><i class="fa fa-search"></i> </span>
-<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
-<div class=local-search-input-wrapper>
-<input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
-</div>
-</div>
-<div id=local-search-result></div>
-</div>
-</div>
-</nav>
-</div>
-</header>
-<main id=main class=main>
-<div class=main-inner>
-<div class=content-wrap>
-<div id=content class=content>
-<section id=posts class=posts-expand>
-<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
-<header class=post-header>
-<h1 class=post-title itemprop="name headline" style=font-weight:700>
-<a class=post-title-link href=https://www.etaon.link/2021/07/11/hadoop-yarn.html itemprop=url>
-HADOOP-Yarn
-</a>
-</h1>
-</header>
-<div class=post-body itemprop=articleBody>
-<p>Yarn 是一个资源调度平台，负责为运算程序提供服务器运算资源，相当于一个分布式 的操作系统平台，而 MapReduce 等运算程序则相当于运行于操作系统之上的应用程序。</p>
-<p>YARN 主要由 ResourceManager、NodeManager、ApplicationMaster 和 Container 等组件构成。</p>
-<h2 id=yarn架构>Yarn架构</h2>
-<p><img src="https://img-blog.csdnimg.cn/2021071122073143.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述>
-如上图：</p>
-<p>RM，整体集群</p>
-<p>NM，单节点</p>
-<p>AM，应用</p>
-<p>Container，承载单位</p>
-<h2 id=工作机制>工作机制</h2>
-<p>（1）MR 程序提交到客户端所在的节点。</p>
-<p>（2）YarnRunner 向 ResourceManager 申请一个 Application。</p>
-<p>（3）RM 将该应用程序的资源路径返回给 YarnRunner。</p>
-<p>（4）该程序将运行所需资源提交到 HDFS 上。</p>
-<p>（5）程序资源提交完毕后，申请运行 mrAppMaster。</p>
-<p>（6）RM 将用户的请求初始化成一个 Task，并放入队列。</p>
-<p>（7）其中一个 NodeManager 从队列领取到 Task 任务。</p>
-<p>（8）该 NodeManager 创建容器 Container，并产生 MRAppmaster</p>
-<p>（9）Container 从 HDFS 上拷贝资源到本地。</p>
-<p>（10）MRAppmaster 向 RM 申请运行 MapTask 资源。</p>
-<p>（11）RM 将运行 MapTask 任务分配给另外两个 NodeManager，另两NodeManager 分别领取任务并创建容器。</p>
-<p>（12）MR 向两个接收到任务的 NodeManager 发送程序启动脚本，这两个NodeManager 分别启动 MapTask，MapTask 对数据分区排序。</p>
-<p>（13）MrAppMaster 等待所有 MapTask 运行完毕后，向 RM 申请容器，运行 ReduceTask。</p>
-<p>（14）ReduceTask 向 MapTask 获取相应分区的数据。</p>
-<p>（15）程序运行完毕后，MR 会向 RM 申请注销自己。
-<img src="https://img-blog.csdnimg.cn/20210711220848359.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p>
-<h3 id=yarnhdfs和mapreduce>Yarn、HDFS和Mapreduce</h3>
-<p><img src="https://img-blog.csdnimg.cn/2021071122095670.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述>
+<span class=logo-line-after><i></i></span></a></div><p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p></div><div class=site-nav-right><div class="toggle popup-trigger" style=opacity:1;top:0><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class=site-nav><ul id=menu class=menu><li class=menu-item><a href=/ rel=section><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class=menu-item><a href=/post rel=section><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class=menu-item><a href=/about.html rel=section><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于我</a></li><li class=menu-item><a href=/404.html rel=section><i class="menu-item-icon fa fa-fw fa-heartbeat"></i><br>公益404</a></li><li class="menu-item menu-item-search"><a href=javascript:; class=popup-trigger><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class=site-search><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class=search-icon><i class="fa fa-search"></i></span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span><div class=local-search-input-wrapper><input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off></div></div><div id=local-search-result></div></div></div></nav></div></header><main id=main class=main><div class=main-inner><div class=content-wrap><div id=content class=content><section id=posts class=posts-expand><article class="post post-type-normal" itemscope itemtype=http://schema.org/Article><header class=post-header><h1 class=post-title itemprop="name headline" style=font-weight:700><a class=post-title-link href=https://www.etaon.top/2021/07/11/hadoop-yarn.html itemprop=url>HADOOP-Yarn</a></h1></header><div class=post-body itemprop=articleBody><p>Yarn 是一个资源调度平台，负责为运算程序提供服务器运算资源，相当于一个分布式 的操作系统平台，而 MapReduce 等运算程序则相当于运行于操作系统之上的应用程序。</p><p>YARN 主要由 ResourceManager、NodeManager、ApplicationMaster 和 Container 等组件构成。</p><h2 id=yarn架构>Yarn架构</h2><p><img src="https://img-blog.csdnimg.cn/2021071122073143.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述>
+如上图：</p><p>RM，整体集群</p><p>NM，单节点</p><p>AM，应用</p><p>Container，承载单位</p><h2 id=工作机制>工作机制</h2><p>（1）MR 程序提交到客户端所在的节点。</p><p>（2）YarnRunner 向 ResourceManager 申请一个 Application。</p><p>（3）RM 将该应用程序的资源路径返回给 YarnRunner。</p><p>（4）该程序将运行所需资源提交到 HDFS 上。</p><p>（5）程序资源提交完毕后，申请运行 mrAppMaster。</p><p>（6）RM 将用户的请求初始化成一个 Task，并放入队列。</p><p>（7）其中一个 NodeManager 从队列领取到 Task 任务。</p><p>（8）该 NodeManager 创建容器 Container，并产生 MRAppmaster</p><p>（9）Container 从 HDFS 上拷贝资源到本地。</p><p>（10）MRAppmaster 向 RM 申请运行 MapTask 资源。</p><p>（11）RM 将运行 MapTask 任务分配给另外两个 NodeManager，另两NodeManager 分别领取任务并创建容器。</p><p>（12）MR 向两个接收到任务的 NodeManager 发送程序启动脚本，这两个NodeManager 分别启动 MapTask，MapTask 对数据分区排序。</p><p>（13）MrAppMaster 等待所有 MapTask 运行完毕后，向 RM 申请容器，运行 ReduceTask。</p><p>（14）ReduceTask 向 MapTask 获取相应分区的数据。</p><p>（15）程序运行完毕后，MR 会向 RM 申请注销自己。
+<img src="https://img-blog.csdnimg.cn/20210711220848359.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p><h3 id=yarnhdfs和mapreduce>Yarn、HDFS和Mapreduce</h3><p><img src="https://img-blog.csdnimg.cn/2021071122095670.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述>
 从作业提交角度
-<img src="https://img-blog.csdnimg.cn/20210711221056570.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p>
-<h2 id=调度器>调度器</h2>
-<p>当前，Hadoop 作业调度器主要有三种：FIFO、容量（Capacity Scheduler）和公平（Fair Scheduler）。Apache Hadoop3.1.3 默认的资源调度器是 Capacity Scheduler。</p>
-<p>调度器的配置在yarn-default.xml 文件
-<img src=https://img-blog.csdnimg.cn/20210711221301911.png alt=在这里插入图片描述></p>
-<h3 id=fifo-调度器first-in-first-out>FIFO 调度器（First In First Out）</h3>
-<p>FIFO 调度器（First In First Out）单队列，根据提交作业的先后顺序，先来先服务。
+<img src="https://img-blog.csdnimg.cn/20210711221056570.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p><h2 id=调度器>调度器</h2><p>当前，Hadoop 作业调度器主要有三种：FIFO、容量（Capacity Scheduler）和公平（Fair Scheduler）。Apache Hadoop3.1.3 默认的资源调度器是 Capacity Scheduler。</p><p>调度器的配置在yarn-default.xml 文件
+<img src=https://img-blog.csdnimg.cn/20210711221301911.png alt=在这里插入图片描述></p><h3 id=fifo-调度器first-in-first-out>FIFO 调度器（First In First Out）</h3><p>FIFO 调度器（First In First Out）单队列，根据提交作业的先后顺序，先来先服务。
 <strong>不支持多队列！</strong>
-<img src="https://img-blog.csdnimg.cn/20210711221632207.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p>
-<h3 id=容量调度器capacity-scheduler>容量调度器（Capacity Scheduler）</h3>
-<p>Capacity Scheduler 是 Yahoo 开发的多用户调度器。
+<img src="https://img-blog.csdnimg.cn/20210711221632207.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p><h3 id=容量调度器capacity-scheduler>容量调度器（Capacity Scheduler）</h3><p>Capacity Scheduler 是 Yahoo 开发的多用户调度器。
 <img src="https://img-blog.csdnimg.cn/20210711221757710.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述>
 1、多队列：每个队列可配置一定的资源量，每个队列采用FIFO调度策略。
 2、容量保证：管理员可为每个队列设置资源最低保证和资源使用上限
 3、灵活性：如果一个队列中的资源有剩余，可以暂时共享给那些需要资源的队列，而一旦该队列有新的应用 程序提交，则其他队列借调的资源会归还给该队列
 4、多租户： 支持多用户共享集群和多应用程序同时运行。 为了防止同一个用户的作业独占队列中的资源，该调度器会对同一用户提交的作业所占资源量（总量）进行限定
-<img src="https://img-blog.csdnimg.cn/20210711221838753.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p>
-<h4 id=资源分配>资源分配</h4>
-<p>1）队列资源分配</p>
-<p>从root开始，使用深度优先算法，优先选择资源占用率最低的队列分配资源。 上面例子先选择队列A，先做小任务。</p>
-<p>2）作业资源分配</p>
-<p>默认按照提交作业的优先级和提交时间，顺序分配资源。</p>
-<p>3）容器资源分配</p>
-<p>按照容器的优先级分配资源；</p>
-<p>如果优先级相同，按照数据本地性原则：</p>
-<p>（1）任务和数据在同一节点</p>
-<p>（2）任务和数据在同一机架</p>
-<p>（3）任务和数据不在同一节点也不在同一机架</p>
-<h3 id=公平调度器fair-scheduler>公平调度器（Fair Scheduler）</h3>
-<p>Fair Schedulere 是 Facebook 开发的多用户调度器。</p>
-<p>设计目标：同队列所有任务共享资源，在时间尺度上获得公平的资源</p>
-<p>1）与容量调度器相同点
+<img src="https://img-blog.csdnimg.cn/20210711221838753.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p><h4 id=资源分配>资源分配</h4><p>1）队列资源分配</p><p>从root开始，使用深度优先算法，优先选择资源占用率最低的队列分配资源。 上面例子先选择队列A，先做小任务。</p><p>2）作业资源分配</p><p>默认按照提交作业的优先级和提交时间，顺序分配资源。</p><p>3）容器资源分配</p><p>按照容器的优先级分配资源；</p><p>如果优先级相同，按照数据本地性原则：</p><p>（1）任务和数据在同一节点</p><p>（2）任务和数据在同一机架</p><p>（3）任务和数据不在同一节点也不在同一机架</p><h3 id=公平调度器fair-scheduler>公平调度器（Fair Scheduler）</h3><p>Fair Schedulere 是 Facebook 开发的多用户调度器。</p><p>设计目标：同队列所有任务共享资源，在时间尺度上获得公平的资源</p><p>1）与容量调度器相同点
 <img src=https://img-blog.csdnimg.cn/20210711223446579.png alt=在这里插入图片描述>
-<img src="https://img-blog.csdnimg.cn/2021071122352819.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p>
-<p>2）与容量调度器不同点</p>
-<p>（1）核心调度策略不同</p>
-<p>容量调度器：优先选择资源利用率低的队列</p>
-<p>公平调度器：优先选择对资源的缺额比例大的</p>
-<p>（2）每个队列可以单独设置资源分配方式</p>
-<p>容量调度器：FIFO、 DRF</p>
-<p>公平调度器：FIFO、FAIR、DRF</p>
-<h4 id=缺额>缺额</h4>
-<p>某一时刻一个作业应获资源和实际获取资源的差距叫“缺额” ，调度器会优先为缺额大的作业分配资源</p>
-<p><img src="https://img-blog.csdnimg.cn/20210711223537907.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p>
-<h2 id=调度算法策略>调度算法/策略</h2>
-<p>我们前面说过，调度器可以选择不同的策略（除了FIFO调度器）</p>
-<p>容量调度器：FIFO、 DRF</p>
-<p>公平调度器：FIFO、FAIR、DRF</p>
-<h3 id=fifo策略>FIFO策略</h3>
-<p>除了FIFO调度器，公平调度器每个队列资源分配策略如果选择FIFO的话，此时公平调度器相当于容量调度器</p>
-<h3 id=fair策略>Fair策略</h3>
-<p>Fair 策略（默认）是一种基于最大最小公平算法实现的资源多路复用方式，默认情况下，每个队列内部采用该方式分配资源。这意味着，如果一个队列中有两个应用程序同时运行，则每个应用程序可得到1/2的资源；如果三个应用程序同时运行，则每个应用程序可得到1/3的资源。</p>
-<p><img src="https://img-blog.csdnimg.cn/20210711224456918.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p>
-<p>➢ 实际最小资源份额：mindshare = Min（资源需求量，配置的最小资源）</p>
-<p>➢ 是否饥饿：isNeedy = 资源使用量 &lt; mindshare（实际最小资源份额）</p>
-<p>➢ 资源分配比：minShareRatio = 资源使用量 / Max（mindshare, 1）</p>
-<p>➢ 资源使用权重比：useToWeightRatio = 资源使用量 / 权重</p>
-<h4 id=用例说明>用例说明</h4>
-<p>如下图：
-<img src="https://img-blog.csdnimg.cn/20210711224614870.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p>
-<h5 id=队列资源分配>队列资源分配</h5>
-<p>需求：集群总资源100，有三个队列，对资源的需求分别是： queueA -> 20， queueB ->50， queueC -> 30</p>
-<p>第一次算：100 / 3 = 33.33</p>
-<p>queueA：分33.33 → 多13.33</p>
-<p>queueB：分33.33 → 少16.67</p>
-<p>queueC：分33.33 → 多3.33</p>
-<p>第二次算： （13.33 + 3.33）/ 1 = 16.66</p>
-<p>queueA：分20</p>
-<p>queueB：分33.33 + 13.66+3.33 = 50</p>
-<p>queueC：分30</p>
-<h5 id=作业资源分配>作业资源分配</h5>
-<h6 id=不加权关注点是job的个数>不加权（关注点是Job的个数）</h6>
-<p>需求：有一条队列总资源12个, 有4个job，对资源的需求分别是: job1->1, job2->2 , job3->6, job4->5
-第一次算: （分母对于需求数）</p>
-<p>12 / 4 = 3</p>
-<p>job1: 分3 &ndash;> 多2个</p>
-<p>job2: 分3 &ndash;> 多1个</p>
-<p>job3: 分3 &ndash;> 差3个</p>
-<p>job4: 分3 &ndash;> 差2个</p>
-<p>第二次算: 3 / 2 = 1.5（多出来的3个分给2个job)</p>
-<p>job1: 分1</p>
-<p>job2: 分2</p>
-<p>job3: 分3 &ndash;> 差3个 &ndash;> 分1.5 &ndash;> 最终: 4.5</p>
-<p>job4: 分3 &ndash;> 差2个 &ndash;> 分1.5 &ndash;> 最终: 4.5</p>
-<p>一直算到没有空闲资源</p>
-<h6 id=加权关注点是job的权重>加权（关注点是Job的权重）</h6>
-<p>需求：有一条队列总资源16，有4个job 对资源的需求分别是:</p>
-<p>job1->4 job2->2 job3->10 job4->4</p>
-<p>每个job的权重为:</p>
-<p>job1->5 job2->8 job3->1 job4->2</p>
-<p>第一次算: （分母对于权重）</p>
-<p>16 / (5+8+1+2) = 1</p>
-<p>job1: 分5 &ndash;> 多1</p>
-<p>job2: 分8 &ndash;> 多6</p>
-<p>job3: 分1 &ndash;> 少9</p>
-<p>job4: 分2 &ndash;> 少2</p>
-<p>第二次算: 7 / (1+2) = 7/3</p>
-<p>job1: 分4</p>
-<p>job2: 分2</p>
-<p>job3: 分1 &ndash;> 分7/3（2.33） &ndash;>少6.67</p>
-<p>job4: 分2 &ndash;> 分14/3(4.66) &ndash;>多2.66</p>
-<p>第三次算:2.66/1=2.66
-job1: 分4</p>
-<p>job2: 分2</p>
-<p>job3: 分2.33 &ndash;> 分2.66/1 &ndash;> 分2.66</p>
-<p>job4: 分4</p>
-<p>一直算到没有空闲资源</p>
-<h3 id=drf策略>DRF策略</h3>
-<p>DRF（Dominant Resource Fairness），我们之前说的资源，都是单一标准，例如只考虑内存（也是Yarn默 认的情况）。但是很多时候我们资源有很多种，例如内存，CPU，网络带宽等，这样我们很难衡量两个应用 应该分配的资源比例。
-那么在YARN中，我们用DRF来决定如何调度： 假设集群一共有100 CPU和10T 内存，而应用A需要（2 CPU, 300GB），应用B需要（6 CPU，100GB）。 则两个应用分别需要A（2%CPU, 3%内存）和B（6%CPU, 1%内存）的资源，这就意味着A是内存主导的, B是 CPU主导的，针对这种情况，我们可以选择DRF策略对不同应用进行不同资源（CPU和内存）的一个不同比 例的限制。</p>
-</div>
-<footer class=post-footer>
-<div id=wcomments></div>
-</footer>
-</article>
-</section>
-</div>
-</div>
-<div class=sidebar-toggle>
-<div class=sidebar-toggle-line-wrap>
-<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+<img src="https://img-blog.csdnimg.cn/2021071122352819.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p><p>2）与容量调度器不同点</p><p>（1）核心调度策略不同</p><p>容量调度器：优先选择资源利用率低的队列</p><p>公平调度器：优先选择对资源的缺额比例大的</p><p>（2）每个队列可以单独设置资源分配方式</p><p>容量调度器：FIFO、 DRF</p><p>公平调度器：FIFO、FAIR、DRF</p><h4 id=缺额>缺额</h4><p>某一时刻一个作业应获资源和实际获取资源的差距叫“缺额” ，调度器会优先为缺额大的作业分配资源</p><p><img src="https://img-blog.csdnimg.cn/20210711223537907.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p><h2 id=调度算法策略>调度算法/策略</h2><p>我们前面说过，调度器可以选择不同的策略（除了FIFO调度器）</p><p>容量调度器：FIFO、 DRF</p><p>公平调度器：FIFO、FAIR、DRF</p><h3 id=fifo策略>FIFO策略</h3><p>除了FIFO调度器，公平调度器每个队列资源分配策略如果选择FIFO的话，此时公平调度器相当于容量调度器</p><h3 id=fair策略>Fair策略</h3><p>Fair 策略（默认）是一种基于最大最小公平算法实现的资源多路复用方式，默认情况下，每个队列内部采用该方式分配资源。这意味着，如果一个队列中有两个应用程序同时运行，则每个应用程序可得到1/2的资源；如果三个应用程序同时运行，则每个应用程序可得到1/3的资源。</p><p><img src="https://img-blog.csdnimg.cn/20210711224456918.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p><p>➢ 实际最小资源份额：mindshare = Min（资源需求量，配置的最小资源）</p><p>➢ 是否饥饿：isNeedy = 资源使用量 &lt; mindshare（实际最小资源份额）</p><p>➢ 资源分配比：minShareRatio = 资源使用量 / Max（mindshare, 1）</p><p>➢ 资源使用权重比：useToWeightRatio = 资源使用量 / 权重</p><h4 id=用例说明>用例说明</h4><p>如下图：
+<img src="https://img-blog.csdnimg.cn/20210711224614870.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p><h5 id=队列资源分配>队列资源分配</h5><p>需求：集群总资源100，有三个队列，对资源的需求分别是： queueA -> 20， queueB ->50， queueC -> 30</p><p>第一次算：100 / 3 = 33.33</p><p>queueA：分33.33 → 多13.33</p><p>queueB：分33.33 → 少16.67</p><p>queueC：分33.33 → 多3.33</p><p>第二次算： （13.33 + 3.33）/ 1 = 16.66</p><p>queueA：分20</p><p>queueB：分33.33 + 13.66+3.33 = 50</p><p>queueC：分30</p><h5 id=作业资源分配>作业资源分配</h5><h6 id=不加权关注点是job的个数>不加权（关注点是Job的个数）</h6><p>需求：有一条队列总资源12个, 有4个job，对资源的需求分别是: job1->1, job2->2 , job3->6, job4->5
+第一次算: （分母对于需求数）</p><p>12 / 4 = 3</p><p>job1: 分3 &ndash;> 多2个</p><p>job2: 分3 &ndash;> 多1个</p><p>job3: 分3 &ndash;> 差3个</p><p>job4: 分3 &ndash;> 差2个</p><p>第二次算: 3 / 2 = 1.5（多出来的3个分给2个job)</p><p>job1: 分1</p><p>job2: 分2</p><p>job3: 分3 &ndash;> 差3个 &ndash;> 分1.5 &ndash;> 最终: 4.5</p><p>job4: 分3 &ndash;> 差2个 &ndash;> 分1.5 &ndash;> 最终: 4.5</p><p>一直算到没有空闲资源</p><h6 id=加权关注点是job的权重>加权（关注点是Job的权重）</h6><p>需求：有一条队列总资源16，有4个job 对资源的需求分别是:</p><p>job1->4 job2->2 job3->10 job4->4</p><p>每个job的权重为:</p><p>job1->5 job2->8 job3->1 job4->2</p><p>第一次算: （分母对于权重）</p><p>16 / (5+8+1+2) = 1</p><p>job1: 分5 &ndash;> 多1</p><p>job2: 分8 &ndash;> 多6</p><p>job3: 分1 &ndash;> 少9</p><p>job4: 分2 &ndash;> 少2</p><p>第二次算: 7 / (1+2) = 7/3</p><p>job1: 分4</p><p>job2: 分2</p><p>job3: 分1 &ndash;> 分7/3（2.33） &ndash;>少6.67</p><p>job4: 分2 &ndash;> 分14/3(4.66) &ndash;>多2.66</p><p>第三次算:2.66/1=2.66
+job1: 分4</p><p>job2: 分2</p><p>job3: 分2.33 &ndash;> 分2.66/1 &ndash;> 分2.66</p><p>job4: 分4</p><p>一直算到没有空闲资源</p><h3 id=drf策略>DRF策略</h3><p>DRF（Dominant Resource Fairness），我们之前说的资源，都是单一标准，例如只考虑内存（也是Yarn默 认的情况）。但是很多时候我们资源有很多种，例如内存，CPU，网络带宽等，这样我们很难衡量两个应用 应该分配的资源比例。
+那么在YARN中，我们用DRF来决定如何调度： 假设集群一共有100 CPU和10T 内存，而应用A需要（2 CPU, 300GB），应用B需要（6 CPU，100GB）。 则两个应用分别需要A（2%CPU, 3%内存）和B（6%CPU, 1%内存）的资源，这就意味着A是内存主导的, B是 CPU主导的，针对这种情况，我们可以选择DRF策略对不同应用进行不同资源（CPU和内存）的一个不同比 例的限制。</p></div><footer class=post-footer><div id=wcomments></div></footer></article></section></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
 <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-</div>
-</div>
-<aside id=sidebar class=sidebar>
-<div class=sidebar-inner>
-<ul class="sidebar-nav motion-element">
-<li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>
-文章目录
-</li>
-<li class=sidebar-nav-overview data-target=site-overview>
-站点概览
-</li>
-</ul>
-<section class="site-overview sidebar-panel">
-<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
-<img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon>
-<p class=site-author-name itemprop=name>Etaon</p>
-<p class="site-description motion-element" itemprop=description>
-Kepp Going!
-</p>
-</div>
-<nav class="site-state motion-element">
-<div class="site-state-item site-state-posts">
-<a href=/post/>
-<span class=site-state-item-count>61</span>
-<span class=site-state-item-name>日志</span>
-</a>
-</div>
-<div class="site-state-item site-state-categories">
-<a href=/categories/>
-<span class=site-state-item-count>13</span>
-<span class=site-state-item-name>分类</span>
-</a>
-</div>
-<div class="site-state-item site-state-tags">
-<a href=/tags/>
-<span class=site-state-item-count>34</span>
-<span class=site-state-item-name>标签</span>
-</a>
-</div>
-</nav>
-<div class="links-of-author motion-element">
-<span class=links-of-author-item>
-<a href=https://github.com/etaon target=_blank title=GitHub>
-<i class="fa fa-fw fa-github"></i>
-GitHub
-</a>
-</span>
-<span class=links-of-author-item>
-<a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN>
-<i class="fa fa-fw fa-CSDN"></i>
-CSDN
-</a>
-</span>
-</div>
-<div class="links-of-blogroll motion-element links-of-blogroll-inline">
-<div class=links-of-blogroll-title>
-<i class="fa fa-fw fa-globe"></i>
-友情链接
-</div>
-<ul class=links-of-blogroll-list>
-<li class=links-of-blogroll-item>
-<a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a>
-</li>
-</ul>
-</div>
-<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
-<div class=tagcloud-of-blogroll-title>
-<i class="fa fa-fw fa-tags"></i>
-标签云
-</div>
-<ul class=tagcloud-of-blogroll-list>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mysql>Mysql</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/aws>Aws</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/dql>Dql</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/hadoop>Hadoop</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/redis>Redis</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/cicd>Cicd</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/git>Git</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/istio>Istio</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mongodb>Mongodb</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/azure>Azure</a>
-</li>
-</ul>
-</div>
-</section>
-<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-<div class=post-toc>
-<div class=post-toc-content><nav id=TableOfContents>
-<ul>
-<li><a href=#yarn架构>Yarn架构</a></li>
-<li><a href=#工作机制>工作机制</a>
-<ul>
-<li><a href=#yarnhdfs和mapreduce>Yarn、HDFS和Mapreduce</a></li>
-</ul>
-</li>
-<li><a href=#调度器>调度器</a>
-<ul>
-<li><a href=#fifo-调度器first-in-first-out>FIFO 调度器（First In First Out）</a></li>
-<li><a href=#容量调度器capacity-scheduler>容量调度器（Capacity Scheduler）</a></li>
-<li><a href=#公平调度器fair-scheduler>公平调度器（Fair Scheduler）</a></li>
-</ul>
-</li>
-<li><a href=#调度算法策略>调度算法/策略</a>
-<ul>
-<li><a href=#fifo策略>FIFO策略</a></li>
-<li><a href=#fair策略>Fair策略</a></li>
-<li><a href=#drf策略>DRF策略</a></li>
-</ul>
-</li>
-</ul>
-</nav></div>
-</div>
-</section>
-</div>
-</aside>
-</div>
-</main>
-<footer id=footer class=footer>
-<div class=footer-inner>
-<div class=copyright>
-<span class=copyright-year>
-&copy; 2010 - 2022
-</span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id=sidebar class=sidebar><div class=sidebar-inner><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>文章目录</li><li class=sidebar-nav-overview data-target=site-overview>站点概览</li></ul><section class="site-overview sidebar-panel"><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon><p class=site-author-name itemprop=name>Etaon</p><p class="site-description motion-element" itemprop=description>Kepp Going!</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=/post/><span class=site-state-item-count>61</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>13</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>34</span>
+<span class=site-state-item-name>标签</span></a></div></nav><div class="links-of-author motion-element"><span class=links-of-author-item><a href=https://github.com/etaon target=_blank title=GitHub><i class="fa fa-fw fa-github"></i>
+GitHub</a></span>
+<span class=links-of-author-item><a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN><i class="fa fa-fw fa-CSDN"></i>
+CSDN</a></span></div><div class="links-of-blogroll motion-element links-of-blogroll-inline"><div class=links-of-blogroll-title><i class="fa fa-fw fa-globe"></i>
+友情链接</div><ul class=links-of-blogroll-list><li class=links-of-blogroll-item><a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a></li><li class=links-of-blogroll-item><a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a></li><li class=links-of-blogroll-item><a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a></li><li class=links-of-blogroll-item><a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a></li></ul></div><div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline"><div class=tagcloud-of-blogroll-title><i class="fa fa-fw fa-tags"></i>
+标签云</div><ul class=tagcloud-of-blogroll-list><li class=tagcloud-of-blogroll-item><a href=/tags/mysql>Mysql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/aws>Aws</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/dql>Dql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/hadoop>Hadoop</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/redis>Redis</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/cicd>Cicd</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/git>Git</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/istio>Istio</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/mongodb>Mongodb</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/azure>Azure</a></li></ul></div></section><section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active"><div class=post-toc><div class=post-toc-content><nav id=TableOfContents><ul><li><a href=#yarn架构>Yarn架构</a></li><li><a href=#工作机制>工作机制</a><ul><li><a href=#yarnhdfs和mapreduce>Yarn、HDFS和Mapreduce</a></li></ul></li><li><a href=#调度器>调度器</a><ul><li><a href=#fifo-调度器first-in-first-out>FIFO 调度器（First In First Out）</a></li><li><a href=#容量调度器capacity-scheduler>容量调度器（Capacity Scheduler）</a></li><li><a href=#公平调度器fair-scheduler>公平调度器（Fair Scheduler）</a></li></ul></li><li><a href=#调度算法策略>调度算法/策略</a><ul><li><a href=#fifo策略>FIFO策略</a></li><li><a href=#fair策略>Fair策略</a></li><li><a href=#drf策略>DRF策略</a></li></ul></li></ul></nav></div></div></section></div></aside></div></main><footer id=footer class=footer><div class=footer-inner><div class=copyright><span class=copyright-year>&copy; 2010 - 2022</span>
 <span class=with-love><i class="fa fa-heart"></i></span>
-<span class=copyright-author>路无止境！</span>
-</div>
-<div class=powered-info>
-<span class=powered-by>
-Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.91.2</a>
-</span>
+<span class=copyright-author>路无止境！</span></div><div class=powered-info><span class=powered-by>Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.101.0</a></span>
 <span class=separator-line>/</span>
-<span class=theme-info>
-Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
-</a>
-</span>
-</div>
-<div class=vistor-info>
-<script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
-<span class=site-uv>
-<i class="fa fa-user"></i>
-<span class=busuanzi-value id=busuanzi_value_site_uv></span>
-</span>
+<span class=theme-info>Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank>NexT</a></span></div><div class=vistor-info><script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<span class=site-uv><i class="fa fa-user"></i>
+<span class=busuanzi-value id=busuanzi_value_site_uv></span></span>
 <span class=separator-line>/</span>
-<span class=site-pv>
-<i class="fa fa-eye"></i>
-<span class=busuanzi-value id=busuanzi_value_site_pv></span>
-</span>
-</div>
-<div class=license-info>
-<span class=storage-info>
-Storage by
-<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a>
-</span>
+<span class=site-pv><i class="fa fa-eye"></i>
+<span class=busuanzi-value id=busuanzi_value_site_pv></span></span></div><div class=license-info><span class=storage-info>Storage by
+<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a></span>
 <span class=separator-line>/</span>
-<span class=license-num>
-<a href target=_blank></a>
-</span>
-</div>
-</div>
-</footer>
-<div class=back-to-top>
-<i class="fa fa-arrow-up"></i>
-<span id=scrollpercent><span>0</span>%</span>
-</div>
-</div>
-<script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
+<span class=license-num><a href target=_blank></a></span></div></div></footer><div class=back-to-top><i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span></div></div><script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
 <script type=text/javascript src=/js/search.js></script>
 <script type=text/javascript src=/js/affix.js></script>
 <script type=text/javascript src=/js/scrollspy.js></script>
-<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.main').css('padding-bottom'),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}}),$(document).on('affixed.bs.affix',function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var b=$('.header-inner').height()+10,c,d,a,e;$('#sidebar').css({'margin-top':b}).show(),c=parseInt($('#sidebar').css('margin-top')),d=parseInt($('.sidebar-inner').css('height')),a=c+d,e=$('.content-wrap').height(),e<a&&$('.content-wrap').css('min-height',a),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
-<script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
-<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
-<script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+'//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js',function(){new Waline({el:'#wcomments',visitor:!0,avatar:'wavatar',avatarCDN:'https://sdn.geekzu.org/avatar/',avatarForce:!1,wordLimit:'200',placeholder:' 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ',requiredFields:['nick','mail'],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$('#wcomments').html('抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。')})</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type=text/javascript>function detectIE(){var e=window.navigator.userAgent,t=e.indexOf("MSIE "),n=e.indexOf("Trident/"),s=e.indexOf("Edge/");return t>0||n>0||s>0?-1:1}function getCntViewHeight(){var t=$("#content").height(),e=$(window).height(),n=t>e?t-e:$(document).height()-e;return n}function getScrollbarWidth(){var e=$("<div />").addClass("scrollbar-measure").prependTo("body"),t=e[0],n=t.offsetWidth-t.clientWidth;return e.remove(),n}function registerBackTop(){var t=50,e=$(".back-to-top");$(window).on("scroll",function(){e.toggleClass("back-to-top-on",window.pageYOffset>t);var s=$(window).scrollTop(),o=getCntViewHeight(),i=s/o,n=Math.round(i*100),a=n>100?100:n;$("#scrollpercent>span").html(a)}),e.on("click",function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var e=".post-toc",s=$(e),t=".active-current";s.on("activate.bs.scrollspy",function(){var t=$(e+" .active").last();n(),t.addClass("active-current")}).on("clear.bs.scrollspy",n),$("body").scrollspy({target:e});function n(){$(e+" "+t).removeClass(t.substring(1))}}function initAffix(){var e=$(".header-inner").height(),t=parseInt($(".main").css("padding-bottom"),10),n=e+10;$(".sidebar-inner").affix({offset:{top:n,bottom:t}}),$(document).on("affixed.bs.affix",function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){$(window).on("resize",function(){e&&clearTimeout(e),e=setTimeout(function(){var e=document.body.clientHeight-100;updateTOCHeight(e)},0)}),updateTOCHeight(document.body.clientHeight-100);var e,t=getScrollbarWidth();$(".post-toc").css("width","calc(100% + "+t+"px)")}function updateTOCHeight(e){e=e||"auto",$(".post-toc").css("max-height",e)}$(function(){var e,t,n,s,o=$(".header-inner").height()+10;$("#sidebar").css({"margin-top":o}).show(),t=parseInt($("#sidebar").css("margin-top")),n=parseInt($(".sidebar-inner").css("height")),e=t+n,s=$(".content-wrap").height(),s<e&&$(".content-wrap").css("min-height",e),$(".site-nav-toggle").on("click",function(){var e=$(".site-nav"),o=$(".toggle"),t="site-nav-on",i="toggle-close",n=e.hasClass(t),a=n?"slideUp":"slideDown",s=n?"removeClass":"addClass";e.stop()[a]("normal",function(){e[s](t),o[s](i)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$(".sidebar-nav-toc").click(function(){$(this).addClass("sidebar-nav-active"),$(this).next().removeClass("sidebar-nav-active"),$("."+$(this).next().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)}),$(".sidebar-nav-overview").click(function(){$(this).addClass("sidebar-nav-active"),$(this).prev().removeClass("sidebar-nav-active"),$("."+$(this).prev().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)})})</script><script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$(".post-body").viewer()})</script><script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+"//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js",function(){new Waline({el:"#wcomments",visitor:!0,avatar:"wavatar",avatarCDN:"https://sdn.geekzu.org/avatar/",avatarForce:!1,wordLimit:"200",placeholder:" 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ",requiredFields:["nick","mail"],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$("#wcomments").html("抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。")})</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
 <script type=text/javascript src="//s7.addthis.com/js/300/addthis_widget.js#pubid=Your%20AddthisId"></script>
-<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
-</body>
-</html>
+<script>(function(){var t,e=document.createElement("script"),n=window.location.protocol.split(":")[0];n==="https"?e.src="https://zz.bdstatic.com/linksubmit/push.js":e.src="http://push.zhanzhang.baidu.com/push.js",t=document.getElementsByTagName("script")[0],t.parentNode.insertBefore(e,t)})()</script></body></html>

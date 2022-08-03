@@ -1,559 +1,234 @@
-<!doctype html><html lang=zh-cn dir=content/zh-cn>
-<head>
-<meta charset=utf-8>
-<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
-<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
-<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
-<title> Istio-熔断测试 - 路无止境！ </title>
-<meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云">
-<meta name=author content="Etaon">
-<meta property="og:title" content="Istio-熔断测试">
-<meta property="og:site_name" content="路无止境！">
-<meta property="og:image" content="/img/author.jpg">
-<meta name=title content="Istio-熔断测试 - 路无止境！">
-<meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。">
-<link rel="shortcut icon" href=/img/favicon.ico>
-<link rel=apple-touch-icon href=/img/apple-touch-icon.png>
-<link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png>
-<link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css>
-<link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet>
-<link href=/css/main.css rel=stylesheet type=text/css>
-<link href=/css/syntax.css rel=stylesheet type=text/css>
-</head>
-<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
-<div class="container one-collumn sidebar-position-left page-home">
-<div class=headband></div>
-<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
-<div class=header-inner> <div class=site-brand-container>
-<div class=site-nav-toggle>
-<div class=toggle role=button style=opacity:1;top:0>
+<!doctype html><html lang=zh-cn dir=content/zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=content-security-policy content="upgrade-insecure-requests"><title>Istio-熔断测试 - 路无止境！</title><meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云"><meta name=author content="Etaon"><meta property="og:title" content="Istio-熔断测试"><meta property="og:site_name" content="路无止境！"><meta property="og:image" content="/img/author.jpg"><meta name=title content="Istio-熔断测试 - 路无止境！"><meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。"><link rel="shortcut icon" href=/img/favicon.ico><link rel=apple-touch-icon href=/img/apple-touch-icon.png><link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png><link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css><link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet><link href=/css/main.css rel=stylesheet type=text/css><link href=/css/syntax.css rel=stylesheet type=text/css></head><body itemscope itemtype=http://schema.org/WebPage lang=zh-hans><div class="container one-collumn sidebar-position-left page-home"><div class=headband></div><header id=header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle role=button style=opacity:1;top:0><span class=toggle-line></span>
 <span class=toggle-line></span>
-<span class=toggle-line></span>
-<span class=toggle-line></span>
-</div>
-</div>
-<div class=site-meta>
-<div class=multi-lang-switch>
-<i class="fa fa-fw fa-language" style=margin-right:5px></i>
-<a class=lang-link id=zh-cn href=#>中文</a>
-</div>
-<div class=custom-logo-site-title>
-<a href=/ class=brand rel=start>
-<span class=logo-line-before><i></i></span>
+<span class=toggle-line></span></div></div><div class=site-meta><div class=multi-lang-switch><i class="fa fa-fw fa-language" style=margin-right:5px></i>
+<a class=lang-link id=zh-cn href=#>中文</a></div><div class=custom-logo-site-title><a href=/ class=brand rel=start><span class=logo-line-before><i></i></span>
 <span class=site-title>路无止境！</span>
-<span class=logo-line-after><i></i></span>
-</a>
-</div>
-<p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p>
-</div>
-<div class=site-nav-right>
-<div class="toggle popup-trigger" style=opacity:1;top:0>
-<i class="fa fa-search fa-fw fa-lg"></i>
-</div>
-</div>
-</div>
-<nav class=site-nav>
-<ul id=menu class=menu>
-<li class=menu-item>
-<a href=/ rel=section>
-<i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页
-</a>
-</li>
-<li class=menu-item>
-<a href=/post rel=section>
-<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档
-</a>
-</li>
-<li class=menu-item>
-<a href=/about.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于我
-</a>
-</li>
-<li class=menu-item>
-<a href=/404.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益404
-</a>
-</li>
-<li class="menu-item menu-item-search">
-<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> 搜索</a>
-</li>
-</ul>
-<div class=site-search>
-<div class="popup search-popup local-search-popup">
-<div class="local-search-header clearfix">
-<span class=search-icon><i class="fa fa-search"></i> </span>
-<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
-<div class=local-search-input-wrapper>
-<input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
-</div>
-</div>
-<div id=local-search-result></div>
-</div>
-</div>
-</nav>
-</div>
-</header>
-<main id=main class=main>
-<div class=main-inner>
-<div class=content-wrap>
-<div id=content class=content>
-<section id=posts class=posts-expand>
-<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
-<header class=post-header>
-<h1 class=post-title itemprop="name headline" style=font-weight:700>
-<a class=post-title-link href=https://www.etaon.link/2021/08/12/istio-overflow.html itemprop=url>
-Istio-熔断测试
-</a>
-</h1>
-</header>
-<div class=post-body itemprop=articleBody>
-<p>配置熔断规则，然后通过有意的使熔断器“跳闸”来测试配置。
+<span class=logo-line-after><i></i></span></a></div><p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p></div><div class=site-nav-right><div class="toggle popup-trigger" style=opacity:1;top:0><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class=site-nav><ul id=menu class=menu><li class=menu-item><a href=/ rel=section><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class=menu-item><a href=/post rel=section><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class=menu-item><a href=/about.html rel=section><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于我</a></li><li class=menu-item><a href=/404.html rel=section><i class="menu-item-icon fa fa-fw fa-heartbeat"></i><br>公益404</a></li><li class="menu-item menu-item-search"><a href=javascript:; class=popup-trigger><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class=site-search><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class=search-icon><i class="fa fa-search"></i></span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span><div class=local-search-input-wrapper><input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off></div></div><div id=local-search-result></div></div></div></nav></div></header><main id=main class=main><div class=main-inner><div class=content-wrap><div id=content class=content><section id=posts class=posts-expand><article class="post post-type-normal" itemscope itemtype=http://schema.org/Article><header class=post-header><h1 class=post-title itemprop="name headline" style=font-weight:700><a class=post-title-link href=https://www.etaon.top/2021/08/12/istio-overflow.html itemprop=url>Istio-熔断测试</a></h1></header><div class=post-body itemprop=articleBody><p>配置熔断规则，然后通过有意的使熔断器“跳闸”来测试配置。
 本实验来自于Istio官方<a href=https://istio.io/latest/zh/docs/tasks/traffic-management/circuit-breaking/>熔断</a>
-实验环境沿用上一篇Bookinfo环境</p>
-<h2 id=启动-httpbin-样例程序>启动 httpbin 样例程序</h2>
-<ol>
-<li>将httpbin启动在default namespace，该Namespace已启用了sidecar注入</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#080;font-style:italic># Copyright Istio Authors</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#   Licensed under the Apache License, Version 2.0 (the &#34;License&#34;);</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#   you may not use this file except in compliance with the License.</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#   You may obtain a copy of the License at</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#       http://www.apache.org/licenses/LICENSE-2.0</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#   Unless required by applicable law or agreed to in writing, software</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#   distributed under the License is distributed on an &#34;AS IS&#34; BASIS,</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#   See the License for the specific language governing permissions and</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#   limitations under the License.</span><span style=color:#bbb>
-</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic>##################################################################################################</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic># httpbin service</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#080;font-style:italic>##################################################################################################</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>ServiceAccount<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>httpbin<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#00f;font-weight:700>---</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>Service<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>httpbin<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>httpbin<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>service</span>:<span style=color:#bbb> </span>httpbin<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>ports</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>http<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>port</span>:<span style=color:#bbb> </span><span style=color:#666>8000</span><span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>targetPort</span>:<span style=color:#bbb> </span><span style=color:#666>80</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>selector</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>httpbin<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#00f;font-weight:700>---</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>apps/v1<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>Deployment<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>httpbin<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>replicas</span>:<span style=color:#bbb> </span><span style=color:#666>1</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>selector</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>matchLabels</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>httpbin<span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>version</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>template</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>httpbin<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>version</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>serviceAccountName</span>:<span style=color:#bbb> </span>httpbin<span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>containers</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>      </span>- <span style=color:green;font-weight:700>image</span>:<span style=color:#bbb> </span>docker.io/kennethreitz/httpbin<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>imagePullPolicy</span>:<span style=color:#bbb> </span>IfNotPresent<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>httpbin<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>ports</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>        </span>- <span style=color:green;font-weight:700>containerPort</span>:<span style=color:#bbb> </span><span style=color:#666>80</span><span style=color:#bbb>
-</span></code></pre></div><p>注：手动注入，部署命令如下：</p>
-<blockquote>
-<p>$ kubectl apply -f &lt;(istioctl kube-inject -f samples/httpbin/httpbin.yaml)</p>
-</blockquote>
-<ol start=2>
-<li>创建一个目标规则，在调用 httpbin 服务时应用熔断设置：</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml>kubectl apply -f - &lt;&lt;EOF<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>networking.istio.io/v1alpha3<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>DestinationRule<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>httpbin<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>host</span>:<span style=color:#bbb> </span>httpbin<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>trafficPolicy</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>connectionPool</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>tcp</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>maxConnections</span>:<span style=color:#bbb> </span><span style=color:#666>1</span><span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>http</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>http1MaxPendingRequests</span>:<span style=color:#bbb> </span><span style=color:#666>1</span><span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>maxRequestsPerConnection</span>:<span style=color:#bbb> </span><span style=color:#666>1</span><span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>outlierDetection</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>consecutiveErrors</span>:<span style=color:#bbb> </span><span style=color:#666>1</span><span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>interval</span>:<span style=color:#bbb> </span>1s<span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>baseEjectionTime</span>:<span style=color:#bbb> </span>3m<span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>maxEjectionPercent</span>:<span style=color:#bbb> </span><span style=color:#666>100</span><span style=color:#bbb>
-</span><span style=color:#bbb></span>EOF<span style=color:#bbb>
-</span></code></pre></div><p>在 DestinationRule 配置中，定义了 maxConnections: 1 和 http1MaxPendingRequests: 1。 这些规则意味着，如果并发的连接和请求数超过一个，在 istio-proxy 进行进一步的请求和连接时，后续请求或 连接将被阻止。</p>
-<h2 id=增加一个测试客户端>增加一个测试客户端</h2>
-<p>创建客户端程序Fortio以发送流量到 httpbin 服务。</p>
-<p><a href=https://github.com/fortio/fortio>Fortio</a> 是一个快速、小巧（3Mb docker 镜像，最小依赖）、可重用、可嵌入的 go 库以及命令行工具和服务器进程，服务器包括一个简单的 Web UI 和结果的图形表示（都是单个延迟图 以及多个结果比较最小值、最大值、平均值、qps 和百分位数图）。</p>
-<p>Fortio 还包括一组服务器端功能（类似于 httpbin）以帮助调试和测试：请求回送包括标头、添加延迟或错误代码的概率分布、tcp 回送、tcp 代理、http 扇出/分散和收集代理 服务器、GRPC 回声/健康以及 http 等&mldr;</p>
-<ol>
-<li>向客户端注入 Istio Sidecar 代理，以便 Istio 对其网络交互进行管理：</li>
-</ol>
-<blockquote>
-<p>$ kubectl apply -f &lt;(istioctl kube-inject -f samples/httpbin/sample-client/fortio-deploy.yaml)</p>
-</blockquote>
-<p>生成FORTIO_PORT参数</p>
-<blockquote>
-<p>FORTIO_POD=$(kubectl get pod | grep fortio | awk &lsquo;{ print $1 }')</p>
-</blockquote>
-<ol start=2>
-<li>登入客户端 Pod 并使用 Fortio 工具调用 httpbin 服务。-curl 参数表明发送一次调用：</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@master01 istio-1.10.3]# kubectl exec -it $FORTIO_POD  -c fortio -- /usr/bin/fortio  load  -curl  http://httpbin:8000/get
-HTTP/1.1 200 OK
-server: envoy
-date: Tue, 10 Aug 2021 02:53:08 GMT
-content-type: application/json
-content-length: 594
-access-control-allow-origin: *
-access-control-allow-credentials: true
-x-envoy-upstream-service-time: 11
-
-{
-  &#34;args&#34;: {},
-  &#34;headers&#34;: {
-    &#34;Host&#34;: &#34;httpbin:8000&#34;,
-    &#34;User-Agent&#34;: &#34;fortio.org/fortio-1.11.3&#34;,
-    &#34;X-B3-Parentspanid&#34;: &#34;1410263b9341228f&#34;,
-    &#34;X-B3-Sampled&#34;: &#34;0&#34;,
-    &#34;X-B3-Spanid&#34;: &#34;ddb57a39b067b8a3&#34;,
-    &#34;X-B3-Traceid&#34;: &#34;5044667c51dbf7281410263b9341228f&#34;,
-    &#34;X-Envoy-Attempt-Count&#34;: &#34;1&#34;,
-    &#34;X-Forwarded-Client-Cert&#34;: &#34;By=spiffe://cluster.local/ns/default/sa/httpbin;Hash=d8906081c4cdfada648017c91bd4f7779d8fcfcc07505ae719e65d50df149ccb;Subject=\&#34;\&#34;;URI=spiffe://cluster.local/ns/default/sa/default&#34;
-  },
-  &#34;origin&#34;: &#34;127.0.0.6&#34;,
-  &#34;url&#34;: &#34;http://httpbin:8000/get&#34;
-}
-</code></pre></div><h2 id=触发熔断器>触发熔断器</h2>
-<p>在前面DestinationRule 配置中，定义了 maxConnections: 1 和 http1MaxPendingRequests: 1。 如果并发的连接和请求数超过一个，在 istio-proxy 进行进一步的请求和连接时，后续请求或连接可能被阻止。</p>
-<ol>
-<li>发送并发数为 2 的连接（-c 2），请求 20 次（-n 20）：</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@master01 istio-1.10.3]# kubectl exec -it $FORTIO_POD  -c fortio -- /usr/bin/fortio load -c 2 -qps 0 -n 20 -loglevel Warning http://httpbin:8000/get
-02:56:29 I logger.go:127&gt; Log level is now 3 Warning (was 2 Info)
-Fortio 1.11.3 running at 0 queries per second, 5-&gt;5 procs, for 20 calls: http://httpbin:8000/get
-Starting at max qps with 2 thread(s) [gomax 5] for exactly 20 calls (10 per thread + 0)
-02:56:29 W http_client.go:693&gt; Parsed non ok code 503 (HTTP/1.1 503)
-02:56:29 W http_client.go:693&gt; Parsed non ok code 503 (HTTP/1.1 503)
-Ended after 119.101006ms : 20 calls. qps=167.92
-Aggregated Function Time : count 20 avg 0.010222645 +/- 0.01167 min 0.000775367 max 0.059878998 sum 0.204452894
-# range, mid point, percentile, count
-&gt;= 0.000775367 &lt;= 0.001 , 0.000887683 , 5.00, 1
-&gt; 0.003 &lt;= 0.004 , 0.0035 , 10.00, 1
-&gt; 0.006 &lt;= 0.007 , 0.0065 , 30.00, 4
-&gt; 0.007 &lt;= 0.008 , 0.0075 , 65.00, 7
-&gt; 0.008 &lt;= 0.009 , 0.0085 , 80.00, 3
-&gt; 0.01 &lt;= 0.011 , 0.0105 , 90.00, 2
-&gt; 0.014 &lt;= 0.016 , 0.015 , 95.00, 1
-&gt; 0.05 &lt;= 0.059879 , 0.0549395 , 100.00, 1
-# target 50% 0.00757143
-# target 75% 0.00866667
-# target 90% 0.011
-# target 99% 0.0579032
-# target 99.9% 0.0596814
-Sockets used: 4 (for perfect keepalive, would be 2)
-Jitter: false
-Code 200 : 18 (90.0 %)
-Code 503 : 2 (10.0 %)
-Response Header Sizes : count 20 avg 207.1 +/- 69.03 min 0 max 231 sum 4142
-Response Body/Total Sizes : count 20 avg 765.8 +/- 174.9 min 241 max 825 sum 15316
-All done 20 calls (plus 0 warmup) 10.223 ms avg, 167.9 qps
-</code></pre></div><p>上面的例子中，20个请求只丢失了2个。说明在httpbin的连接虽然在规则规定了maxConnections: 1 和 http1MaxPendingRequests: 1，但是在实际使用中，其1+1的模式最大可能的处理连接。
-2. 将并发连接数提高到 3 个：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@master01 istio-1.10.3]# kubectl exec -it $FORTIO_POD  -c fortio -- /usr/bin/fortio load -c 3 -loglevel Warning http://httpbin:8000/get
-02:59:15 I logger.go:127&gt; Log level is now 3 Warning (was 2 Info)
-Fortio 1.11.3 running at 8 queries per second, 5-&gt;5 procs, for 5s: http://httpbin:8000/get
-Starting at 8 qps with 3 thread(s) [gomax 5] for 5s : 13 calls each (total 39)
-02:59:15 W http_client.go:693&gt; Parsed non ok code 503 (HTTP/1.1 503)
-02:59:16 W http_client.go:693&gt; Parsed non ok code 503 (HTTP/1.1 503)
-02:59:16 W http_client.go:693&gt; Parsed non ok code 503 (HTTP/1.1 503)
-02:59:16 W http_client.go:693&gt; Parsed non ok code 503 (HTTP/1.1 503)
-02:59:17 W http_client.go:693&gt; Parsed non ok code 503 (HTTP/1.1 503)
-02:59:17 W http_client.go:693&gt; Parsed non ok code 503 (HTTP/1.1 503)
-02:59:17 W http_client.go:693&gt; Parsed non ok code 503 (HTTP/1.1 503)
-02:59:17 W http_client.go:693&gt; Parsed non ok code 503 (HTTP/1.1 503)
-02:59:17 W http_client.go:693&gt; Parsed non ok code 503 (HTTP/1.1 503)
-02:59:18 W http_client.go:693&gt; Parsed non ok code 503 (HTTP/1.1 503)
-02:59:18 W http_client.go:693&gt; Parsed non ok code 503 (HTTP/1.1 503)
-02:59:18 W http_client.go:693&gt; Parsed non ok code 503 (HTTP/1.1 503)
-02:59:19 W http_client.go:693&gt; Parsed non ok code 503 (HTTP/1.1 503)
-02:59:19 W http_client.go:693&gt; Parsed non ok code 503 (HTTP/1.1 503)
-02:59:19 W http_client.go:693&gt; Parsed non ok code 503 (HTTP/1.1 503)
-02:59:19 W http_client.go:693&gt; Parsed non ok code 503 (HTTP/1.1 503)
-02:59:19 W http_client.go:693&gt; Parsed non ok code 503 (HTTP/1.1 503)
-02:59:20 W http_client.go:693&gt; Parsed non ok code 503 (HTTP/1.1 503)
-02:59:20 W http_client.go:693&gt; Parsed non ok code 503 (HTTP/1.1 503)
-02:59:20 W http_client.go:693&gt; Parsed non ok code 503 (HTTP/1.1 503)
-02:59:20 W http_client.go:693&gt; Parsed non ok code 503 (HTTP/1.1 503)
-Ended after 4.882695412s : 39 calls. qps=7.9874
-Sleep times : count 36 avg 0.3991201 +/- 0.006301 min 0.377749958 max 0.404587224 sum 14.3683237
-Aggregated Function Time : count 39 avg 0.0063830586 +/- 0.006152 min 0.001316094 max 0.027898116 sum 0.248939285
-# range, mid point, percentile, count
-&gt;= 0.00131609 &lt;= 0.002 , 0.00165805 , 35.90, 14
-&gt; 0.002 &lt;= 0.003 , 0.0025 , 48.72, 5
-&gt; 0.003 &lt;= 0.004 , 0.0035 , 51.28, 1
-&gt; 0.004 &lt;= 0.005 , 0.0045 , 53.85, 1
-&gt; 0.007 &lt;= 0.008 , 0.0075 , 69.23, 6
-&gt; 0.008 &lt;= 0.009 , 0.0085 , 79.49, 4
-&gt; 0.009 &lt;= 0.01 , 0.0095 , 82.05, 1
-&gt; 0.01 &lt;= 0.011 , 0.0105 , 89.74, 3
-&gt; 0.014 &lt;= 0.016 , 0.015 , 92.31, 1
-&gt; 0.02 &lt;= 0.025 , 0.0225 , 97.44, 2
-&gt; 0.025 &lt;= 0.0278981 , 0.0264491 , 100.00, 1
-# target 50% 0.0035
-# target 75% 0.0085625
-# target 90% 0.0142
-# target 99% 0.0267679
-# target 99.9% 0.0277851
-Sockets used: 22 (for perfect keepalive, would be 3)
-Jitter: false
-Code 200 : 18 (46.2 %)
-Code 503 : 21 (53.8 %)
-Response Header Sizes : count 39 avg 106.25641 +/- 114.8 min 0 max 231 sum 4144
-Response Body/Total Sizes : count 39 avg 510.17949 +/- 290.7 min 241 max 825 sum 19897
-All done 39 calls (plus 3 warmup) 6.383 ms avg, 8.0 qps
-</code></pre></div><p>上面的例子，有着40个请求的测试中，失败的个数达到了21个。说明在大规模请求的情况下，整体性能下降很快，熔断生效。</p>
-<ol start=3>
-<li>查询 istio-proxy 状态可以了解更多熔断详情:</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@master01 istio-1.10.3]# kubectl exec $FORTIO_POD -c istio-proxy -- pilot-agent request GET stats | grep httpbin | grep pending        cluster.outbound|8000||httpbin.default.svc.cluster.local.circuit_breakers.default.remaining_pending: 1
-cluster.outbound|8000||httpbin.default.svc.cluster.local.circuit_breakers.default.rq_pending_open: 0
-cluster.outbound|8000||httpbin.default.svc.cluster.local.circuit_breakers.high.rq_pending_open: 0
-cluster.outbound|8000||httpbin.default.svc.cluster.local.upstream_rq_pending_active: 0
-cluster.outbound|8000||httpbin.default.svc.cluster.local.upstream_rq_pending_failure_eject: 0
-cluster.outbound|8000||httpbin.default.svc.cluster.local.upstream_rq_pending_overflow: 58
-cluster.outbound|8000||httpbin.default.svc.cluster.local.upstream_rq_pending_total: 176
-</code></pre></div><p><strong>upstream_rq_pending_overflow</strong> 值 58，这意味着，目前为止已有 58个调用连接被标记为熔断。</p>
-<h2 id=清理规则服务和客户端>清理规则/服务和客户端</h2>
-<blockquote>
-<p>$ kubectl delete destinationrule httpbin</p>
-</blockquote>
-<p>下线 httpbin 服务和客户端：</p>
-<blockquote>
-<p>$ kubectl delete deploy httpbin fortio-deploy
-$ kubectl delete svc httpbin</p>
-</blockquote>
-<p><em>这个案例里的fortio测试镜像，在容器化环境可以引用。</em></p>
-</div>
-<footer class=post-footer>
-<div id=wcomments></div>
-</footer>
-</article>
-</section>
-</div>
-</div>
-<div class=sidebar-toggle>
-<div class=sidebar-toggle-line-wrap>
-<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+实验环境沿用上一篇Bookinfo环境</p><h2 id=启动-httpbin-样例程序>启动 httpbin 样例程序</h2><ol><li>将httpbin启动在default namespace，该Namespace已启用了sidecar注入</li></ol><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#080;font-style:italic># Copyright Istio Authors</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#   Licensed under the Apache License, Version 2.0 (the &#34;License&#34;);</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#   you may not use this file except in compliance with the License.</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#   You may obtain a copy of the License at</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#       http://www.apache.org/licenses/LICENSE-2.0</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#   Unless required by applicable law or agreed to in writing, software</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#   distributed under the License is distributed on an &#34;AS IS&#34; BASIS,</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#   See the License for the specific language governing permissions and</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic>#   limitations under the License.</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic>##################################################################################################</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic># httpbin service</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#080;font-style:italic>##################################################################################################</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>ServiceAccount<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>httpbin<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#00f;font-weight:700>---</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>Service<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>httpbin<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>httpbin<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>service</span>:<span style=color:#bbb> </span>httpbin<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>ports</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>http<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>port</span>:<span style=color:#bbb> </span><span style=color:#666>8000</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>targetPort</span>:<span style=color:#bbb> </span><span style=color:#666>80</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>selector</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>httpbin<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#00f;font-weight:700>---</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>apps/v1<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>Deployment<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>httpbin<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>replicas</span>:<span style=color:#bbb> </span><span style=color:#666>1</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>selector</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>matchLabels</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>httpbin<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>version</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>template</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>httpbin<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>version</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>serviceAccountName</span>:<span style=color:#bbb> </span>httpbin<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>containers</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span>- <span style=color:green;font-weight:700>image</span>:<span style=color:#bbb> </span>docker.io/kennethreitz/httpbin<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>imagePullPolicy</span>:<span style=color:#bbb> </span>IfNotPresent<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>httpbin<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>ports</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span>- <span style=color:green;font-weight:700>containerPort</span>:<span style=color:#bbb> </span><span style=color:#666>80</span><span style=color:#bbb>
+</span></span></span></code></pre></div><p>注：手动注入，部署命令如下：</p><blockquote><p>$ kubectl apply -f &lt;(istioctl kube-inject -f samples/httpbin/httpbin.yaml)</p></blockquote><ol start=2><li>创建一个目标规则，在调用 httpbin 服务时应用熔断设置：</li></ol><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span>kubectl apply -f - &lt;&lt;EOF<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>networking.istio.io/v1alpha3<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>DestinationRule<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>httpbin<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>host</span>:<span style=color:#bbb> </span>httpbin<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>trafficPolicy</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>connectionPool</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>tcp</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>maxConnections</span>:<span style=color:#bbb> </span><span style=color:#666>1</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>http</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>http1MaxPendingRequests</span>:<span style=color:#bbb> </span><span style=color:#666>1</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>maxRequestsPerConnection</span>:<span style=color:#bbb> </span><span style=color:#666>1</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>outlierDetection</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>consecutiveErrors</span>:<span style=color:#bbb> </span><span style=color:#666>1</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>interval</span>:<span style=color:#bbb> </span>1s<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>baseEjectionTime</span>:<span style=color:#bbb> </span>3m<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>maxEjectionPercent</span>:<span style=color:#bbb> </span><span style=color:#666>100</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>EOF<span style=color:#bbb>
+</span></span></span></code></pre></div><p>在 DestinationRule 配置中，定义了 maxConnections: 1 和 http1MaxPendingRequests: 1。 这些规则意味着，如果并发的连接和请求数超过一个，在 istio-proxy 进行进一步的请求和连接时，后续请求或 连接将被阻止。</p><h2 id=增加一个测试客户端>增加一个测试客户端</h2><p>创建客户端程序Fortio以发送流量到 httpbin 服务。</p><p><a href=https://github.com/fortio/fortio>Fortio</a> 是一个快速、小巧（3Mb docker 镜像，最小依赖）、可重用、可嵌入的 go 库以及命令行工具和服务器进程，服务器包括一个简单的 Web UI 和结果的图形表示（都是单个延迟图 以及多个结果比较最小值、最大值、平均值、qps 和百分位数图）。</p><p>Fortio 还包括一组服务器端功能（类似于 httpbin）以帮助调试和测试：请求回送包括标头、添加延迟或错误代码的概率分布、tcp 回送、tcp 代理、http 扇出/分散和收集代理 服务器、GRPC 回声/健康以及 http 等&mldr;</p><ol><li>向客户端注入 Istio Sidecar 代理，以便 Istio 对其网络交互进行管理：</li></ol><blockquote><p>$ kubectl apply -f &lt;(istioctl kube-inject -f samples/httpbin/sample-client/fortio-deploy.yaml)</p></blockquote><p>生成FORTIO_PORT参数</p><blockquote><p>FORTIO_POD=$(kubectl get pod | grep fortio | awk &lsquo;{ print $1 }&rsquo;)</p></blockquote><ol start=2><li>登入客户端 Pod 并使用 Fortio 工具调用 httpbin 服务。-curl 参数表明发送一次调用：</li></ol><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[root@master01 istio-1.10.3]# kubectl exec -it $FORTIO_POD  -c fortio -- /usr/bin/fortio  load  -curl  http://httpbin:8000/get
+</span></span><span style=display:flex><span>HTTP/1.1 200 OK
+</span></span><span style=display:flex><span>server: envoy
+</span></span><span style=display:flex><span>date: Tue, 10 Aug 2021 02:53:08 GMT
+</span></span><span style=display:flex><span>content-type: application/json
+</span></span><span style=display:flex><span>content-length: 594
+</span></span><span style=display:flex><span>access-control-allow-origin: *
+</span></span><span style=display:flex><span>access-control-allow-credentials: true
+</span></span><span style=display:flex><span>x-envoy-upstream-service-time: 11
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>  &#34;args&#34;: {},
+</span></span><span style=display:flex><span>  &#34;headers&#34;: {
+</span></span><span style=display:flex><span>    &#34;Host&#34;: &#34;httpbin:8000&#34;,
+</span></span><span style=display:flex><span>    &#34;User-Agent&#34;: &#34;fortio.org/fortio-1.11.3&#34;,
+</span></span><span style=display:flex><span>    &#34;X-B3-Parentspanid&#34;: &#34;1410263b9341228f&#34;,
+</span></span><span style=display:flex><span>    &#34;X-B3-Sampled&#34;: &#34;0&#34;,
+</span></span><span style=display:flex><span>    &#34;X-B3-Spanid&#34;: &#34;ddb57a39b067b8a3&#34;,
+</span></span><span style=display:flex><span>    &#34;X-B3-Traceid&#34;: &#34;5044667c51dbf7281410263b9341228f&#34;,
+</span></span><span style=display:flex><span>    &#34;X-Envoy-Attempt-Count&#34;: &#34;1&#34;,
+</span></span><span style=display:flex><span>    &#34;X-Forwarded-Client-Cert&#34;: &#34;By=spiffe://cluster.local/ns/default/sa/httpbin;Hash=d8906081c4cdfada648017c91bd4f7779d8fcfcc07505ae719e65d50df149ccb;Subject=\&#34;\&#34;;URI=spiffe://cluster.local/ns/default/sa/default&#34;
+</span></span><span style=display:flex><span>  },
+</span></span><span style=display:flex><span>  &#34;origin&#34;: &#34;127.0.0.6&#34;,
+</span></span><span style=display:flex><span>  &#34;url&#34;: &#34;http://httpbin:8000/get&#34;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h2 id=触发熔断器>触发熔断器</h2><p>在前面DestinationRule 配置中，定义了 maxConnections: 1 和 http1MaxPendingRequests: 1。 如果并发的连接和请求数超过一个，在 istio-proxy 进行进一步的请求和连接时，后续请求或连接可能被阻止。</p><ol><li>发送并发数为 2 的连接（-c 2），请求 20 次（-n 20）：</li></ol><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[root@master01 istio-1.10.3]# kubectl exec -it $FORTIO_POD  -c fortio -- /usr/bin/fortio load -c 2 -qps 0 -n 20 -loglevel Warning http://httpbin:8000/get
+</span></span><span style=display:flex><span>02:56:29 I logger.go:127&gt; Log level is now 3 Warning (was 2 Info)
+</span></span><span style=display:flex><span>Fortio 1.11.3 running at 0 queries per second, 5-&gt;5 procs, for 20 calls: http://httpbin:8000/get
+</span></span><span style=display:flex><span>Starting at max qps with 2 thread(s) [gomax 5] for exactly 20 calls (10 per thread + 0)
+</span></span><span style=display:flex><span>02:56:29 W http_client.go:693&gt; Parsed non ok code 503 (HTTP/1.1 503)
+</span></span><span style=display:flex><span>02:56:29 W http_client.go:693&gt; Parsed non ok code 503 (HTTP/1.1 503)
+</span></span><span style=display:flex><span>Ended after 119.101006ms : 20 calls. qps=167.92
+</span></span><span style=display:flex><span>Aggregated Function Time : count 20 avg 0.010222645 +/- 0.01167 min 0.000775367 max 0.059878998 sum 0.204452894
+</span></span><span style=display:flex><span># range, mid point, percentile, count
+</span></span><span style=display:flex><span>&gt;= 0.000775367 &lt;= 0.001 , 0.000887683 , 5.00, 1
+</span></span><span style=display:flex><span>&gt; 0.003 &lt;= 0.004 , 0.0035 , 10.00, 1
+</span></span><span style=display:flex><span>&gt; 0.006 &lt;= 0.007 , 0.0065 , 30.00, 4
+</span></span><span style=display:flex><span>&gt; 0.007 &lt;= 0.008 , 0.0075 , 65.00, 7
+</span></span><span style=display:flex><span>&gt; 0.008 &lt;= 0.009 , 0.0085 , 80.00, 3
+</span></span><span style=display:flex><span>&gt; 0.01 &lt;= 0.011 , 0.0105 , 90.00, 2
+</span></span><span style=display:flex><span>&gt; 0.014 &lt;= 0.016 , 0.015 , 95.00, 1
+</span></span><span style=display:flex><span>&gt; 0.05 &lt;= 0.059879 , 0.0549395 , 100.00, 1
+</span></span><span style=display:flex><span># target 50% 0.00757143
+</span></span><span style=display:flex><span># target 75% 0.00866667
+</span></span><span style=display:flex><span># target 90% 0.011
+</span></span><span style=display:flex><span># target 99% 0.0579032
+</span></span><span style=display:flex><span># target 99.9% 0.0596814
+</span></span><span style=display:flex><span>Sockets used: 4 (for perfect keepalive, would be 2)
+</span></span><span style=display:flex><span>Jitter: false
+</span></span><span style=display:flex><span>Code 200 : 18 (90.0 %)
+</span></span><span style=display:flex><span>Code 503 : 2 (10.0 %)
+</span></span><span style=display:flex><span>Response Header Sizes : count 20 avg 207.1 +/- 69.03 min 0 max 231 sum 4142
+</span></span><span style=display:flex><span>Response Body/Total Sizes : count 20 avg 765.8 +/- 174.9 min 241 max 825 sum 15316
+</span></span><span style=display:flex><span>All done 20 calls (plus 0 warmup) 10.223 ms avg, 167.9 qps
+</span></span></code></pre></div><p>上面的例子中，20个请求只丢失了2个。说明在httpbin的连接虽然在规则规定了maxConnections: 1 和 http1MaxPendingRequests: 1，但是在实际使用中，其1+1的模式最大可能的处理连接。
+2. 将并发连接数提高到 3 个：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[root@master01 istio-1.10.3]# kubectl exec -it $FORTIO_POD  -c fortio -- /usr/bin/fortio load -c 3 -loglevel Warning http://httpbin:8000/get
+</span></span><span style=display:flex><span>02:59:15 I logger.go:127&gt; Log level is now 3 Warning (was 2 Info)
+</span></span><span style=display:flex><span>Fortio 1.11.3 running at 8 queries per second, 5-&gt;5 procs, for 5s: http://httpbin:8000/get
+</span></span><span style=display:flex><span>Starting at 8 qps with 3 thread(s) [gomax 5] for 5s : 13 calls each (total 39)
+</span></span><span style=display:flex><span>02:59:15 W http_client.go:693&gt; Parsed non ok code 503 (HTTP/1.1 503)
+</span></span><span style=display:flex><span>02:59:16 W http_client.go:693&gt; Parsed non ok code 503 (HTTP/1.1 503)
+</span></span><span style=display:flex><span>02:59:16 W http_client.go:693&gt; Parsed non ok code 503 (HTTP/1.1 503)
+</span></span><span style=display:flex><span>02:59:16 W http_client.go:693&gt; Parsed non ok code 503 (HTTP/1.1 503)
+</span></span><span style=display:flex><span>02:59:17 W http_client.go:693&gt; Parsed non ok code 503 (HTTP/1.1 503)
+</span></span><span style=display:flex><span>02:59:17 W http_client.go:693&gt; Parsed non ok code 503 (HTTP/1.1 503)
+</span></span><span style=display:flex><span>02:59:17 W http_client.go:693&gt; Parsed non ok code 503 (HTTP/1.1 503)
+</span></span><span style=display:flex><span>02:59:17 W http_client.go:693&gt; Parsed non ok code 503 (HTTP/1.1 503)
+</span></span><span style=display:flex><span>02:59:17 W http_client.go:693&gt; Parsed non ok code 503 (HTTP/1.1 503)
+</span></span><span style=display:flex><span>02:59:18 W http_client.go:693&gt; Parsed non ok code 503 (HTTP/1.1 503)
+</span></span><span style=display:flex><span>02:59:18 W http_client.go:693&gt; Parsed non ok code 503 (HTTP/1.1 503)
+</span></span><span style=display:flex><span>02:59:18 W http_client.go:693&gt; Parsed non ok code 503 (HTTP/1.1 503)
+</span></span><span style=display:flex><span>02:59:19 W http_client.go:693&gt; Parsed non ok code 503 (HTTP/1.1 503)
+</span></span><span style=display:flex><span>02:59:19 W http_client.go:693&gt; Parsed non ok code 503 (HTTP/1.1 503)
+</span></span><span style=display:flex><span>02:59:19 W http_client.go:693&gt; Parsed non ok code 503 (HTTP/1.1 503)
+</span></span><span style=display:flex><span>02:59:19 W http_client.go:693&gt; Parsed non ok code 503 (HTTP/1.1 503)
+</span></span><span style=display:flex><span>02:59:19 W http_client.go:693&gt; Parsed non ok code 503 (HTTP/1.1 503)
+</span></span><span style=display:flex><span>02:59:20 W http_client.go:693&gt; Parsed non ok code 503 (HTTP/1.1 503)
+</span></span><span style=display:flex><span>02:59:20 W http_client.go:693&gt; Parsed non ok code 503 (HTTP/1.1 503)
+</span></span><span style=display:flex><span>02:59:20 W http_client.go:693&gt; Parsed non ok code 503 (HTTP/1.1 503)
+</span></span><span style=display:flex><span>02:59:20 W http_client.go:693&gt; Parsed non ok code 503 (HTTP/1.1 503)
+</span></span><span style=display:flex><span>Ended after 4.882695412s : 39 calls. qps=7.9874
+</span></span><span style=display:flex><span>Sleep times : count 36 avg 0.3991201 +/- 0.006301 min 0.377749958 max 0.404587224 sum 14.3683237
+</span></span><span style=display:flex><span>Aggregated Function Time : count 39 avg 0.0063830586 +/- 0.006152 min 0.001316094 max 0.027898116 sum 0.248939285
+</span></span><span style=display:flex><span># range, mid point, percentile, count
+</span></span><span style=display:flex><span>&gt;= 0.00131609 &lt;= 0.002 , 0.00165805 , 35.90, 14
+</span></span><span style=display:flex><span>&gt; 0.002 &lt;= 0.003 , 0.0025 , 48.72, 5
+</span></span><span style=display:flex><span>&gt; 0.003 &lt;= 0.004 , 0.0035 , 51.28, 1
+</span></span><span style=display:flex><span>&gt; 0.004 &lt;= 0.005 , 0.0045 , 53.85, 1
+</span></span><span style=display:flex><span>&gt; 0.007 &lt;= 0.008 , 0.0075 , 69.23, 6
+</span></span><span style=display:flex><span>&gt; 0.008 &lt;= 0.009 , 0.0085 , 79.49, 4
+</span></span><span style=display:flex><span>&gt; 0.009 &lt;= 0.01 , 0.0095 , 82.05, 1
+</span></span><span style=display:flex><span>&gt; 0.01 &lt;= 0.011 , 0.0105 , 89.74, 3
+</span></span><span style=display:flex><span>&gt; 0.014 &lt;= 0.016 , 0.015 , 92.31, 1
+</span></span><span style=display:flex><span>&gt; 0.02 &lt;= 0.025 , 0.0225 , 97.44, 2
+</span></span><span style=display:flex><span>&gt; 0.025 &lt;= 0.0278981 , 0.0264491 , 100.00, 1
+</span></span><span style=display:flex><span># target 50% 0.0035
+</span></span><span style=display:flex><span># target 75% 0.0085625
+</span></span><span style=display:flex><span># target 90% 0.0142
+</span></span><span style=display:flex><span># target 99% 0.0267679
+</span></span><span style=display:flex><span># target 99.9% 0.0277851
+</span></span><span style=display:flex><span>Sockets used: 22 (for perfect keepalive, would be 3)
+</span></span><span style=display:flex><span>Jitter: false
+</span></span><span style=display:flex><span>Code 200 : 18 (46.2 %)
+</span></span><span style=display:flex><span>Code 503 : 21 (53.8 %)
+</span></span><span style=display:flex><span>Response Header Sizes : count 39 avg 106.25641 +/- 114.8 min 0 max 231 sum 4144
+</span></span><span style=display:flex><span>Response Body/Total Sizes : count 39 avg 510.17949 +/- 290.7 min 241 max 825 sum 19897
+</span></span><span style=display:flex><span>All done 39 calls (plus 3 warmup) 6.383 ms avg, 8.0 qps
+</span></span></code></pre></div><p>上面的例子，有着40个请求的测试中，失败的个数达到了21个。说明在大规模请求的情况下，整体性能下降很快，熔断生效。</p><ol start=3><li>查询 istio-proxy 状态可以了解更多熔断详情:</li></ol><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[root@master01 istio-1.10.3]# kubectl exec $FORTIO_POD -c istio-proxy -- pilot-agent request GET stats | grep httpbin | grep pending        cluster.outbound|8000||httpbin.default.svc.cluster.local.circuit_breakers.default.remaining_pending: 1
+</span></span><span style=display:flex><span>cluster.outbound|8000||httpbin.default.svc.cluster.local.circuit_breakers.default.rq_pending_open: 0
+</span></span><span style=display:flex><span>cluster.outbound|8000||httpbin.default.svc.cluster.local.circuit_breakers.high.rq_pending_open: 0
+</span></span><span style=display:flex><span>cluster.outbound|8000||httpbin.default.svc.cluster.local.upstream_rq_pending_active: 0
+</span></span><span style=display:flex><span>cluster.outbound|8000||httpbin.default.svc.cluster.local.upstream_rq_pending_failure_eject: 0
+</span></span><span style=display:flex><span>cluster.outbound|8000||httpbin.default.svc.cluster.local.upstream_rq_pending_overflow: 58
+</span></span><span style=display:flex><span>cluster.outbound|8000||httpbin.default.svc.cluster.local.upstream_rq_pending_total: 176
+</span></span></code></pre></div><p><strong>upstream_rq_pending_overflow</strong> 值 58，这意味着，目前为止已有 58个调用连接被标记为熔断。</p><h2 id=清理规则服务和客户端>清理规则/服务和客户端</h2><blockquote><p>$ kubectl delete destinationrule httpbin</p></blockquote><p>下线 httpbin 服务和客户端：</p><blockquote><p>$ kubectl delete deploy httpbin fortio-deploy
+$ kubectl delete svc httpbin</p></blockquote><p><em>这个案例里的fortio测试镜像，在容器化环境可以引用。</em></p></div><footer class=post-footer><div id=wcomments></div></footer></article></section></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
 <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-</div>
-</div>
-<aside id=sidebar class=sidebar>
-<div class=sidebar-inner>
-<ul class="sidebar-nav motion-element">
-<li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>
-文章目录
-</li>
-<li class=sidebar-nav-overview data-target=site-overview>
-站点概览
-</li>
-</ul>
-<section class="site-overview sidebar-panel">
-<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
-<img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon>
-<p class=site-author-name itemprop=name>Etaon</p>
-<p class="site-description motion-element" itemprop=description>
-Kepp Going!
-</p>
-</div>
-<nav class="site-state motion-element">
-<div class="site-state-item site-state-posts">
-<a href=/post/>
-<span class=site-state-item-count>61</span>
-<span class=site-state-item-name>日志</span>
-</a>
-</div>
-<div class="site-state-item site-state-categories">
-<a href=/categories/>
-<span class=site-state-item-count>13</span>
-<span class=site-state-item-name>分类</span>
-</a>
-</div>
-<div class="site-state-item site-state-tags">
-<a href=/tags/>
-<span class=site-state-item-count>34</span>
-<span class=site-state-item-name>标签</span>
-</a>
-</div>
-</nav>
-<div class="links-of-author motion-element">
-<span class=links-of-author-item>
-<a href=https://github.com/etaon target=_blank title=GitHub>
-<i class="fa fa-fw fa-github"></i>
-GitHub
-</a>
-</span>
-<span class=links-of-author-item>
-<a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN>
-<i class="fa fa-fw fa-CSDN"></i>
-CSDN
-</a>
-</span>
-</div>
-<div class="links-of-blogroll motion-element links-of-blogroll-inline">
-<div class=links-of-blogroll-title>
-<i class="fa fa-fw fa-globe"></i>
-友情链接
-</div>
-<ul class=links-of-blogroll-list>
-<li class=links-of-blogroll-item>
-<a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a>
-</li>
-</ul>
-</div>
-<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
-<div class=tagcloud-of-blogroll-title>
-<i class="fa fa-fw fa-tags"></i>
-标签云
-</div>
-<ul class=tagcloud-of-blogroll-list>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mysql>Mysql</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/aws>Aws</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/dql>Dql</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/hadoop>Hadoop</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/redis>Redis</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/cicd>Cicd</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/git>Git</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/istio>Istio</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mongodb>Mongodb</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/azure>Azure</a>
-</li>
-</ul>
-</div>
-</section>
-<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-<div class=post-toc>
-<div class=post-toc-content><nav id=TableOfContents>
-<ul>
-<li><a href=#启动-httpbin-样例程序>启动 httpbin 样例程序</a></li>
-<li><a href=#增加一个测试客户端>增加一个测试客户端</a></li>
-<li><a href=#触发熔断器>触发熔断器</a></li>
-<li><a href=#清理规则服务和客户端>清理规则/服务和客户端</a></li>
-</ul>
-</nav></div>
-</div>
-</section>
-</div>
-</aside>
-</div>
-</main>
-<footer id=footer class=footer>
-<div class=footer-inner>
-<div class=copyright>
-<span class=copyright-year>
-&copy; 2010 - 2022
-</span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id=sidebar class=sidebar><div class=sidebar-inner><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>文章目录</li><li class=sidebar-nav-overview data-target=site-overview>站点概览</li></ul><section class="site-overview sidebar-panel"><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon><p class=site-author-name itemprop=name>Etaon</p><p class="site-description motion-element" itemprop=description>Kepp Going!</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=/post/><span class=site-state-item-count>61</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>13</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>34</span>
+<span class=site-state-item-name>标签</span></a></div></nav><div class="links-of-author motion-element"><span class=links-of-author-item><a href=https://github.com/etaon target=_blank title=GitHub><i class="fa fa-fw fa-github"></i>
+GitHub</a></span>
+<span class=links-of-author-item><a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN><i class="fa fa-fw fa-CSDN"></i>
+CSDN</a></span></div><div class="links-of-blogroll motion-element links-of-blogroll-inline"><div class=links-of-blogroll-title><i class="fa fa-fw fa-globe"></i>
+友情链接</div><ul class=links-of-blogroll-list><li class=links-of-blogroll-item><a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a></li><li class=links-of-blogroll-item><a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a></li><li class=links-of-blogroll-item><a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a></li><li class=links-of-blogroll-item><a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a></li></ul></div><div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline"><div class=tagcloud-of-blogroll-title><i class="fa fa-fw fa-tags"></i>
+标签云</div><ul class=tagcloud-of-blogroll-list><li class=tagcloud-of-blogroll-item><a href=/tags/mysql>Mysql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/aws>Aws</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/dql>Dql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/hadoop>Hadoop</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/redis>Redis</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/cicd>Cicd</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/git>Git</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/istio>Istio</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/mongodb>Mongodb</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/azure>Azure</a></li></ul></div></section><section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active"><div class=post-toc><div class=post-toc-content><nav id=TableOfContents><ul><li><a href=#启动-httpbin-样例程序>启动 httpbin 样例程序</a></li><li><a href=#增加一个测试客户端>增加一个测试客户端</a></li><li><a href=#触发熔断器>触发熔断器</a></li><li><a href=#清理规则服务和客户端>清理规则/服务和客户端</a></li></ul></nav></div></div></section></div></aside></div></main><footer id=footer class=footer><div class=footer-inner><div class=copyright><span class=copyright-year>&copy; 2010 - 2022</span>
 <span class=with-love><i class="fa fa-heart"></i></span>
-<span class=copyright-author>路无止境！</span>
-</div>
-<div class=powered-info>
-<span class=powered-by>
-Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.91.2</a>
-</span>
+<span class=copyright-author>路无止境！</span></div><div class=powered-info><span class=powered-by>Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.101.0</a></span>
 <span class=separator-line>/</span>
-<span class=theme-info>
-Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
-</a>
-</span>
-</div>
-<div class=vistor-info>
-<script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
-<span class=site-uv>
-<i class="fa fa-user"></i>
-<span class=busuanzi-value id=busuanzi_value_site_uv></span>
-</span>
+<span class=theme-info>Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank>NexT</a></span></div><div class=vistor-info><script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<span class=site-uv><i class="fa fa-user"></i>
+<span class=busuanzi-value id=busuanzi_value_site_uv></span></span>
 <span class=separator-line>/</span>
-<span class=site-pv>
-<i class="fa fa-eye"></i>
-<span class=busuanzi-value id=busuanzi_value_site_pv></span>
-</span>
-</div>
-<div class=license-info>
-<span class=storage-info>
-Storage by
-<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a>
-</span>
+<span class=site-pv><i class="fa fa-eye"></i>
+<span class=busuanzi-value id=busuanzi_value_site_pv></span></span></div><div class=license-info><span class=storage-info>Storage by
+<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a></span>
 <span class=separator-line>/</span>
-<span class=license-num>
-<a href target=_blank></a>
-</span>
-</div>
-</div>
-</footer>
-<div class=back-to-top>
-<i class="fa fa-arrow-up"></i>
-<span id=scrollpercent><span>0</span>%</span>
-</div>
-</div>
-<script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
+<span class=license-num><a href target=_blank></a></span></div></div></footer><div class=back-to-top><i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span></div></div><script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
 <script type=text/javascript src=/js/search.js></script>
 <script type=text/javascript src=/js/affix.js></script>
 <script type=text/javascript src=/js/scrollspy.js></script>
-<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.main').css('padding-bottom'),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}}),$(document).on('affixed.bs.affix',function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var b=$('.header-inner').height()+10,c,d,a,e;$('#sidebar').css({'margin-top':b}).show(),c=parseInt($('#sidebar').css('margin-top')),d=parseInt($('.sidebar-inner').css('height')),a=c+d,e=$('.content-wrap').height(),e<a&&$('.content-wrap').css('min-height',a),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
-<script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
-<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
-<script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+'//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js',function(){new Waline({el:'#wcomments',visitor:!0,avatar:'wavatar',avatarCDN:'https://sdn.geekzu.org/avatar/',avatarForce:!1,wordLimit:'200',placeholder:' 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ',requiredFields:['nick','mail'],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$('#wcomments').html('抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。')})</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type=text/javascript>function detectIE(){var e=window.navigator.userAgent,t=e.indexOf("MSIE "),n=e.indexOf("Trident/"),s=e.indexOf("Edge/");return t>0||n>0||s>0?-1:1}function getCntViewHeight(){var t=$("#content").height(),e=$(window).height(),n=t>e?t-e:$(document).height()-e;return n}function getScrollbarWidth(){var e=$("<div />").addClass("scrollbar-measure").prependTo("body"),t=e[0],n=t.offsetWidth-t.clientWidth;return e.remove(),n}function registerBackTop(){var t=50,e=$(".back-to-top");$(window).on("scroll",function(){e.toggleClass("back-to-top-on",window.pageYOffset>t);var s=$(window).scrollTop(),o=getCntViewHeight(),i=s/o,n=Math.round(i*100),a=n>100?100:n;$("#scrollpercent>span").html(a)}),e.on("click",function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var e=".post-toc",s=$(e),t=".active-current";s.on("activate.bs.scrollspy",function(){var t=$(e+" .active").last();n(),t.addClass("active-current")}).on("clear.bs.scrollspy",n),$("body").scrollspy({target:e});function n(){$(e+" "+t).removeClass(t.substring(1))}}function initAffix(){var e=$(".header-inner").height(),t=parseInt($(".main").css("padding-bottom"),10),n=e+10;$(".sidebar-inner").affix({offset:{top:n,bottom:t}}),$(document).on("affixed.bs.affix",function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){$(window).on("resize",function(){e&&clearTimeout(e),e=setTimeout(function(){var e=document.body.clientHeight-100;updateTOCHeight(e)},0)}),updateTOCHeight(document.body.clientHeight-100);var e,t=getScrollbarWidth();$(".post-toc").css("width","calc(100% + "+t+"px)")}function updateTOCHeight(e){e=e||"auto",$(".post-toc").css("max-height",e)}$(function(){var e,t,n,s,o=$(".header-inner").height()+10;$("#sidebar").css({"margin-top":o}).show(),t=parseInt($("#sidebar").css("margin-top")),n=parseInt($(".sidebar-inner").css("height")),e=t+n,s=$(".content-wrap").height(),s<e&&$(".content-wrap").css("min-height",e),$(".site-nav-toggle").on("click",function(){var e=$(".site-nav"),o=$(".toggle"),t="site-nav-on",i="toggle-close",n=e.hasClass(t),a=n?"slideUp":"slideDown",s=n?"removeClass":"addClass";e.stop()[a]("normal",function(){e[s](t),o[s](i)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$(".sidebar-nav-toc").click(function(){$(this).addClass("sidebar-nav-active"),$(this).next().removeClass("sidebar-nav-active"),$("."+$(this).next().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)}),$(".sidebar-nav-overview").click(function(){$(this).addClass("sidebar-nav-active"),$(this).prev().removeClass("sidebar-nav-active"),$("."+$(this).prev().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)})})</script><script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$(".post-body").viewer()})</script><script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+"//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js",function(){new Waline({el:"#wcomments",visitor:!0,avatar:"wavatar",avatarCDN:"https://sdn.geekzu.org/avatar/",avatarForce:!1,wordLimit:"200",placeholder:" 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ",requiredFields:["nick","mail"],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$("#wcomments").html("抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。")})</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
 <script type=text/javascript src="//s7.addthis.com/js/300/addthis_widget.js#pubid=Your%20AddthisId"></script>
-<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
-</body>
-</html>
+<script>(function(){var t,e=document.createElement("script"),n=window.location.protocol.split(":")[0];n==="https"?e.src="https://zz.bdstatic.com/linksubmit/push.js":e.src="http://push.zhanzhang.baidu.com/push.js",t=document.getElementsByTagName("script")[0],t.parentNode.insertBefore(e,t)})()</script></body></html>

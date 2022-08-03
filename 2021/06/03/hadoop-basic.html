@@ -1,744 +1,395 @@
-<!doctype html><html lang=zh-cn dir=content/zh-cn>
-<head>
-<meta charset=utf-8>
-<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
-<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
-<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
-<title> HADOOP-基本操作 - 路无止境！ </title>
-<meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云">
-<meta name=author content="Etaon">
-<meta property="og:title" content="HADOOP-基本操作">
-<meta property="og:site_name" content="路无止境！">
-<meta property="og:image" content="/img/author.jpg">
-<meta name=title content="HADOOP-基本操作 - 路无止境！">
-<meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。">
-<link rel="shortcut icon" href=/img/favicon.ico>
-<link rel=apple-touch-icon href=/img/apple-touch-icon.png>
-<link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png>
-<link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css>
-<link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet>
-<link href=/css/main.css rel=stylesheet type=text/css>
-<link href=/css/syntax.css rel=stylesheet type=text/css>
-</head>
-<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
-<div class="container one-collumn sidebar-position-left page-home">
-<div class=headband></div>
-<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
-<div class=header-inner> <div class=site-brand-container>
-<div class=site-nav-toggle>
-<div class=toggle role=button style=opacity:1;top:0>
+<!doctype html><html lang=zh-cn dir=content/zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=content-security-policy content="upgrade-insecure-requests"><title>HADOOP-基本操作 - 路无止境！</title><meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云"><meta name=author content="Etaon"><meta property="og:title" content="HADOOP-基本操作"><meta property="og:site_name" content="路无止境！"><meta property="og:image" content="/img/author.jpg"><meta name=title content="HADOOP-基本操作 - 路无止境！"><meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。"><link rel="shortcut icon" href=/img/favicon.ico><link rel=apple-touch-icon href=/img/apple-touch-icon.png><link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png><link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css><link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet><link href=/css/main.css rel=stylesheet type=text/css><link href=/css/syntax.css rel=stylesheet type=text/css></head><body itemscope itemtype=http://schema.org/WebPage lang=zh-hans><div class="container one-collumn sidebar-position-left page-home"><div class=headband></div><header id=header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle role=button style=opacity:1;top:0><span class=toggle-line></span>
 <span class=toggle-line></span>
-<span class=toggle-line></span>
-<span class=toggle-line></span>
-</div>
-</div>
-<div class=site-meta>
-<div class=multi-lang-switch>
-<i class="fa fa-fw fa-language" style=margin-right:5px></i>
-<a class=lang-link id=zh-cn href=#>中文</a>
-</div>
-<div class=custom-logo-site-title>
-<a href=/ class=brand rel=start>
-<span class=logo-line-before><i></i></span>
+<span class=toggle-line></span></div></div><div class=site-meta><div class=multi-lang-switch><i class="fa fa-fw fa-language" style=margin-right:5px></i>
+<a class=lang-link id=zh-cn href=#>中文</a></div><div class=custom-logo-site-title><a href=/ class=brand rel=start><span class=logo-line-before><i></i></span>
 <span class=site-title>路无止境！</span>
-<span class=logo-line-after><i></i></span>
-</a>
-</div>
-<p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p>
-</div>
-<div class=site-nav-right>
-<div class="toggle popup-trigger" style=opacity:1;top:0>
-<i class="fa fa-search fa-fw fa-lg"></i>
-</div>
-</div>
-</div>
-<nav class=site-nav>
-<ul id=menu class=menu>
-<li class=menu-item>
-<a href=/ rel=section>
-<i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页
-</a>
-</li>
-<li class=menu-item>
-<a href=/post rel=section>
-<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档
-</a>
-</li>
-<li class=menu-item>
-<a href=/about.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于我
-</a>
-</li>
-<li class=menu-item>
-<a href=/404.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益404
-</a>
-</li>
-<li class="menu-item menu-item-search">
-<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> 搜索</a>
-</li>
-</ul>
-<div class=site-search>
-<div class="popup search-popup local-search-popup">
-<div class="local-search-header clearfix">
-<span class=search-icon><i class="fa fa-search"></i> </span>
-<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
-<div class=local-search-input-wrapper>
-<input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
-</div>
-</div>
-<div id=local-search-result></div>
-</div>
-</div>
-</nav>
-</div>
-</header>
-<main id=main class=main>
-<div class=main-inner>
-<div class=content-wrap>
-<div id=content class=content>
-<section id=posts class=posts-expand>
-<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
-<header class=post-header>
-<h1 class=post-title itemprop="name headline" style=font-weight:700>
-<a class=post-title-link href=https://www.etaon.link/2021/06/03/hadoop-basic.html itemprop=url>
-HADOOP-基本操作
-</a>
-</h1>
-</header>
-<div class=post-body itemprop=articleBody>
-<p>接上篇</p>
-<h2 id=基本操作>基本操作</h2>
-<h3 id=上传文件>上传文件</h3>
-<p>首先创建目录</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[zyi@h102 sbin]$ hadoop fs -mkdir /input
-</code></pre></div><p>在Hadoop：http://h102:9870查看
-<img src="https://img-blog.csdnimg.cn/20210603144250849.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p>
-<p>上传文件：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[zyi@h102 hadoop-3.1.3]$ hadoop fs -put /tmp/word.txt /input
-</code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>2021-06-02 22:28:37,950 INFO sasl.SaslDataTransferClient: SASL encryption trust check: localHostTrusted = false, remoteHostTrusted = false
-[zyi@h102 hadoop-3.1.3]$ hadoop fs -put /opt/software/
-hadoop-3.1.3.tar.gz         jdk-8u212-linux-x64.tar.gz
-[zyi@h102 hadoop-3.1.3]$ hadoop fs -put /opt/software/jdk-8u212-linux-x64.tar.gz /input
-2021-06-02 22:33:18,080 INFO sasl.SaslDataTransferClient: SASL encryption trust check: localHostTrusted = false, remoteHostTrusted = false
-2021-06-02 22:33:29,127 INFO sasl.SaslDataTransferClient: SASL encryption trust check: localHostTrusted = false, remoteHostTrusted =
-</code></pre></div><p>两个文件在web页面都可以看到
-<img src="https://img-blog.csdnimg.cn/20210603144305520.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p>
-<p>Block Size默认为128M
-副本数Replication 3，点击可以调整</p>
-<p>实际文件存储的地方：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>$hadoop_home/data开始找到文件存储的地方：
-[zyi@h102 dfs]$ cd data/current/BP-1568640629-192.168.110.82-1622624666933/current/finalized/
-[zyi@h102 finalized]$ ll
-total 0
-drwxrwxr-x. 3 zyi zyi 21 Jun  2 22:28 subdir0
-[zyi@h102 finalized]$ cd subdir0/
-[zyi@h102 subdir0]$ ll
-total 0
-drwxrwxr-x. 2 zyi zyi 168 Jun  2 22:33 subdir0
-[zyi@h102 subdir0]$ cd subdir0/
-[zyi@h102 subdir0]$ ll
-total 191944
--rw-rw-r--. 1 zyi zyi      1248 Jun  2 22:28 blk_1073741825
--rw-rw-r--. 1 zyi zyi        19 Jun  2 22:28 blk_1073741825_1001.meta
--rw-rw-r--. 1 zyi zyi 134217728 Jun  2 22:33 blk_1073741826
--rw-rw-r--. 1 zyi zyi   1048583 Jun  2 22:33 blk_1073741826_1002.meta
--rw-rw-r--. 1 zyi zyi  60795424 Jun  2 22:33 blk_1073741827
--rw-rw-r--. 1 zyi zyi    474975 Jun  2 22:33 blk_1073741827_1003.meta
-[zyi@h102 subdir0]$ pwd
-/opt/module/hadoop-3.1.3/data/dfs/data/current/BP-1568640629-192.168.110.82-1622624666933/current/finalized/subdir0/subdir0
-</code></pre></div><p>以上我们看到一堆文件
-到底是什么呢</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[zyi@h102 subdir0]$ cat blk_1073741825
-Creative Commons is not a party to this License, and makes no warranty
-        whatsoever in connection with the Work. Creative Commons will not be
-        liable to You or any party on any legal theory for any damages
-        whatsoever, including without limitation any general, special,
-        incidental or consequential damages arising in connection to this
-        license. Notwithstanding the foregoing two (2) sentences, if Creative
-        Commons has expressly identified itself as the Licensor hereunder, it
-        shall have all rights and obligations of Licensor.
-
-        Except for the limited purpose of indicating to the public that the
-        Work is licensed under the CCPL, Creative Commons does not authorize
-        the use by either party of the trademark &#34;Creative Commons&#34; or any
-        related trademark or logo of Creative Commons without the prior
-        written consent of Creative Commons. Any permitted use will be in
-        compliance with Creative Commons&#39; then-current trademark usage
-        guidelines, as may be published on its website or otherwise made
-        available upon request from time to time. For the avoidance of doubt,
-        this trademark restriction does not form part of this License.
-</code></pre></div><p>这个文件就是word.txt
+<span class=logo-line-after><i></i></span></a></div><p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p></div><div class=site-nav-right><div class="toggle popup-trigger" style=opacity:1;top:0><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class=site-nav><ul id=menu class=menu><li class=menu-item><a href=/ rel=section><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class=menu-item><a href=/post rel=section><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class=menu-item><a href=/about.html rel=section><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于我</a></li><li class=menu-item><a href=/404.html rel=section><i class="menu-item-icon fa fa-fw fa-heartbeat"></i><br>公益404</a></li><li class="menu-item menu-item-search"><a href=javascript:; class=popup-trigger><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class=site-search><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class=search-icon><i class="fa fa-search"></i></span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span><div class=local-search-input-wrapper><input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off></div></div><div id=local-search-result></div></div></div></nav></div></header><main id=main class=main><div class=main-inner><div class=content-wrap><div id=content class=content><section id=posts class=posts-expand><article class="post post-type-normal" itemscope itemtype=http://schema.org/Article><header class=post-header><h1 class=post-title itemprop="name headline" style=font-weight:700><a class=post-title-link href=https://www.etaon.top/2021/06/03/hadoop-basic.html itemprop=url>HADOOP-基本操作</a></h1></header><div class=post-body itemprop=articleBody><p>接上篇</p><h2 id=基本操作>基本操作</h2><h3 id=上传文件>上传文件</h3><p>首先创建目录</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[zyi@h102 sbin]$ hadoop fs -mkdir /input
+</span></span></code></pre></div><p>在Hadoop：http://h102:9870查看
+<img src="https://img-blog.csdnimg.cn/20210603144250849.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p><p>上传文件：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[zyi@h102 hadoop-3.1.3]$ hadoop fs -put /tmp/word.txt /input
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>2021-06-02 22:28:37,950 INFO sasl.SaslDataTransferClient: SASL encryption trust check: localHostTrusted = false, remoteHostTrusted = false
+</span></span><span style=display:flex><span>[zyi@h102 hadoop-3.1.3]$ hadoop fs -put /opt/software/
+</span></span><span style=display:flex><span>hadoop-3.1.3.tar.gz         jdk-8u212-linux-x64.tar.gz
+</span></span><span style=display:flex><span>[zyi@h102 hadoop-3.1.3]$ hadoop fs -put /opt/software/jdk-8u212-linux-x64.tar.gz /input
+</span></span><span style=display:flex><span>2021-06-02 22:33:18,080 INFO sasl.SaslDataTransferClient: SASL encryption trust check: localHostTrusted = false, remoteHostTrusted = false
+</span></span><span style=display:flex><span>2021-06-02 22:33:29,127 INFO sasl.SaslDataTransferClient: SASL encryption trust check: localHostTrusted = false, remoteHostTrusted =
+</span></span></code></pre></div><p>两个文件在web页面都可以看到
+<img src="https://img-blog.csdnimg.cn/20210603144305520.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p><p>Block Size默认为128M
+副本数Replication 3，点击可以调整</p><p>实际文件存储的地方：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>$hadoop_home/data开始找到文件存储的地方：
+</span></span><span style=display:flex><span>[zyi@h102 dfs]$ cd data/current/BP-1568640629-192.168.110.82-1622624666933/current/finalized/
+</span></span><span style=display:flex><span>[zyi@h102 finalized]$ ll
+</span></span><span style=display:flex><span>total 0
+</span></span><span style=display:flex><span>drwxrwxr-x. 3 zyi zyi 21 Jun  2 22:28 subdir0
+</span></span><span style=display:flex><span>[zyi@h102 finalized]$ cd subdir0/
+</span></span><span style=display:flex><span>[zyi@h102 subdir0]$ ll
+</span></span><span style=display:flex><span>total 0
+</span></span><span style=display:flex><span>drwxrwxr-x. 2 zyi zyi 168 Jun  2 22:33 subdir0
+</span></span><span style=display:flex><span>[zyi@h102 subdir0]$ cd subdir0/
+</span></span><span style=display:flex><span>[zyi@h102 subdir0]$ ll
+</span></span><span style=display:flex><span>total 191944
+</span></span><span style=display:flex><span>-rw-rw-r--. 1 zyi zyi      1248 Jun  2 22:28 blk_1073741825
+</span></span><span style=display:flex><span>-rw-rw-r--. 1 zyi zyi        19 Jun  2 22:28 blk_1073741825_1001.meta
+</span></span><span style=display:flex><span>-rw-rw-r--. 1 zyi zyi 134217728 Jun  2 22:33 blk_1073741826
+</span></span><span style=display:flex><span>-rw-rw-r--. 1 zyi zyi   1048583 Jun  2 22:33 blk_1073741826_1002.meta
+</span></span><span style=display:flex><span>-rw-rw-r--. 1 zyi zyi  60795424 Jun  2 22:33 blk_1073741827
+</span></span><span style=display:flex><span>-rw-rw-r--. 1 zyi zyi    474975 Jun  2 22:33 blk_1073741827_1003.meta
+</span></span><span style=display:flex><span>[zyi@h102 subdir0]$ pwd
+</span></span><span style=display:flex><span>/opt/module/hadoop-3.1.3/data/dfs/data/current/BP-1568640629-192.168.110.82-1622624666933/current/finalized/subdir0/subdir0
+</span></span></code></pre></div><p>以上我们看到一堆文件
+到底是什么呢</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[zyi@h102 subdir0]$ cat blk_1073741825
+</span></span><span style=display:flex><span>Creative Commons is not a party to this License, and makes no warranty
+</span></span><span style=display:flex><span>        whatsoever in connection with the Work. Creative Commons will not be
+</span></span><span style=display:flex><span>        liable to You or any party on any legal theory for any damages
+</span></span><span style=display:flex><span>        whatsoever, including without limitation any general, special,
+</span></span><span style=display:flex><span>        incidental or consequential damages arising in connection to this
+</span></span><span style=display:flex><span>        license. Notwithstanding the foregoing two (2) sentences, if Creative
+</span></span><span style=display:flex><span>        Commons has expressly identified itself as the Licensor hereunder, it
+</span></span><span style=display:flex><span>        shall have all rights and obligations of Licensor.
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        Except for the limited purpose of indicating to the public that the
+</span></span><span style=display:flex><span>        Work is licensed under the CCPL, Creative Commons does not authorize
+</span></span><span style=display:flex><span>        the use by either party of the trademark &#34;Creative Commons&#34; or any
+</span></span><span style=display:flex><span>        related trademark or logo of Creative Commons without the prior
+</span></span><span style=display:flex><span>        written consent of Creative Commons. Any permitted use will be in
+</span></span><span style=display:flex><span>        compliance with Creative Commons&#39; then-current trademark usage
+</span></span><span style=display:flex><span>        guidelines, as may be published on its website or otherwise made
+</span></span><span style=display:flex><span>        available upon request from time to time. For the avoidance of doubt,
+</span></span><span style=display:flex><span>        this trademark restriction does not form part of this License.
+</span></span></code></pre></div><p>这个文件就是word.txt
 另外两个文件，其中
 -rw-rw-r&ndash;. 1 zyi zyi 134217728 Jun 2 22:33 blk_1073741826
-为128M，符合前面看到的block size</p>
-<p>把这两个文件组合起来：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[zyi@h102 subdir0]$ cat blk_1073741826 &gt;&gt; tmp.tar.gz
-[zyi@h102 subdir0]$ cat blk_1073741827 &gt;&gt; tmp.tar.gz
-[zyi@h102 subdir0]$ ll
-total 585160
--rw-rw-r--. 1 zyi zyi      1248 Jun  2 22:28 blk_1073741825
--rw-rw-r--. 1 zyi zyi        19 Jun  2 22:28 blk_1073741825_1001.meta
--rw-rw-r--. 1 zyi zyi 134217728 Jun  2 22:33 blk_1073741826
--rw-rw-r--. 1 zyi zyi   1048583 Jun  2 22:33 blk_1073741826_1002.meta
--rw-rw-r--. 1 zyi zyi  60795424 Jun  2 22:33 blk_1073741827
--rw-rw-r--. 1 zyi zyi    474975 Jun  2 22:33 blk_1073741827_1003.meta
--rw-rw-r--. 1 zyi zyi 195013152 Jun  2 22:39 tmp.tar.gz
-[zyi@h102 subdir0]$ tar -zxvf tmp.tar.gz
-jdk1.8.0_212/
-jdk1.8.0_212/README.html
-jdk1.8.0_212/LICENSE
-jdk1.8.0_212/include/
-jdk1.8.0_212/include/jawt.h
-jdk1.8.0_212/include/linux/
-jdk1.8.0_212/include/linux/jawt_md.h
-jdk1.8.0_212/include/linux/jni_md.h
-jdk1.8.0_212/include/classfile_constants.h
-jdk1.8.0_212/include/jvmticmlr.h
-jdk1.8.0_212/include/jni.h
-jdk1.8.0_212/include/jdwpTransport.h
-jdk1.8.0_212/include/jvmti.h
-。。。。。。
-[zyi@h102 subdir0]$ ll
-total 585160
--rw-rw-r--. 1 zyi zyi      1248 Jun  2 22:28 blk_1073741825
--rw-rw-r--. 1 zyi zyi        19 Jun  2 22:28 blk_1073741825_1001.meta
--rw-rw-r--. 1 zyi zyi 134217728 Jun  2 22:33 blk_1073741826
--rw-rw-r--. 1 zyi zyi   1048583 Jun  2 22:33 blk_1073741826_1002.meta
--rw-rw-r--. 1 zyi zyi  60795424 Jun  2 22:33 blk_1073741827
--rw-rw-r--. 1 zyi zyi    474975 Jun  2 22:33 blk_1073741827_1003.meta
-drwxr-xr-x. 7 zyi zyi       245 Apr  2  2019 jdk1.8.0_212
--rw-rw-r--. 1 zyi zyi 195013152 Jun  2 22:39 tmp.tar.gz
-</code></pre></div><p>这个就是jdk文件</p>
-<h3 id=验证3副本>验证3副本</h3>
-<p>删除jdk以后，查看集群里的三台主机存储情况</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[zyi@h102 subdir0]$ ll
-total 191944
--rw-rw-r--. 1 zyi zyi      1248 Jun  2 22:28 blk_1073741825
--rw-rw-r--. 1 zyi zyi        19 Jun  2 22:28 blk_1073741825_1001.meta
--rw-rw-r--. 1 zyi zyi 134217728 Jun  2 22:33 blk_1073741826
--rw-rw-r--. 1 zyi zyi   1048583 Jun  2 22:33 blk_1073741826_1002.meta
--rw-rw-r--. 1 zyi zyi  60795424 Jun  2 22:33 blk_1073741827
--rw-rw-r--. 1 zyi zyi    474975 Jun  2 22:33 blk_1073741827_1003.meta
-[zyi@h102 subdir0]$ ssh h103
-Last login: Wed Jun  2 22:22:07 2021 from h102
-[zyi@h103 ~]$ ll /opt/module/hadoop-3.1.3/data/dfs/data/current/BP-1568640629-192.168.110.82-1622624666933/current/finalized/subdir0/subdir0
-total 191944
--rw-rw-r--. 1 zyi zyi      1248 Jun  2 22:29 blk_1073741825
--rw-rw-r--. 1 zyi zyi        19 Jun  2 22:29 blk_1073741825_1001.meta
--rw-rw-r--. 1 zyi zyi 134217728 Jun  2 22:34 blk_1073741826
--rw-rw-r--. 1 zyi zyi   1048583 Jun  2 22:34 blk_1073741826_1002.meta
--rw-rw-r--. 1 zyi zyi  60795424 Jun  2 22:34 blk_1073741827
--rw-rw-r--. 1 zyi zyi    474975 Jun  2 22:34 blk_1073741827_1003.meta
-[zyi@h103 ~]$ exit
-logout
-Connection to h103 closed.
-[zyi@h102 subdir0]$ ssh h104
-Last login: Wed Jun  2 06:16:42 2021 from h102
-[zyi@h104 ~]$ ll /opt/module/hadoop-3.1.3/data/dfs/data/current/BP-1568640629-192.168.110.82-1622624666933/current/finalized/subdir0/subdir0/
-total 191944
--rw-rw-r--. 1 zyi zyi      1248 Jun  2 22:28 blk_1073741825
--rw-rw-r--. 1 zyi zyi        19 Jun  2 22:28 blk_1073741825_1001.meta
--rw-rw-r--. 1 zyi zyi 134217728 Jun  2 22:33 blk_1073741826
--rw-rw-r--. 1 zyi zyi   1048583 Jun  2 22:33 blk_1073741826_1002.meta
--rw-rw-r--. 1 zyi zyi  60795424 Jun  2 22:33 blk_1073741827
--rw-rw-r--. 1 zyi zyi    474975 Jun  2 22:33 blk_1073741827_1003.meta
-</code></pre></div><p>验证成功</p>
-<h3 id=mapreduce任务>Mapreduce任务</h3>
-<p>删除jdk文件执行wordcount任务</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[zyi@h102 hadoop-3.1.3]$ hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-3.1.3.jar wordcount /input /output
-</code></pre></div><p>完整过程</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>2021-06-02 23:26:05,512 INFO client.RMProxy: Connecting to ResourceManager at h103/192.168.110.83:8032
-2021-06-02 23:26:07,332 INFO mapreduce.JobResourceUploader: Disabling Erasure Coding for path: /tmp/hadoop-yarn/staging/zyi/.staging/job_1622628704820_0001
-2021-06-02 23:26:07,593 INFO sasl.SaslDataTransferClient: SASL encryption trust check: localHostTrusted = false, remoteHostTrusted = false
-2021-06-02 23:26:08,046 INFO input.FileInputFormat: Total input files to process : 1
-2021-06-02 23:26:08,137 INFO sasl.SaslDataTransferClient: SASL encryption trust check: localHostTrusted = false, remoteHostTrusted = false
-2021-06-02 23:26:08,343 INFO sasl.SaslDataTransferClient: SASL encryption trust check: localHostTrusted = false, remoteHostTrusted = false
-2021-06-02 23:26:08,421 INFO mapreduce.JobSubmitter: number of splits:1
-2021-06-02 23:26:09,047 INFO sasl.SaslDataTransferClient: SASL encryption trust check: localHostTrusted = false, remoteHostTrusted = false
-2021-06-02 23:26:09,127 INFO mapreduce.JobSubmitter: Submitting tokens for job: job_1622628704820_0001
-2021-06-02 23:26:09,127 INFO mapreduce.JobSubmitter: Executing with tokens: []
-2021-06-02 23:26:09,585 INFO conf.Configuration: resource-types.xml not found
-2021-06-02 23:26:09,586 INFO resource.ResourceUtils: Unable to find &#39;resource-types.xml&#39;.
-2021-06-02 23:26:10,934 INFO impl.YarnClientImpl: Submitted application application_1622628704820_0001
-2021-06-02 23:26:11,455 INFO mapreduce.Job: The url to track the job: http://h103:8088/proxy/application_1622628704820_0001/
-2021-06-02 23:26:11,456 INFO mapreduce.Job: Running job: job_1622628704820_0001
-2021-06-02 23:26:28,137 INFO mapreduce.Job: Job job_1622628704820_0001 running in uber mode : false
-2021-06-02 23:26:28,138 INFO mapreduce.Job:  map 0% reduce 0%
-2021-06-02 23:26:42,562 INFO mapreduce.Job: Task Id : attempt_1622628704820_0001_m_000000_0, Status : FAILED
-[2021-06-02 23:26:40.533]Container [pid=32136,containerID=container_1622628704820_0001_01_000002] is running 273295872B beyond the &#39;VIRTUAL&#39; memory limit. Current usage: 91.3 MB of 1 GB physical memory used; 2.4 GB of 2.1 GB virtual memory used. Killing container.
-Dump of the process-tree for container_1622628704820_0001_01_000002 :
-        |- PID PPID PGRPID SESSID CMD_NAME USER_MODE_TIME(MILLIS) SYSTEM_TIME(MILLIS) VMEM_USAGE(BYTES) RSSMEM_USAGE(PAGES) FULL_CMD_LINE
-        |- 32136 32134 32136 32136 (bash) 0 3 9797632 288 /bin/bash -c /opt/module/jdk1.8.0_212/bin/java -Djava.net.preferIPv4Stack=true -Dhadoop.metrics.log.level=WARN   -Xmx820m -Djava.io.tmpdir=/opt/module/hadoop-3.1.3/data/nm-local-dir/usercache/zyi/appcache/application_1622628704820_0001/container_1622628704820_0001_01_000002/tmp -Dlog4j.configuration=container-log4j.properties -Dyarn.app.container.log.dir=/opt/module/hadoop-3.1.3/logs/userlogs/application_1622628704820_0001/container_1622628704820_0001_01_000002 -Dyarn.app.container.log.filesize=0 -Dhadoop.root.logger=INFO,CLA -Dhadoop.root.logfile=syslog org.apache.hadoop.mapred.YarnChild 192.168.110.83 39249 attempt_1622628704820_0001_m_000000_0 2 1&gt;/opt/module/hadoop-3.1.3/logs/userlogs/application_1622628704820_0001/container_1622628704820_0001_01_000002/stdout 2&gt;/opt/module/hadoop-3.1.3/logs/userlogs/application_1622628704820_0001/container_1622628704820_0001_01_000002/stderr
-        |- 32145 32136 32136 32136 (java) 315 288 2518355968 23074 /opt/module/jdk1.8.0_212/bin/java -Djava.net.preferIPv4Stack=true -Dhadoop.metrics.log.level=WARN -Xmx820m -Djava.io.tmpdir=/opt/module/hadoop-3.1.3/data/nm-local-dir/usercache/zyi/appcache/application_1622628704820_0001/container_1622628704820_0001_01_000002/tmp -Dlog4j.configuration=container-log4j.properties -Dyarn.app.container.log.dir=/opt/module/hadoop-3.1.3/logs/userlogs/application_1622628704820_0001/container_1622628704820_0001_01_000002 -Dyarn.app.container.log.filesize=0 -Dhadoop.root.logger=INFO,CLA -Dhadoop.root.logfile=syslog org.apache.hadoop.mapred.YarnChild 192.168.110.83 39249 attempt_1622628704820_0001_m_000000_0 2
-
-[2021-06-02 23:26:40.760]Container killed on request. Exit code is 143
-[2021-06-02 23:26:40.781]Container exited with a non-zero exit code 143.
-
-2021-06-02 23:26:50,784 INFO mapreduce.Job:  map 100% reduce 0%
-2021-06-02 23:26:57,022 INFO mapreduce.Job: Task Id : attempt_1622628704820_0001_r_000000_0, Status : FAILED
-[2021-06-02 23:26:55.995]Container [pid=32233,containerID=container_1622628704820_0001_01_000004] is running 315304448B beyond the &#39;VIRTUAL&#39; memory limit. Current usage: 166.6 MB of 1 GB physical memory used; 2.4 GB of 2.1 GB virtual memory used. Killing container.
-Dump of the process-tree for container_1622628704820_0001_01_000004 :
-        |- PID PPID PGRPID SESSID CMD_NAME USER_MODE_TIME(MILLIS) SYSTEM_TIME(MILLIS) VMEM_USAGE(BYTES) RSSMEM_USAGE(PAGES) FULL_CMD_LINE
-        |- 32243 32233 32233 32233 (java) 545 47 2560364544 42352 /opt/module/jdk1.8.0_212/bin/java -Djava.net.preferIPv4Stack=true -Dhadoop.metrics.log.level=WARN -Xmx820m -Djava.io.tmpdir=/opt/module/hadoop-3.1.3/data/nm-local-dir/usercache/zyi/appcache/application_1622628704820_0001/container_1622628704820_0001_01_000004/tmp -Dlog4j.configuration=container-log4j.properties -Dyarn.app.container.log.dir=/opt/module/hadoop-3.1.3/logs/userlogs/application_1622628704820_0001/container_1622628704820_0001_01_000004 -Dyarn.app.container.log.filesize=0 -Dhadoop.root.logger=INFO,CLA -Dhadoop.root.logfile=syslog -Dyarn.app.mapreduce.shuffle.logger=INFO,shuffleCLA -Dyarn.app.mapreduce.shuffle.logfile=syslog.shuffle -Dyarn.app.mapreduce.shuffle.log.filesize=0 -Dyarn.app.mapreduce.shuffle.log.backups=0 org.apache.hadoop.mapred.YarnChild 192.168.110.83 39249 attempt_1622628704820_0001_r_000000_0 4
-        |- 32233 32232 32233 32233 (bash) 0 0 9797632 288 /bin/bash -c /opt/module/jdk1.8.0_212/bin/java -Djava.net.preferIPv4Stack=true -Dhadoop.metrics.log.level=WARN   -Xmx820m -Djava.io.tmpdir=/opt/module/hadoop-3.1.3/data/nm-local-dir/usercache/zyi/appcache/application_1622628704820_0001/container_1622628704820_0001_01_000004/tmp -Dlog4j.configuration=container-log4j.properties -Dyarn.app.container.log.dir=/opt/module/hadoop-3.1.3/logs/userlogs/application_1622628704820_0001/container_1622628704820_0001_01_000004 -Dyarn.app.container.log.filesize=0 -Dhadoop.root.logger=INFO,CLA -Dhadoop.root.logfile=syslog -Dyarn.app.mapreduce.shuffle.logger=INFO,shuffleCLA -Dyarn.app.mapreduce.shuffle.logfile=syslog.shuffle -Dyarn.app.mapreduce.shuffle.log.filesize=0 -Dyarn.app.mapreduce.shuffle.log.backups=0 org.apache.hadoop.mapred.YarnChild 192.168.110.83 39249 attempt_1622628704820_0001_r_000000_0 4 1&gt;/opt/module/hadoop-3.1.3/logs/userlogs/application_1622628704820_0001/container_1622628704820_0001_01_000004/stdout 2&gt;/opt/module/hadoop-3.1.3/logs/userlogs/application_1622628704820_0001/container_1622628704820_0001_01_000004/stderr
-
-[2021-06-02 23:26:56.036]Container killed on request. Exit code is 143
-[2021-06-02 23:26:56.071]Container exited with a non-zero exit code 143.
-
-2021-06-02 23:27:05,170 INFO mapreduce.Job:  map 100% reduce 100%
-2021-06-02 23:27:05,189 INFO mapreduce.Job: Job job_1622628704820_0001 completed successfully
-2021-06-02 23:27:05,323 INFO mapreduce.Job: Counters: 56
-        File System Counters
-                FILE: Number of bytes read=1462
-                FILE: Number of bytes written=437045
-                FILE: Number of read operations=0
-                FILE: Number of large read operations=0
-                FILE: Number of write operations=0
-                HDFS: Number of bytes read=1344
-                HDFS: Number of bytes written=1013
-                HDFS: Number of read operations=8
-                HDFS: Number of large read operations=0
-                HDFS: Number of write operations=2
-        Job Counters
-                Failed map tasks=1
-                Failed reduce tasks=1
-                Launched map tasks=2
-                Launched reduce tasks=2
-                Other local map tasks=1
-                Data-local map tasks=1
-                Total time spent by all maps in occupied slots (ms)=14362
-                Total time spent by all reduces in occupied slots (ms)=8549
-                Total time spent by all map tasks (ms)=14362
-                Total time spent by all reduce tasks (ms)=8549
-                Total vcore-milliseconds taken by all map tasks=14362
-                Total vcore-milliseconds taken by all reduce tasks=8549
-                Total megabyte-milliseconds taken by all map tasks=14706688
-                Total megabyte-milliseconds taken by all reduce tasks=8754176
-        Map-Reduce Framework
-                Map input records=19
-                Map output records=176
-                Map output bytes=1822
-                Map output materialized bytes=1462
-                Input split bytes=96
-                Combine input records=176
-                Combine output records=111
-                Reduce input groups=111
-                Reduce shuffle bytes=1462
-                Reduce input records=111
-                Reduce output records=111
-                Spilled Records=222
-                Shuffled Maps =1
-                Failed Shuffles=0
-                Merged Map outputs=1
-                GC time elapsed (ms)=258
-                CPU time spent (ms)=2270
-                Physical memory (bytes) snapshot=476758016
-                Virtual memory (bytes) snapshot=5136683008
-                Total committed heap usage (bytes)=435683328
-                Peak Map Physical memory (bytes)=291237888
-                Peak Map Virtual memory (bytes)=2565316608
-                Peak Reduce Physical memory (bytes)=185520128
-                Peak Reduce Virtual memory (bytes)=2571366400
-        Shuffle Errors
-                BAD_ID=0
-                CONNECTION=0
-                IO_ERROR=0
-                WRONG_LENGTH=0
-                WRONG_MAP=0
-                WRONG_REDUCE=0
-        File Input Format Counters
-                Bytes Read=1248
-        File Output Format Counters
-                Bytes Written=1013
-</code></pre></div><p>在yarn的web页面上可以看到任务：
-<img src="https://img-blog.csdnimg.cn/20210603144346408.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p>
-<p>执行完成以后：
-<img src="https://img-blog.csdnimg.cn/20210603144358625.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p>
-<p>count的结果</p>
-<h3 id=其他--集群误删等恢复>其他&ndash;集群误删等，恢复</h3>
-<ol>
-<li>jps查看进程并停止</li>
-<li>删除每台上的/datahe /logs</li>
-<li>格式化namenode</li>
-<li>启动fs和yarn</li>
-</ol>
-<h2 id=启动历史服务器>启动历史服务器</h2>
-<p>在Yarn查看任务结束后，可以看到页面有一个链接到历史
+为128M，符合前面看到的block size</p><p>把这两个文件组合起来：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[zyi@h102 subdir0]$ cat blk_1073741826 &gt;&gt; tmp.tar.gz
+</span></span><span style=display:flex><span>[zyi@h102 subdir0]$ cat blk_1073741827 &gt;&gt; tmp.tar.gz
+</span></span><span style=display:flex><span>[zyi@h102 subdir0]$ ll
+</span></span><span style=display:flex><span>total 585160
+</span></span><span style=display:flex><span>-rw-rw-r--. 1 zyi zyi      1248 Jun  2 22:28 blk_1073741825
+</span></span><span style=display:flex><span>-rw-rw-r--. 1 zyi zyi        19 Jun  2 22:28 blk_1073741825_1001.meta
+</span></span><span style=display:flex><span>-rw-rw-r--. 1 zyi zyi 134217728 Jun  2 22:33 blk_1073741826
+</span></span><span style=display:flex><span>-rw-rw-r--. 1 zyi zyi   1048583 Jun  2 22:33 blk_1073741826_1002.meta
+</span></span><span style=display:flex><span>-rw-rw-r--. 1 zyi zyi  60795424 Jun  2 22:33 blk_1073741827
+</span></span><span style=display:flex><span>-rw-rw-r--. 1 zyi zyi    474975 Jun  2 22:33 blk_1073741827_1003.meta
+</span></span><span style=display:flex><span>-rw-rw-r--. 1 zyi zyi 195013152 Jun  2 22:39 tmp.tar.gz
+</span></span><span style=display:flex><span>[zyi@h102 subdir0]$ tar -zxvf tmp.tar.gz
+</span></span><span style=display:flex><span>jdk1.8.0_212/
+</span></span><span style=display:flex><span>jdk1.8.0_212/README.html
+</span></span><span style=display:flex><span>jdk1.8.0_212/LICENSE
+</span></span><span style=display:flex><span>jdk1.8.0_212/include/
+</span></span><span style=display:flex><span>jdk1.8.0_212/include/jawt.h
+</span></span><span style=display:flex><span>jdk1.8.0_212/include/linux/
+</span></span><span style=display:flex><span>jdk1.8.0_212/include/linux/jawt_md.h
+</span></span><span style=display:flex><span>jdk1.8.0_212/include/linux/jni_md.h
+</span></span><span style=display:flex><span>jdk1.8.0_212/include/classfile_constants.h
+</span></span><span style=display:flex><span>jdk1.8.0_212/include/jvmticmlr.h
+</span></span><span style=display:flex><span>jdk1.8.0_212/include/jni.h
+</span></span><span style=display:flex><span>jdk1.8.0_212/include/jdwpTransport.h
+</span></span><span style=display:flex><span>jdk1.8.0_212/include/jvmti.h
+</span></span><span style=display:flex><span>。。。。。。
+</span></span><span style=display:flex><span>[zyi@h102 subdir0]$ ll
+</span></span><span style=display:flex><span>total 585160
+</span></span><span style=display:flex><span>-rw-rw-r--. 1 zyi zyi      1248 Jun  2 22:28 blk_1073741825
+</span></span><span style=display:flex><span>-rw-rw-r--. 1 zyi zyi        19 Jun  2 22:28 blk_1073741825_1001.meta
+</span></span><span style=display:flex><span>-rw-rw-r--. 1 zyi zyi 134217728 Jun  2 22:33 blk_1073741826
+</span></span><span style=display:flex><span>-rw-rw-r--. 1 zyi zyi   1048583 Jun  2 22:33 blk_1073741826_1002.meta
+</span></span><span style=display:flex><span>-rw-rw-r--. 1 zyi zyi  60795424 Jun  2 22:33 blk_1073741827
+</span></span><span style=display:flex><span>-rw-rw-r--. 1 zyi zyi    474975 Jun  2 22:33 blk_1073741827_1003.meta
+</span></span><span style=display:flex><span>drwxr-xr-x. 7 zyi zyi       245 Apr  2  2019 jdk1.8.0_212
+</span></span><span style=display:flex><span>-rw-rw-r--. 1 zyi zyi 195013152 Jun  2 22:39 tmp.tar.gz
+</span></span></code></pre></div><p>这个就是jdk文件</p><h3 id=验证3副本>验证3副本</h3><p>删除jdk以后，查看集群里的三台主机存储情况</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[zyi@h102 subdir0]$ ll
+</span></span><span style=display:flex><span>total 191944
+</span></span><span style=display:flex><span>-rw-rw-r--. 1 zyi zyi      1248 Jun  2 22:28 blk_1073741825
+</span></span><span style=display:flex><span>-rw-rw-r--. 1 zyi zyi        19 Jun  2 22:28 blk_1073741825_1001.meta
+</span></span><span style=display:flex><span>-rw-rw-r--. 1 zyi zyi 134217728 Jun  2 22:33 blk_1073741826
+</span></span><span style=display:flex><span>-rw-rw-r--. 1 zyi zyi   1048583 Jun  2 22:33 blk_1073741826_1002.meta
+</span></span><span style=display:flex><span>-rw-rw-r--. 1 zyi zyi  60795424 Jun  2 22:33 blk_1073741827
+</span></span><span style=display:flex><span>-rw-rw-r--. 1 zyi zyi    474975 Jun  2 22:33 blk_1073741827_1003.meta
+</span></span><span style=display:flex><span>[zyi@h102 subdir0]$ ssh h103
+</span></span><span style=display:flex><span>Last login: Wed Jun  2 22:22:07 2021 from h102
+</span></span><span style=display:flex><span>[zyi@h103 ~]$ ll /opt/module/hadoop-3.1.3/data/dfs/data/current/BP-1568640629-192.168.110.82-1622624666933/current/finalized/subdir0/subdir0
+</span></span><span style=display:flex><span>total 191944
+</span></span><span style=display:flex><span>-rw-rw-r--. 1 zyi zyi      1248 Jun  2 22:29 blk_1073741825
+</span></span><span style=display:flex><span>-rw-rw-r--. 1 zyi zyi        19 Jun  2 22:29 blk_1073741825_1001.meta
+</span></span><span style=display:flex><span>-rw-rw-r--. 1 zyi zyi 134217728 Jun  2 22:34 blk_1073741826
+</span></span><span style=display:flex><span>-rw-rw-r--. 1 zyi zyi   1048583 Jun  2 22:34 blk_1073741826_1002.meta
+</span></span><span style=display:flex><span>-rw-rw-r--. 1 zyi zyi  60795424 Jun  2 22:34 blk_1073741827
+</span></span><span style=display:flex><span>-rw-rw-r--. 1 zyi zyi    474975 Jun  2 22:34 blk_1073741827_1003.meta
+</span></span><span style=display:flex><span>[zyi@h103 ~]$ exit
+</span></span><span style=display:flex><span>logout
+</span></span><span style=display:flex><span>Connection to h103 closed.
+</span></span><span style=display:flex><span>[zyi@h102 subdir0]$ ssh h104
+</span></span><span style=display:flex><span>Last login: Wed Jun  2 06:16:42 2021 from h102
+</span></span><span style=display:flex><span>[zyi@h104 ~]$ ll /opt/module/hadoop-3.1.3/data/dfs/data/current/BP-1568640629-192.168.110.82-1622624666933/current/finalized/subdir0/subdir0/
+</span></span><span style=display:flex><span>total 191944
+</span></span><span style=display:flex><span>-rw-rw-r--. 1 zyi zyi      1248 Jun  2 22:28 blk_1073741825
+</span></span><span style=display:flex><span>-rw-rw-r--. 1 zyi zyi        19 Jun  2 22:28 blk_1073741825_1001.meta
+</span></span><span style=display:flex><span>-rw-rw-r--. 1 zyi zyi 134217728 Jun  2 22:33 blk_1073741826
+</span></span><span style=display:flex><span>-rw-rw-r--. 1 zyi zyi   1048583 Jun  2 22:33 blk_1073741826_1002.meta
+</span></span><span style=display:flex><span>-rw-rw-r--. 1 zyi zyi  60795424 Jun  2 22:33 blk_1073741827
+</span></span><span style=display:flex><span>-rw-rw-r--. 1 zyi zyi    474975 Jun  2 22:33 blk_1073741827_1003.meta
+</span></span></code></pre></div><p>验证成功</p><h3 id=mapreduce任务>Mapreduce任务</h3><p>删除jdk文件执行wordcount任务</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[zyi@h102 hadoop-3.1.3]$ hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-3.1.3.jar wordcount /input /output
+</span></span></code></pre></div><p>完整过程</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>2021-06-02 23:26:05,512 INFO client.RMProxy: Connecting to ResourceManager at h103/192.168.110.83:8032
+</span></span><span style=display:flex><span>2021-06-02 23:26:07,332 INFO mapreduce.JobResourceUploader: Disabling Erasure Coding for path: /tmp/hadoop-yarn/staging/zyi/.staging/job_1622628704820_0001
+</span></span><span style=display:flex><span>2021-06-02 23:26:07,593 INFO sasl.SaslDataTransferClient: SASL encryption trust check: localHostTrusted = false, remoteHostTrusted = false
+</span></span><span style=display:flex><span>2021-06-02 23:26:08,046 INFO input.FileInputFormat: Total input files to process : 1
+</span></span><span style=display:flex><span>2021-06-02 23:26:08,137 INFO sasl.SaslDataTransferClient: SASL encryption trust check: localHostTrusted = false, remoteHostTrusted = false
+</span></span><span style=display:flex><span>2021-06-02 23:26:08,343 INFO sasl.SaslDataTransferClient: SASL encryption trust check: localHostTrusted = false, remoteHostTrusted = false
+</span></span><span style=display:flex><span>2021-06-02 23:26:08,421 INFO mapreduce.JobSubmitter: number of splits:1
+</span></span><span style=display:flex><span>2021-06-02 23:26:09,047 INFO sasl.SaslDataTransferClient: SASL encryption trust check: localHostTrusted = false, remoteHostTrusted = false
+</span></span><span style=display:flex><span>2021-06-02 23:26:09,127 INFO mapreduce.JobSubmitter: Submitting tokens for job: job_1622628704820_0001
+</span></span><span style=display:flex><span>2021-06-02 23:26:09,127 INFO mapreduce.JobSubmitter: Executing with tokens: []
+</span></span><span style=display:flex><span>2021-06-02 23:26:09,585 INFO conf.Configuration: resource-types.xml not found
+</span></span><span style=display:flex><span>2021-06-02 23:26:09,586 INFO resource.ResourceUtils: Unable to find &#39;resource-types.xml&#39;.
+</span></span><span style=display:flex><span>2021-06-02 23:26:10,934 INFO impl.YarnClientImpl: Submitted application application_1622628704820_0001
+</span></span><span style=display:flex><span>2021-06-02 23:26:11,455 INFO mapreduce.Job: The url to track the job: http://h103:8088/proxy/application_1622628704820_0001/
+</span></span><span style=display:flex><span>2021-06-02 23:26:11,456 INFO mapreduce.Job: Running job: job_1622628704820_0001
+</span></span><span style=display:flex><span>2021-06-02 23:26:28,137 INFO mapreduce.Job: Job job_1622628704820_0001 running in uber mode : false
+</span></span><span style=display:flex><span>2021-06-02 23:26:28,138 INFO mapreduce.Job:  map 0% reduce 0%
+</span></span><span style=display:flex><span>2021-06-02 23:26:42,562 INFO mapreduce.Job: Task Id : attempt_1622628704820_0001_m_000000_0, Status : FAILED
+</span></span><span style=display:flex><span>[2021-06-02 23:26:40.533]Container [pid=32136,containerID=container_1622628704820_0001_01_000002] is running 273295872B beyond the &#39;VIRTUAL&#39; memory limit. Current usage: 91.3 MB of 1 GB physical memory used; 2.4 GB of 2.1 GB virtual memory used. Killing container.
+</span></span><span style=display:flex><span>Dump of the process-tree for container_1622628704820_0001_01_000002 :
+</span></span><span style=display:flex><span>        |- PID PPID PGRPID SESSID CMD_NAME USER_MODE_TIME(MILLIS) SYSTEM_TIME(MILLIS) VMEM_USAGE(BYTES) RSSMEM_USAGE(PAGES) FULL_CMD_LINE
+</span></span><span style=display:flex><span>        |- 32136 32134 32136 32136 (bash) 0 3 9797632 288 /bin/bash -c /opt/module/jdk1.8.0_212/bin/java -Djava.net.preferIPv4Stack=true -Dhadoop.metrics.log.level=WARN   -Xmx820m -Djava.io.tmpdir=/opt/module/hadoop-3.1.3/data/nm-local-dir/usercache/zyi/appcache/application_1622628704820_0001/container_1622628704820_0001_01_000002/tmp -Dlog4j.configuration=container-log4j.properties -Dyarn.app.container.log.dir=/opt/module/hadoop-3.1.3/logs/userlogs/application_1622628704820_0001/container_1622628704820_0001_01_000002 -Dyarn.app.container.log.filesize=0 -Dhadoop.root.logger=INFO,CLA -Dhadoop.root.logfile=syslog org.apache.hadoop.mapred.YarnChild 192.168.110.83 39249 attempt_1622628704820_0001_m_000000_0 2 1&gt;/opt/module/hadoop-3.1.3/logs/userlogs/application_1622628704820_0001/container_1622628704820_0001_01_000002/stdout 2&gt;/opt/module/hadoop-3.1.3/logs/userlogs/application_1622628704820_0001/container_1622628704820_0001_01_000002/stderr
+</span></span><span style=display:flex><span>        |- 32145 32136 32136 32136 (java) 315 288 2518355968 23074 /opt/module/jdk1.8.0_212/bin/java -Djava.net.preferIPv4Stack=true -Dhadoop.metrics.log.level=WARN -Xmx820m -Djava.io.tmpdir=/opt/module/hadoop-3.1.3/data/nm-local-dir/usercache/zyi/appcache/application_1622628704820_0001/container_1622628704820_0001_01_000002/tmp -Dlog4j.configuration=container-log4j.properties -Dyarn.app.container.log.dir=/opt/module/hadoop-3.1.3/logs/userlogs/application_1622628704820_0001/container_1622628704820_0001_01_000002 -Dyarn.app.container.log.filesize=0 -Dhadoop.root.logger=INFO,CLA -Dhadoop.root.logfile=syslog org.apache.hadoop.mapred.YarnChild 192.168.110.83 39249 attempt_1622628704820_0001_m_000000_0 2
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>[2021-06-02 23:26:40.760]Container killed on request. Exit code is 143
+</span></span><span style=display:flex><span>[2021-06-02 23:26:40.781]Container exited with a non-zero exit code 143.
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>2021-06-02 23:26:50,784 INFO mapreduce.Job:  map 100% reduce 0%
+</span></span><span style=display:flex><span>2021-06-02 23:26:57,022 INFO mapreduce.Job: Task Id : attempt_1622628704820_0001_r_000000_0, Status : FAILED
+</span></span><span style=display:flex><span>[2021-06-02 23:26:55.995]Container [pid=32233,containerID=container_1622628704820_0001_01_000004] is running 315304448B beyond the &#39;VIRTUAL&#39; memory limit. Current usage: 166.6 MB of 1 GB physical memory used; 2.4 GB of 2.1 GB virtual memory used. Killing container.
+</span></span><span style=display:flex><span>Dump of the process-tree for container_1622628704820_0001_01_000004 :
+</span></span><span style=display:flex><span>        |- PID PPID PGRPID SESSID CMD_NAME USER_MODE_TIME(MILLIS) SYSTEM_TIME(MILLIS) VMEM_USAGE(BYTES) RSSMEM_USAGE(PAGES) FULL_CMD_LINE
+</span></span><span style=display:flex><span>        |- 32243 32233 32233 32233 (java) 545 47 2560364544 42352 /opt/module/jdk1.8.0_212/bin/java -Djava.net.preferIPv4Stack=true -Dhadoop.metrics.log.level=WARN -Xmx820m -Djava.io.tmpdir=/opt/module/hadoop-3.1.3/data/nm-local-dir/usercache/zyi/appcache/application_1622628704820_0001/container_1622628704820_0001_01_000004/tmp -Dlog4j.configuration=container-log4j.properties -Dyarn.app.container.log.dir=/opt/module/hadoop-3.1.3/logs/userlogs/application_1622628704820_0001/container_1622628704820_0001_01_000004 -Dyarn.app.container.log.filesize=0 -Dhadoop.root.logger=INFO,CLA -Dhadoop.root.logfile=syslog -Dyarn.app.mapreduce.shuffle.logger=INFO,shuffleCLA -Dyarn.app.mapreduce.shuffle.logfile=syslog.shuffle -Dyarn.app.mapreduce.shuffle.log.filesize=0 -Dyarn.app.mapreduce.shuffle.log.backups=0 org.apache.hadoop.mapred.YarnChild 192.168.110.83 39249 attempt_1622628704820_0001_r_000000_0 4
+</span></span><span style=display:flex><span>        |- 32233 32232 32233 32233 (bash) 0 0 9797632 288 /bin/bash -c /opt/module/jdk1.8.0_212/bin/java -Djava.net.preferIPv4Stack=true -Dhadoop.metrics.log.level=WARN   -Xmx820m -Djava.io.tmpdir=/opt/module/hadoop-3.1.3/data/nm-local-dir/usercache/zyi/appcache/application_1622628704820_0001/container_1622628704820_0001_01_000004/tmp -Dlog4j.configuration=container-log4j.properties -Dyarn.app.container.log.dir=/opt/module/hadoop-3.1.3/logs/userlogs/application_1622628704820_0001/container_1622628704820_0001_01_000004 -Dyarn.app.container.log.filesize=0 -Dhadoop.root.logger=INFO,CLA -Dhadoop.root.logfile=syslog -Dyarn.app.mapreduce.shuffle.logger=INFO,shuffleCLA -Dyarn.app.mapreduce.shuffle.logfile=syslog.shuffle -Dyarn.app.mapreduce.shuffle.log.filesize=0 -Dyarn.app.mapreduce.shuffle.log.backups=0 org.apache.hadoop.mapred.YarnChild 192.168.110.83 39249 attempt_1622628704820_0001_r_000000_0 4 1&gt;/opt/module/hadoop-3.1.3/logs/userlogs/application_1622628704820_0001/container_1622628704820_0001_01_000004/stdout 2&gt;/opt/module/hadoop-3.1.3/logs/userlogs/application_1622628704820_0001/container_1622628704820_0001_01_000004/stderr
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>[2021-06-02 23:26:56.036]Container killed on request. Exit code is 143
+</span></span><span style=display:flex><span>[2021-06-02 23:26:56.071]Container exited with a non-zero exit code 143.
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>2021-06-02 23:27:05,170 INFO mapreduce.Job:  map 100% reduce 100%
+</span></span><span style=display:flex><span>2021-06-02 23:27:05,189 INFO mapreduce.Job: Job job_1622628704820_0001 completed successfully
+</span></span><span style=display:flex><span>2021-06-02 23:27:05,323 INFO mapreduce.Job: Counters: 56
+</span></span><span style=display:flex><span>        File System Counters
+</span></span><span style=display:flex><span>                FILE: Number of bytes read=1462
+</span></span><span style=display:flex><span>                FILE: Number of bytes written=437045
+</span></span><span style=display:flex><span>                FILE: Number of read operations=0
+</span></span><span style=display:flex><span>                FILE: Number of large read operations=0
+</span></span><span style=display:flex><span>                FILE: Number of write operations=0
+</span></span><span style=display:flex><span>                HDFS: Number of bytes read=1344
+</span></span><span style=display:flex><span>                HDFS: Number of bytes written=1013
+</span></span><span style=display:flex><span>                HDFS: Number of read operations=8
+</span></span><span style=display:flex><span>                HDFS: Number of large read operations=0
+</span></span><span style=display:flex><span>                HDFS: Number of write operations=2
+</span></span><span style=display:flex><span>        Job Counters
+</span></span><span style=display:flex><span>                Failed map tasks=1
+</span></span><span style=display:flex><span>                Failed reduce tasks=1
+</span></span><span style=display:flex><span>                Launched map tasks=2
+</span></span><span style=display:flex><span>                Launched reduce tasks=2
+</span></span><span style=display:flex><span>                Other local map tasks=1
+</span></span><span style=display:flex><span>                Data-local map tasks=1
+</span></span><span style=display:flex><span>                Total time spent by all maps in occupied slots (ms)=14362
+</span></span><span style=display:flex><span>                Total time spent by all reduces in occupied slots (ms)=8549
+</span></span><span style=display:flex><span>                Total time spent by all map tasks (ms)=14362
+</span></span><span style=display:flex><span>                Total time spent by all reduce tasks (ms)=8549
+</span></span><span style=display:flex><span>                Total vcore-milliseconds taken by all map tasks=14362
+</span></span><span style=display:flex><span>                Total vcore-milliseconds taken by all reduce tasks=8549
+</span></span><span style=display:flex><span>                Total megabyte-milliseconds taken by all map tasks=14706688
+</span></span><span style=display:flex><span>                Total megabyte-milliseconds taken by all reduce tasks=8754176
+</span></span><span style=display:flex><span>        Map-Reduce Framework
+</span></span><span style=display:flex><span>                Map input records=19
+</span></span><span style=display:flex><span>                Map output records=176
+</span></span><span style=display:flex><span>                Map output bytes=1822
+</span></span><span style=display:flex><span>                Map output materialized bytes=1462
+</span></span><span style=display:flex><span>                Input split bytes=96
+</span></span><span style=display:flex><span>                Combine input records=176
+</span></span><span style=display:flex><span>                Combine output records=111
+</span></span><span style=display:flex><span>                Reduce input groups=111
+</span></span><span style=display:flex><span>                Reduce shuffle bytes=1462
+</span></span><span style=display:flex><span>                Reduce input records=111
+</span></span><span style=display:flex><span>                Reduce output records=111
+</span></span><span style=display:flex><span>                Spilled Records=222
+</span></span><span style=display:flex><span>                Shuffled Maps =1
+</span></span><span style=display:flex><span>                Failed Shuffles=0
+</span></span><span style=display:flex><span>                Merged Map outputs=1
+</span></span><span style=display:flex><span>                GC time elapsed (ms)=258
+</span></span><span style=display:flex><span>                CPU time spent (ms)=2270
+</span></span><span style=display:flex><span>                Physical memory (bytes) snapshot=476758016
+</span></span><span style=display:flex><span>                Virtual memory (bytes) snapshot=5136683008
+</span></span><span style=display:flex><span>                Total committed heap usage (bytes)=435683328
+</span></span><span style=display:flex><span>                Peak Map Physical memory (bytes)=291237888
+</span></span><span style=display:flex><span>                Peak Map Virtual memory (bytes)=2565316608
+</span></span><span style=display:flex><span>                Peak Reduce Physical memory (bytes)=185520128
+</span></span><span style=display:flex><span>                Peak Reduce Virtual memory (bytes)=2571366400
+</span></span><span style=display:flex><span>        Shuffle Errors
+</span></span><span style=display:flex><span>                BAD_ID=0
+</span></span><span style=display:flex><span>                CONNECTION=0
+</span></span><span style=display:flex><span>                IO_ERROR=0
+</span></span><span style=display:flex><span>                WRONG_LENGTH=0
+</span></span><span style=display:flex><span>                WRONG_MAP=0
+</span></span><span style=display:flex><span>                WRONG_REDUCE=0
+</span></span><span style=display:flex><span>        File Input Format Counters
+</span></span><span style=display:flex><span>                Bytes Read=1248
+</span></span><span style=display:flex><span>        File Output Format Counters
+</span></span><span style=display:flex><span>                Bytes Written=1013
+</span></span></code></pre></div><p>在yarn的web页面上可以看到任务：
+<img src="https://img-blog.csdnimg.cn/20210603144346408.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p><p>执行完成以后：
+<img src="https://img-blog.csdnimg.cn/20210603144358625.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p><p>count的结果</p><h3 id=其他--集群误删等恢复>其他&ndash;集群误删等，恢复</h3><ol><li>jps查看进程并停止</li><li>删除每台上的/datahe /logs</li><li>格式化namenode</li><li>启动fs和yarn</li></ol><h2 id=启动历史服务器>启动历史服务器</h2><p>在Yarn查看任务结束后，可以看到页面有一个链接到历史
 <img src="https://img-blog.csdnimg.cn/20210603145524429.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述>
-默认地址为：http://h103:8088/proxy/application_1622701983047_0001/，系统会查找mapred-site.xml的配置从定向到配置的服务器地址。</p>
-<h3 id=修改mapred-sitexml>修改mapred-site.xml</h3>
-<p>位置：$hadoop_home/etc/hadoop/</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[zyi@h102 hadoop-3.1.3]$ vim etc/hadoop/mapred-site.xml
-</code></pre></div><p>增加下面内容：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>  &lt;property&gt;
-    &lt;name&gt;mapreduce.jobhistory.address&lt;/name&gt;
-    &lt;value&gt;h102:10020&lt;/value&gt;
-  &lt;/property&gt;
-
-
-  &lt;property&gt;
-    &lt;name&gt;mapreduce.jobhistory.webapp.address&lt;/name&gt;
-    &lt;value&gt;h102:19888&lt;/value&gt;
-  &lt;/property&gt;
-</code></pre></div><h3 id=同步集群内配置文件>同步集群内配置文件</h3>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[zyi@h102 hadoop-3.1.3]$ xsync etc/hadoop/
-==============================h102==============================
-sending incremental file list
-
-sent 888 bytes  received 18 bytes  604.00 bytes/sec
-total size is 107,834  speedup is 119.02
-==============================h103==============================
-sending incremental file list
-hadoop/
-hadoop/mapred-site.xml
-
-sent 1,440 bytes  received 52 bytes  994.67 bytes/sec
-total size is 107,834  speedup is 72.27
-==============================h104==============================
-sending incremental file list
-hadoop/
-hadoop/mapred-site.xml
-
-sent 1,440 bytes  received 52 bytes  994.67 bytes/sec
-total size is 107,834  speedup is 72.27
-</code></pre></div><h3 id=重启yarn>重启Yarn</h3>
-<p>到h103上重启Yarn</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[zyi@h103 ~]$ stop-yarn.sh
-Stopping nodemanagers
-Stopping resourcemanager
-[zyi@h103 ~]$  start-yarn.sh
-Starting resourcemanager
-Starting nodemanagers
-</code></pre></div><h3 id=手动启用historyserver进程>手动启用historyserver进程</h3>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[zyi@h102 hadoop-3.1.3]$ mapred --daemon start historyserver
-[zyi@h102 hadoop-3.1.3]$ jps
-19681 NameNode
-3766 Jps
-2839 JobHistoryServer
-19821 DataNode
-2589 NodeManager
-
-</code></pre></div><h3 id=重新执行mapreduce任务>重新执行mapreduce任务</h3>
-<p>删除前面任务的目录</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[zyi@h102 hadoop-3.1.3]$ hadoop fs -rm -r /output
-Deleted /output
-</code></pre></div><p>执行mapreduce&ndash;wordcount任务</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[zyi@h102 hadoop-3.1.3]$ hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-3.1.3.jar wordcount /input /output
-2021-06-03 02:35:31,696 INFO client.RMProxy: Connecting to ResourceManager at h103/192.168.110.83:8032
-2021-06-03 02:35:32,926 INFO mapreduce.JobResourceUploader: Disabling Erasure Coding for path: /tmp/hadoop-yarn/staging/zyi/.staging/job_1622701983047_0001
-······
-</code></pre></div><p>点击history进入h102:19888页面
-<img src="https://img-blog.csdnimg.cn/20210603150743635.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p>
-<h2 id=日志汇总>日志汇总</h2>
-<p>完成应用运行后，将日志文件都传到HDFS保存
+默认地址为：http://h103:8088/proxy/application_1622701983047_0001/，系统会查找mapred-site.xml的配置从定向到配置的服务器地址。</p><h3 id=修改mapred-sitexml>修改mapred-site.xml</h3><p>位置：$hadoop_home/etc/hadoop/</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[zyi@h102 hadoop-3.1.3]$ vim etc/hadoop/mapred-site.xml
+</span></span></code></pre></div><p>增加下面内容：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>  &lt;property&gt;
+</span></span><span style=display:flex><span>    &lt;name&gt;mapreduce.jobhistory.address&lt;/name&gt;
+</span></span><span style=display:flex><span>    &lt;value&gt;h102:10020&lt;/value&gt;
+</span></span><span style=display:flex><span>  &lt;/property&gt;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  &lt;property&gt;
+</span></span><span style=display:flex><span>    &lt;name&gt;mapreduce.jobhistory.webapp.address&lt;/name&gt;
+</span></span><span style=display:flex><span>    &lt;value&gt;h102:19888&lt;/value&gt;
+</span></span><span style=display:flex><span>  &lt;/property&gt;
+</span></span></code></pre></div><h3 id=同步集群内配置文件>同步集群内配置文件</h3><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[zyi@h102 hadoop-3.1.3]$ xsync etc/hadoop/
+</span></span><span style=display:flex><span>==============================h102==============================
+</span></span><span style=display:flex><span>sending incremental file list
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>sent 888 bytes  received 18 bytes  604.00 bytes/sec
+</span></span><span style=display:flex><span>total size is 107,834  speedup is 119.02
+</span></span><span style=display:flex><span>==============================h103==============================
+</span></span><span style=display:flex><span>sending incremental file list
+</span></span><span style=display:flex><span>hadoop/
+</span></span><span style=display:flex><span>hadoop/mapred-site.xml
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>sent 1,440 bytes  received 52 bytes  994.67 bytes/sec
+</span></span><span style=display:flex><span>total size is 107,834  speedup is 72.27
+</span></span><span style=display:flex><span>==============================h104==============================
+</span></span><span style=display:flex><span>sending incremental file list
+</span></span><span style=display:flex><span>hadoop/
+</span></span><span style=display:flex><span>hadoop/mapred-site.xml
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>sent 1,440 bytes  received 52 bytes  994.67 bytes/sec
+</span></span><span style=display:flex><span>total size is 107,834  speedup is 72.27
+</span></span></code></pre></div><h3 id=重启yarn>重启Yarn</h3><p>到h103上重启Yarn</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[zyi@h103 ~]$ stop-yarn.sh
+</span></span><span style=display:flex><span>Stopping nodemanagers
+</span></span><span style=display:flex><span>Stopping resourcemanager
+</span></span><span style=display:flex><span>[zyi@h103 ~]$  start-yarn.sh
+</span></span><span style=display:flex><span>Starting resourcemanager
+</span></span><span style=display:flex><span>Starting nodemanagers
+</span></span></code></pre></div><h3 id=手动启用historyserver进程>手动启用historyserver进程</h3><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[zyi@h102 hadoop-3.1.3]$ mapred --daemon start historyserver
+</span></span><span style=display:flex><span>[zyi@h102 hadoop-3.1.3]$ jps
+</span></span><span style=display:flex><span>19681 NameNode
+</span></span><span style=display:flex><span>3766 Jps
+</span></span><span style=display:flex><span>2839 JobHistoryServer
+</span></span><span style=display:flex><span>19821 DataNode
+</span></span><span style=display:flex><span>2589 NodeManager
+</span></span></code></pre></div><h3 id=重新执行mapreduce任务>重新执行mapreduce任务</h3><p>删除前面任务的目录</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[zyi@h102 hadoop-3.1.3]$ hadoop fs -rm -r /output
+</span></span><span style=display:flex><span>Deleted /output
+</span></span></code></pre></div><p>执行mapreduce&ndash;wordcount任务</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[zyi@h102 hadoop-3.1.3]$ hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-3.1.3.jar wordcount /input /output
+</span></span><span style=display:flex><span>2021-06-03 02:35:31,696 INFO client.RMProxy: Connecting to ResourceManager at h103/192.168.110.83:8032
+</span></span><span style=display:flex><span>2021-06-03 02:35:32,926 INFO mapreduce.JobResourceUploader: Disabling Erasure Coding for path: /tmp/hadoop-yarn/staging/zyi/.staging/job_1622701983047_0001
+</span></span><span style=display:flex><span>······
+</span></span></code></pre></div><p>点击history进入h102:19888页面
+<img src="https://img-blog.csdnimg.cn/20210603150743635.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p><h2 id=日志汇总>日志汇总</h2><p>完成应用运行后，将日志文件都传到HDFS保存
 初始情况下在logs后面提示：
-<img src="https://img-blog.csdnimg.cn/20210603173349335.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p>
-<p><img src="https://img-blog.csdnimg.cn/20210603151459992.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述>
-<strong>开启此功能，要重启NodeName、ResourceManager和historyServer</strong></p>
-<h3 id=配置yarn-sitexml>配置yarn-site.xml</h3>
-<p>增加以下内容</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>  &lt;property&gt;
-    &lt;description&gt;Log aggregation&lt;/description&gt;
-    &lt;name&gt;yarn.log-aggregation-enable&lt;/name&gt;
-    &lt;value&gt;true&lt;/value&gt;
-  &lt;/property&gt;
-
-  &lt;property&gt;
-    &lt;description&gt;Log server  url&lt;/description&gt;
-    &lt;name&gt;yarn.log.server.url&lt;/name&gt;
-    &lt;value&gt;http://h102:19888/jobhistory/logs&lt;/value&gt;
-  &lt;/property&gt;
-
-  &lt;property&gt;
-    &lt;description&gt;Log retains by seconds&lt;/description&gt;
-    &lt;name&gt;yarn.log-aggregation.retain-seconds&lt;/name&gt;
-    &lt;value&gt;604800&lt;/value&gt;
-  &lt;/property&gt;
-</code></pre></div><h3 id=分发给集群所有主机>分发给集群所有主机</h3>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[zyi@h102 hadoop-3.1.3]$ xsync etc/hadoop/
-==============================h102==============================
-sending incremental file list
-
-sent 888 bytes  received 18 bytes  604.00 bytes/sec
-total size is 108,309  speedup is 119.55
-==============================h103==============================
-sending incremental file list
-hadoop/
-hadoop/yarn-site.xml
-
-sent 2,022 bytes  received 52 bytes  4,148.00 bytes/sec
-total size is 108,309  speedup is 52.22
-==============================h104==============================
-sending incremental file list
-hadoop/
-hadoop/yarn-site.xml
-
-sent 2,022 bytes  received 52 bytes  1,382.67 bytes/sec
-total size is 108,309  speedup is 52.22
-</code></pre></div><h3 id=重启nodenameresourcemanager和historyserver>重启NodeName、ResourceManager和historyServer</h3>
-<p>h102重启NodeName、historyServer，h103重启Yarn ResourceManager</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[zyi@h102 hadoop-3.1.3]$ !220
-mapred --daemon stop historyserver
-[zyi@h102 hadoop-3.1.3]$ stop-dfs.sh
-Stopping namenodes on [h102]
-Stopping datanodes
-Stopping secondary namenodes [h104]
-[zyi@h102 hadoop-3.1.3]$ ssh h103
-Last login: Thu Jun  3 02:32:17 2021 from h102
-[zyi@h103 ~]$ stop-yarn.sh
-Stopping nodemanagers
-h103: WARNING: nodemanager did not stop gracefully after 5 seconds: Trying to kill with kill -9
-h102: WARNING: nodemanager did not stop gracefully after 5 seconds: Trying to kill with kill -9
-h104: WARNING: nodemanager did not stop gracefully after 5 seconds: Trying to kill with kill -9
-Stopping resourcemanager
-[zyi@h103 ~]$  start-yarn.sh
-Starting resourcemanager
-Starting nodemanagers
-[zyi@h103 ~]$ exit
-logout
-Connection to h103 closed.
-[zyi@h102 hadoop-3.1.3]$ start-dfs.sh
-Starting namenodes on [h102]
-Starting datanodes
-Starting secondary namenodes [h104]
-[zyi@h102 hadoop-3.1.3]$ mapred --daemon start historyserver
-</code></pre></div><p>重新做Mapreduce任务</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[zyi@h102 hadoop-3.1.3]$ !226
-hadoop fs -rm -r /output
-Deleted /output
-[zyi@h102 hadoop-3.1.3]$ !213
-hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-3.1.3.jar wordcount /input /output
-2021-06-03 03:45:03,861 INFO client.RMProxy: Connecting to ResourceManager at h103/192.168.110.83:8032
-2021-06-03 03:45:05,880 INFO mapreduce.JobResourceUploader: Disabling Erasure Coding for path: /tmp/hadoop-yarn/staging/zyi/.staging/job_1622706200490_0001
-2021-06-03 03:45:06,116 INFO sasl.SaslDataTransferClient: SASL encryption trust check: localHostTrusted = false, remoteHostTrusted = false
-2021-06-03 03:45:07,055 INFO input.FileInputFormat: Total input files to process : 1
-···
-</code></pre></div><p>查看Job History，可以看到logs链接
+<img src="https://img-blog.csdnimg.cn/20210603173349335.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p><p><img src="https://img-blog.csdnimg.cn/20210603151459992.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述>
+<strong>开启此功能，要重启NodeName、ResourceManager和historyServer</strong></p><h3 id=配置yarn-sitexml>配置yarn-site.xml</h3><p>增加以下内容</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>  &lt;property&gt;
+</span></span><span style=display:flex><span>    &lt;description&gt;Log aggregation&lt;/description&gt;
+</span></span><span style=display:flex><span>    &lt;name&gt;yarn.log-aggregation-enable&lt;/name&gt;
+</span></span><span style=display:flex><span>    &lt;value&gt;true&lt;/value&gt;
+</span></span><span style=display:flex><span>  &lt;/property&gt;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  &lt;property&gt;
+</span></span><span style=display:flex><span>    &lt;description&gt;Log server  url&lt;/description&gt;
+</span></span><span style=display:flex><span>    &lt;name&gt;yarn.log.server.url&lt;/name&gt;
+</span></span><span style=display:flex><span>    &lt;value&gt;http://h102:19888/jobhistory/logs&lt;/value&gt;
+</span></span><span style=display:flex><span>  &lt;/property&gt;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  &lt;property&gt;
+</span></span><span style=display:flex><span>    &lt;description&gt;Log retains by seconds&lt;/description&gt;
+</span></span><span style=display:flex><span>    &lt;name&gt;yarn.log-aggregation.retain-seconds&lt;/name&gt;
+</span></span><span style=display:flex><span>    &lt;value&gt;604800&lt;/value&gt;
+</span></span><span style=display:flex><span>  &lt;/property&gt;
+</span></span></code></pre></div><h3 id=分发给集群所有主机>分发给集群所有主机</h3><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[zyi@h102 hadoop-3.1.3]$ xsync etc/hadoop/
+</span></span><span style=display:flex><span>==============================h102==============================
+</span></span><span style=display:flex><span>sending incremental file list
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>sent 888 bytes  received 18 bytes  604.00 bytes/sec
+</span></span><span style=display:flex><span>total size is 108,309  speedup is 119.55
+</span></span><span style=display:flex><span>==============================h103==============================
+</span></span><span style=display:flex><span>sending incremental file list
+</span></span><span style=display:flex><span>hadoop/
+</span></span><span style=display:flex><span>hadoop/yarn-site.xml
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>sent 2,022 bytes  received 52 bytes  4,148.00 bytes/sec
+</span></span><span style=display:flex><span>total size is 108,309  speedup is 52.22
+</span></span><span style=display:flex><span>==============================h104==============================
+</span></span><span style=display:flex><span>sending incremental file list
+</span></span><span style=display:flex><span>hadoop/
+</span></span><span style=display:flex><span>hadoop/yarn-site.xml
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>sent 2,022 bytes  received 52 bytes  1,382.67 bytes/sec
+</span></span><span style=display:flex><span>total size is 108,309  speedup is 52.22
+</span></span></code></pre></div><h3 id=重启nodenameresourcemanager和historyserver>重启NodeName、ResourceManager和historyServer</h3><p>h102重启NodeName、historyServer，h103重启Yarn ResourceManager</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[zyi@h102 hadoop-3.1.3]$ !220
+</span></span><span style=display:flex><span>mapred --daemon stop historyserver
+</span></span><span style=display:flex><span>[zyi@h102 hadoop-3.1.3]$ stop-dfs.sh
+</span></span><span style=display:flex><span>Stopping namenodes on [h102]
+</span></span><span style=display:flex><span>Stopping datanodes
+</span></span><span style=display:flex><span>Stopping secondary namenodes [h104]
+</span></span><span style=display:flex><span>[zyi@h102 hadoop-3.1.3]$ ssh h103
+</span></span><span style=display:flex><span>Last login: Thu Jun  3 02:32:17 2021 from h102
+</span></span><span style=display:flex><span>[zyi@h103 ~]$ stop-yarn.sh
+</span></span><span style=display:flex><span>Stopping nodemanagers
+</span></span><span style=display:flex><span>h103: WARNING: nodemanager did not stop gracefully after 5 seconds: Trying to kill with kill -9
+</span></span><span style=display:flex><span>h102: WARNING: nodemanager did not stop gracefully after 5 seconds: Trying to kill with kill -9
+</span></span><span style=display:flex><span>h104: WARNING: nodemanager did not stop gracefully after 5 seconds: Trying to kill with kill -9
+</span></span><span style=display:flex><span>Stopping resourcemanager
+</span></span><span style=display:flex><span>[zyi@h103 ~]$  start-yarn.sh
+</span></span><span style=display:flex><span>Starting resourcemanager
+</span></span><span style=display:flex><span>Starting nodemanagers
+</span></span><span style=display:flex><span>[zyi@h103 ~]$ exit
+</span></span><span style=display:flex><span>logout
+</span></span><span style=display:flex><span>Connection to h103 closed.
+</span></span><span style=display:flex><span>[zyi@h102 hadoop-3.1.3]$ start-dfs.sh
+</span></span><span style=display:flex><span>Starting namenodes on [h102]
+</span></span><span style=display:flex><span>Starting datanodes
+</span></span><span style=display:flex><span>Starting secondary namenodes [h104]
+</span></span><span style=display:flex><span>[zyi@h102 hadoop-3.1.3]$ mapred --daemon start historyserver
+</span></span></code></pre></div><p>重新做Mapreduce任务</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[zyi@h102 hadoop-3.1.3]$ !226
+</span></span><span style=display:flex><span>hadoop fs -rm -r /output
+</span></span><span style=display:flex><span>Deleted /output
+</span></span><span style=display:flex><span>[zyi@h102 hadoop-3.1.3]$ !213
+</span></span><span style=display:flex><span>hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-3.1.3.jar wordcount /input /output
+</span></span><span style=display:flex><span>2021-06-03 03:45:03,861 INFO client.RMProxy: Connecting to ResourceManager at h103/192.168.110.83:8032
+</span></span><span style=display:flex><span>2021-06-03 03:45:05,880 INFO mapreduce.JobResourceUploader: Disabling Erasure Coding for path: /tmp/hadoop-yarn/staging/zyi/.staging/job_1622706200490_0001
+</span></span><span style=display:flex><span>2021-06-03 03:45:06,116 INFO sasl.SaslDataTransferClient: SASL encryption trust check: localHostTrusted = false, remoteHostTrusted = false
+</span></span><span style=display:flex><span>2021-06-03 03:45:07,055 INFO input.FileInputFormat: Total input files to process : 1
+</span></span><span style=display:flex><span>···
+</span></span></code></pre></div><p>查看Job History，可以看到logs链接
 <img src="https://img-blog.csdnimg.cn/20210603155048806.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述>
 点击logs
-<img src="https://img-blog.csdnimg.cn/2021060315513328.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p>
-<p>以上</p>
-</div>
-<footer class=post-footer>
-<div id=wcomments></div>
-</footer>
-</article>
-</section>
-</div>
-</div>
-<div class=sidebar-toggle>
-<div class=sidebar-toggle-line-wrap>
-<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+<img src="https://img-blog.csdnimg.cn/2021060315513328.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p><p>以上</p></div><footer class=post-footer><div id=wcomments></div></footer></article></section></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
 <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-</div>
-</div>
-<aside id=sidebar class=sidebar>
-<div class=sidebar-inner>
-<ul class="sidebar-nav motion-element">
-<li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>
-文章目录
-</li>
-<li class=sidebar-nav-overview data-target=site-overview>
-站点概览
-</li>
-</ul>
-<section class="site-overview sidebar-panel">
-<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
-<img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon>
-<p class=site-author-name itemprop=name>Etaon</p>
-<p class="site-description motion-element" itemprop=description>
-Kepp Going!
-</p>
-</div>
-<nav class="site-state motion-element">
-<div class="site-state-item site-state-posts">
-<a href=/post/>
-<span class=site-state-item-count>61</span>
-<span class=site-state-item-name>日志</span>
-</a>
-</div>
-<div class="site-state-item site-state-categories">
-<a href=/categories/>
-<span class=site-state-item-count>13</span>
-<span class=site-state-item-name>分类</span>
-</a>
-</div>
-<div class="site-state-item site-state-tags">
-<a href=/tags/>
-<span class=site-state-item-count>34</span>
-<span class=site-state-item-name>标签</span>
-</a>
-</div>
-</nav>
-<div class="links-of-author motion-element">
-<span class=links-of-author-item>
-<a href=https://github.com/etaon target=_blank title=GitHub>
-<i class="fa fa-fw fa-github"></i>
-GitHub
-</a>
-</span>
-<span class=links-of-author-item>
-<a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN>
-<i class="fa fa-fw fa-CSDN"></i>
-CSDN
-</a>
-</span>
-</div>
-<div class="links-of-blogroll motion-element links-of-blogroll-inline">
-<div class=links-of-blogroll-title>
-<i class="fa fa-fw fa-globe"></i>
-友情链接
-</div>
-<ul class=links-of-blogroll-list>
-<li class=links-of-blogroll-item>
-<a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a>
-</li>
-</ul>
-</div>
-<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
-<div class=tagcloud-of-blogroll-title>
-<i class="fa fa-fw fa-tags"></i>
-标签云
-</div>
-<ul class=tagcloud-of-blogroll-list>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mysql>Mysql</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/aws>Aws</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/dql>Dql</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/hadoop>Hadoop</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/redis>Redis</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/cicd>Cicd</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/git>Git</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/istio>Istio</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mongodb>Mongodb</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/azure>Azure</a>
-</li>
-</ul>
-</div>
-</section>
-<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-<div class=post-toc>
-<div class=post-toc-content><nav id=TableOfContents>
-<ul>
-<li><a href=#基本操作>基本操作</a>
-<ul>
-<li><a href=#上传文件>上传文件</a></li>
-<li><a href=#验证3副本>验证3副本</a></li>
-<li><a href=#mapreduce任务>Mapreduce任务</a></li>
-<li><a href=#其他--集群误删等恢复>其他&ndash;集群误删等，恢复</a></li>
-</ul>
-</li>
-<li><a href=#启动历史服务器>启动历史服务器</a>
-<ul>
-<li><a href=#修改mapred-sitexml>修改mapred-site.xml</a></li>
-<li><a href=#同步集群内配置文件>同步集群内配置文件</a></li>
-<li><a href=#重启yarn>重启Yarn</a></li>
-<li><a href=#手动启用historyserver进程>手动启用historyserver进程</a></li>
-<li><a href=#重新执行mapreduce任务>重新执行mapreduce任务</a></li>
-</ul>
-</li>
-<li><a href=#日志汇总>日志汇总</a>
-<ul>
-<li><a href=#配置yarn-sitexml>配置yarn-site.xml</a></li>
-<li><a href=#分发给集群所有主机>分发给集群所有主机</a></li>
-<li><a href=#重启nodenameresourcemanager和historyserver>重启NodeName、ResourceManager和historyServer</a></li>
-</ul>
-</li>
-</ul>
-</nav></div>
-</div>
-</section>
-</div>
-</aside>
-</div>
-</main>
-<footer id=footer class=footer>
-<div class=footer-inner>
-<div class=copyright>
-<span class=copyright-year>
-&copy; 2010 - 2022
-</span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id=sidebar class=sidebar><div class=sidebar-inner><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>文章目录</li><li class=sidebar-nav-overview data-target=site-overview>站点概览</li></ul><section class="site-overview sidebar-panel"><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon><p class=site-author-name itemprop=name>Etaon</p><p class="site-description motion-element" itemprop=description>Kepp Going!</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=/post/><span class=site-state-item-count>61</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>13</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>34</span>
+<span class=site-state-item-name>标签</span></a></div></nav><div class="links-of-author motion-element"><span class=links-of-author-item><a href=https://github.com/etaon target=_blank title=GitHub><i class="fa fa-fw fa-github"></i>
+GitHub</a></span>
+<span class=links-of-author-item><a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN><i class="fa fa-fw fa-CSDN"></i>
+CSDN</a></span></div><div class="links-of-blogroll motion-element links-of-blogroll-inline"><div class=links-of-blogroll-title><i class="fa fa-fw fa-globe"></i>
+友情链接</div><ul class=links-of-blogroll-list><li class=links-of-blogroll-item><a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a></li><li class=links-of-blogroll-item><a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a></li><li class=links-of-blogroll-item><a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a></li><li class=links-of-blogroll-item><a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a></li></ul></div><div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline"><div class=tagcloud-of-blogroll-title><i class="fa fa-fw fa-tags"></i>
+标签云</div><ul class=tagcloud-of-blogroll-list><li class=tagcloud-of-blogroll-item><a href=/tags/mysql>Mysql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/aws>Aws</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/dql>Dql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/hadoop>Hadoop</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/redis>Redis</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/cicd>Cicd</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/git>Git</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/istio>Istio</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/mongodb>Mongodb</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/azure>Azure</a></li></ul></div></section><section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active"><div class=post-toc><div class=post-toc-content><nav id=TableOfContents><ul><li><a href=#基本操作>基本操作</a><ul><li><a href=#上传文件>上传文件</a></li><li><a href=#验证3副本>验证3副本</a></li><li><a href=#mapreduce任务>Mapreduce任务</a></li><li><a href=#其他--集群误删等恢复>其他&ndash;集群误删等，恢复</a></li></ul></li><li><a href=#启动历史服务器>启动历史服务器</a><ul><li><a href=#修改mapred-sitexml>修改mapred-site.xml</a></li><li><a href=#同步集群内配置文件>同步集群内配置文件</a></li><li><a href=#重启yarn>重启Yarn</a></li><li><a href=#手动启用historyserver进程>手动启用historyserver进程</a></li><li><a href=#重新执行mapreduce任务>重新执行mapreduce任务</a></li></ul></li><li><a href=#日志汇总>日志汇总</a><ul><li><a href=#配置yarn-sitexml>配置yarn-site.xml</a></li><li><a href=#分发给集群所有主机>分发给集群所有主机</a></li><li><a href=#重启nodenameresourcemanager和historyserver>重启NodeName、ResourceManager和historyServer</a></li></ul></li></ul></nav></div></div></section></div></aside></div></main><footer id=footer class=footer><div class=footer-inner><div class=copyright><span class=copyright-year>&copy; 2010 - 2022</span>
 <span class=with-love><i class="fa fa-heart"></i></span>
-<span class=copyright-author>路无止境！</span>
-</div>
-<div class=powered-info>
-<span class=powered-by>
-Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.91.2</a>
-</span>
+<span class=copyright-author>路无止境！</span></div><div class=powered-info><span class=powered-by>Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.101.0</a></span>
 <span class=separator-line>/</span>
-<span class=theme-info>
-Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
-</a>
-</span>
-</div>
-<div class=vistor-info>
-<script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
-<span class=site-uv>
-<i class="fa fa-user"></i>
-<span class=busuanzi-value id=busuanzi_value_site_uv></span>
-</span>
+<span class=theme-info>Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank>NexT</a></span></div><div class=vistor-info><script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<span class=site-uv><i class="fa fa-user"></i>
+<span class=busuanzi-value id=busuanzi_value_site_uv></span></span>
 <span class=separator-line>/</span>
-<span class=site-pv>
-<i class="fa fa-eye"></i>
-<span class=busuanzi-value id=busuanzi_value_site_pv></span>
-</span>
-</div>
-<div class=license-info>
-<span class=storage-info>
-Storage by
-<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a>
-</span>
+<span class=site-pv><i class="fa fa-eye"></i>
+<span class=busuanzi-value id=busuanzi_value_site_pv></span></span></div><div class=license-info><span class=storage-info>Storage by
+<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a></span>
 <span class=separator-line>/</span>
-<span class=license-num>
-<a href target=_blank></a>
-</span>
-</div>
-</div>
-</footer>
-<div class=back-to-top>
-<i class="fa fa-arrow-up"></i>
-<span id=scrollpercent><span>0</span>%</span>
-</div>
-</div>
-<script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
+<span class=license-num><a href target=_blank></a></span></div></div></footer><div class=back-to-top><i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span></div></div><script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
 <script type=text/javascript src=/js/search.js></script>
 <script type=text/javascript src=/js/affix.js></script>
 <script type=text/javascript src=/js/scrollspy.js></script>
-<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.main').css('padding-bottom'),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}}),$(document).on('affixed.bs.affix',function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var b=$('.header-inner').height()+10,c,d,a,e;$('#sidebar').css({'margin-top':b}).show(),c=parseInt($('#sidebar').css('margin-top')),d=parseInt($('.sidebar-inner').css('height')),a=c+d,e=$('.content-wrap').height(),e<a&&$('.content-wrap').css('min-height',a),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
-<script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
-<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
-<script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+'//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js',function(){new Waline({el:'#wcomments',visitor:!0,avatar:'wavatar',avatarCDN:'https://sdn.geekzu.org/avatar/',avatarForce:!1,wordLimit:'200',placeholder:' 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ',requiredFields:['nick','mail'],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$('#wcomments').html('抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。')})</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type=text/javascript>function detectIE(){var e=window.navigator.userAgent,t=e.indexOf("MSIE "),n=e.indexOf("Trident/"),s=e.indexOf("Edge/");return t>0||n>0||s>0?-1:1}function getCntViewHeight(){var t=$("#content").height(),e=$(window).height(),n=t>e?t-e:$(document).height()-e;return n}function getScrollbarWidth(){var e=$("<div />").addClass("scrollbar-measure").prependTo("body"),t=e[0],n=t.offsetWidth-t.clientWidth;return e.remove(),n}function registerBackTop(){var t=50,e=$(".back-to-top");$(window).on("scroll",function(){e.toggleClass("back-to-top-on",window.pageYOffset>t);var s=$(window).scrollTop(),o=getCntViewHeight(),i=s/o,n=Math.round(i*100),a=n>100?100:n;$("#scrollpercent>span").html(a)}),e.on("click",function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var e=".post-toc",s=$(e),t=".active-current";s.on("activate.bs.scrollspy",function(){var t=$(e+" .active").last();n(),t.addClass("active-current")}).on("clear.bs.scrollspy",n),$("body").scrollspy({target:e});function n(){$(e+" "+t).removeClass(t.substring(1))}}function initAffix(){var e=$(".header-inner").height(),t=parseInt($(".main").css("padding-bottom"),10),n=e+10;$(".sidebar-inner").affix({offset:{top:n,bottom:t}}),$(document).on("affixed.bs.affix",function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){$(window).on("resize",function(){e&&clearTimeout(e),e=setTimeout(function(){var e=document.body.clientHeight-100;updateTOCHeight(e)},0)}),updateTOCHeight(document.body.clientHeight-100);var e,t=getScrollbarWidth();$(".post-toc").css("width","calc(100% + "+t+"px)")}function updateTOCHeight(e){e=e||"auto",$(".post-toc").css("max-height",e)}$(function(){var e,t,n,s,o=$(".header-inner").height()+10;$("#sidebar").css({"margin-top":o}).show(),t=parseInt($("#sidebar").css("margin-top")),n=parseInt($(".sidebar-inner").css("height")),e=t+n,s=$(".content-wrap").height(),s<e&&$(".content-wrap").css("min-height",e),$(".site-nav-toggle").on("click",function(){var e=$(".site-nav"),o=$(".toggle"),t="site-nav-on",i="toggle-close",n=e.hasClass(t),a=n?"slideUp":"slideDown",s=n?"removeClass":"addClass";e.stop()[a]("normal",function(){e[s](t),o[s](i)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$(".sidebar-nav-toc").click(function(){$(this).addClass("sidebar-nav-active"),$(this).next().removeClass("sidebar-nav-active"),$("."+$(this).next().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)}),$(".sidebar-nav-overview").click(function(){$(this).addClass("sidebar-nav-active"),$(this).prev().removeClass("sidebar-nav-active"),$("."+$(this).prev().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)})})</script><script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$(".post-body").viewer()})</script><script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+"//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js",function(){new Waline({el:"#wcomments",visitor:!0,avatar:"wavatar",avatarCDN:"https://sdn.geekzu.org/avatar/",avatarForce:!1,wordLimit:"200",placeholder:" 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ",requiredFields:["nick","mail"],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$("#wcomments").html("抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。")})</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
 <script type=text/javascript src="//s7.addthis.com/js/300/addthis_widget.js#pubid=Your%20AddthisId"></script>
-<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
-</body>
-</html>
+<script>(function(){var t,e=document.createElement("script"),n=window.location.protocol.split(":")[0];n==="https"?e.src="https://zz.bdstatic.com/linksubmit/push.js":e.src="http://push.zhanzhang.baidu.com/push.js",t=document.getElementsByTagName("script")[0],t.parentNode.insertBefore(e,t)})()</script></body></html>

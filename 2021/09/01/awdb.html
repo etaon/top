@@ -1,225 +1,24 @@
-<!doctype html><html lang=zh-cn dir=content/zh-cn>
-<head>
-<meta charset=utf-8>
-<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
-<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
-<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
-<title> AWS-DB - 路无止境！ </title>
-<meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云">
-<meta name=author content="Etaon">
-<meta property="og:title" content="AWS-DB">
-<meta property="og:site_name" content="路无止境！">
-<meta property="og:image" content="/img/author.jpg">
-<meta name=title content="AWS-DB - 路无止境！">
-<meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。">
-<link rel="shortcut icon" href=/img/favicon.ico>
-<link rel=apple-touch-icon href=/img/apple-touch-icon.png>
-<link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png>
-<link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css>
-<link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet>
-<link href=/css/main.css rel=stylesheet type=text/css>
-<link href=/css/syntax.css rel=stylesheet type=text/css>
-</head>
-<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
-<div class="container one-collumn sidebar-position-left page-home">
-<div class=headband></div>
-<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
-<div class=header-inner> <div class=site-brand-container>
-<div class=site-nav-toggle>
-<div class=toggle role=button style=opacity:1;top:0>
+<!doctype html><html lang=zh-cn dir=content/zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=content-security-policy content="upgrade-insecure-requests"><title>AWS-DB - 路无止境！</title><meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云"><meta name=author content="Etaon"><meta property="og:title" content="AWS-DB"><meta property="og:site_name" content="路无止境！"><meta property="og:image" content="/img/author.jpg"><meta name=title content="AWS-DB - 路无止境！"><meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。"><link rel="shortcut icon" href=/img/favicon.ico><link rel=apple-touch-icon href=/img/apple-touch-icon.png><link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png><link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css><link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet><link href=/css/main.css rel=stylesheet type=text/css><link href=/css/syntax.css rel=stylesheet type=text/css></head><body itemscope itemtype=http://schema.org/WebPage lang=zh-hans><div class="container one-collumn sidebar-position-left page-home"><div class=headband></div><header id=header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle role=button style=opacity:1;top:0><span class=toggle-line></span>
 <span class=toggle-line></span>
-<span class=toggle-line></span>
-<span class=toggle-line></span>
-</div>
-</div>
-<div class=site-meta>
-<div class=multi-lang-switch>
-<i class="fa fa-fw fa-language" style=margin-right:5px></i>
-<a class=lang-link id=zh-cn href=#>中文</a>
-</div>
-<div class=custom-logo-site-title>
-<a href=/ class=brand rel=start>
-<span class=logo-line-before><i></i></span>
+<span class=toggle-line></span></div></div><div class=site-meta><div class=multi-lang-switch><i class="fa fa-fw fa-language" style=margin-right:5px></i>
+<a class=lang-link id=zh-cn href=#>中文</a></div><div class=custom-logo-site-title><a href=/ class=brand rel=start><span class=logo-line-before><i></i></span>
 <span class=site-title>路无止境！</span>
-<span class=logo-line-after><i></i></span>
-</a>
-</div>
-<p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p>
-</div>
-<div class=site-nav-right>
-<div class="toggle popup-trigger" style=opacity:1;top:0>
-<i class="fa fa-search fa-fw fa-lg"></i>
-</div>
-</div>
-</div>
-<nav class=site-nav>
-<ul id=menu class=menu>
-<li class=menu-item>
-<a href=/ rel=section>
-<i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页
-</a>
-</li>
-<li class=menu-item>
-<a href=/post rel=section>
-<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档
-</a>
-</li>
-<li class=menu-item>
-<a href=/about.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于我
-</a>
-</li>
-<li class=menu-item>
-<a href=/404.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益404
-</a>
-</li>
-<li class="menu-item menu-item-search">
-<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> 搜索</a>
-</li>
-</ul>
-<div class=site-search>
-<div class="popup search-popup local-search-popup">
-<div class="local-search-header clearfix">
-<span class=search-icon><i class="fa fa-search"></i> </span>
-<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
-<div class=local-search-input-wrapper>
-<input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
-</div>
-</div>
-<div id=local-search-result></div>
-</div>
-</div>
-</nav>
-</div>
-</header>
-<main id=main class=main>
-<div class=main-inner>
-<div class=content-wrap>
-<div id=content class=content>
-<section id=posts class=posts-expand>
-<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
-<header class=post-header>
-<h1 class=post-title itemprop="name headline" style=font-weight:700>
-<a class=post-title-link href=https://www.etaon.link/2021/09/01/awdb.html itemprop=url>
-AWS-DB
-</a>
-</h1>
-</header>
-<div class=post-body itemprop=articleBody>
-<h2 id=正确选择数据库>正确选择数据库：</h2>
-<ul>
-<li>
-<p>工作负载平衡？还是读量大？写量大？</p>
-</li>
-<li>
-<p>吞吐量，是无序波动还是可预测？</p>
-</li>
-<li>
-<p>要存储多少数据，需要多长时间？平均对象大小</p>
-</li>
-<li>
-<p>数据持久性要求</p>
-</li>
-<li>
-<p>延迟要求</p>
-</li>
-<li>
-<p>数据模型</p>
-</li>
-<li>
-<p>强模式或灵活模式，SQL或NoSQL</p>
-</li>
-<li>
-<p>许可证费用</p>
-</li>
-</ul>
-<h2 id=database-types-which-are-supported-by-aws>Database types which are supported by AWS:</h2>
-<h3 id=relational-database>Relational Database</h3>
-<pre><code>    RDS
+<span class=logo-line-after><i></i></span></a></div><p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p></div><div class=site-nav-right><div class="toggle popup-trigger" style=opacity:1;top:0><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class=site-nav><ul id=menu class=menu><li class=menu-item><a href=/ rel=section><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class=menu-item><a href=/post rel=section><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class=menu-item><a href=/about.html rel=section><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于我</a></li><li class=menu-item><a href=/404.html rel=section><i class="menu-item-icon fa fa-fw fa-heartbeat"></i><br>公益404</a></li><li class="menu-item menu-item-search"><a href=javascript:; class=popup-trigger><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class=site-search><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class=search-icon><i class="fa fa-search"></i></span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span><div class=local-search-input-wrapper><input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off></div></div><div id=local-search-result></div></div></div></nav></div></header><main id=main class=main><div class=main-inner><div class=content-wrap><div id=content class=content><section id=posts class=posts-expand><article class="post post-type-normal" itemscope itemtype=http://schema.org/Article><header class=post-header><h1 class=post-title itemprop="name headline" style=font-weight:700><a class=post-title-link href=https://www.etaon.top/2021/09/01/awdb.html itemprop=url>AWS-DB</a></h1></header><div class=post-body itemprop=articleBody><h2 id=正确选择数据库>正确选择数据库：</h2><ul><li><p>工作负载平衡？还是读量大？写量大？</p></li><li><p>吞吐量，是无序波动还是可预测？</p></li><li><p>要存储多少数据，需要多长时间？平均对象大小</p></li><li><p>数据持久性要求</p></li><li><p>延迟要求</p></li><li><p>数据模型</p></li><li><p>强模式或灵活模式，SQL或NoSQL</p></li><li><p>许可证费用</p></li></ul><h2 id=database-types-which-are-supported-by-aws>Database types which are supported by AWS:</h2><h3 id=relational-database>Relational Database</h3><pre><code>    RDS
         Postgres
         MySQL
         MariaDB
         Oracle
         Microsoft SQL Server
     Aurora (* AWS Proprietary database)
-</code></pre>
-<h3 id=nosql>NoSQL</h3>
-<pre><code>    DynamoDB (~ JSON)
+</code></pre><h3 id=nosql>NoSQL</h3><pre><code>    DynamoDB (~ JSON)
     ElastiCache (key-value pairs)
     Neptune (graphs) - no joins, no SQL
-</code></pre>
-<h3 id=object-store-sort-of>Object Store (“sort of”)</h3>
-<pre><code>    S3
+</code></pre><h3 id=object-store-sort-of>Object Store (“sort of”)</h3><pre><code>    S3
     Glacier
-</code></pre>
-<h3 id=data-warehouse>Data Warehouse</h3>
-<pre><code>    Redshift
+</code></pre><h3 id=data-warehouse>Data Warehouse</h3><pre><code>    Redshift
     Athena (query data in S3 using SQL, so “sort of”)
-</code></pre>
-<h3 id=数据库服务>数据库服务</h3>
-<table>
-<thead>
-<tr>
-<th>数据库类型</th>
-<th>使用案例</th>
-<th>AWS 服务</th>
-<th></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>关系</td>
-<td>传统应用程序、ERP、CRM 、电子商务</td>
-<td>Amazon Aurora、 Amazon-RDS、 Amazon Redshift</td>
-<td></td>
-</tr>
-<tr>
-<td>键值</td>
-<td>高流量 Web 应用、电子商务系统、游戏应用程序</td>
-<td>Amazon DynamoDB</td>
-<td></td>
-</tr>
-<tr>
-<td>内存中</td>
-<td>缓存、会话管理、游戏排行榜、地理空间应用程序</td>
-<td>Amazon ElastiCache for Memcached 、Amazon ElastiCache for Redis</td>
-<td></td>
-</tr>
-<tr>
-<td>文档</td>
-<td>内容管理、目录、用户配置文件</td>
-<td>DocumentDB（兼容 MongoDB）</td>
-<td></td>
-</tr>
-<tr>
-<td>宽列</td>
-<td>用于设备维护、队列管理和路线优化的大规模工业应用程序</td>
-<td>Amazon Keyspaces (for Apache Cassandra)</td>
-<td></td>
-</tr>
-<tr>
-<td>图形</td>
-<td>欺诈检测、社交网络、建议引擎</td>
-<td>Amazon Neptune</td>
-<td></td>
-</tr>
-<tr>
-<td>时间序列</td>
-<td>IoT 应用、开发运营和工业遥测</td>
-<td>Amazon Timestream</td>
-<td></td>
-</tr>
-<tr>
-<td>分类账</td>
-<td>系统记录、供应链、注册、银行事务</td>
-<td>Amazon QLDB</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<h2 id=rds概述>RDS概述</h2>
-<pre><code>• RDS是一种托管服务：
+</code></pre><h3 id=数据库服务>数据库服务</h3><table><thead><tr><th>数据库类型</th><th>使用案例</th><th>AWS 服务</th><th></th></tr></thead><tbody><tr><td>关系</td><td>传统应用程序、ERP、CRM 、电子商务</td><td>Amazon Aurora、 Amazon-RDS、 Amazon Redshift</td><td></td></tr><tr><td>键值</td><td>高流量 Web 应用、电子商务系统、游戏应用程序</td><td>Amazon DynamoDB</td><td></td></tr><tr><td>内存中</td><td>缓存、会话管理、游戏排行榜、地理空间应用程序</td><td>Amazon ElastiCache for Memcached 、Amazon ElastiCache for Redis</td><td></td></tr><tr><td>文档</td><td>内容管理、目录、用户配置文件</td><td>DocumentDB（兼容 MongoDB）</td><td></td></tr><tr><td>宽列</td><td>用于设备维护、队列管理和路线优化的大规模工业应用程序</td><td>Amazon Keyspaces (for Apache Cassandra)</td><td></td></tr><tr><td>图形</td><td>欺诈检测、社交网络、建议引擎</td><td>Amazon Neptune</td><td></td></tr><tr><td>时间序列</td><td>IoT 应用、开发运营和工业遥测</td><td>Amazon Timestream</td><td></td></tr><tr><td>分类账</td><td>系统记录、供应链、注册、银行事务</td><td>Amazon QLDB</td><td></td></tr></tbody></table><h2 id=rds概述>RDS概述</h2><pre><code>• RDS是一种托管服务：
 
 • 自动资源调配、操作系统修补
 
@@ -236,59 +35,27 @@ AWS-DB
 • 扩展能力（垂直和水平）
 
 • 由EBS（gp2或io1）支持的存储
-</code></pre>
-<p><strong>但是，不能SSH到RDS的实例中</strong></p>
-<h3 id=rds有两个重要特性>RDS有两个重要特性</h3>
-<pre><code>• 多AZ：这是用于“灾难恢复”
+</code></pre><p><strong>但是，不能SSH到RDS的实例中</strong></p><h3 id=rds有两个重要特性>RDS有两个重要特性</h3><pre><code>• 多AZ：这是用于“灾难恢复”
 
 • 只读副本：这是为了“提高性能”
-</code></pre>
-<h3 id=oltp与olap>OLTP与OLAP</h3>
-<p>联机事务处理OLTP（on-line transaction processing）、联机分析处理OLAP（On-Line Analytical Processing）</p>
-<ul>
-<li>
-<p>OLTP 系统强调数据库内存效率，强调内存各种指标的命令率，强调绑定变量，强调并发操作；</p>
-</li>
-<li>
-<p>OLAP 系统则强调数据分析，强调SQL执行市场，强调磁盘I/O，强调分区等。</p>
-</li>
-<li>
-<p>OLAP用于AWS上的数据仓库（从数据库角度和基础设施层来看，这是一种不同类型的体系结构）</p>
-</li>
-</ul>
-<h3 id=关系数据库>关系数据库</h3>
-<pre><code>• RDS在虚拟机上运行，但无法通过ssh连接到虚拟机
+</code></pre><h3 id=oltp与olap>OLTP与OLAP</h3><p>联机事务处理OLTP（on-line transaction processing）、联机分析处理OLAP（On-Line Analytical Processing）</p><ul><li><p>OLTP 系统强调数据库内存效率，强调内存各种指标的命令率，强调绑定变量，强调并发操作；</p></li><li><p>OLAP 系统则强调数据分析，强调SQL执行市场，强调磁盘I/O，强调分区等。</p></li><li><p>OLAP用于AWS上的数据仓库（从数据库角度和基础设施层来看，这是一种不同类型的体系结构）</p></li></ul><h3 id=关系数据库>关系数据库</h3><pre><code>• RDS在虚拟机上运行，但无法通过ssh连接到虚拟机
 
 • RDS不是无服务器的，但Aurora serverless是无服务器的
-</code></pre>
-<h3 id=rds备份多az和只读副本>RDS—备份、多AZ和只读副本</h3>
-<h4 id=backup>Backup</h4>
-<p>RDS有两种备份类型</p>
-<pre><code>• 自动备份
+</code></pre><h3 id=rds备份多az和只读副本>RDS—备份、多AZ和只读副本</h3><h4 id=backup>Backup</h4><p>RDS有两种备份类型</p><pre><code>• 自动备份
 
 • 数据库快照
-</code></pre>
-<h5 id=automated-backups自动备份>Automated Backups自动备份</h5>
-<pre><code>• 它允许用户将数据库恢复到“保留期”内的任何时间点，即大约7~35天。
+</code></pre><h5 id=automated-backups自动备份>Automated Backups自动备份</h5><pre><code>• 它允许用户将数据库恢复到“保留期”内的任何时间点，即大约7~35天。
 
 • 自动备份默认启用，备份数据存储在S3中，同时您的RDS大小等于S3的大小
-</code></pre>
-<blockquote>
-<p>Tips&ndash;自动备份：</p>
-</blockquote>
-<pre><code>• 数据库的每日完整备份（在维护窗口期间）
+</code></pre><blockquote><p>Tips&ndash;自动备份：</p></blockquote><pre><code>• 数据库的每日完整备份（在维护窗口期间）
 
 • RDS每5分钟备份一次事务日志Transaction logs
 
 • 这使您能够恢复到任何时间点（从最早的备份到5分钟前）
-</code></pre>
-<h5 id=数据库快照>数据库快照</h5>
-<pre><code>• 即使删除了原始RDS实例，也会有存储了的数据库快照
+</code></pre><h5 id=数据库快照>数据库快照</h5><pre><code>• 即使删除了原始RDS实例，也会有存储了的数据库快照
 
 • 但它是由用户手动触发的，并可保留备份，保留时间随您的需要而定
-</code></pre>
-<h4 id=多az>多AZ</h4>
-<pre><code>• 它只有一个DNS名称，自动将应用程序故障时待机状态的实例进行切换，无需手动干预应用程序
+</code></pre><h4 id=多az>多AZ</h4><pre><code>• 它只有一个DNS名称，自动将应用程序故障时待机状态的实例进行切换，无需手动干预应用程序
 
 • 在另一个AZ中生成数据库的精确副本
 
@@ -303,16 +70,9 @@ AWS-DB
 	○ AZ故障
 
 	○ 网络故障
-</code></pre>
-<p>这仅用于灾难恢复DR、提高可用性
+</code></pre><p>这仅用于灾难恢复DR、提高可用性
 <img src="https://img-blog.csdnimg.cn/92330e65b09443cc9e5f6f5617402ea3.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述>
-以上是在配置RDS的时候选择多AZ的部分，用于提供冗余，增加可用性和持久性。</p>
-<h4 id=只读副本read-replicas>只读副本Read Replicas</h4>
-<p>允许用户拥有生产数据库的只读副本。</p>
-<p>这是通过使用从主RDS实例到只读副本的<strong>异步复制</strong>来实现的。对于那些读取工作量大的数据库来说，它显然更好。</p>
-<p>只读副本用于<strong>SELECT</strong>唯一类型的任务，而不是插入Insert、删除delete或更新update</p>
-<p>Tips：请注意只读副本和以前的数据库备份方法之间的差异</p>
-<pre><code>• 只读副本用于扩展，以提高性能
+以上是在配置RDS的时候选择多AZ的部分，用于提供冗余，增加可用性和持久性。</p><h4 id=只读副本read-replicas>只读副本Read Replicas</h4><p>允许用户拥有生产数据库的只读副本。</p><p>这是通过使用从主RDS实例到只读副本的<strong>异步复制</strong>来实现的。对于那些读取工作量大的数据库来说，它显然更好。</p><p>只读副本用于<strong>SELECT</strong>唯一类型的任务，而不是插入Insert、删除delete或更新update</p><p>Tips：请注意只读副本和以前的数据库备份方法之间的差异</p><pre><code>• 只读副本用于扩展，以提高性能
 
 • 要使用只读副本，应打开“自动备份Automated Backups”设置
 
@@ -323,285 +83,95 @@ AWS-DB
 • 每个只读副本都有其端点endpoint
 
 • 可以提示读取副本作为其数据库，但复制无法工作
-</code></pre>
-<ul>
-<li>单AZ只读副本-网络成本</li>
-</ul>
-<blockquote>
-<p>在AWS中，当数据从一个AZ传输到另一个AZ时，存在网络成本，因此为了降低成本，您可以在同一AZ中拥有只读副本</p>
-</blockquote>
-<h3 id=rds安全>RDS安全</h3>
-<h4 id=加密>加密</h4>
-<p>这是通过使用AWS KMS（密钥管理服务）实现的，一旦启用加密，以下内容将被加密：</p>
-<pre><code>• 数据底层存储
+</code></pre><ul><li>单AZ只读副本-网络成本</li></ul><blockquote><p>在AWS中，当数据从一个AZ传输到另一个AZ时，存在网络成本，因此为了降低成本，您可以在同一AZ中拥有只读副本</p></blockquote><h3 id=rds安全>RDS安全</h3><h4 id=加密>加密</h4><p>这是通过使用AWS KMS（密钥管理服务）实现的，一旦启用加密，以下内容将被加密：</p><pre><code>• 数据底层存储
 
 • 自动备份
 
 • 只读副本
 
 • 数据库快照
-</code></pre>
-<p>无论何时恢复自动备份或数据库快照，数据库的恢复版本都将是具有新DNS端点的新RDS实例，另做一个！</p>
-<h4 id=静止加密和传输中加密>静止加密和传输中加密</h4>
-<h5 id=静态加密>静态加密</h5>
-<p>我们可以使用AWS KMS-AES-256加密来加密主数据库和只读副本，这必须在启动时定义。</p>
-<p>如果主数据库未加密，则无法加密只读副本</p>
-<p>Tips:或者，</p>
-<blockquote>
-<p>未加密的数据库->快照->将快照复制为加密的->从加密的快照创建新的数据库</p>
-</blockquote>
-<p>另：Transparent Data Encryption (TDE) 支持Oracle和SQL Server</p>
-<h5 id=传输中加密>传输中加密</h5>
-<p>这允许使用SSL证书将到传输中的RDS数据进行加密，在连接到数据库时，必须提供带有信任证书trust certificate的SSL选项</p>
-<h4 id=网络与iam>网络与IAM</h4>
-<h5 id=网络安全>网络安全</h5>
-<pre><code>• RDS数据库通常部署在私有子网中，而不是在公用子网中
+</code></pre><p>无论何时恢复自动备份或数据库快照，数据库的恢复版本都将是具有新DNS端点的新RDS实例，另做一个！</p><h4 id=静止加密和传输中加密>静止加密和传输中加密</h4><h5 id=静态加密>静态加密</h5><p>我们可以使用AWS KMS-AES-256加密来加密主数据库和只读副本，这必须在启动时定义。</p><p>如果主数据库未加密，则无法加密只读副本</p><p>Tips:或者，</p><blockquote><p>未加密的数据库->快照->将快照复制为加密的->从加密的快照创建新的数据库</p></blockquote><p>另：Transparent Data Encryption (TDE) 支持Oracle和SQL Server</p><h5 id=传输中加密>传输中加密</h5><p>这允许使用SSL证书将到传输中的RDS数据进行加密，在连接到数据库时，必须提供带有信任证书trust certificate的SSL选项</p><h4 id=网络与iam>网络与IAM</h4><h5 id=网络安全>网络安全</h5><pre><code>• RDS数据库通常部署在私有子网中，而不是在公用子网中
 
 • RDS安全通过利用安全组工作，它控制哪个IP/安全组可以与RDS通信
-</code></pre>
-<h5 id=访问管理>访问管理</h5>
-<pre><code>• IAM策略有助于控制谁可以通过RDS API管理AWS RDS，如“谁可以创建读取副本？”？等等……”
+</code></pre><h5 id=访问管理>访问管理</h5><pre><code>• IAM策略有助于控制谁可以通过RDS API管理AWS RDS，如“谁可以创建读取副本？”？等等……”
 
 • 传统用户名/密码可用于登录数据库
 
 • 基于IAM的身份验证可用于登录RDS MySQL和PostgreSQL
-</code></pre>
-<h5 id=iam身份验证>IAM身份验证</h5>
-<pre><code>• 支持MySQL和PostgreSQL
+</code></pre><h5 id=iam身份验证>IAM身份验证</h5><pre><code>• 支持MySQL和PostgreSQL
 
 • 无需密码，只需通过IAM和RDS API调用获得令牌即可
 
 • 令牌的生存期为15分钟
-</code></pre>
-<p>IAM身份验证具有以下好处：</p>
-<pre><code>• 必须使用SSL对网络输入/输出进行加密
+</code></pre><p>IAM身份验证具有以下好处：</p><pre><code>• 必须使用SSL对网络输入/输出进行加密
 
 • IAM将集中管理用户而不是数据库
 
 • 可以利用IAM角色和EC2实例配置文件轻松集成
-</code></pre>
-<h3 id=aurora>Aurora</h3>
-<ul>
-<li>
-<p>Aurora is the MySQL and PostgreSQL compatible, AWS solution to Relational Database
-Aurora HA and Scalability</p>
-</li>
-<li>
-<p>速度最高可以达到标准 MySQL 数据库的五倍、标准 PostgreSQL 数据库的三倍</p>
-</li>
-<li>
-<p>可以把每个数据库实例扩展到最高 128TB。</p>
-</li>
-<li>
-<p>最多 15 个低延迟读取副本、时间点恢复、持续备份到 Amazon S3，还支持跨三个可用区 (AZ) 复制。</p>
-</li>
-<li>
-<p>Support Cross Region Replication</p>
-</li>
-</ul>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>Aurora always maintains 2 copies of your data in each AZ, with a minimum of 3 AZ =&gt; which leads to 6 copies of data
-Among these 6 copies of your data across 3 AZ:
-
-	•     4 copies out of 6 needed for writes
-	•     3 copies out of 6 needed for reads
-	•     self-healing with peer-to-peer replication
-	•     storage is striped across 100s of volumes
-
-There is a primary-secondary architecture, one Aurora instance will take writes (primary)
-
-If there is a failover happened, the automated failover for primary DB will take effect in less than 30 seconds
-</code></pre></div><p><img src="https://img-blog.csdnimg.cn/5244538c87ac4c45bd76da29052a1fb6.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p>
-<h4 id=aurora-replicas>Aurora Replicas</h4>
-<p>Aurora Replicas 有两种类型：</p>
-<pre><code>•     Aurora Replicas
+</code></pre><h3 id=aurora>Aurora</h3><ul><li><p>Aurora is the MySQL and PostgreSQL compatible, AWS solution to Relational Database
+Aurora HA and Scalability</p></li><li><p>速度最高可以达到标准 MySQL 数据库的五倍、标准 PostgreSQL 数据库的三倍</p></li><li><p>可以把每个数据库实例扩展到最高 128TB。</p></li><li><p>最多 15 个低延迟读取副本、时间点恢复、持续备份到 Amazon S3，还支持跨三个可用区 (AZ) 复制。</p></li><li><p>Support Cross Region Replication</p></li></ul><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>Aurora always maintains 2 copies of your data in each AZ, with a minimum of 3 AZ =&gt; which leads to 6 copies of data
+</span></span><span style=display:flex><span>Among these 6 copies of your data across 3 AZ:
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	•     4 copies out of 6 needed for writes
+</span></span><span style=display:flex><span>	•     3 copies out of 6 needed for reads
+</span></span><span style=display:flex><span>	•     self-healing with peer-to-peer replication
+</span></span><span style=display:flex><span>	•     storage is striped across 100s of volumes
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>There is a primary-secondary architecture, one Aurora instance will take writes (primary)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>If there is a failover happened, the automated failover for primary DB will take effect in less than 30 seconds
+</span></span></code></pre></div><p><img src="https://img-blog.csdnimg.cn/5244538c87ac4c45bd76da29052a1fb6.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p><h4 id=aurora-replicas>Aurora Replicas</h4><p>Aurora Replicas 有两种类型：</p><pre><code>•     Aurora Replicas
 •     MySQL Read Replicas
 
 - Automated failover is only available with Aurora Replicas
-</code></pre>
-<h4 id=backups-for-aurora>Backups for Aurora</h4>
-<p>also 2 types:</p>
-<pre><code>•     Automated Backups
+</code></pre><h4 id=backups-for-aurora>Backups for Aurora</h4><p>also 2 types:</p><pre><code>•     Automated Backups
 •     Data Snapshots
-</code></pre>
-<h4 id=migrate>Migrate</h4>
-<p>To migrate data from MySQL to Aurora, you can do the following things</p>
-<pre><code>1.     take a data snapshot and restore in Aurora
+</code></pre><h4 id=migrate>Migrate</h4><p>To migrate data from MySQL to Aurora, you can do the following things</p><pre><code>1.     take a data snapshot and restore in Aurora
 2.     create an Aurora Read replica and then promote the Read Replica as a &quot;database service&quot;
-</code></pre>
-<p>也可以使用DMS：AWS Database Migration Service</p>
-<blockquote>
-<p>由于源数据库和目标数据库的架构结构、数据类型和数据库代码都是兼容的，此类迁移只需一个步骤即可完成。
+</code></pre><p>也可以使用DMS：AWS Database Migration Service</p><blockquote><p>由于源数据库和目标数据库的架构结构、数据类型和数据库代码都是兼容的，此类迁移只需一个步骤即可完成。
 1. 可以创建与源数据库和目标数据库相连的迁移任务，然后单击一个按钮开始迁移
-2. AWS Database Migration Service 将负责完成其余的工作。</p>
-</blockquote>
-<h4 id=aurora-db-cluster>Aurora DB Cluster</h4>
-<p><img src="https://img-blog.csdnimg.cn/d25c4b9407fb49f49cd57a94889c0275.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p>
-<pre><code>load balancing happens during connection
-</code></pre>
-<h4 id=aurora-serverless>Aurora Serverless</h4>
-<pre><code>• 基于实际使用情况的自动数据库实例化和自动缩放
+2. AWS Database Migration Service 将负责完成其余的工作。</p></blockquote><h4 id=aurora-db-cluster>Aurora DB Cluster</h4><p><img src="https://img-blog.csdnimg.cn/d25c4b9407fb49f49cd57a94889c0275.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p><pre><code>load balancing happens during connection
+</code></pre><h4 id=aurora-serverless>Aurora Serverless</h4><pre><code>• 基于实际使用情况的自动数据库实例化和自动缩放
 
 • 适用于不频繁、间歇或不可预测的工作负载
 
 • 无需容量规划
 
 • 按每秒支付，可以更具成本效益
-</code></pre>
-<p>Aurora Serverless将创建Aurora实例，客户端将使用proxy fleet连接到Aurora，并启用自动缩放功能，这意味着：如果QPS较大，则将创建更多Aurora实例，否则将删除</p>
-<h4 id=global-aurora>Global Aurora</h4>
-<pre><code>Ø Aurora跨区域读取副本
+</code></pre><p>Aurora Serverless将创建Aurora实例，客户端将使用proxy fleet连接到Aurora，并启用自动缩放功能，这意味着：如果QPS较大，则将创建更多Aurora实例，否则将删除</p><h4 id=global-aurora>Global Aurora</h4><pre><code>Ø Aurora跨区域读取副本
 
 	○ 对灾难恢复有用
 
 	○ 易于安装
 
 Ø Aurora Global数据库（推荐）
-</code></pre>
-<ul>
-<li>
-<p>1个主区域（读/写）</p>
-</li>
-<li>
-<p>最多5个辅助secondary （只读）区域，复制延迟小于1秒</p>
-</li>
-<li>
-<p>每个辅助secondary 区域最多16个只读副本，有助于减少延迟</p>
-</li>
-<li>
-<p>DR时启用另一个区域（用于灾难恢复）的RTO（恢复时间目标）小于1分钟</p>
-</li>
-</ul>
-<h2 id=elasticcache>ElasticCache</h2>
-<p>这是基于内存缓存的web服务的AWS解决方案</p>
-<h3 id=elasticcache概述>ElasticCache概述</h3>
-<ul>
-<li>
-<p>与RDS获取托管关系数据库的方法是一样的</p>
-</li>
-<li>
-<p>ElastiCache用于管理Redis或Memcached</p>
-</li>
-<li>
-<p>有助于减少读取密集型工作负载的数据库负载</p>
-</li>
-<li>
-<p>使无状态应用程序</p>
-</li>
-<li>
-<p>使用分片写入缩放</p>
-</li>
-<li>
-<p>使用只读副本进行读取扩展</p>
-</li>
-<li>
-<p>具有故障切换功能的多个AZ部署</p>
-</li>
-<li>
-<p>AWS负责操作系统维护/修补、优化、设置、配置、监控、故障恢复和备份</p>
-</li>
-</ul>
-<h3 id=应用场景>应用场景</h3>
-<h4 id=db-cache>DB Cache</h4>
-<p><img src="https://img-blog.csdnimg.cn/64226c66786b4e4c8aff6597ba1786ec.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述>
-应用程序首先查询ElastiCache，如果数据不可用（缓存未命中），则从RDS等数据库获取数据并存储在ElastiCache中，以便在以后的查询中达到缓存命中</p>
-<h4 id=user-session-store>User Session Store</h4>
-<p><img src="https://img-blog.csdnimg.cn/ea82efdfae074c9db69a9f3aed38c120.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p>
-<pre><code>Ø     User login to any of the application
+</code></pre><ul><li><p>1个主区域（读/写）</p></li><li><p>最多5个辅助secondary （只读）区域，复制延迟小于1秒</p></li><li><p>每个辅助secondary 区域最多16个只读副本，有助于减少延迟</p></li><li><p>DR时启用另一个区域（用于灾难恢复）的RTO（恢复时间目标）小于1分钟</p></li></ul><h2 id=elasticcache>ElasticCache</h2><p>这是基于内存缓存的web服务的AWS解决方案</p><h3 id=elasticcache概述>ElasticCache概述</h3><ul><li><p>与RDS获取托管关系数据库的方法是一样的</p></li><li><p>ElastiCache用于管理Redis或Memcached</p></li><li><p>有助于减少读取密集型工作负载的数据库负载</p></li><li><p>使无状态应用程序</p></li><li><p>使用分片写入缩放</p></li><li><p>使用只读副本进行读取扩展</p></li><li><p>具有故障切换功能的多个AZ部署</p></li><li><p>AWS负责操作系统维护/修补、优化、设置、配置、监控、故障恢复和备份</p></li></ul><h3 id=应用场景>应用场景</h3><h4 id=db-cache>DB Cache</h4><p><img src="https://img-blog.csdnimg.cn/64226c66786b4e4c8aff6597ba1786ec.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述>
+应用程序首先查询ElastiCache，如果数据不可用（缓存未命中），则从RDS等数据库获取数据并存储在ElastiCache中，以便在以后的查询中达到缓存命中</p><h4 id=user-session-store>User Session Store</h4><p><img src="https://img-blog.csdnimg.cn/ea82efdfae074c9db69a9f3aed38c120.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p><pre><code>Ø     User login to any of the application
 Ø     The application writes the session data into ElastiCache
 Ø     The user hits another instance of our application
 Ø     The instance retrieves the data and the user is already logged in
-</code></pre>
-<h4 id=机器学习与实时分析>机器学习与实时分析</h4>
-<p><img src="https://img-blog.csdnimg.cn/bf5c0a59c8c24ec5a7b8a30aa1018500.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述>
-利用ElastiCache提供的快速内存中数据存储，以帮助快速构建和部署机器学习模型，并可用于实时分析。</p>
-<h3 id=elasticache---redis-or-memcached>ElastiCache - Redis or Memcached</h3>
-<table>
-<thead>
-<tr>
-<th>Redis</th>
-<th>Memcached</th>
-<th></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Multi-AZ with Auto-Failover</td>
-<td>Multi-node for the partitioning of data (sharding)</td>
-<td></td>
-</tr>
-<tr>
-<td>Read Replicas to scale reads and have high availability</td>
-<td>Nonpersistent</td>
-<td></td>
-</tr>
-<tr>
-<td>Data Durability using AOF persistence</td>
-<td>No backup and restore</td>
-<td></td>
-</tr>
-<tr>
-<td>Backup and restore feature</td>
-<td>Multi-threaded architecture</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<blockquote>
-<ul>
-<li>If you need scale horizontally, you need to choose Memcached</li>
-<li>If you need Multi-AZ, Backups, and Restores, you need to choose Redis</li>
-</ul>
-</blockquote>
-<p>Tips:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>Right now, we have two methods of improving performance
-
-    ElasticCache -&gt; Cache layer to speed up
-    Read Replicas -&gt; Improved read/write on the database layer
-</code></pre></div><h3 id=elasticache---cache-security>ElastiCache - Cache Security</h3>
-<p>All caches in ElastiCache:</p>
-<pre><code>•     support SSL in-flight encryption
+</code></pre><h4 id=机器学习与实时分析>机器学习与实时分析</h4><p><img src="https://img-blog.csdnimg.cn/bf5c0a59c8c24ec5a7b8a30aa1018500.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述>
+利用ElastiCache提供的快速内存中数据存储，以帮助快速构建和部署机器学习模型，并可用于实时分析。</p><h3 id=elasticache---redis-or-memcached>ElastiCache - Redis or Memcached</h3><table><thead><tr><th>Redis</th><th>Memcached</th><th></th></tr></thead><tbody><tr><td>Multi-AZ with Auto-Failover</td><td>Multi-node for the partitioning of data (sharding)</td><td></td></tr><tr><td>Read Replicas to scale reads and have high availability</td><td>Nonpersistent</td><td></td></tr><tr><td>Data Durability using AOF persistence</td><td>No backup and restore</td><td></td></tr><tr><td>Backup and restore feature</td><td>Multi-threaded architecture</td><td></td></tr></tbody></table><blockquote><ul><li>If you need scale horizontally, you need to choose Memcached</li><li>If you need Multi-AZ, Backups, and Restores, you need to choose Redis</li></ul></blockquote><p>Tips:</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>Right now, we have two methods of improving performance
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    ElasticCache -&gt; Cache layer to speed up
+</span></span><span style=display:flex><span>    Read Replicas -&gt; Improved read/write on the database layer
+</span></span></code></pre></div><h3 id=elasticache---cache-security>ElastiCache - Cache Security</h3><p>All caches in ElastiCache:</p><pre><code>•     support SSL in-flight encryption
 •     Do not support IAM authentication
 •     IAM policies on ElastiCache are only used for AWS API-level security
-</code></pre>
-<h4 id=redis-auth>Redis AUTH</h4>
-<pre><code>建Redis Cluster 的时候配置“password/token”
+</code></pre><h4 id=redis-auth>Redis AUTH</h4><pre><code>建Redis Cluster 的时候配置“password/token”
 This is an extra level of security for your cache (on top of **Security Group**)
-</code></pre>
-<h4 id=memcached-auth>Memcached AUTH</h4>
-<pre><code>Supports SASL-based authentication
-</code></pre>
-<h3 id=elasticache-for-solutions-architects>ElastiCache for Solutions Architects</h3>
-<ul>
-<li>延迟加载Lazy Loading：所有读取的数据都被缓存，缓存中的数据可能会过时</li>
-<li>直写Write Through：写入数据库时，在缓存中添加或更新数据（无过时数据）</li>
-<li>会话存储Session Store：在缓存中存储临时会话数据（使用TTL功能）</li>
-</ul>
-<h2 id=dynamodb>DynamoDB</h2>
-<blockquote>
-<p>DynamoDB现在可以做事务transactions了</p>
-</blockquote>
-<p>DynamoDB是针对<strong>无服务器Severless</strong> NoSQL数据库的AWS解决方案，它支持<strong>文档</strong>和<strong>键值对</strong>数据模型</p>
-<ul>
-<li>数据存储在SSD存储器中</li>
-<li>高可用性，可跨3个AZ（地理位置不同的数据中心）进行复制</li>
-<li>可以恢复到先前的 35 天内的任何时间点，而无需停机</li>
-<li>最终一致读取（默认）</li>
-<li>强一致读取</li>
-</ul>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>**最终一致读取**
- - 所有数据拷贝的一致性通常在一秒钟内达到。短时间后重复读取应返回更新的数据。
- - 这是为了“最佳读取性能”，默认情况下启用此设置
-**强一致读取**
-强一致性读取返回的结果反映了在读取之前收到成功响应的所有写入
-</code></pre></div><h3 id=dynamodb-基础>DynamoDB-基础</h3>
-<pre><code>•     DynamoDB是由tables组成的
+</code></pre><h4 id=memcached-auth>Memcached AUTH</h4><pre><code>Supports SASL-based authentication
+</code></pre><h3 id=elasticache-for-solutions-architects>ElastiCache for Solutions Architects</h3><ul><li>延迟加载Lazy Loading：所有读取的数据都被缓存，缓存中的数据可能会过时</li><li>直写Write Through：写入数据库时，在缓存中添加或更新数据（无过时数据）</li><li>会话存储Session Store：在缓存中存储临时会话数据（使用TTL功能）</li></ul><h2 id=dynamodb>DynamoDB</h2><blockquote><p>DynamoDB现在可以做事务transactions了</p></blockquote><p>DynamoDB是针对<strong>无服务器Severless</strong> NoSQL数据库的AWS解决方案，它支持<strong>文档</strong>和<strong>键值对</strong>数据模型</p><ul><li>数据存储在SSD存储器中</li><li>高可用性，可跨3个AZ（地理位置不同的数据中心）进行复制</li><li>可以恢复到先前的 35 天内的任何时间点，而无需停机</li><li>最终一致读取（默认）</li><li>强一致读取</li></ul><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>**最终一致读取**
+</span></span><span style=display:flex><span> - 所有数据拷贝的一致性通常在一秒钟内达到。短时间后重复读取应返回更新的数据。
+</span></span><span style=display:flex><span> - 这是为了“最佳读取性能”，默认情况下启用此设置
+</span></span><span style=display:flex><span>**强一致读取**
+</span></span><span style=display:flex><span>强一致性读取返回的结果反映了在读取之前收到成功响应的所有写入
+</span></span></code></pre></div><h3 id=dynamodb-基础>DynamoDB-基础</h3><pre><code>•     DynamoDB是由tables组成的
 •     每个表都有一个主键primary key（必须在创建时确定）
 •     每个表可以有无限多的项（=行rows）
 •     每个项目都有属性attributes（可以随时间添加-可以为空）
 •     item的最大大小为400 KB
-</code></pre>
-<h3 id=dynamodb-提供的throughput>DynamoDB-提供的Throughput</h3>
-<pre><code>	Ø 表必须已预先设置读写容量单位
+</code></pre><h3 id=dynamodb-提供的throughput>DynamoDB-提供的Throughput</h3><pre><code>	Ø 表必须已预先设置读写容量单位
 	Ø 读取容量单位（RCU）：读取的吞吐量
 	    ○ 1个RCU:1个每秒4 KB的强一致性读取
 	    ○ 1个RCU:2个每秒4 KB的最终一致读取
@@ -611,298 +181,56 @@ This is an extra level of security for your cache (on top of **Security Group**)
 	Ø 可以使用“突发信用burst credit”暂时超过吞吐量
 	Ø 如果burst credit为空，将获得“ProvisionedThroughputException”
 	Ø 然后建议执行指数退避重试
-</code></pre>
-<h3 id=dynamodb-dax>DynamoDB-DAX</h3>
-<p><img src="https://img-blog.csdnimg.cn/9e00f3c608fa487ea8aa52d480e12ad0.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p>
-<p>DAX是DynamoDB加速器，它为DynamoDB提供无缝seamless缓存，无需应用程序重写。写入操作通过DAX，然后到达DynamoDB。
-支持多个AZ，建议至少生产3个节点</p>
-<h3 id=dynamodb流>DynamoDB流</h3>
-<p><img src="https://img-blog.csdnimg.cn/50f0a0d4d49a42db975ade6f68cbda77.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p>
-<pre><code>	Ø DynamoDB中的变化将以DynamoDB流结束
+</code></pre><h3 id=dynamodb-dax>DynamoDB-DAX</h3><p><img src="https://img-blog.csdnimg.cn/9e00f3c608fa487ea8aa52d480e12ad0.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p><p>DAX是DynamoDB加速器，它为DynamoDB提供无缝seamless缓存，无需应用程序重写。写入操作通过DAX，然后到达DynamoDB。
+支持多个AZ，建议至少生产3个节点</p><h3 id=dynamodb流>DynamoDB流</h3><p><img src="https://img-blog.csdnimg.cn/50f0a0d4d49a42db975ade6f68cbda77.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p><pre><code>	Ø DynamoDB中的变化将以DynamoDB流结束
 	Ø AWS Lambda可以读取该流，因此我们可以进行分析工作
 	Ø 可以使用流实现跨区域复制
 	Ø 它有24小时的数据保留时间
-</code></pre>
-<h3 id=dynamodb-安全>DynamoDB-安全</h3>
-<pre><code>	Ø VPC端点无需互联网即可访问DynamoDB
+</code></pre><h3 id=dynamodb-安全>DynamoDB-安全</h3><pre><code>	Ø VPC端点无需互联网即可访问DynamoDB
 	Ø 访问完全由IAM控制
 	Ø 加密：KMS和SSL/TLS
-</code></pre>
-<h3 id=dynamodb-其他功能>DynamoDB-其他功能</h3>
-<p>全球表格Global Tables：</p>
-<pre><code>	Ø 多regions的Active-Active复制
+</code></pre><h3 id=dynamodb-其他功能>DynamoDB-其他功能</h3><p>全球表格Global Tables：</p><pre><code>	Ø 多regions的Active-Active复制
 	Ø 必须启用DynamoDB流
 	Ø 它具有低延迟，用于灾难恢复
-</code></pre>
-<h3 id=能力规划>能力规划：</h3>
-<pre><code>	Ø 计划容量：配置WCU和RCU可启用自动缩放
+</code></pre><h3 id=能力规划>能力规划：</h3><pre><code>	Ø 计划容量：配置WCU和RCU可启用自动缩放
 	Ø 按需容量：获得无限的WCU和RCU，无上限，更昂贵
-</code></pre>
-<blockquote>
-<p>工作负载—按需容量，个别情况
-可自动扩展的可预测工作负载-计划容量</p>
-</blockquote>
-<p>其他功能，如备份和恢复、迁移，甚至可以设置本地DynamoDB进行开发</p>
-<h2 id=redshift>RedShift</h2>
-<p>这是AWS自己的数据仓库服务解决方案，它支持大规模并行处理Massively Parallel Processing（MPP）</p>
-<h3 id=redshift备份>Redshift备份</h3>
-<pre><code>	Ø 这是默认启用的，保留期为1天，最长为35天
+</code></pre><blockquote><p>工作负载—按需容量，个别情况
+可自动扩展的可预测工作负载-计划容量</p></blockquote><p>其他功能，如备份和恢复、迁移，甚至可以设置本地DynamoDB进行开发</p><h2 id=redshift>RedShift</h2><p>这是AWS自己的数据仓库服务解决方案，它支持大规模并行处理Massively Parallel Processing（MPP）</p><h3 id=redshift备份>Redshift备份</h3><pre><code>	Ø 这是默认启用的，保留期为1天，最长为35天
 	Ø 始终尝试维护至少3个数据副本，即计算节点上的原始或副本，备份在AWS S3上
-</code></pre>
-<blockquote>
-<p>但它只在一个AZ中提供</p>
-</blockquote>
-<h2 id=neptune>Neptune</h2>
-<pre><code>	用户完全管理的图形数据库
+</code></pre><blockquote><p>但它只在一个AZ中提供</p></blockquote><h2 id=neptune>Neptune</h2><pre><code>	用户完全管理的图形数据库
 
 	Ø 高关系数据
 	Ø 社交网络
 	Ø 知识图
-</code></pre>
-<p>跨3个AZ高度可用，最多15个读取副本，具有时间点恢复功能，可连续备份到Amazon S3。
-支持REST+HTTPS时的KMS加密。</p>
-</div>
-<footer class=post-footer>
-<div id=wcomments></div>
-</footer>
-</article>
-</section>
-</div>
-</div>
-<div class=sidebar-toggle>
-<div class=sidebar-toggle-line-wrap>
-<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+</code></pre><p>跨3个AZ高度可用，最多15个读取副本，具有时间点恢复功能，可连续备份到Amazon S3。
+支持REST+HTTPS时的KMS加密。</p></div><footer class=post-footer><div id=wcomments></div></footer></article></section></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
 <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-</div>
-</div>
-<aside id=sidebar class=sidebar>
-<div class=sidebar-inner>
-<ul class="sidebar-nav motion-element">
-<li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>
-文章目录
-</li>
-<li class=sidebar-nav-overview data-target=site-overview>
-站点概览
-</li>
-</ul>
-<section class="site-overview sidebar-panel">
-<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
-<img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon>
-<p class=site-author-name itemprop=name>Etaon</p>
-<p class="site-description motion-element" itemprop=description>
-Kepp Going!
-</p>
-</div>
-<nav class="site-state motion-element">
-<div class="site-state-item site-state-posts">
-<a href=/post/>
-<span class=site-state-item-count>61</span>
-<span class=site-state-item-name>日志</span>
-</a>
-</div>
-<div class="site-state-item site-state-categories">
-<a href=/categories/>
-<span class=site-state-item-count>13</span>
-<span class=site-state-item-name>分类</span>
-</a>
-</div>
-<div class="site-state-item site-state-tags">
-<a href=/tags/>
-<span class=site-state-item-count>34</span>
-<span class=site-state-item-name>标签</span>
-</a>
-</div>
-</nav>
-<div class="links-of-author motion-element">
-<span class=links-of-author-item>
-<a href=https://github.com/etaon target=_blank title=GitHub>
-<i class="fa fa-fw fa-github"></i>
-GitHub
-</a>
-</span>
-<span class=links-of-author-item>
-<a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN>
-<i class="fa fa-fw fa-CSDN"></i>
-CSDN
-</a>
-</span>
-</div>
-<div class="links-of-blogroll motion-element links-of-blogroll-inline">
-<div class=links-of-blogroll-title>
-<i class="fa fa-fw fa-globe"></i>
-友情链接
-</div>
-<ul class=links-of-blogroll-list>
-<li class=links-of-blogroll-item>
-<a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a>
-</li>
-</ul>
-</div>
-<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
-<div class=tagcloud-of-blogroll-title>
-<i class="fa fa-fw fa-tags"></i>
-标签云
-</div>
-<ul class=tagcloud-of-blogroll-list>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mysql>Mysql</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/aws>Aws</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/dql>Dql</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/hadoop>Hadoop</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/redis>Redis</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/cicd>Cicd</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/git>Git</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/istio>Istio</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mongodb>Mongodb</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/azure>Azure</a>
-</li>
-</ul>
-</div>
-</section>
-<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-<div class=post-toc>
-<div class=post-toc-content><nav id=TableOfContents>
-<ul>
-<li><a href=#正确选择数据库>正确选择数据库：</a></li>
-<li><a href=#database-types-which-are-supported-by-aws>Database types which are supported by AWS:</a>
-<ul>
-<li><a href=#relational-database>Relational Database</a></li>
-<li><a href=#nosql>NoSQL</a></li>
-<li><a href=#object-store-sort-of>Object Store (“sort of”)</a></li>
-<li><a href=#data-warehouse>Data Warehouse</a></li>
-<li><a href=#数据库服务>数据库服务</a></li>
-</ul>
-</li>
-<li><a href=#rds概述>RDS概述</a>
-<ul>
-<li><a href=#rds有两个重要特性>RDS有两个重要特性</a></li>
-<li><a href=#oltp与olap>OLTP与OLAP</a></li>
-<li><a href=#关系数据库>关系数据库</a></li>
-<li><a href=#rds备份多az和只读副本>RDS—备份、多AZ和只读副本</a></li>
-<li><a href=#rds安全>RDS安全</a></li>
-<li><a href=#aurora>Aurora</a></li>
-</ul>
-</li>
-<li><a href=#elasticcache>ElasticCache</a>
-<ul>
-<li><a href=#elasticcache概述>ElasticCache概述</a></li>
-<li><a href=#应用场景>应用场景</a></li>
-<li><a href=#elasticache---redis-or-memcached>ElastiCache - Redis or Memcached</a></li>
-<li><a href=#elasticache---cache-security>ElastiCache - Cache Security</a></li>
-<li><a href=#elasticache-for-solutions-architects>ElastiCache for Solutions Architects</a></li>
-</ul>
-</li>
-<li><a href=#dynamodb>DynamoDB</a>
-<ul>
-<li><a href=#dynamodb-基础>DynamoDB-基础</a></li>
-<li><a href=#dynamodb-提供的throughput>DynamoDB-提供的Throughput</a></li>
-<li><a href=#dynamodb-dax>DynamoDB-DAX</a></li>
-<li><a href=#dynamodb流>DynamoDB流</a></li>
-<li><a href=#dynamodb-安全>DynamoDB-安全</a></li>
-<li><a href=#dynamodb-其他功能>DynamoDB-其他功能</a></li>
-<li><a href=#能力规划>能力规划：</a></li>
-</ul>
-</li>
-<li><a href=#redshift>RedShift</a>
-<ul>
-<li><a href=#redshift备份>Redshift备份</a></li>
-</ul>
-</li>
-<li><a href=#neptune>Neptune</a></li>
-</ul>
-</nav></div>
-</div>
-</section>
-</div>
-</aside>
-</div>
-</main>
-<footer id=footer class=footer>
-<div class=footer-inner>
-<div class=copyright>
-<span class=copyright-year>
-&copy; 2010 - 2022
-</span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id=sidebar class=sidebar><div class=sidebar-inner><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>文章目录</li><li class=sidebar-nav-overview data-target=site-overview>站点概览</li></ul><section class="site-overview sidebar-panel"><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon><p class=site-author-name itemprop=name>Etaon</p><p class="site-description motion-element" itemprop=description>Kepp Going!</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=/post/><span class=site-state-item-count>61</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>13</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>34</span>
+<span class=site-state-item-name>标签</span></a></div></nav><div class="links-of-author motion-element"><span class=links-of-author-item><a href=https://github.com/etaon target=_blank title=GitHub><i class="fa fa-fw fa-github"></i>
+GitHub</a></span>
+<span class=links-of-author-item><a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN><i class="fa fa-fw fa-CSDN"></i>
+CSDN</a></span></div><div class="links-of-blogroll motion-element links-of-blogroll-inline"><div class=links-of-blogroll-title><i class="fa fa-fw fa-globe"></i>
+友情链接</div><ul class=links-of-blogroll-list><li class=links-of-blogroll-item><a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a></li><li class=links-of-blogroll-item><a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a></li><li class=links-of-blogroll-item><a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a></li><li class=links-of-blogroll-item><a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a></li></ul></div><div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline"><div class=tagcloud-of-blogroll-title><i class="fa fa-fw fa-tags"></i>
+标签云</div><ul class=tagcloud-of-blogroll-list><li class=tagcloud-of-blogroll-item><a href=/tags/mysql>Mysql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/aws>Aws</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/dql>Dql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/hadoop>Hadoop</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/redis>Redis</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/cicd>Cicd</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/git>Git</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/istio>Istio</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/mongodb>Mongodb</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/azure>Azure</a></li></ul></div></section><section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active"><div class=post-toc><div class=post-toc-content><nav id=TableOfContents><ul><li><a href=#正确选择数据库>正确选择数据库：</a></li><li><a href=#database-types-which-are-supported-by-aws>Database types which are supported by AWS:</a><ul><li><a href=#relational-database>Relational Database</a></li><li><a href=#nosql>NoSQL</a></li><li><a href=#object-store-sort-of>Object Store (“sort of”)</a></li><li><a href=#data-warehouse>Data Warehouse</a></li><li><a href=#数据库服务>数据库服务</a></li></ul></li><li><a href=#rds概述>RDS概述</a><ul><li><a href=#rds有两个重要特性>RDS有两个重要特性</a></li><li><a href=#oltp与olap>OLTP与OLAP</a></li><li><a href=#关系数据库>关系数据库</a></li><li><a href=#rds备份多az和只读副本>RDS—备份、多AZ和只读副本</a></li><li><a href=#rds安全>RDS安全</a></li><li><a href=#aurora>Aurora</a></li></ul></li><li><a href=#elasticcache>ElasticCache</a><ul><li><a href=#elasticcache概述>ElasticCache概述</a></li><li><a href=#应用场景>应用场景</a></li><li><a href=#elasticache---redis-or-memcached>ElastiCache - Redis or Memcached</a></li><li><a href=#elasticache---cache-security>ElastiCache - Cache Security</a></li><li><a href=#elasticache-for-solutions-architects>ElastiCache for Solutions Architects</a></li></ul></li><li><a href=#dynamodb>DynamoDB</a><ul><li><a href=#dynamodb-基础>DynamoDB-基础</a></li><li><a href=#dynamodb-提供的throughput>DynamoDB-提供的Throughput</a></li><li><a href=#dynamodb-dax>DynamoDB-DAX</a></li><li><a href=#dynamodb流>DynamoDB流</a></li><li><a href=#dynamodb-安全>DynamoDB-安全</a></li><li><a href=#dynamodb-其他功能>DynamoDB-其他功能</a></li><li><a href=#能力规划>能力规划：</a></li></ul></li><li><a href=#redshift>RedShift</a><ul><li><a href=#redshift备份>Redshift备份</a></li></ul></li><li><a href=#neptune>Neptune</a></li></ul></nav></div></div></section></div></aside></div></main><footer id=footer class=footer><div class=footer-inner><div class=copyright><span class=copyright-year>&copy; 2010 - 2022</span>
 <span class=with-love><i class="fa fa-heart"></i></span>
-<span class=copyright-author>路无止境！</span>
-</div>
-<div class=powered-info>
-<span class=powered-by>
-Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.91.2</a>
-</span>
+<span class=copyright-author>路无止境！</span></div><div class=powered-info><span class=powered-by>Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.101.0</a></span>
 <span class=separator-line>/</span>
-<span class=theme-info>
-Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
-</a>
-</span>
-</div>
-<div class=vistor-info>
-<script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
-<span class=site-uv>
-<i class="fa fa-user"></i>
-<span class=busuanzi-value id=busuanzi_value_site_uv></span>
-</span>
+<span class=theme-info>Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank>NexT</a></span></div><div class=vistor-info><script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<span class=site-uv><i class="fa fa-user"></i>
+<span class=busuanzi-value id=busuanzi_value_site_uv></span></span>
 <span class=separator-line>/</span>
-<span class=site-pv>
-<i class="fa fa-eye"></i>
-<span class=busuanzi-value id=busuanzi_value_site_pv></span>
-</span>
-</div>
-<div class=license-info>
-<span class=storage-info>
-Storage by
-<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a>
-</span>
+<span class=site-pv><i class="fa fa-eye"></i>
+<span class=busuanzi-value id=busuanzi_value_site_pv></span></span></div><div class=license-info><span class=storage-info>Storage by
+<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a></span>
 <span class=separator-line>/</span>
-<span class=license-num>
-<a href target=_blank></a>
-</span>
-</div>
-</div>
-</footer>
-<div class=back-to-top>
-<i class="fa fa-arrow-up"></i>
-<span id=scrollpercent><span>0</span>%</span>
-</div>
-</div>
-<script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
+<span class=license-num><a href target=_blank></a></span></div></div></footer><div class=back-to-top><i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span></div></div><script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
 <script type=text/javascript src=/js/search.js></script>
 <script type=text/javascript src=/js/affix.js></script>
 <script type=text/javascript src=/js/scrollspy.js></script>
-<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.main').css('padding-bottom'),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}}),$(document).on('affixed.bs.affix',function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var b=$('.header-inner').height()+10,c,d,a,e;$('#sidebar').css({'margin-top':b}).show(),c=parseInt($('#sidebar').css('margin-top')),d=parseInt($('.sidebar-inner').css('height')),a=c+d,e=$('.content-wrap').height(),e<a&&$('.content-wrap').css('min-height',a),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
-<script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
-<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
-<script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+'//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js',function(){new Waline({el:'#wcomments',visitor:!0,avatar:'wavatar',avatarCDN:'https://sdn.geekzu.org/avatar/',avatarForce:!1,wordLimit:'200',placeholder:' 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ',requiredFields:['nick','mail'],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$('#wcomments').html('抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。')})</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type=text/javascript>function detectIE(){var e=window.navigator.userAgent,t=e.indexOf("MSIE "),n=e.indexOf("Trident/"),s=e.indexOf("Edge/");return t>0||n>0||s>0?-1:1}function getCntViewHeight(){var t=$("#content").height(),e=$(window).height(),n=t>e?t-e:$(document).height()-e;return n}function getScrollbarWidth(){var e=$("<div />").addClass("scrollbar-measure").prependTo("body"),t=e[0],n=t.offsetWidth-t.clientWidth;return e.remove(),n}function registerBackTop(){var t=50,e=$(".back-to-top");$(window).on("scroll",function(){e.toggleClass("back-to-top-on",window.pageYOffset>t);var s=$(window).scrollTop(),o=getCntViewHeight(),i=s/o,n=Math.round(i*100),a=n>100?100:n;$("#scrollpercent>span").html(a)}),e.on("click",function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var e=".post-toc",s=$(e),t=".active-current";s.on("activate.bs.scrollspy",function(){var t=$(e+" .active").last();n(),t.addClass("active-current")}).on("clear.bs.scrollspy",n),$("body").scrollspy({target:e});function n(){$(e+" "+t).removeClass(t.substring(1))}}function initAffix(){var e=$(".header-inner").height(),t=parseInt($(".main").css("padding-bottom"),10),n=e+10;$(".sidebar-inner").affix({offset:{top:n,bottom:t}}),$(document).on("affixed.bs.affix",function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){$(window).on("resize",function(){e&&clearTimeout(e),e=setTimeout(function(){var e=document.body.clientHeight-100;updateTOCHeight(e)},0)}),updateTOCHeight(document.body.clientHeight-100);var e,t=getScrollbarWidth();$(".post-toc").css("width","calc(100% + "+t+"px)")}function updateTOCHeight(e){e=e||"auto",$(".post-toc").css("max-height",e)}$(function(){var e,t,n,s,o=$(".header-inner").height()+10;$("#sidebar").css({"margin-top":o}).show(),t=parseInt($("#sidebar").css("margin-top")),n=parseInt($(".sidebar-inner").css("height")),e=t+n,s=$(".content-wrap").height(),s<e&&$(".content-wrap").css("min-height",e),$(".site-nav-toggle").on("click",function(){var e=$(".site-nav"),o=$(".toggle"),t="site-nav-on",i="toggle-close",n=e.hasClass(t),a=n?"slideUp":"slideDown",s=n?"removeClass":"addClass";e.stop()[a]("normal",function(){e[s](t),o[s](i)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$(".sidebar-nav-toc").click(function(){$(this).addClass("sidebar-nav-active"),$(this).next().removeClass("sidebar-nav-active"),$("."+$(this).next().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)}),$(".sidebar-nav-overview").click(function(){$(this).addClass("sidebar-nav-active"),$(this).prev().removeClass("sidebar-nav-active"),$("."+$(this).prev().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)})})</script><script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$(".post-body").viewer()})</script><script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+"//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js",function(){new Waline({el:"#wcomments",visitor:!0,avatar:"wavatar",avatarCDN:"https://sdn.geekzu.org/avatar/",avatarForce:!1,wordLimit:"200",placeholder:" 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ",requiredFields:["nick","mail"],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$("#wcomments").html("抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。")})</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
 <script type=text/javascript src="//s7.addthis.com/js/300/addthis_widget.js#pubid=Your%20AddthisId"></script>
-<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
-</body>
-</html>
+<script>(function(){var t,e=document.createElement("script"),n=window.location.protocol.split(":")[0];n==="https"?e.src="https://zz.bdstatic.com/linksubmit/push.js":e.src="http://push.zhanzhang.baidu.com/push.js",t=document.getElementsByTagName("script")[0],t.parentNode.insertBefore(e,t)})()</script></body></html>

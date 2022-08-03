@@ -1,550 +1,213 @@
-<!doctype html><html lang=zh-cn dir=content/zh-cn>
-<head>
-<meta charset=utf-8>
-<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
-<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
-<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
-<title> Ingress Lab（Ingress-Nginx) - 路无止境！ </title>
-<meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云">
-<meta name=author content="Etaon">
-<meta property="og:title" content="Ingress Lab（Ingress-Nginx)">
-<meta property="og:site_name" content="路无止境！">
-<meta property="og:image" content="/img/author.jpg">
-<meta name=title content="Ingress Lab（Ingress-Nginx) - 路无止境！">
-<meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。">
-<link rel="shortcut icon" href=/img/favicon.ico>
-<link rel=apple-touch-icon href=/img/apple-touch-icon.png>
-<link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png>
-<link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css>
-<link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet>
-<link href=/css/main.css rel=stylesheet type=text/css>
-<link href=/css/syntax.css rel=stylesheet type=text/css>
-</head>
-<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
-<div class="container one-collumn sidebar-position-left page-home">
-<div class=headband></div>
-<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
-<div class=header-inner> <div class=site-brand-container>
-<div class=site-nav-toggle>
-<div class=toggle role=button style=opacity:1;top:0>
+<!doctype html><html lang=zh-cn dir=content/zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=content-security-policy content="upgrade-insecure-requests"><title>Ingress Lab（Ingress-Nginx) - 路无止境！</title><meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云"><meta name=author content="Etaon"><meta property="og:title" content="Ingress Lab（Ingress-Nginx)"><meta property="og:site_name" content="路无止境！"><meta property="og:image" content="/img/author.jpg"><meta name=title content="Ingress Lab（Ingress-Nginx) - 路无止境！"><meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。"><link rel="shortcut icon" href=/img/favicon.ico><link rel=apple-touch-icon href=/img/apple-touch-icon.png><link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png><link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css><link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet><link href=/css/main.css rel=stylesheet type=text/css><link href=/css/syntax.css rel=stylesheet type=text/css></head><body itemscope itemtype=http://schema.org/WebPage lang=zh-hans><div class="container one-collumn sidebar-position-left page-home"><div class=headband></div><header id=header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle role=button style=opacity:1;top:0><span class=toggle-line></span>
 <span class=toggle-line></span>
-<span class=toggle-line></span>
-<span class=toggle-line></span>
-</div>
-</div>
-<div class=site-meta>
-<div class=multi-lang-switch>
-<i class="fa fa-fw fa-language" style=margin-right:5px></i>
-<a class=lang-link id=zh-cn href=#>中文</a>
-</div>
-<div class=custom-logo-site-title>
-<a href=/ class=brand rel=start>
-<span class=logo-line-before><i></i></span>
+<span class=toggle-line></span></div></div><div class=site-meta><div class=multi-lang-switch><i class="fa fa-fw fa-language" style=margin-right:5px></i>
+<a class=lang-link id=zh-cn href=#>中文</a></div><div class=custom-logo-site-title><a href=/ class=brand rel=start><span class=logo-line-before><i></i></span>
 <span class=site-title>路无止境！</span>
-<span class=logo-line-after><i></i></span>
-</a>
-</div>
-<p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p>
-</div>
-<div class=site-nav-right>
-<div class="toggle popup-trigger" style=opacity:1;top:0>
-<i class="fa fa-search fa-fw fa-lg"></i>
-</div>
-</div>
-</div>
-<nav class=site-nav>
-<ul id=menu class=menu>
-<li class=menu-item>
-<a href=/ rel=section>
-<i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页
-</a>
-</li>
-<li class=menu-item>
-<a href=/post rel=section>
-<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档
-</a>
-</li>
-<li class=menu-item>
-<a href=/about.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于我
-</a>
-</li>
-<li class=menu-item>
-<a href=/404.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益404
-</a>
-</li>
-<li class="menu-item menu-item-search">
-<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> 搜索</a>
-</li>
-</ul>
-<div class=site-search>
-<div class="popup search-popup local-search-popup">
-<div class="local-search-header clearfix">
-<span class=search-icon><i class="fa fa-search"></i> </span>
-<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
-<div class=local-search-input-wrapper>
-<input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
-</div>
-</div>
-<div id=local-search-result></div>
-</div>
-</div>
-</nav>
-</div>
-</header>
-<main id=main class=main>
-<div class=main-inner>
-<div class=content-wrap>
-<div id=content class=content>
-<section id=posts class=posts-expand>
-<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
-<header class=post-header>
-<h1 class=post-title itemprop="name headline" style=font-weight:700>
-<a class=post-title-link href=https://www.etaon.link/2022/02/18/ingress-nginx.html itemprop=url>
-Ingress Lab（Ingress-Nginx)
-</a>
-</h1>
-</header>
-<div class=post-body itemprop=articleBody>
-<h1 id=heading></h1>
-<h2 id=环境准备>环境准备</h2>
-<p><a href=https://github.com/kubernetes/ingress-nginx/>GitHub - kubernetes/ingress-nginx: NGINX Ingress Controller for Kubernetes</a></p>
-<p><a href=https://kubernetes.github.io/ingress-nginx/>Welcome - NGINX Ingress Controller</a></p>
-<p>本地环境使用NodePord，可以用Bare Metal cluster的yaml</p>
-<p><code>https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.1.1/deploy/static/provider/baremetal/deploy.yaml</code></p>
-<p>注意其中的images：<a href=http://k8s.gcr.io/ingress-nginx/controller:v1.1.1@sha256:0bc88eb15f9e7f84e8e56c14fa5735aaa488b840983f87bd79b1054190e660de>k8s.gcr.io/ingress-nginx/controller:v1.1.1@sha256:0bc88eb15f9e7f84e8e56c14fa5735aaa488b840983f87bd79b1054190e660de</a></p>
-<p>需要使用国内的源或自行下载：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql>root<span style=color:#666>@</span>worker:<span style=color:#666>~#</span><span style=color:#bbb> </span>docker<span style=color:#bbb> </span>login<span style=color:#bbb> </span><span style=color:#080;font-style:italic>--username=dewin.alsion@gmail.com registry.cn-hangzhou.aliyuncs.com
-</span><span style=color:#080;font-style:italic></span>Password:<span style=color:#bbb>
-</span><span style=color:#bbb></span>WARNING<span style=color:#666>!</span><span style=color:#bbb> </span>Your<span style=color:#bbb> </span>password<span style=color:#bbb> </span>will<span style=color:#bbb> </span>be<span style=color:#bbb> </span>stored<span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>unencrypted</span><span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>in</span><span style=color:#bbb> </span><span style=color:#666>/</span>root<span style=color:#666>/</span>.docker<span style=color:#666>/</span>config.json.<span style=color:#bbb>
-</span><span style=color:#bbb></span>Configure<span style=color:#bbb> </span>a<span style=color:#bbb> </span>credential<span style=color:#bbb> </span>helper<span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>to</span><span style=color:#bbb> </span>remove<span style=color:#bbb> </span>this<span style=color:#bbb> </span>warning.<span style=color:#bbb> </span>See<span style=color:#bbb>
-</span><span style=color:#bbb></span>https:<span style=color:#666>//</span>docs.docker.com<span style=color:#666>/</span>engine<span style=color:#666>/</span>reference<span style=color:#666>/</span>commandline<span style=color:#666>/</span>login<span style=color:#666>/#</span>credentials<span style=color:#666>-</span>store<span style=color:#bbb>
-</span><span style=color:#bbb>
-</span><span style=color:#bbb></span>Login<span style=color:#bbb> </span>Succeeded<span style=color:#bbb>
-</span><span style=color:#bbb></span>root<span style=color:#666>@</span>worker:<span style=color:#666>~#</span><span style=color:#bbb> </span>docker<span style=color:#bbb> </span>push<span style=color:#bbb> </span>registry.cn<span style=color:#666>-</span>hangzhou.aliyuncs.com<span style=color:#666>/</span>etaon<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#666>-</span>controller:v1.<span style=color:#666>1</span>.<span style=color:#666>1</span><span style=color:#bbb>
-</span><span style=color:#bbb></span>The<span style=color:#bbb> </span>push<span style=color:#bbb> </span>refers<span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>to</span><span style=color:#bbb> </span>repository<span style=color:#bbb> </span>[registry.cn<span style=color:#666>-</span>hangzhou.aliyuncs.com<span style=color:#666>/</span>etaon<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#666>-</span>controller]<span style=color:#bbb>
-</span><span style=color:#bbb></span>An<span style=color:#bbb> </span>image<span style=color:#bbb> </span>does<span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>not</span><span style=color:#bbb> </span>exist<span style=color:#bbb> </span>locally<span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>with</span><span style=color:#bbb> </span>the<span style=color:#bbb> </span>tag:<span style=color:#bbb> </span>registry.cn<span style=color:#666>-</span>hangzhou.aliyuncs.com<span style=color:#666>/</span>etaon<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#666>-</span>controller<span style=color:#bbb>
-</span><span style=color:#bbb></span>root<span style=color:#666>@</span>worker:<span style=color:#666>~#</span><span style=color:#bbb> </span>docker<span style=color:#bbb> </span>pull<span style=color:#bbb> </span>registry.cn<span style=color:#666>-</span>hangzhou.aliyuncs.com<span style=color:#666>/</span>etaon<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#666>-</span>controller:v1.<span style=color:#666>1</span>.<span style=color:#666>1</span><span style=color:#bbb>
-</span><span style=color:#bbb></span>v1.<span style=color:#666>1</span>.<span style=color:#666>1</span>:<span style=color:#bbb> </span>Pulling<span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>from</span><span style=color:#bbb> </span>etaon<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#666>-</span>controller<span style=color:#bbb>
-</span><span style=color:#bbb></span>a0d0a0d46f8b:<span style=color:#bbb> </span>Pull<span style=color:#bbb> </span>complete<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#666>3</span>aae86482564:<span style=color:#bbb> </span>Pull<span style=color:#bbb> </span>complete<span style=color:#bbb>
-</span><span style=color:#bbb></span>c0d03781abb3:<span style=color:#bbb> </span>Pull<span style=color:#bbb> </span>complete<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#666>0297</span>e2ef8f7f:<span style=color:#bbb> </span>Pull<span style=color:#bbb> </span>complete<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#666>866</span>a68ce3c13:<span style=color:#bbb> </span>Pull<span style=color:#bbb> </span>complete<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#666>95659</span>ee0b3b1:<span style=color:#bbb> </span>Pull<span style=color:#bbb> </span>complete<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#666>004</span>aaf0049fd:<span style=color:#bbb> </span>Pull<span style=color:#bbb> </span>complete<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#666>79</span>acb83cc767:<span style=color:#bbb> </span>Pull<span style=color:#bbb> </span>complete<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#666>152</span>f0f0a27e1:<span style=color:#bbb> </span>Pull<span style=color:#bbb> </span>complete<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#666>256313</span>a1425c:<span style=color:#bbb> </span>Pull<span style=color:#bbb> </span>complete<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#666>81</span>e081df9e03:<span style=color:#bbb> </span>Pull<span style=color:#bbb> </span>complete<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#666>1</span>b6179f6007a:<span style=color:#bbb> </span>Pull<span style=color:#bbb> </span>complete<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#666>3</span>e4300421da9:<span style=color:#bbb> </span>Pull<span style=color:#bbb> </span>complete<span style=color:#bbb>
-</span><span style=color:#bbb></span>Digest:<span style=color:#bbb> </span>sha256:<span style=color:#666>402333</span>bae4fa45ff918939e77e6c836e0c39f53cafba734a91503fd38190c032<span style=color:#bbb>
-</span><span style=color:#bbb></span>Status:<span style=color:#bbb> </span>Downloaded<span style=color:#bbb> </span>newer<span style=color:#bbb> </span>image<span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>for</span><span style=color:#bbb> </span>registry.cn<span style=color:#666>-</span>hangzhou.aliyuncs.com<span style=color:#666>/</span>etaon<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#666>-</span>controller:v1.<span style=color:#666>1</span>.<span style=color:#666>1</span><span style=color:#bbb>
-</span><span style=color:#bbb></span>registry.cn<span style=color:#666>-</span>hangzhou.aliyuncs.com<span style=color:#666>/</span>etaon<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#666>-</span>controller:v1.<span style=color:#666>1</span>.<span style=color:#666>1</span><span style=color:#bbb>
-</span><span style=color:#bbb></span>root<span style=color:#666>@</span>worker:<span style=color:#666>~#</span><span style=color:#bbb>
-</span></code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql>zyi<span style=color:#666>@</span>cp:<span style=color:#666>~</span><span>$</span><span style=color:#bbb> </span>kubectl<span style=color:#bbb> </span>apply<span style=color:#bbb> </span><span style=color:#666>-</span>f<span style=color:#bbb> </span>ingress<span style=color:#666>-</span>deploy.yaml<span style=color:#bbb>
-</span><span style=color:#bbb></span>namespace<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#bbb> </span>created<span style=color:#bbb>
-</span><span style=color:#bbb></span>serviceaccount<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#bbb> </span>created<span style=color:#bbb>
-</span><span style=color:#bbb></span>configmap<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#666>-</span>controller<span style=color:#bbb> </span>created<span style=color:#bbb>
-</span><span style=color:#bbb></span>clusterrole.rbac.<span style=color:#a2f;font-weight:700>authorization</span>.k8s.io<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#bbb> </span>created<span style=color:#bbb>
-</span><span style=color:#bbb></span>clusterrolebinding.rbac.<span style=color:#a2f;font-weight:700>authorization</span>.k8s.io<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#bbb> </span>created<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#a2f;font-weight:700>role</span>.rbac.<span style=color:#a2f;font-weight:700>authorization</span>.k8s.io<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#bbb> </span>created<span style=color:#bbb>
-</span><span style=color:#bbb></span>rolebinding.rbac.<span style=color:#a2f;font-weight:700>authorization</span>.k8s.io<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#bbb> </span>created<span style=color:#bbb>
-</span><span style=color:#bbb></span>service<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#666>-</span>controller<span style=color:#666>-</span>admission<span style=color:#bbb> </span>created<span style=color:#bbb>
-</span><span style=color:#bbb></span>service<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#666>-</span>controller<span style=color:#bbb> </span>created<span style=color:#bbb>
-</span><span style=color:#bbb></span>deployment.apps<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#666>-</span>controller<span style=color:#bbb> </span>created<span style=color:#bbb>
-</span><span style=color:#bbb></span>validatingwebhookconfiguration.admissionregistration.k8s.io<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#666>-</span>admission<span style=color:#bbb> </span>created<span style=color:#bbb>
-</span><span style=color:#bbb></span>serviceaccount<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#666>-</span>admission<span style=color:#bbb> </span>created<span style=color:#bbb>
-</span><span style=color:#bbb></span>clusterrole.rbac.<span style=color:#a2f;font-weight:700>authorization</span>.k8s.io<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#666>-</span>admission<span style=color:#bbb> </span>created<span style=color:#bbb>
-</span><span style=color:#bbb></span>clusterrolebinding.rbac.<span style=color:#a2f;font-weight:700>authorization</span>.k8s.io<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#666>-</span>admission<span style=color:#bbb> </span>created<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#a2f;font-weight:700>role</span>.rbac.<span style=color:#a2f;font-weight:700>authorization</span>.k8s.io<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#666>-</span>admission<span style=color:#bbb> </span>created<span style=color:#bbb>
-</span><span style=color:#bbb></span>rolebinding.rbac.<span style=color:#a2f;font-weight:700>authorization</span>.k8s.io<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#666>-</span>admission<span style=color:#bbb> </span>created<span style=color:#bbb>
-</span><span style=color:#bbb></span>job.batch<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#666>-</span>admission<span style=color:#666>-</span><span style=color:#a2f;font-weight:700>create</span><span style=color:#bbb> </span>created<span style=color:#bbb>
-</span><span style=color:#bbb></span>job.batch<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#666>-</span>admission<span style=color:#666>-</span>patch<span style=color:#bbb> </span>created<span style=color:#bbb>
-</span><span style=color:#bbb>
-</span><span style=color:#bbb></span>zyi<span style=color:#666>@</span>cp:<span style=color:#666>~</span><span>$</span><span style=color:#bbb> </span>kubectl<span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>get</span><span style=color:#bbb> </span>po<span style=color:#bbb> </span><span style=color:#666>-</span>n<span style=color:#bbb> </span>ingress<span style=color:#666>-</span>nginx<span style=color:#bbb>
-</span><span style=color:#bbb></span>NAME<span style=color:#bbb>                                        </span>READY<span style=color:#bbb>   </span>STATUS<span style=color:#bbb>      </span>RESTARTS<span style=color:#bbb>   </span>AGE<span style=color:#bbb>
-</span><span style=color:#bbb></span>ingress<span style=color:#666>-</span>nginx<span style=color:#666>-</span>admission<span style=color:#666>-</span><span style=color:#a2f;font-weight:700>create</span><span style=color:#666>-</span>gg9nk<span style=color:#bbb>        </span><span style=color:#666>0</span><span style=color:#666>/</span><span style=color:#666>1</span><span style=color:#bbb>     </span>Completed<span style=color:#bbb>   </span><span style=color:#666>0</span><span style=color:#bbb>          </span><span style=color:#666>94</span>s<span style=color:#bbb>
-</span><span style=color:#bbb></span>ingress<span style=color:#666>-</span>nginx<span style=color:#666>-</span>admission<span style=color:#666>-</span>patch<span style=color:#666>-</span>gcckz<span style=color:#bbb>         </span><span style=color:#666>0</span><span style=color:#666>/</span><span style=color:#666>1</span><span style=color:#bbb>     </span>Completed<span style=color:#bbb>   </span><span style=color:#666>0</span><span style=color:#bbb>          </span><span style=color:#666>94</span>s<span style=color:#bbb>
-</span></code></pre></div><p><img src=Ingress%20La%2055521/Untitled.png alt=Untitled></p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql>zyi<span style=color:#666>@</span>cp:<span style=color:#666>~</span><span>$</span><span style=color:#bbb> </span>kubectl<span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>get</span><span style=color:#bbb> </span>svc<span style=color:#bbb> </span><span style=color:#666>-</span>A<span style=color:#bbb>
-</span><span style=color:#bbb></span>NAMESPACE<span style=color:#bbb>              </span>NAME<span style=color:#bbb>                                 </span><span style=color:#a2f;font-weight:700>TYPE</span><span style=color:#bbb>        </span><span style=color:#a2f;font-weight:700>CLUSTER</span><span style=color:#666>-</span>IP<span style=color:#bbb>       </span><span style=color:#a2f;font-weight:700>EXTERNAL</span><span style=color:#666>-</span>IP<span style=color:#bbb>   </span>PORT(S)<span style=color:#bbb>                      </span>AGE<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#a2f;font-weight:700>default</span><span style=color:#bbb>                </span>front<span style=color:#666>-</span>app<span style=color:#bbb>                            </span>NodePort<span style=color:#bbb>    </span><span style=color:#666>10</span>.<span style=color:#666>101</span>.<span style=color:#666>172</span>.<span style=color:#666>40</span><span style=color:#bbb>    </span><span style=color:#666>&lt;</span><span style=color:#a2f;font-weight:700>none</span><span style=color:#666>&gt;</span><span style=color:#bbb>        </span><span style=color:#666>8000</span>:<span style=color:#666>31583</span><span style=color:#666>/</span>TCP<span style=color:#bbb>               </span><span style=color:#666>19</span>m<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#a2f;font-weight:700>default</span><span style=color:#bbb>                </span>kubernetes<span style=color:#bbb>                           </span>ClusterIP<span style=color:#bbb>   </span><span style=color:#666>10</span>.<span style=color:#666>96</span>.<span style=color:#666>0</span>.<span style=color:#666>1</span><span style=color:#bbb>        </span><span style=color:#666>&lt;</span><span style=color:#a2f;font-weight:700>none</span><span style=color:#666>&gt;</span><span style=color:#bbb>        </span><span style=color:#666>443</span><span style=color:#666>/</span>TCP<span style=color:#bbb>                      </span><span style=color:#666>30</span>d<span style=color:#bbb>
-</span><span style=color:#bbb></span>ingress<span style=color:#666>-</span>nginx<span style=color:#bbb>          </span>ingress<span style=color:#666>-</span>nginx<span style=color:#666>-</span>controller<span style=color:#bbb>             </span>NodePort<span style=color:#bbb>    </span><span style=color:#666>10</span>.<span style=color:#666>105</span>.<span style=color:#666>172</span>.<span style=color:#666>147</span><span style=color:#bbb>   </span><span style=color:#666>&lt;</span><span style=color:#a2f;font-weight:700>none</span><span style=color:#666>&gt;</span><span style=color:#bbb>        </span><span style=color:#666>80</span>:<span style=color:#666>31283</span><span style=color:#666>/</span>TCP,<span style=color:#666>443</span>:<span style=color:#666>31788</span><span style=color:#666>/</span>TCP<span style=color:#bbb>   </span><span style=color:#666>113</span>s<span style=color:#bbb>
-</span><span style=color:#bbb></span>ingress<span style=color:#666>-</span>nginx<span style=color:#bbb>          </span>ingress<span style=color:#666>-</span>nginx<span style=color:#666>-</span>controller<span style=color:#666>-</span>admission<span style=color:#bbb>   </span>ClusterIP<span style=color:#bbb>   </span><span style=color:#666>10</span>.<span style=color:#666>96</span>.<span style=color:#666>168</span>.<span style=color:#666>59</span><span style=color:#bbb>     </span><span style=color:#666>&lt;</span><span style=color:#a2f;font-weight:700>none</span><span style=color:#666>&gt;</span><span style=color:#bbb>        </span><span style=color:#666>443</span><span style=color:#666>/</span>TCP<span style=color:#bbb>                      </span><span style=color:#666>113</span>s<span style=color:#bbb>
-</span></code></pre></div><p>部署好以后，Ingress对外使用：80:31283/TCP,443:31788/TCP</p>
-<h2 id=实验拓扑>实验拓扑</h2>
-<p><img src=Ingress%20La%2055521/Untitled%201.png alt=Untitled></p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql>kubectl<span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>create</span><span style=color:#bbb> </span>deployment<span style=color:#bbb> </span>front<span style=color:#666>-</span>app<span style=color:#bbb> </span><span style=color:#080;font-style:italic>--image=network-multitool:v1.1 --replicas=3
-</span><span style=color:#080;font-style:italic></span>kubectl<span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>create</span><span style=color:#bbb> </span>deployment<span style=color:#bbb> </span>back<span style=color:#666>-</span>app<span style=color:#bbb> </span><span style=color:#080;font-style:italic>--image=network-multitool:v1.1 --replicas=2
-</span><span style=color:#080;font-style:italic></span><span style=color:#bbb>
-</span><span style=color:#bbb></span>kubectl<span style=color:#bbb> </span>expose<span style=color:#bbb> </span>deployment<span style=color:#bbb> </span>front<span style=color:#666>-</span>app<span style=color:#bbb> </span><span style=color:#080;font-style:italic>--port=80 --target-port=80 --type=NodePort
-</span><span style=color:#080;font-style:italic></span>kubectl<span style=color:#bbb> </span>expose<span style=color:#bbb> </span>deployment<span style=color:#bbb> </span>back<span style=color:#666>-</span>app<span style=color:#bbb> </span><span style=color:#080;font-style:italic>--port=8080 --target-port=80 --type=NodePort
-</span><span style=color:#080;font-style:italic></span><span style=color:#bbb>
-</span><span style=color:#bbb></span>zyi<span style=color:#666>@</span>cp:<span style=color:#666>~</span><span>$</span><span style=color:#bbb> </span>kubectl<span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>get</span><span style=color:#bbb> </span>po<span style=color:#bbb> </span><span style=color:#666>-</span>owide<span style=color:#bbb>
-</span><span style=color:#bbb></span>NAME<span style=color:#bbb>                         </span>READY<span style=color:#bbb>   </span>STATUS<span style=color:#bbb>    </span>RESTARTS<span style=color:#bbb>   </span>AGE<span style=color:#bbb>   </span>IP<span style=color:#bbb>                </span>NODE<span style=color:#bbb>     </span>NOMINATED<span style=color:#bbb> </span>NODE<span style=color:#bbb>   </span>READINESS<span style=color:#bbb> </span>GATES<span style=color:#bbb>
-</span><span style=color:#bbb></span>back<span style=color:#666>-</span>app<span style=color:#666>-</span><span style=color:#666>6</span>b5f87d447<span style=color:#666>-</span>d4dgj<span style=color:#bbb>    </span><span style=color:#666>1</span><span style=color:#666>/</span><span style=color:#666>1</span><span style=color:#bbb>     </span>Running<span style=color:#bbb>   </span><span style=color:#666>0</span><span style=color:#bbb>          </span><span style=color:#666>21</span>h<span style=color:#bbb>   </span><span style=color:#666>192</span>.<span style=color:#666>168</span>.<span style=color:#666>171</span>.<span style=color:#666>109</span><span style=color:#bbb>   </span>worker<span style=color:#bbb>   </span><span style=color:#666>&lt;</span><span style=color:#a2f;font-weight:700>none</span><span style=color:#666>&gt;</span><span style=color:#bbb>           </span><span style=color:#666>&lt;</span><span style=color:#a2f;font-weight:700>none</span><span style=color:#666>&gt;</span><span style=color:#bbb>
-</span><span style=color:#bbb></span>back<span style=color:#666>-</span>app<span style=color:#666>-</span><span style=color:#666>6</span>b5f87d447<span style=color:#666>-</span>v8tqz<span style=color:#bbb>    </span><span style=color:#666>1</span><span style=color:#666>/</span><span style=color:#666>1</span><span style=color:#bbb>     </span>Running<span style=color:#bbb>   </span><span style=color:#666>0</span><span style=color:#bbb>          </span><span style=color:#666>21</span>h<span style=color:#bbb>   </span><span style=color:#666>192</span>.<span style=color:#666>168</span>.<span style=color:#666>171</span>.<span style=color:#666>108</span><span style=color:#bbb>   </span>worker<span style=color:#bbb>   </span><span style=color:#666>&lt;</span><span style=color:#a2f;font-weight:700>none</span><span style=color:#666>&gt;</span><span style=color:#bbb>           </span><span style=color:#666>&lt;</span><span style=color:#a2f;font-weight:700>none</span><span style=color:#666>&gt;</span><span style=color:#bbb>
-</span><span style=color:#bbb></span>front<span style=color:#666>-</span>app<span style=color:#666>-</span><span style=color:#666>544</span>b8cdb7f<span style=color:#666>-</span><span style=color:#666>7</span>hnf7<span style=color:#bbb>   </span><span style=color:#666>1</span><span style=color:#666>/</span><span style=color:#666>1</span><span style=color:#bbb>     </span>Running<span style=color:#bbb>   </span><span style=color:#666>0</span><span style=color:#bbb>          </span><span style=color:#666>24</span>h<span style=color:#bbb>   </span><span style=color:#666>192</span>.<span style=color:#666>168</span>.<span style=color:#666>171</span>.<span style=color:#666>103</span><span style=color:#bbb>   </span>worker<span style=color:#bbb>   </span><span style=color:#666>&lt;</span><span style=color:#a2f;font-weight:700>none</span><span style=color:#666>&gt;</span><span style=color:#bbb>           </span><span style=color:#666>&lt;</span><span style=color:#a2f;font-weight:700>none</span><span style=color:#666>&gt;</span><span style=color:#bbb>
-</span><span style=color:#bbb></span>front<span style=color:#666>-</span>app<span style=color:#666>-</span><span style=color:#666>544</span>b8cdb7f<span style=color:#666>-</span>dmdvz<span style=color:#bbb>   </span><span style=color:#666>1</span><span style=color:#666>/</span><span style=color:#666>1</span><span style=color:#bbb>     </span>Running<span style=color:#bbb>   </span><span style=color:#666>0</span><span style=color:#bbb>          </span><span style=color:#666>24</span>h<span style=color:#bbb>   </span><span style=color:#666>192</span>.<span style=color:#666>168</span>.<span style=color:#666>171</span>.<span style=color:#666>104</span><span style=color:#bbb>   </span>worker<span style=color:#bbb>   </span><span style=color:#666>&lt;</span><span style=color:#a2f;font-weight:700>none</span><span style=color:#666>&gt;</span><span style=color:#bbb>           </span><span style=color:#666>&lt;</span><span style=color:#a2f;font-weight:700>none</span><span style=color:#666>&gt;</span><span style=color:#bbb>
-</span><span style=color:#bbb></span>front<span style=color:#666>-</span>app<span style=color:#666>-</span><span style=color:#666>544</span>b8cdb7f<span style=color:#666>-</span>kf9x9<span style=color:#bbb>   </span><span style=color:#666>1</span><span style=color:#666>/</span><span style=color:#666>1</span><span style=color:#bbb>     </span>Running<span style=color:#bbb>   </span><span style=color:#666>0</span><span style=color:#bbb>          </span><span style=color:#666>24</span>h<span style=color:#bbb>   </span><span style=color:#666>192</span>.<span style=color:#666>168</span>.<span style=color:#666>171</span>.<span style=color:#666>102</span><span style=color:#bbb>   </span>worker<span style=color:#bbb>   </span><span style=color:#666>&lt;</span><span style=color:#a2f;font-weight:700>none</span><span style=color:#666>&gt;</span><span style=color:#bbb>           </span><span style=color:#666>&lt;</span><span style=color:#a2f;font-weight:700>none</span><span style=color:#666>&gt;</span><span style=color:#bbb>
-</span><span style=color:#bbb></span>zyi<span style=color:#666>@</span>cp:<span style=color:#666>~</span><span>$</span><span style=color:#bbb> </span>kubectl<span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>get</span><span style=color:#bbb> </span>svc<span style=color:#bbb> </span><span style=color:#666>-</span>owide<span style=color:#bbb>
-</span><span style=color:#bbb></span>NAME<span style=color:#bbb>         </span><span style=color:#a2f;font-weight:700>TYPE</span><span style=color:#bbb>        </span><span style=color:#a2f;font-weight:700>CLUSTER</span><span style=color:#666>-</span>IP<span style=color:#bbb>      </span><span style=color:#a2f;font-weight:700>EXTERNAL</span><span style=color:#666>-</span>IP<span style=color:#bbb>   </span>PORT(S)<span style=color:#bbb>          </span>AGE<span style=color:#bbb>   </span>SELECTOR<span style=color:#bbb>
-</span><span style=color:#bbb></span>back<span style=color:#666>-</span>app<span style=color:#bbb>     </span>NodePort<span style=color:#bbb>    </span><span style=color:#666>10</span>.<span style=color:#666>100</span>.<span style=color:#666>37</span>.<span style=color:#666>208</span><span style=color:#bbb>   </span><span style=color:#666>&lt;</span><span style=color:#a2f;font-weight:700>none</span><span style=color:#666>&gt;</span><span style=color:#bbb>        </span><span style=color:#666>8080</span>:<span style=color:#666>30439</span><span style=color:#666>/</span>TCP<span style=color:#bbb>   </span><span style=color:#666>21</span>h<span style=color:#bbb>   </span>app<span style=color:#666>=</span>back<span style=color:#666>-</span>app<span style=color:#bbb>
-</span><span style=color:#bbb></span>front<span style=color:#666>-</span>app<span style=color:#bbb>    </span>NodePort<span style=color:#bbb>    </span><span style=color:#666>10</span>.<span style=color:#666>101</span>.<span style=color:#666>172</span>.<span style=color:#666>40</span><span style=color:#bbb>   </span><span style=color:#666>&lt;</span><span style=color:#a2f;font-weight:700>none</span><span style=color:#666>&gt;</span><span style=color:#bbb>        </span><span style=color:#666>80</span>:<span style=color:#666>31583</span><span style=color:#666>/</span>TCP<span style=color:#bbb>     </span><span style=color:#666>24</span>h<span style=color:#bbb>   </span>app<span style=color:#666>=</span>front<span style=color:#666>-</span>app<span style=color:#bbb>
-</span><span style=color:#bbb></span>kubernetes<span style=color:#bbb>   </span>ClusterIP<span style=color:#bbb>   </span><span style=color:#666>10</span>.<span style=color:#666>96</span>.<span style=color:#666>0</span>.<span style=color:#666>1</span><span style=color:#bbb>       </span><span style=color:#666>&lt;</span><span style=color:#a2f;font-weight:700>none</span><span style=color:#666>&gt;</span><span style=color:#bbb>        </span><span style=color:#666>443</span><span style=color:#666>/</span>TCP<span style=color:#bbb>          </span><span style=color:#666>31</span>d<span style=color:#bbb>   </span><span style=color:#666>&lt;</span><span style=color:#a2f;font-weight:700>none</span><span style=color:#666>&gt;</span><span style=color:#bbb>
-</span></code></pre></div><p>测试web服务：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>/ <span style=color:#080;font-style:italic># curl 10.101.172.40</span>
-Praqma Network MultiTool <span style=color:#666>(</span>with NGINX<span style=color:#666>)</span> - front-app-544b8cdb7f-kf9x9 - 192.168.171.102
-Front-APP
-/ <span style=color:#080;font-style:italic># curl 10.100.37.208:8080</span>
-Praqma Network MultiTool <span style=color:#666>(</span>with NGINX<span style=color:#666>)</span> - back-app-6b5f87d447-v8tqz - 192.168.171.108
-Back-app
-</code></pre></div><h2 id=实验步骤>实验步骤</h2>
-<h3 id=按域名访问>按域名访问</h3>
-<p>设计目标是</p>
-<p>front.etaon.top—→front-app(service)</p>
-<p>back.etaon.top—→back-app(service)</p>
-<p>官方配置参考</p>
-<p><a href=https://github.com/kubernetes/ingress-nginx/blob/main/docs/examples/customization/configuration-snippets/ingress.yaml>ingress-nginx/ingress.yaml at main · kubernetes/ingress-nginx</a></p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>apiVersion: networking.k8s.io/v1
-kind: Ingress  
-metadata:
-  name: ingress-host-bar
-spec:
-  ingressClassName: nginx
-  rules:
-  - host: <span style=color:#b44>&#34;front.etaon.top&#34;</span>
-    http:
-      paths:
-      - pathType: Prefix
-        path: <span style=color:#b44>&#34;/&#34;</span>
-        backend:
-          service:
-            name: front-app
-            port:
-              number: <span style=color:#666>80</span>
-  - host: <span style=color:#b44>&#34;back.etaon.top&#34;</span>
-    http:
-      paths:
-      - pathType: Prefix
-        path: <span style=color:#b44>&#34;/&#34;</span>  
-        backend:
-          service:
-            name: back-app
-            port:
-              number: <span style=color:#666>8080</span>
-</code></pre></div><p>效果如下：</p>
-<p><img src=Ingress%20La%2055521/Untitled%202.png alt=Untitled></p>
-<p><img src=Ingress%20La%2055521/Untitled%203.png alt=Untitled></p>
-<h3 id=rewrite>Rewrite</h3>
-<p>重写可以参考官方文档：</p>
-<p><a href=https://kubernetes.github.io/ingress-nginx/examples/rewrite/>Rewrite - NGINX Ingress Controller</a></p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>metadata:
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /<span style=color:#b8860b>$2</span>
-spec:
-...
-    http:
-      paths:
-      - path: /something<span style=color:#666>(</span>/|$<span style=color:#666>)(</span>.*<span style=color:#666>)</span>
-</code></pre></div><ul>
-<li>捕获的组按时间顺序以 $1、$2 &mldr; $n 的形式保存在编号的占位符中。这些占位符可以用作 rewrite-target 注释中的参数</li>
-<li>(.*) 捕获的任何字符都将分配给占位符 $2，然后将其用作 rewrite-target 注释中的参数</li>
-</ul>
-<p>上面的Ingress定义将导致以下重写：</p>
-<ul>
-<li><code>rewrite.bar.com/something</code> rewrites to <code>rewrite.bar.com/</code></li>
-<li><code>rewrite.bar.com/something/</code> rewrites to <code>rewrite.bar.com/</code></li>
-<li><code>rewrite.bar.com/something/new</code> rewrites to <code>rewrite.bar.com/new</code></li>
-</ul>
-<p>改写yaml，效果要求：back.etaon.top:31283/nginx—>back.etaon.top:31283/</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>apiVersion: networking.k8s.io/v1
-kind: Ingress  
-metadata:
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /<span style=color:#b8860b>$2</span>
-  name: ingress-host-bar
-spec:
-  ingressClassName: nginx
-  rules:
-  - host: <span style=color:#b44>&#34;front.etaon.top&#34;</span>
-    http:
-      paths:
-      - pathType: Prefix
-        path: <span style=color:#b44>&#34;/&#34;</span>
-        backend:
-          service:
-            name: front-app
-            port:
-              number: <span style=color:#666>80</span>
-  - host: <span style=color:#b44>&#34;back.etaon.top&#34;</span>
-    http:
-      paths:
-      - pathType: Prefix
-        path: <span style=color:#b44>&#34;/nginx(/|</span>$<span style=color:#b44>)(.*)&#34;</span>  
-        backend:
-          service:
-            name: back-app  
-            port:
-              number: <span style=color:#666>8080</span>
-</code></pre></div><p><img src=Ingress%20La%2055521/Untitled%204.png alt=Untitled></p>
-<h3 id=速率限制>速率限制</h3>
-<p>官方参考</p>
-<p><a href=https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#rate-limiting>Annotations - NGINX Ingress Controller</a></p>
-<p>可以定义很多规则：</p>
-<ul>
-<li><code>nginx.ingress.kubernetes.io/limit-connections</code>: number of concurrent connections allowed from a single IP address. A 503 error is returned when exceeding this limit.</li>
-<li><code>nginx.ingress.kubernetes.io/limit-rps</code>: number of requests accepted from a given IP each second. The burst
+<span class=logo-line-after><i></i></span></a></div><p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p></div><div class=site-nav-right><div class="toggle popup-trigger" style=opacity:1;top:0><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class=site-nav><ul id=menu class=menu><li class=menu-item><a href=/ rel=section><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class=menu-item><a href=/post rel=section><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class=menu-item><a href=/about.html rel=section><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于我</a></li><li class=menu-item><a href=/404.html rel=section><i class="menu-item-icon fa fa-fw fa-heartbeat"></i><br>公益404</a></li><li class="menu-item menu-item-search"><a href=javascript:; class=popup-trigger><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class=site-search><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class=search-icon><i class="fa fa-search"></i></span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span><div class=local-search-input-wrapper><input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off></div></div><div id=local-search-result></div></div></div></nav></div></header><main id=main class=main><div class=main-inner><div class=content-wrap><div id=content class=content><section id=posts class=posts-expand><article class="post post-type-normal" itemscope itemtype=http://schema.org/Article><header class=post-header><h1 class=post-title itemprop="name headline" style=font-weight:700><a class=post-title-link href=https://www.etaon.top/2022/02/18/ingress-nginx.html itemprop=url>Ingress Lab（Ingress-Nginx)</a></h1></header><div class=post-body itemprop=articleBody><h1 id=heading></h1><h2 id=环境准备>环境准备</h2><p><a href=https://github.com/kubernetes/ingress-nginx/>GitHub - kubernetes/ingress-nginx: NGINX Ingress Controller for Kubernetes</a></p><p><a href=https://kubernetes.github.io/ingress-nginx/>Welcome - NGINX Ingress Controller</a></p><p>本地环境使用NodePord，可以用Bare Metal cluster的yaml</p><p><code>https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.1.1/deploy/static/provider/baremetal/deploy.yaml</code></p><p>注意其中的images：<a href=http://k8s.gcr.io/ingress-nginx/controller:v1.1.1@sha256:0bc88eb15f9e7f84e8e56c14fa5735aaa488b840983f87bd79b1054190e660de>k8s.gcr.io/ingress-nginx/controller:v1.1.1@sha256:0bc88eb15f9e7f84e8e56c14fa5735aaa488b840983f87bd79b1054190e660de</a></p><p>需要使用国内的源或自行下载：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=display:flex><span>root<span style=color:#666>@</span>worker:<span style=color:#666>~#</span><span style=color:#bbb> </span>docker<span style=color:#bbb> </span>login<span style=color:#bbb> </span><span style=color:#080;font-style:italic>--username=dewin.alsion@gmail.com registry.cn-hangzhou.aliyuncs.com
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>Password:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>WARNING<span style=color:#666>!</span><span style=color:#bbb> </span>Your<span style=color:#bbb> </span>password<span style=color:#bbb> </span>will<span style=color:#bbb> </span>be<span style=color:#bbb> </span>stored<span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>unencrypted</span><span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>in</span><span style=color:#bbb> </span><span style=color:#666>/</span>root<span style=color:#666>/</span>.docker<span style=color:#666>/</span>config.json.<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>Configure<span style=color:#bbb> </span>a<span style=color:#bbb> </span>credential<span style=color:#bbb> </span>helper<span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>to</span><span style=color:#bbb> </span>remove<span style=color:#bbb> </span>this<span style=color:#bbb> </span>warning.<span style=color:#bbb> </span>See<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>https:<span style=color:#666>//</span>docs.docker.com<span style=color:#666>/</span>engine<span style=color:#666>/</span>reference<span style=color:#666>/</span>commandline<span style=color:#666>/</span>login<span style=color:#666>/#</span>credentials<span style=color:#666>-</span>store<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>Login<span style=color:#bbb> </span>Succeeded<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>root<span style=color:#666>@</span>worker:<span style=color:#666>~#</span><span style=color:#bbb> </span>docker<span style=color:#bbb> </span>push<span style=color:#bbb> </span>registry.cn<span style=color:#666>-</span>hangzhou.aliyuncs.com<span style=color:#666>/</span>etaon<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#666>-</span>controller:v1.<span style=color:#666>1</span>.<span style=color:#666>1</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>The<span style=color:#bbb> </span>push<span style=color:#bbb> </span>refers<span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>to</span><span style=color:#bbb> </span>repository<span style=color:#bbb> </span>[registry.cn<span style=color:#666>-</span>hangzhou.aliyuncs.com<span style=color:#666>/</span>etaon<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#666>-</span>controller]<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>An<span style=color:#bbb> </span>image<span style=color:#bbb> </span>does<span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>not</span><span style=color:#bbb> </span>exist<span style=color:#bbb> </span>locally<span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>with</span><span style=color:#bbb> </span>the<span style=color:#bbb> </span>tag:<span style=color:#bbb> </span>registry.cn<span style=color:#666>-</span>hangzhou.aliyuncs.com<span style=color:#666>/</span>etaon<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#666>-</span>controller<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>root<span style=color:#666>@</span>worker:<span style=color:#666>~#</span><span style=color:#bbb> </span>docker<span style=color:#bbb> </span>pull<span style=color:#bbb> </span>registry.cn<span style=color:#666>-</span>hangzhou.aliyuncs.com<span style=color:#666>/</span>etaon<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#666>-</span>controller:v1.<span style=color:#666>1</span>.<span style=color:#666>1</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>v1.<span style=color:#666>1</span>.<span style=color:#666>1</span>:<span style=color:#bbb> </span>Pulling<span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>from</span><span style=color:#bbb> </span>etaon<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#666>-</span>controller<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>a0d0a0d46f8b:<span style=color:#bbb> </span>Pull<span style=color:#bbb> </span>complete<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#666>3</span>aae86482564:<span style=color:#bbb> </span>Pull<span style=color:#bbb> </span>complete<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>c0d03781abb3:<span style=color:#bbb> </span>Pull<span style=color:#bbb> </span>complete<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#666>0297</span>e2ef8f7f:<span style=color:#bbb> </span>Pull<span style=color:#bbb> </span>complete<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#666>866</span>a68ce3c13:<span style=color:#bbb> </span>Pull<span style=color:#bbb> </span>complete<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#666>95659</span>ee0b3b1:<span style=color:#bbb> </span>Pull<span style=color:#bbb> </span>complete<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#666>004</span>aaf0049fd:<span style=color:#bbb> </span>Pull<span style=color:#bbb> </span>complete<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#666>79</span>acb83cc767:<span style=color:#bbb> </span>Pull<span style=color:#bbb> </span>complete<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#666>152</span>f0f0a27e1:<span style=color:#bbb> </span>Pull<span style=color:#bbb> </span>complete<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#666>256313</span>a1425c:<span style=color:#bbb> </span>Pull<span style=color:#bbb> </span>complete<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#666>81</span>e081df9e03:<span style=color:#bbb> </span>Pull<span style=color:#bbb> </span>complete<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#666>1</span>b6179f6007a:<span style=color:#bbb> </span>Pull<span style=color:#bbb> </span>complete<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#666>3</span>e4300421da9:<span style=color:#bbb> </span>Pull<span style=color:#bbb> </span>complete<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>Digest:<span style=color:#bbb> </span>sha256:<span style=color:#666>402333</span>bae4fa45ff918939e77e6c836e0c39f53cafba734a91503fd38190c032<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>Status:<span style=color:#bbb> </span>Downloaded<span style=color:#bbb> </span>newer<span style=color:#bbb> </span>image<span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>for</span><span style=color:#bbb> </span>registry.cn<span style=color:#666>-</span>hangzhou.aliyuncs.com<span style=color:#666>/</span>etaon<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#666>-</span>controller:v1.<span style=color:#666>1</span>.<span style=color:#666>1</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>registry.cn<span style=color:#666>-</span>hangzhou.aliyuncs.com<span style=color:#666>/</span>etaon<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#666>-</span>controller:v1.<span style=color:#666>1</span>.<span style=color:#666>1</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>root<span style=color:#666>@</span>worker:<span style=color:#666>~#</span><span style=color:#bbb>
+</span></span></span></code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=display:flex><span>zyi<span style=color:#666>@</span>cp:<span style=color:#666>~</span><span>$</span><span style=color:#bbb> </span>kubectl<span style=color:#bbb> </span>apply<span style=color:#bbb> </span><span style=color:#666>-</span>f<span style=color:#bbb> </span>ingress<span style=color:#666>-</span>deploy.yaml<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>namespace<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#bbb> </span>created<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>serviceaccount<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#bbb> </span>created<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>configmap<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#666>-</span>controller<span style=color:#bbb> </span>created<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>clusterrole.rbac.<span style=color:#a2f;font-weight:700>authorization</span>.k8s.io<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#bbb> </span>created<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>clusterrolebinding.rbac.<span style=color:#a2f;font-weight:700>authorization</span>.k8s.io<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#bbb> </span>created<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#a2f;font-weight:700>role</span>.rbac.<span style=color:#a2f;font-weight:700>authorization</span>.k8s.io<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#bbb> </span>created<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>rolebinding.rbac.<span style=color:#a2f;font-weight:700>authorization</span>.k8s.io<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#bbb> </span>created<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>service<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#666>-</span>controller<span style=color:#666>-</span>admission<span style=color:#bbb> </span>created<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>service<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#666>-</span>controller<span style=color:#bbb> </span>created<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>deployment.apps<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#666>-</span>controller<span style=color:#bbb> </span>created<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>validatingwebhookconfiguration.admissionregistration.k8s.io<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#666>-</span>admission<span style=color:#bbb> </span>created<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>serviceaccount<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#666>-</span>admission<span style=color:#bbb> </span>created<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>clusterrole.rbac.<span style=color:#a2f;font-weight:700>authorization</span>.k8s.io<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#666>-</span>admission<span style=color:#bbb> </span>created<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>clusterrolebinding.rbac.<span style=color:#a2f;font-weight:700>authorization</span>.k8s.io<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#666>-</span>admission<span style=color:#bbb> </span>created<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#a2f;font-weight:700>role</span>.rbac.<span style=color:#a2f;font-weight:700>authorization</span>.k8s.io<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#666>-</span>admission<span style=color:#bbb> </span>created<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>rolebinding.rbac.<span style=color:#a2f;font-weight:700>authorization</span>.k8s.io<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#666>-</span>admission<span style=color:#bbb> </span>created<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>job.batch<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#666>-</span>admission<span style=color:#666>-</span><span style=color:#a2f;font-weight:700>create</span><span style=color:#bbb> </span>created<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>job.batch<span style=color:#666>/</span>ingress<span style=color:#666>-</span>nginx<span style=color:#666>-</span>admission<span style=color:#666>-</span>patch<span style=color:#bbb> </span>created<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>zyi<span style=color:#666>@</span>cp:<span style=color:#666>~</span><span>$</span><span style=color:#bbb> </span>kubectl<span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>get</span><span style=color:#bbb> </span>po<span style=color:#bbb> </span><span style=color:#666>-</span>n<span style=color:#bbb> </span>ingress<span style=color:#666>-</span>nginx<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>NAME<span style=color:#bbb>                                        </span>READY<span style=color:#bbb>   </span>STATUS<span style=color:#bbb>      </span>RESTARTS<span style=color:#bbb>   </span>AGE<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>ingress<span style=color:#666>-</span>nginx<span style=color:#666>-</span>admission<span style=color:#666>-</span><span style=color:#a2f;font-weight:700>create</span><span style=color:#666>-</span>gg9nk<span style=color:#bbb>        </span><span style=color:#666>0</span><span style=color:#666>/</span><span style=color:#666>1</span><span style=color:#bbb>     </span>Completed<span style=color:#bbb>   </span><span style=color:#666>0</span><span style=color:#bbb>          </span><span style=color:#666>94</span>s<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>ingress<span style=color:#666>-</span>nginx<span style=color:#666>-</span>admission<span style=color:#666>-</span>patch<span style=color:#666>-</span>gcckz<span style=color:#bbb>         </span><span style=color:#666>0</span><span style=color:#666>/</span><span style=color:#666>1</span><span style=color:#bbb>     </span>Completed<span style=color:#bbb>   </span><span style=color:#666>0</span><span style=color:#bbb>          </span><span style=color:#666>94</span>s<span style=color:#bbb>
+</span></span></span></code></pre></div><p><img src=Ingress%20La%2055521/Untitled.png alt=Untitled></p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=display:flex><span>zyi<span style=color:#666>@</span>cp:<span style=color:#666>~</span><span>$</span><span style=color:#bbb> </span>kubectl<span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>get</span><span style=color:#bbb> </span>svc<span style=color:#bbb> </span><span style=color:#666>-</span>A<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>NAMESPACE<span style=color:#bbb>              </span>NAME<span style=color:#bbb>                                 </span><span style=color:#a2f;font-weight:700>TYPE</span><span style=color:#bbb>        </span><span style=color:#a2f;font-weight:700>CLUSTER</span><span style=color:#666>-</span>IP<span style=color:#bbb>       </span><span style=color:#a2f;font-weight:700>EXTERNAL</span><span style=color:#666>-</span>IP<span style=color:#bbb>   </span>PORT(S)<span style=color:#bbb>                      </span>AGE<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#a2f;font-weight:700>default</span><span style=color:#bbb>                </span>front<span style=color:#666>-</span>app<span style=color:#bbb>                            </span>NodePort<span style=color:#bbb>    </span><span style=color:#666>10</span>.<span style=color:#666>101</span>.<span style=color:#666>172</span>.<span style=color:#666>40</span><span style=color:#bbb>    </span><span style=color:#666>&lt;</span><span style=color:#a2f;font-weight:700>none</span><span style=color:#666>&gt;</span><span style=color:#bbb>        </span><span style=color:#666>8000</span>:<span style=color:#666>31583</span><span style=color:#666>/</span>TCP<span style=color:#bbb>               </span><span style=color:#666>19</span>m<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#a2f;font-weight:700>default</span><span style=color:#bbb>                </span>kubernetes<span style=color:#bbb>                           </span>ClusterIP<span style=color:#bbb>   </span><span style=color:#666>10</span>.<span style=color:#666>96</span>.<span style=color:#666>0</span>.<span style=color:#666>1</span><span style=color:#bbb>        </span><span style=color:#666>&lt;</span><span style=color:#a2f;font-weight:700>none</span><span style=color:#666>&gt;</span><span style=color:#bbb>        </span><span style=color:#666>443</span><span style=color:#666>/</span>TCP<span style=color:#bbb>                      </span><span style=color:#666>30</span>d<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>ingress<span style=color:#666>-</span>nginx<span style=color:#bbb>          </span>ingress<span style=color:#666>-</span>nginx<span style=color:#666>-</span>controller<span style=color:#bbb>             </span>NodePort<span style=color:#bbb>    </span><span style=color:#666>10</span>.<span style=color:#666>105</span>.<span style=color:#666>172</span>.<span style=color:#666>147</span><span style=color:#bbb>   </span><span style=color:#666>&lt;</span><span style=color:#a2f;font-weight:700>none</span><span style=color:#666>&gt;</span><span style=color:#bbb>        </span><span style=color:#666>80</span>:<span style=color:#666>31283</span><span style=color:#666>/</span>TCP,<span style=color:#666>443</span>:<span style=color:#666>31788</span><span style=color:#666>/</span>TCP<span style=color:#bbb>   </span><span style=color:#666>113</span>s<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>ingress<span style=color:#666>-</span>nginx<span style=color:#bbb>          </span>ingress<span style=color:#666>-</span>nginx<span style=color:#666>-</span>controller<span style=color:#666>-</span>admission<span style=color:#bbb>   </span>ClusterIP<span style=color:#bbb>   </span><span style=color:#666>10</span>.<span style=color:#666>96</span>.<span style=color:#666>168</span>.<span style=color:#666>59</span><span style=color:#bbb>     </span><span style=color:#666>&lt;</span><span style=color:#a2f;font-weight:700>none</span><span style=color:#666>&gt;</span><span style=color:#bbb>        </span><span style=color:#666>443</span><span style=color:#666>/</span>TCP<span style=color:#bbb>                      </span><span style=color:#666>113</span>s<span style=color:#bbb>
+</span></span></span></code></pre></div><p>部署好以后，Ingress对外使用：80:31283/TCP,443:31788/TCP</p><h2 id=实验拓扑>实验拓扑</h2><p><img src=Ingress%20La%2055521/Untitled%201.png alt=Untitled></p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=display:flex><span>kubectl<span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>create</span><span style=color:#bbb> </span>deployment<span style=color:#bbb> </span>front<span style=color:#666>-</span>app<span style=color:#bbb> </span><span style=color:#080;font-style:italic>--image=network-multitool:v1.1 --replicas=3
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>kubectl<span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>create</span><span style=color:#bbb> </span>deployment<span style=color:#bbb> </span>back<span style=color:#666>-</span>app<span style=color:#bbb> </span><span style=color:#080;font-style:italic>--image=network-multitool:v1.1 --replicas=2
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>kubectl<span style=color:#bbb> </span>expose<span style=color:#bbb> </span>deployment<span style=color:#bbb> </span>front<span style=color:#666>-</span>app<span style=color:#bbb> </span><span style=color:#080;font-style:italic>--port=80 --target-port=80 --type=NodePort
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>kubectl<span style=color:#bbb> </span>expose<span style=color:#bbb> </span>deployment<span style=color:#bbb> </span>back<span style=color:#666>-</span>app<span style=color:#bbb> </span><span style=color:#080;font-style:italic>--port=8080 --target-port=80 --type=NodePort
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>zyi<span style=color:#666>@</span>cp:<span style=color:#666>~</span><span>$</span><span style=color:#bbb> </span>kubectl<span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>get</span><span style=color:#bbb> </span>po<span style=color:#bbb> </span><span style=color:#666>-</span>owide<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>NAME<span style=color:#bbb>                         </span>READY<span style=color:#bbb>   </span>STATUS<span style=color:#bbb>    </span>RESTARTS<span style=color:#bbb>   </span>AGE<span style=color:#bbb>   </span>IP<span style=color:#bbb>                </span>NODE<span style=color:#bbb>     </span>NOMINATED<span style=color:#bbb> </span>NODE<span style=color:#bbb>   </span>READINESS<span style=color:#bbb> </span>GATES<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>back<span style=color:#666>-</span>app<span style=color:#666>-</span><span style=color:#666>6</span>b5f87d447<span style=color:#666>-</span>d4dgj<span style=color:#bbb>    </span><span style=color:#666>1</span><span style=color:#666>/</span><span style=color:#666>1</span><span style=color:#bbb>     </span>Running<span style=color:#bbb>   </span><span style=color:#666>0</span><span style=color:#bbb>          </span><span style=color:#666>21</span>h<span style=color:#bbb>   </span><span style=color:#666>192</span>.<span style=color:#666>168</span>.<span style=color:#666>171</span>.<span style=color:#666>109</span><span style=color:#bbb>   </span>worker<span style=color:#bbb>   </span><span style=color:#666>&lt;</span><span style=color:#a2f;font-weight:700>none</span><span style=color:#666>&gt;</span><span style=color:#bbb>           </span><span style=color:#666>&lt;</span><span style=color:#a2f;font-weight:700>none</span><span style=color:#666>&gt;</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>back<span style=color:#666>-</span>app<span style=color:#666>-</span><span style=color:#666>6</span>b5f87d447<span style=color:#666>-</span>v8tqz<span style=color:#bbb>    </span><span style=color:#666>1</span><span style=color:#666>/</span><span style=color:#666>1</span><span style=color:#bbb>     </span>Running<span style=color:#bbb>   </span><span style=color:#666>0</span><span style=color:#bbb>          </span><span style=color:#666>21</span>h<span style=color:#bbb>   </span><span style=color:#666>192</span>.<span style=color:#666>168</span>.<span style=color:#666>171</span>.<span style=color:#666>108</span><span style=color:#bbb>   </span>worker<span style=color:#bbb>   </span><span style=color:#666>&lt;</span><span style=color:#a2f;font-weight:700>none</span><span style=color:#666>&gt;</span><span style=color:#bbb>           </span><span style=color:#666>&lt;</span><span style=color:#a2f;font-weight:700>none</span><span style=color:#666>&gt;</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>front<span style=color:#666>-</span>app<span style=color:#666>-</span><span style=color:#666>544</span>b8cdb7f<span style=color:#666>-</span><span style=color:#666>7</span>hnf7<span style=color:#bbb>   </span><span style=color:#666>1</span><span style=color:#666>/</span><span style=color:#666>1</span><span style=color:#bbb>     </span>Running<span style=color:#bbb>   </span><span style=color:#666>0</span><span style=color:#bbb>          </span><span style=color:#666>24</span>h<span style=color:#bbb>   </span><span style=color:#666>192</span>.<span style=color:#666>168</span>.<span style=color:#666>171</span>.<span style=color:#666>103</span><span style=color:#bbb>   </span>worker<span style=color:#bbb>   </span><span style=color:#666>&lt;</span><span style=color:#a2f;font-weight:700>none</span><span style=color:#666>&gt;</span><span style=color:#bbb>           </span><span style=color:#666>&lt;</span><span style=color:#a2f;font-weight:700>none</span><span style=color:#666>&gt;</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>front<span style=color:#666>-</span>app<span style=color:#666>-</span><span style=color:#666>544</span>b8cdb7f<span style=color:#666>-</span>dmdvz<span style=color:#bbb>   </span><span style=color:#666>1</span><span style=color:#666>/</span><span style=color:#666>1</span><span style=color:#bbb>     </span>Running<span style=color:#bbb>   </span><span style=color:#666>0</span><span style=color:#bbb>          </span><span style=color:#666>24</span>h<span style=color:#bbb>   </span><span style=color:#666>192</span>.<span style=color:#666>168</span>.<span style=color:#666>171</span>.<span style=color:#666>104</span><span style=color:#bbb>   </span>worker<span style=color:#bbb>   </span><span style=color:#666>&lt;</span><span style=color:#a2f;font-weight:700>none</span><span style=color:#666>&gt;</span><span style=color:#bbb>           </span><span style=color:#666>&lt;</span><span style=color:#a2f;font-weight:700>none</span><span style=color:#666>&gt;</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>front<span style=color:#666>-</span>app<span style=color:#666>-</span><span style=color:#666>544</span>b8cdb7f<span style=color:#666>-</span>kf9x9<span style=color:#bbb>   </span><span style=color:#666>1</span><span style=color:#666>/</span><span style=color:#666>1</span><span style=color:#bbb>     </span>Running<span style=color:#bbb>   </span><span style=color:#666>0</span><span style=color:#bbb>          </span><span style=color:#666>24</span>h<span style=color:#bbb>   </span><span style=color:#666>192</span>.<span style=color:#666>168</span>.<span style=color:#666>171</span>.<span style=color:#666>102</span><span style=color:#bbb>   </span>worker<span style=color:#bbb>   </span><span style=color:#666>&lt;</span><span style=color:#a2f;font-weight:700>none</span><span style=color:#666>&gt;</span><span style=color:#bbb>           </span><span style=color:#666>&lt;</span><span style=color:#a2f;font-weight:700>none</span><span style=color:#666>&gt;</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>zyi<span style=color:#666>@</span>cp:<span style=color:#666>~</span><span>$</span><span style=color:#bbb> </span>kubectl<span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>get</span><span style=color:#bbb> </span>svc<span style=color:#bbb> </span><span style=color:#666>-</span>owide<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>NAME<span style=color:#bbb>         </span><span style=color:#a2f;font-weight:700>TYPE</span><span style=color:#bbb>        </span><span style=color:#a2f;font-weight:700>CLUSTER</span><span style=color:#666>-</span>IP<span style=color:#bbb>      </span><span style=color:#a2f;font-weight:700>EXTERNAL</span><span style=color:#666>-</span>IP<span style=color:#bbb>   </span>PORT(S)<span style=color:#bbb>          </span>AGE<span style=color:#bbb>   </span>SELECTOR<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>back<span style=color:#666>-</span>app<span style=color:#bbb>     </span>NodePort<span style=color:#bbb>    </span><span style=color:#666>10</span>.<span style=color:#666>100</span>.<span style=color:#666>37</span>.<span style=color:#666>208</span><span style=color:#bbb>   </span><span style=color:#666>&lt;</span><span style=color:#a2f;font-weight:700>none</span><span style=color:#666>&gt;</span><span style=color:#bbb>        </span><span style=color:#666>8080</span>:<span style=color:#666>30439</span><span style=color:#666>/</span>TCP<span style=color:#bbb>   </span><span style=color:#666>21</span>h<span style=color:#bbb>   </span>app<span style=color:#666>=</span>back<span style=color:#666>-</span>app<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>front<span style=color:#666>-</span>app<span style=color:#bbb>    </span>NodePort<span style=color:#bbb>    </span><span style=color:#666>10</span>.<span style=color:#666>101</span>.<span style=color:#666>172</span>.<span style=color:#666>40</span><span style=color:#bbb>   </span><span style=color:#666>&lt;</span><span style=color:#a2f;font-weight:700>none</span><span style=color:#666>&gt;</span><span style=color:#bbb>        </span><span style=color:#666>80</span>:<span style=color:#666>31583</span><span style=color:#666>/</span>TCP<span style=color:#bbb>     </span><span style=color:#666>24</span>h<span style=color:#bbb>   </span>app<span style=color:#666>=</span>front<span style=color:#666>-</span>app<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>kubernetes<span style=color:#bbb>   </span>ClusterIP<span style=color:#bbb>   </span><span style=color:#666>10</span>.<span style=color:#666>96</span>.<span style=color:#666>0</span>.<span style=color:#666>1</span><span style=color:#bbb>       </span><span style=color:#666>&lt;</span><span style=color:#a2f;font-weight:700>none</span><span style=color:#666>&gt;</span><span style=color:#bbb>        </span><span style=color:#666>443</span><span style=color:#666>/</span>TCP<span style=color:#bbb>          </span><span style=color:#666>31</span>d<span style=color:#bbb>   </span><span style=color:#666>&lt;</span><span style=color:#a2f;font-weight:700>none</span><span style=color:#666>&gt;</span><span style=color:#bbb>
+</span></span></span></code></pre></div><p>测试web服务：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>/ <span style=color:#080;font-style:italic># curl 10.101.172.40</span>
+</span></span><span style=display:flex><span>Praqma Network MultiTool <span style=color:#666>(</span>with NGINX<span style=color:#666>)</span> - front-app-544b8cdb7f-kf9x9 - 192.168.171.102
+</span></span><span style=display:flex><span>Front-APP
+</span></span><span style=display:flex><span>/ <span style=color:#080;font-style:italic># curl 10.100.37.208:8080</span>
+</span></span><span style=display:flex><span>Praqma Network MultiTool <span style=color:#666>(</span>with NGINX<span style=color:#666>)</span> - back-app-6b5f87d447-v8tqz - 192.168.171.108
+</span></span><span style=display:flex><span>Back-app
+</span></span></code></pre></div><h2 id=实验步骤>实验步骤</h2><h3 id=按域名访问>按域名访问</h3><p>设计目标是</p><p>front.etaon.top—→front-app(service)</p><p>back.etaon.top—→back-app(service)</p><p>官方配置参考</p><p><a href=https://github.com/kubernetes/ingress-nginx/blob/main/docs/examples/customization/configuration-snippets/ingress.yaml>ingress-nginx/ingress.yaml at main · kubernetes/ingress-nginx</a></p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>apiVersion: networking.k8s.io/v1
+</span></span><span style=display:flex><span>kind: Ingress  
+</span></span><span style=display:flex><span>metadata:
+</span></span><span style=display:flex><span>  name: ingress-host-bar
+</span></span><span style=display:flex><span>spec:
+</span></span><span style=display:flex><span>  ingressClassName: nginx
+</span></span><span style=display:flex><span>  rules:
+</span></span><span style=display:flex><span>  - host: <span style=color:#b44>&#34;front.etaon.top&#34;</span>
+</span></span><span style=display:flex><span>    http:
+</span></span><span style=display:flex><span>      paths:
+</span></span><span style=display:flex><span>      - pathType: Prefix
+</span></span><span style=display:flex><span>        path: <span style=color:#b44>&#34;/&#34;</span>
+</span></span><span style=display:flex><span>        backend:
+</span></span><span style=display:flex><span>          service:
+</span></span><span style=display:flex><span>            name: front-app
+</span></span><span style=display:flex><span>            port:
+</span></span><span style=display:flex><span>              number: <span style=color:#666>80</span>
+</span></span><span style=display:flex><span>  - host: <span style=color:#b44>&#34;back.etaon.top&#34;</span>
+</span></span><span style=display:flex><span>    http:
+</span></span><span style=display:flex><span>      paths:
+</span></span><span style=display:flex><span>      - pathType: Prefix
+</span></span><span style=display:flex><span>        path: <span style=color:#b44>&#34;/&#34;</span>  
+</span></span><span style=display:flex><span>        backend:
+</span></span><span style=display:flex><span>          service:
+</span></span><span style=display:flex><span>            name: back-app
+</span></span><span style=display:flex><span>            port:
+</span></span><span style=display:flex><span>              number: <span style=color:#666>8080</span>
+</span></span></code></pre></div><p>效果如下：</p><p><img src=Ingress%20La%2055521/Untitled%202.png alt=Untitled></p><p><img src=Ingress%20La%2055521/Untitled%203.png alt=Untitled></p><h3 id=rewrite>Rewrite</h3><p>重写可以参考官方文档：</p><p><a href=https://kubernetes.github.io/ingress-nginx/examples/rewrite/>Rewrite - NGINX Ingress Controller</a></p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>metadata:
+</span></span><span style=display:flex><span>  annotations:
+</span></span><span style=display:flex><span>    nginx.ingress.kubernetes.io/rewrite-target: /<span style=color:#b8860b>$2</span>
+</span></span><span style=display:flex><span>spec:
+</span></span><span style=display:flex><span>...
+</span></span><span style=display:flex><span>    http:
+</span></span><span style=display:flex><span>      paths:
+</span></span><span style=display:flex><span>      - path: /something<span style=color:#666>(</span>/|$<span style=color:#666>)(</span>.*<span style=color:#666>)</span>
+</span></span></code></pre></div><ul><li>捕获的组按时间顺序以 $1、$2 &mldr; $n 的形式保存在编号的占位符中。这些占位符可以用作 rewrite-target 注释中的参数</li><li>(.*) 捕获的任何字符都将分配给占位符 $2，然后将其用作 rewrite-target 注释中的参数</li></ul><p>上面的Ingress定义将导致以下重写：</p><ul><li><code>rewrite.bar.com/something</code> rewrites to <code>rewrite.bar.com/</code></li><li><code>rewrite.bar.com/something/</code> rewrites to <code>rewrite.bar.com/</code></li><li><code>rewrite.bar.com/something/new</code> rewrites to <code>rewrite.bar.com/new</code></li></ul><p>改写yaml，效果要求：back.etaon.top:31283/nginx—>back.etaon.top:31283/</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>apiVersion: networking.k8s.io/v1
+</span></span><span style=display:flex><span>kind: Ingress  
+</span></span><span style=display:flex><span>metadata:
+</span></span><span style=display:flex><span>  annotations:
+</span></span><span style=display:flex><span>    nginx.ingress.kubernetes.io/rewrite-target: /<span style=color:#b8860b>$2</span>
+</span></span><span style=display:flex><span>  name: ingress-host-bar
+</span></span><span style=display:flex><span>spec:
+</span></span><span style=display:flex><span>  ingressClassName: nginx
+</span></span><span style=display:flex><span>  rules:
+</span></span><span style=display:flex><span>  - host: <span style=color:#b44>&#34;front.etaon.top&#34;</span>
+</span></span><span style=display:flex><span>    http:
+</span></span><span style=display:flex><span>      paths:
+</span></span><span style=display:flex><span>      - pathType: Prefix
+</span></span><span style=display:flex><span>        path: <span style=color:#b44>&#34;/&#34;</span>
+</span></span><span style=display:flex><span>        backend:
+</span></span><span style=display:flex><span>          service:
+</span></span><span style=display:flex><span>            name: front-app
+</span></span><span style=display:flex><span>            port:
+</span></span><span style=display:flex><span>              number: <span style=color:#666>80</span>
+</span></span><span style=display:flex><span>  - host: <span style=color:#b44>&#34;back.etaon.top&#34;</span>
+</span></span><span style=display:flex><span>    http:
+</span></span><span style=display:flex><span>      paths:
+</span></span><span style=display:flex><span>      - pathType: Prefix
+</span></span><span style=display:flex><span>        path: <span style=color:#b44>&#34;/nginx(/|</span>$<span style=color:#b44>)(.*)&#34;</span>  
+</span></span><span style=display:flex><span>        backend:
+</span></span><span style=display:flex><span>          service:
+</span></span><span style=display:flex><span>            name: back-app  
+</span></span><span style=display:flex><span>            port:
+</span></span><span style=display:flex><span>              number: <span style=color:#666>8080</span>
+</span></span></code></pre></div><p><img src=Ingress%20La%2055521/Untitled%204.png alt=Untitled></p><h3 id=速率限制>速率限制</h3><p>官方参考</p><p><a href=https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#rate-limiting>Annotations - NGINX Ingress Controller</a></p><p>可以定义很多规则：</p><ul><li><code>nginx.ingress.kubernetes.io/limit-connections</code>: number of concurrent connections allowed from a single IP address. A 503 error is returned when exceeding this limit.</li><li><code>nginx.ingress.kubernetes.io/limit-rps</code>: number of requests accepted from a given IP each second. The burst
 limit is set to this limit multiplied by the burst multiplier, the
-default multiplier is 5. When clients exceed this limit, <a href=https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/#limit-req-status-code>limit-req-status-code</a> <em><strong>default:</strong></em> 503 is returned.</li>
-<li><code>nginx.ingress.kubernetes.io/limit-rpm</code>: number of requests accepted from a given IP each minute. The burst
+default multiplier is 5. When clients exceed this limit, <a href=https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/#limit-req-status-code>limit-req-status-code</a> <em><strong>default:</strong></em> 503 is returned.</li><li><code>nginx.ingress.kubernetes.io/limit-rpm</code>: number of requests accepted from a given IP each minute. The burst
 limit is set to this limit multiplied by the burst multiplier, the
-default multiplier is 5. When clients exceed this limit, <a href=https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/#limit-req-status-code>limit-req-status-code</a> <em><strong>default:</strong></em> 503 is returned.</li>
-<li><code>nginx.ingress.kubernetes.io/limit-burst-multiplier</code>: multiplier of the limit rate for burst size. The default burst
+default multiplier is 5. When clients exceed this limit, <a href=https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/#limit-req-status-code>limit-req-status-code</a> <em><strong>default:</strong></em> 503 is returned.</li><li><code>nginx.ingress.kubernetes.io/limit-burst-multiplier</code>: multiplier of the limit rate for burst size. The default burst
 multiplier is 5, this annotation override the default multiplier. When
-clients exceed this limit, <a href=https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/#limit-req-status-code>limit-req-status-code</a> <em><strong>default:</strong></em> 503 is returned.</li>
-<li><code>nginx.ingress.kubernetes.io/limit-rate-after</code>: initial number of kilobytes after which the further transmission of a
+clients exceed this limit, <a href=https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/#limit-req-status-code>limit-req-status-code</a> <em><strong>default:</strong></em> 503 is returned.</li><li><code>nginx.ingress.kubernetes.io/limit-rate-after</code>: initial number of kilobytes after which the further transmission of a
 response to a given connection will be rate limited. This feature must
-be used with <a href=https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#proxy-buffering>proxy-buffering</a> enabled.</li>
-<li><code>nginx.ingress.kubernetes.io/limit-rate</code>: number of kilobytes per second allowed to send to a given connection.
-The zero value disables rate limiting. This feature must be used with <a href=https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#proxy-buffering>proxy-buffering</a> enabled.</li>
-<li><code>nginx.ingress.kubernetes.io/limit-whitelist</code>: client IP source ranges to be excluded from rate-limiting. The value is a comma separated list of CIDRs.</li>
-</ul>
-<p>选用limit-rps测试：
-每秒从给定 IP 接受的请求数。突发限制设置为此限制乘以突发倍数，默认倍数为 5。当客户端超过此限制时，返回 limit-req-status-code default: 503。</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>networking.k8s.io/v1<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>Ingress<span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>ingress-limit-rate<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>annotations</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>nginx.ingress.kubernetes.io/limit-rps</span>:<span style=color:#bbb> </span><span style=color:#b44>&#34;1&#34;</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>ingressClassName</span>:<span style=color:#bbb> </span>nginx<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>rules</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span>- <span style=color:green;font-weight:700>host</span>:<span style=color:#bbb> </span><span style=color:#b44>&#34;live.etaon.top&#34;</span><span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>http</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>paths</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>      </span>- <span style=color:green;font-weight:700>pathType</span>:<span style=color:#bbb> </span>Exact<span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>path</span>:<span style=color:#bbb> </span><span style=color:#b44>&#34;/&#34;</span><span style=color:#bbb>
-</span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>backend</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>          </span><span style=color:green;font-weight:700>service</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>            </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>back-app<span style=color:#bbb>
-</span><span style=color:#bbb>            </span><span style=color:green;font-weight:700>port</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>              </span><span style=color:green;font-weight:700>number</span>:<span style=color:#bbb> </span><span style=color:#666>8080</span><span style=color:#bbb>
-</span></code></pre></div><p>正常情况：</p>
-<p><img src=Ingress%20La%2055521/Untitled%205.png alt=Untitled></p>
-<p>加快点击刷新：</p>
-<p><img src=Ingress%20La%2055521/Untitled%206.png alt=Untitled></p>
-<p>出现503错误。</p>
-</div>
-<footer class=post-footer>
-<div id=wcomments></div>
-</footer>
-</article>
-</section>
-</div>
-</div>
-<div class=sidebar-toggle>
-<div class=sidebar-toggle-line-wrap>
-<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+be used with <a href=https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#proxy-buffering>proxy-buffering</a> enabled.</li><li><code>nginx.ingress.kubernetes.io/limit-rate</code>: number of kilobytes per second allowed to send to a given connection.
+The zero value disables rate limiting. This feature must be used with <a href=https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#proxy-buffering>proxy-buffering</a> enabled.</li><li><code>nginx.ingress.kubernetes.io/limit-whitelist</code>: client IP source ranges to be excluded from rate-limiting. The value is a comma separated list of CIDRs.</li></ul><p>选用limit-rps测试：
+每秒从给定 IP 接受的请求数。突发限制设置为此限制乘以突发倍数，默认倍数为 5。当客户端超过此限制时，返回 limit-req-status-code default: 503。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>networking.k8s.io/v1<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>Ingress<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>ingress-limit-rate<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>annotations</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>nginx.ingress.kubernetes.io/limit-rps</span>:<span style=color:#bbb> </span><span style=color:#b44>&#34;1&#34;</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>ingressClassName</span>:<span style=color:#bbb> </span>nginx<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>rules</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span>- <span style=color:green;font-weight:700>host</span>:<span style=color:#bbb> </span><span style=color:#b44>&#34;live.etaon.top&#34;</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>http</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>paths</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span>- <span style=color:green;font-weight:700>pathType</span>:<span style=color:#bbb> </span>Exact<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>path</span>:<span style=color:#bbb> </span><span style=color:#b44>&#34;/&#34;</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>backend</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>          </span><span style=color:green;font-weight:700>service</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>            </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>back-app<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>            </span><span style=color:green;font-weight:700>port</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>              </span><span style=color:green;font-weight:700>number</span>:<span style=color:#bbb> </span><span style=color:#666>8080</span><span style=color:#bbb>
+</span></span></span></code></pre></div><p>正常情况：</p><p><img src=Ingress%20La%2055521/Untitled%205.png alt=Untitled></p><p>加快点击刷新：</p><p><img src=Ingress%20La%2055521/Untitled%206.png alt=Untitled></p><p>出现503错误。</p></div><footer class=post-footer><div id=wcomments></div></footer></article></section></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
 <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-</div>
-</div>
-<aside id=sidebar class=sidebar>
-<div class=sidebar-inner>
-<ul class="sidebar-nav motion-element">
-<li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>
-文章目录
-</li>
-<li class=sidebar-nav-overview data-target=site-overview>
-站点概览
-</li>
-</ul>
-<section class="site-overview sidebar-panel">
-<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
-<img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon>
-<p class=site-author-name itemprop=name>Etaon</p>
-<p class="site-description motion-element" itemprop=description>
-Kepp Going!
-</p>
-</div>
-<nav class="site-state motion-element">
-<div class="site-state-item site-state-posts">
-<a href=/post/>
-<span class=site-state-item-count>61</span>
-<span class=site-state-item-name>日志</span>
-</a>
-</div>
-<div class="site-state-item site-state-categories">
-<a href=/categories/>
-<span class=site-state-item-count>13</span>
-<span class=site-state-item-name>分类</span>
-</a>
-</div>
-<div class="site-state-item site-state-tags">
-<a href=/tags/>
-<span class=site-state-item-count>34</span>
-<span class=site-state-item-name>标签</span>
-</a>
-</div>
-</nav>
-<div class="links-of-author motion-element">
-<span class=links-of-author-item>
-<a href=https://github.com/etaon target=_blank title=GitHub>
-<i class="fa fa-fw fa-github"></i>
-GitHub
-</a>
-</span>
-<span class=links-of-author-item>
-<a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN>
-<i class="fa fa-fw fa-CSDN"></i>
-CSDN
-</a>
-</span>
-</div>
-<div class="links-of-blogroll motion-element links-of-blogroll-inline">
-<div class=links-of-blogroll-title>
-<i class="fa fa-fw fa-globe"></i>
-友情链接
-</div>
-<ul class=links-of-blogroll-list>
-<li class=links-of-blogroll-item>
-<a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a>
-</li>
-</ul>
-</div>
-<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
-<div class=tagcloud-of-blogroll-title>
-<i class="fa fa-fw fa-tags"></i>
-标签云
-</div>
-<ul class=tagcloud-of-blogroll-list>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mysql>Mysql</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/aws>Aws</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/dql>Dql</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/hadoop>Hadoop</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/redis>Redis</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/cicd>Cicd</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/git>Git</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/istio>Istio</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mongodb>Mongodb</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/azure>Azure</a>
-</li>
-</ul>
-</div>
-</section>
-<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-<div class=post-toc>
-<div class=post-toc-content><nav id=TableOfContents>
-<ul>
-<li><a href=#环境准备>环境准备</a></li>
-<li><a href=#实验拓扑>实验拓扑</a></li>
-<li><a href=#实验步骤>实验步骤</a>
-<ul>
-<li><a href=#按域名访问>按域名访问</a></li>
-<li><a href=#rewrite>Rewrite</a></li>
-<li><a href=#速率限制>速率限制</a></li>
-</ul>
-</li>
-</ul>
-</nav></div>
-</div>
-</section>
-</div>
-</aside>
-</div>
-</main>
-<footer id=footer class=footer>
-<div class=footer-inner>
-<div class=copyright>
-<span class=copyright-year>
-&copy; 2010 - 2022
-</span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id=sidebar class=sidebar><div class=sidebar-inner><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>文章目录</li><li class=sidebar-nav-overview data-target=site-overview>站点概览</li></ul><section class="site-overview sidebar-panel"><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon><p class=site-author-name itemprop=name>Etaon</p><p class="site-description motion-element" itemprop=description>Kepp Going!</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=/post/><span class=site-state-item-count>61</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>13</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>34</span>
+<span class=site-state-item-name>标签</span></a></div></nav><div class="links-of-author motion-element"><span class=links-of-author-item><a href=https://github.com/etaon target=_blank title=GitHub><i class="fa fa-fw fa-github"></i>
+GitHub</a></span>
+<span class=links-of-author-item><a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN><i class="fa fa-fw fa-CSDN"></i>
+CSDN</a></span></div><div class="links-of-blogroll motion-element links-of-blogroll-inline"><div class=links-of-blogroll-title><i class="fa fa-fw fa-globe"></i>
+友情链接</div><ul class=links-of-blogroll-list><li class=links-of-blogroll-item><a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a></li><li class=links-of-blogroll-item><a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a></li><li class=links-of-blogroll-item><a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a></li><li class=links-of-blogroll-item><a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a></li></ul></div><div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline"><div class=tagcloud-of-blogroll-title><i class="fa fa-fw fa-tags"></i>
+标签云</div><ul class=tagcloud-of-blogroll-list><li class=tagcloud-of-blogroll-item><a href=/tags/mysql>Mysql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/aws>Aws</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/dql>Dql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/hadoop>Hadoop</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/redis>Redis</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/cicd>Cicd</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/git>Git</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/istio>Istio</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/mongodb>Mongodb</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/azure>Azure</a></li></ul></div></section><section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active"><div class=post-toc><div class=post-toc-content><nav id=TableOfContents><ul><li><a href=#环境准备>环境准备</a></li><li><a href=#实验拓扑>实验拓扑</a></li><li><a href=#实验步骤>实验步骤</a><ul><li><a href=#按域名访问>按域名访问</a></li><li><a href=#rewrite>Rewrite</a></li><li><a href=#速率限制>速率限制</a></li></ul></li></ul></nav></div></div></section></div></aside></div></main><footer id=footer class=footer><div class=footer-inner><div class=copyright><span class=copyright-year>&copy; 2010 - 2022</span>
 <span class=with-love><i class="fa fa-heart"></i></span>
-<span class=copyright-author>路无止境！</span>
-</div>
-<div class=powered-info>
-<span class=powered-by>
-Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.91.2</a>
-</span>
+<span class=copyright-author>路无止境！</span></div><div class=powered-info><span class=powered-by>Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.101.0</a></span>
 <span class=separator-line>/</span>
-<span class=theme-info>
-Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
-</a>
-</span>
-</div>
-<div class=vistor-info>
-<script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
-<span class=site-uv>
-<i class="fa fa-user"></i>
-<span class=busuanzi-value id=busuanzi_value_site_uv></span>
-</span>
+<span class=theme-info>Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank>NexT</a></span></div><div class=vistor-info><script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<span class=site-uv><i class="fa fa-user"></i>
+<span class=busuanzi-value id=busuanzi_value_site_uv></span></span>
 <span class=separator-line>/</span>
-<span class=site-pv>
-<i class="fa fa-eye"></i>
-<span class=busuanzi-value id=busuanzi_value_site_pv></span>
-</span>
-</div>
-<div class=license-info>
-<span class=storage-info>
-Storage by
-<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a>
-</span>
+<span class=site-pv><i class="fa fa-eye"></i>
+<span class=busuanzi-value id=busuanzi_value_site_pv></span></span></div><div class=license-info><span class=storage-info>Storage by
+<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a></span>
 <span class=separator-line>/</span>
-<span class=license-num>
-<a href target=_blank></a>
-</span>
-</div>
-</div>
-</footer>
-<div class=back-to-top>
-<i class="fa fa-arrow-up"></i>
-<span id=scrollpercent><span>0</span>%</span>
-</div>
-</div>
-<script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
+<span class=license-num><a href target=_blank></a></span></div></div></footer><div class=back-to-top><i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span></div></div><script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
 <script type=text/javascript src=/js/search.js></script>
 <script type=text/javascript src=/js/affix.js></script>
 <script type=text/javascript src=/js/scrollspy.js></script>
-<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.main').css('padding-bottom'),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}}),$(document).on('affixed.bs.affix',function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var b=$('.header-inner').height()+10,c,d,a,e;$('#sidebar').css({'margin-top':b}).show(),c=parseInt($('#sidebar').css('margin-top')),d=parseInt($('.sidebar-inner').css('height')),a=c+d,e=$('.content-wrap').height(),e<a&&$('.content-wrap').css('min-height',a),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
-<script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
-<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
-<script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+'//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js',function(){new Waline({el:'#wcomments',visitor:!0,avatar:'wavatar',avatarCDN:'https://sdn.geekzu.org/avatar/',avatarForce:!1,wordLimit:'200',placeholder:' 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ',requiredFields:['nick','mail'],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$('#wcomments').html('抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。')})</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type=text/javascript>function detectIE(){var e=window.navigator.userAgent,t=e.indexOf("MSIE "),n=e.indexOf("Trident/"),s=e.indexOf("Edge/");return t>0||n>0||s>0?-1:1}function getCntViewHeight(){var t=$("#content").height(),e=$(window).height(),n=t>e?t-e:$(document).height()-e;return n}function getScrollbarWidth(){var e=$("<div />").addClass("scrollbar-measure").prependTo("body"),t=e[0],n=t.offsetWidth-t.clientWidth;return e.remove(),n}function registerBackTop(){var t=50,e=$(".back-to-top");$(window).on("scroll",function(){e.toggleClass("back-to-top-on",window.pageYOffset>t);var s=$(window).scrollTop(),o=getCntViewHeight(),i=s/o,n=Math.round(i*100),a=n>100?100:n;$("#scrollpercent>span").html(a)}),e.on("click",function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var e=".post-toc",s=$(e),t=".active-current";s.on("activate.bs.scrollspy",function(){var t=$(e+" .active").last();n(),t.addClass("active-current")}).on("clear.bs.scrollspy",n),$("body").scrollspy({target:e});function n(){$(e+" "+t).removeClass(t.substring(1))}}function initAffix(){var e=$(".header-inner").height(),t=parseInt($(".main").css("padding-bottom"),10),n=e+10;$(".sidebar-inner").affix({offset:{top:n,bottom:t}}),$(document).on("affixed.bs.affix",function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){$(window).on("resize",function(){e&&clearTimeout(e),e=setTimeout(function(){var e=document.body.clientHeight-100;updateTOCHeight(e)},0)}),updateTOCHeight(document.body.clientHeight-100);var e,t=getScrollbarWidth();$(".post-toc").css("width","calc(100% + "+t+"px)")}function updateTOCHeight(e){e=e||"auto",$(".post-toc").css("max-height",e)}$(function(){var e,t,n,s,o=$(".header-inner").height()+10;$("#sidebar").css({"margin-top":o}).show(),t=parseInt($("#sidebar").css("margin-top")),n=parseInt($(".sidebar-inner").css("height")),e=t+n,s=$(".content-wrap").height(),s<e&&$(".content-wrap").css("min-height",e),$(".site-nav-toggle").on("click",function(){var e=$(".site-nav"),o=$(".toggle"),t="site-nav-on",i="toggle-close",n=e.hasClass(t),a=n?"slideUp":"slideDown",s=n?"removeClass":"addClass";e.stop()[a]("normal",function(){e[s](t),o[s](i)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$(".sidebar-nav-toc").click(function(){$(this).addClass("sidebar-nav-active"),$(this).next().removeClass("sidebar-nav-active"),$("."+$(this).next().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)}),$(".sidebar-nav-overview").click(function(){$(this).addClass("sidebar-nav-active"),$(this).prev().removeClass("sidebar-nav-active"),$("."+$(this).prev().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)})})</script><script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$(".post-body").viewer()})</script><script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+"//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js",function(){new Waline({el:"#wcomments",visitor:!0,avatar:"wavatar",avatarCDN:"https://sdn.geekzu.org/avatar/",avatarForce:!1,wordLimit:"200",placeholder:" 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ",requiredFields:["nick","mail"],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$("#wcomments").html("抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。")})</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
 <script type=text/javascript src="//s7.addthis.com/js/300/addthis_widget.js#pubid=Your%20AddthisId"></script>
-<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
-</body>
-</html>
+<script>(function(){var t,e=document.createElement("script"),n=window.location.protocol.split(":")[0];n==="https"?e.src="https://zz.bdstatic.com/linksubmit/push.js":e.src="http://push.zhanzhang.baidu.com/push.js",t=document.getElementsByTagName("script")[0],t.parentNode.insertBefore(e,t)})()</script></body></html>

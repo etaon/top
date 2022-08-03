@@ -1,582 +1,234 @@
-<!doctype html><html lang=zh-cn dir=content/zh-cn>
-<head>
-<meta charset=utf-8>
-<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
-<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
-<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
-<title> Redis Install - 路无止境！ </title>
-<meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云">
-<meta name=author content="Etaon">
-<meta property="og:title" content="Redis Install">
-<meta property="og:site_name" content="路无止境！">
-<meta property="og:image" content="/img/author.jpg">
-<meta name=title content="Redis Install - 路无止境！">
-<meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。">
-<link rel="shortcut icon" href=/img/favicon.ico>
-<link rel=apple-touch-icon href=/img/apple-touch-icon.png>
-<link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png>
-<link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css>
-<link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet>
-<link href=/css/main.css rel=stylesheet type=text/css>
-<link href=/css/syntax.css rel=stylesheet type=text/css>
-</head>
-<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
-<div class="container one-collumn sidebar-position-left page-home">
-<div class=headband></div>
-<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
-<div class=header-inner> <div class=site-brand-container>
-<div class=site-nav-toggle>
-<div class=toggle role=button style=opacity:1;top:0>
+<!doctype html><html lang=zh-cn dir=content/zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=content-security-policy content="upgrade-insecure-requests"><title>Redis Install - 路无止境！</title><meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云"><meta name=author content="Etaon"><meta property="og:title" content="Redis Install"><meta property="og:site_name" content="路无止境！"><meta property="og:image" content="/img/author.jpg"><meta name=title content="Redis Install - 路无止境！"><meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。"><link rel="shortcut icon" href=/img/favicon.ico><link rel=apple-touch-icon href=/img/apple-touch-icon.png><link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png><link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css><link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet><link href=/css/main.css rel=stylesheet type=text/css><link href=/css/syntax.css rel=stylesheet type=text/css></head><body itemscope itemtype=http://schema.org/WebPage lang=zh-hans><div class="container one-collumn sidebar-position-left page-home"><div class=headband></div><header id=header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle role=button style=opacity:1;top:0><span class=toggle-line></span>
 <span class=toggle-line></span>
-<span class=toggle-line></span>
-<span class=toggle-line></span>
-</div>
-</div>
-<div class=site-meta>
-<div class=multi-lang-switch>
-<i class="fa fa-fw fa-language" style=margin-right:5px></i>
-<a class=lang-link id=zh-cn href=#>中文</a>
-</div>
-<div class=custom-logo-site-title>
-<a href=/ class=brand rel=start>
-<span class=logo-line-before><i></i></span>
+<span class=toggle-line></span></div></div><div class=site-meta><div class=multi-lang-switch><i class="fa fa-fw fa-language" style=margin-right:5px></i>
+<a class=lang-link id=zh-cn href=#>中文</a></div><div class=custom-logo-site-title><a href=/ class=brand rel=start><span class=logo-line-before><i></i></span>
 <span class=site-title>路无止境！</span>
-<span class=logo-line-after><i></i></span>
-</a>
-</div>
-<p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p>
-</div>
-<div class=site-nav-right>
-<div class="toggle popup-trigger" style=opacity:1;top:0>
-<i class="fa fa-search fa-fw fa-lg"></i>
-</div>
-</div>
-</div>
-<nav class=site-nav>
-<ul id=menu class=menu>
-<li class=menu-item>
-<a href=/ rel=section>
-<i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页
-</a>
-</li>
-<li class=menu-item>
-<a href=/post rel=section>
-<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档
-</a>
-</li>
-<li class=menu-item>
-<a href=/about.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于我
-</a>
-</li>
-<li class=menu-item>
-<a href=/404.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益404
-</a>
-</li>
-<li class="menu-item menu-item-search">
-<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> 搜索</a>
-</li>
-</ul>
-<div class=site-search>
-<div class="popup search-popup local-search-popup">
-<div class="local-search-header clearfix">
-<span class=search-icon><i class="fa fa-search"></i> </span>
-<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
-<div class=local-search-input-wrapper>
-<input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
-</div>
-</div>
-<div id=local-search-result></div>
-</div>
-</div>
-</nav>
-</div>
-</header>
-<main id=main class=main>
-<div class=main-inner>
-<div class=content-wrap>
-<div id=content class=content>
-<section id=posts class=posts-expand>
-<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
-<header class=post-header>
-<h1 class=post-title itemprop="name headline" style=font-weight:700>
-<a class=post-title-link href=https://www.etaon.link/2021/11/10/redis-install.html itemprop=url>
-Redis Install
-</a>
-</h1>
-</header>
-<div class=post-body itemprop=articleBody>
-<h2 id=下载安装>下载安装</h2>
-<p>地址：
+<span class=logo-line-after><i></i></span></a></div><p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p></div><div class=site-nav-right><div class="toggle popup-trigger" style=opacity:1;top:0><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class=site-nav><ul id=menu class=menu><li class=menu-item><a href=/ rel=section><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class=menu-item><a href=/post rel=section><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class=menu-item><a href=/about.html rel=section><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于我</a></li><li class=menu-item><a href=/404.html rel=section><i class="menu-item-icon fa fa-fw fa-heartbeat"></i><br>公益404</a></li><li class="menu-item menu-item-search"><a href=javascript:; class=popup-trigger><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class=site-search><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class=search-icon><i class="fa fa-search"></i></span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span><div class=local-search-input-wrapper><input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off></div></div><div id=local-search-result></div></div></div></nav></div></header><main id=main class=main><div class=main-inner><div class=content-wrap><div id=content class=content><section id=posts class=posts-expand><article class="post post-type-normal" itemscope itemtype=http://schema.org/Article><header class=post-header><h1 class=post-title itemprop="name headline" style=font-weight:700><a class=post-title-link href=https://www.etaon.top/2021/11/10/redis-install.html itemprop=url>Redis Install</a></h1></header><div class=post-body itemprop=articleBody><h2 id=下载安装>下载安装</h2><p>地址：
 <a href=https://redis.io/download>https://redis.io/download</a>
 在该页面也给出了安装方法：
-Download, extract and compile Redis with:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>$ wget https://download.redis.io/releases/redis-6.2.6.tar.gz
-$ tar xzf redis-6.2.6.tar.gz
-$ cd redis-6.2.6
-$ make
-</code></pre></div><p>The binaries that are now compiled are available in the src directory. Run Redis with:</p>
-<blockquote>
-<p>$ src/redis-server</p>
-</blockquote>
-<p>You can interact with Redis using the built-in client:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>$ src/redis-cli
-redis&gt; set foo bar
-OK
-redis&gt; get foo
-&#34;bar&#34;
-</code></pre></div><p>在安装的时候出现了错误信息：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@worker-02 ~]# make
-……
-server.c:5209:176: `error: ‘struct redisServer’ has no member named ‘maxmemory’`
-         serverLog(LL_WARNING,&#34;WARNING: You specified a maxmemory value that is less than 1MB (current value is %llu bytes). Are you sure this is what you really want?&#34;, server.maxmemory);
-                                                                                                                                                                                ^
-server.c:5212:31: `error: ‘struct redisServer’ has no member named ‘server_cpulist’`
-     redisSetCpuAffinity(server.server_cpulist);
-                               ^
-server.c: In function ‘hasActiveChildProcess’:
-server.c:1480:1: warning: control reaches end of non-void function [-Wreturn-type]
- }
- ^
-server.c: In function ‘allPersistenceDisabled’:
-server.c:1486:1: warning: control reaches end of non-void function [-Wreturn-type]
- }
- ^
-server.c: In function ‘writeCommandsDeniedByDiskError’:
-server.c:3826:1: warning: control reaches end of non-void function [-Wreturn-type]
- }
- ^
-server.c: In function ‘iAmMaster’:
-server.c:5000:1: warning: control reaches end of non-void function [-Wreturn-type]
- }
- ^
-make[1]: *** [server.o] Error 1
-make[1]: Leaving directory `/root/redis-6.0.6/src&#39;
-make: *** [all] Error 2
-</code></pre></div><p>为gcc版本过低，查看gcc的版本。</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>#查看gcc的版本是否在 5.3以上，centos7默认是4.8.5.我这里的就是4.8.5
-gcc -v
-[root@worker-02 ~]# gcc -v
-Using built-in specs.
-COLLECT_GCC=gcc
-COLLECT_LTO_WRAPPER=/usr/libexec/gcc/x86_64-redhat-linux/4.8.5/lto-wrapper
-Target: x86_64-redhat-linux
-Configured with: ../configure --prefix=/usr --mandir=/usr/share/man --infodir=/usr/share/info --with-bugurl=http://bugzilla.redhat.com/bugzilla --enable-bootstrap --enable-shared --enable-threads=posix --enable-checking=release --with-system-zlib --enable-__cxa_atexit --disable-libunwind-exceptions --enable-gnu-unique-object --enable-linker-build-id --with-linker-hash-style=gnu --enable-languages=c,c++,objc,obj-c++,java,fortran,ada,go,lto --enable-plugin --enable-initfini-array --disable-libgcj --with-isl=/builddir/build/BUILD/gcc-4.8.5-20150702/obj-x86_64-redhat-linux/isl-install --with-cloog=/builddir/build/BUILD/gcc-4.8.5-20150702/obj-x86_64-redhat-linux/cloog-install --enable-gnu-indirect-function --with-tune=generic --with-arch_32=x86-64 --build=x86_64-redhat-linux
-Thread model: posix
-`gcc version 4.8.5 20150623 (Red Hat 4.8.5-44) (GCC) `
-</code></pre></div><p>解决方案：</p>
-<p>#升级到 5.3及以上版本</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>yum -y install centos-release-scl
-yum -y install devtoolset-9-gcc devtoolset-9-gcc-c++ devtoolset-9-binutils
-scl enable devtoolset-9 bash
-</code></pre></div><p>注意：scl命令启用只是临时的，退出xshell或者重启就会恢复到原来的gcc版本。
-如果要长期生效的话，执行如下：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>echo &#34;source /opt/rh/devtoolset-9/enable&#34; &gt;&gt;/etc/profile
-[root@worker-02 ~]# gcc -v
-Using built-in specs.
-COLLECT_GCC=gcc
-COLLECT_LTO_WRAPPER=/opt/rh/devtoolset-9/root/usr/libexec/gcc/x86_64-redhat-linux/9/lto-wrapper
-Target: x86_64-redhat-linux
-Configured with: ../configure --enable-bootstrap --enable-languages=c,c++,fortran,lto --prefix=/opt/rh/devtoolset-9/root/usr --mandir=/opt/rh/devtoolset-9/root/usr/share/man --infodir=/opt/rh/devtoolset-9/root/usr/share/info --with-bugurl=http://bugzilla.redhat.com/bugzilla --enable-shared --enable-threads=posix --enable-checking=release --enable-multilib --with-system-zlib --enable-__cxa_atexit --disable-libunwind-exceptions --enable-gnu-unique-object --enable-linker-build-id --with-gcc-major-version-only --with-linker-hash-style=gnu --with-default-libstdcxx-abi=gcc4-compatible --enable-plugin --enable-initfini-array --with-isl=/builddir/build/BUILD/gcc-9.3.1-20200408/obj-x86_64-redhat-linux/isl-install --disable-libmpx --enable-gnu-indirect-function --with-tune=generic --with-arch_32=x86-64 --build=x86_64-redhat-linux
-Thread model: posix
-`gcc version 9.3.1 20200408 (Red Hat 9.3.1-2) (GCC) `
-</code></pre></div><h2 id=控制启动端口>控制启动端口</h2>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@worker-02 src]# ./redis-server --port 6388
-
-![在这里插入图片描述](https://img-blog.csdnimg.cn/7fa5e07765f24861b293e6bd624f0b13.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16)
-</code></pre></div><p>相应的，从cli命令接入Redis也需要加上端口</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@worker-02 redis-6.0.6]# src/redis-cli -p 6388
-127.0.0.1:6388&gt;
-</code></pre></div><h2 id=利用conf文件启动>利用conf文件启动</h2>
-<p>在安装目录中有一个redis.conf文件，修改该文件</p>
-<ol>
-<li>去除解释和空白信息并写入文件</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@worker-02 redis-6.0.6]# cat redis.conf |grep -v &#34;#&#34;|grep -v &#34;^$&#34; &gt;redis-1110.conf
-[root@worker-02 redis-6.0.6]# cat redis-1110.conf
-bind 127.0.0.1
-protected-mode yes
-port 6379
-tcp-backlog 511
-timeout 0
-tcp-keepalive 300
-daemonize no
-supervised no
-pidfile /var/run/redis_6379.pid
-loglevel notice
-logfile &#34;&#34;
-databases 16
-always-show-logo yes
-save 900 1
-save 300 10
-save 60 10000
-stop-writes-on-bgsave-error yes
-rdbcompression yes
-rdbchecksum yes
-dbfilename dump.rdb
-rdb-del-sync-files no
-dir ./
-replica-serve-stale-data yes
-replica-read-only yes
-repl-diskless-sync no
-repl-diskless-sync-delay 5
-repl-diskless-load disabled
-repl-disable-tcp-nodelay no
-replica-priority 100
-acllog-max-len 128
-lazyfree-lazy-eviction no
-lazyfree-lazy-expire no
-lazyfree-lazy-server-del no
-replica-lazy-flush no
-lazyfree-lazy-user-del no
-appendonly no
-appendfilename &#34;appendonly.aof&#34;
-appendfsync everysec
-no-appendfsync-on-rewrite no
-auto-aof-rewrite-percentage 100
-auto-aof-rewrite-min-size 64mb
-aof-load-truncated yes
-aof-use-rdb-preamble yes
-lua-time-limit 5000
-slowlog-log-slower-than 10000
-slowlog-max-len 128
-latency-monitor-threshold 0
-notify-keyspace-events &#34;&#34;
-hash-max-ziplist-entries 512
-hash-max-ziplist-value 64
-list-max-ziplist-size -2
-list-compress-depth 0
-set-max-intset-entries 512
-zset-max-ziplist-entries 128
-zset-max-ziplist-value 64
-hll-sparse-max-bytes 3000
-stream-node-max-bytes 4096
-stream-node-max-entries 100
-activerehashing yes
-client-output-buffer-limit normal 0 0 0
-client-output-buffer-limit replica 256mb 64mb 60
-client-output-buffer-limit pubsub 32mb 8mb 60
-hz 10
-dynamic-hz yes
-aof-rewrite-incremental-fsync yes
-rdb-save-incremental-fsync yes
-jemalloc-bg-thread yes
-</code></pre></div><ol start=2>
-<li>只需要保留几条需要的配置：</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>port `6379`
-#执行端口
-daemonize `*yes*`
-#是否作为守护进程后台运行
-logfile `&#34;1110.log&#34;`
-#log文件名字
-dir `/root/redis-6.0.6/data`
-#工作目录
-</code></pre></div><ol start=3>
-<li>后台启动：</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@worker-02 redis-6.0.6]# src/redis-server redis-1110.conf
-[root@worker-02 redis-6.0.6]# ps -ef |grep redis
-`root       8616      1  0 22:10 ?        00:00:00 src/redis-server *:6379`
-root       8640   6487  0 22:11 pts/0    00:00:00 grep --color=auto redis
-</code></pre></div><ol start=4>
-<li>查看日志文件：</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@worker-02 data]# cat 1110.log
-8615:C 09 Nov 2021 22:10:51.386 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
-8615:C 09 Nov 2021 22:10:51.386 # Redis version=6.0.6, bits=64, commit=00000000, modified=0, pid=8615, just started
-8615:C 09 Nov 2021 22:10:51.386 # Configuration loaded
-8616:M 09 Nov 2021 22:10:51.388 * Increased maximum number of open files to 10032 (it was originally set to 1024).
-8616:M 09 Nov 2021 22:10:51.389 * Running mode=standalone, port=6379.
-8616:M 09 Nov 2021 22:10:51.389 # WARNING: The TCP backlog setting of 511 cannot be enforced because /proc/sys/net/core/somaxconn is set to the lower value of 128.
-8616:M 09 Nov 2021 22:10:51.389 # Server initialized
-8616:M 09 Nov 2021 22:10:51.389 # WARNING overcommit_memory is set to 0! Background save may fail under low memory condition. To fix this issue add &#39;vm.overcommit_memory = 1&#39; to /etc/sysctl.conf and then reboot or run the command &#39;sysctl vm.overcommit_memory=1&#39; for this to take effect.
-8616:M 09 Nov 2021 22:10:51.389 # WARNING you have Transparent Huge Pages (THP) support enabled in your kernel. This will create latency and memory usage issues with Redis. To fix this issue run the command &#39;echo never &gt; /sys/kernel/mm/transparent_hugepage/enabled&#39; as root, and add it to your /etc/rc.local in order to retain the setting after a reboot. Redis must be restarted after THP is disabled.
-8616:M 09 Nov 2021 22:10:51.389 * Ready to accept connections
-</code></pre></div><h2 id=启动多redis进程>启动多Redis进程</h2>
-<p>使用多个配置文件，指定不同端口和log文件</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@worker-02 redis-6.0.6]# src/redis-server ./conf/redis-6379.conf
-[root@worker-02 redis-6.0.6]# src/redis-server ./conf/redis-6380.conf
-[root@worker-02 redis-6.0.6]# src/redis-server ./conf/redis-6381.conf
-[root@worker-02 redis-6.0.6]# ps -ef |grep redis
-root       9080      1  0 22:49 ?        00:00:00 `src/redis-server *:6379`
-root       9109      1  0 22:50 ?        00:00:00 `src/redis-server *:6380`
-root       9115      1  1 22:50 ?        00:00:00 `src/redis-server *:6381`
-root       9121   6487  0 22:50 pts/0    00:00:00 grep --color=auto redis
-</code></pre></div><h2 id=从网络登录redis>从网络登录Redis</h2>
-<table>
-<thead>
-<tr>
-<th>Item</th>
-<th>IP Addr</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Redis Server</td>
-<td>192.168.21.12</td>
-</tr>
-<tr>
-<td>Redis Client</td>
-<td>192.168.21.11</td>
-</tr>
-</tbody>
-</table>
-<ol>
-<li>在Client上登录</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>Could not connect to Redis at 192.168.21.12:6379: `No route to host`
-not connected&gt; exit
-</code></pre></div><ol start=2>
-<li>测试IP层：</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>PING 192.168.21.12 (192.168.21.12) 56(84) bytes of data.
-64 bytes from 192.168.21.12: icmp_seq=1 ttl=64 time=0.451 ms
-64 bytes from 192.168.21.12: icmp_seq=2 ttl=64 time=1.58 ms
-</code></pre></div><ol start=3>
-<li>在Redis Server上关闭Iptables</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@worker-02 data]# iptables -F
-</code></pre></div><ol start=4>
-<li>Redis Client重新登录</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>192.168.21.12:6379&gt;
-</code></pre></div><p>成功！</p>
-<ol start=5>
-<li>测试</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>(error) DENIED Redis is running in protected mode because protected mode is enabled, no bind address was specified, no authentication password is requested to clients. In this mode connections are only accepted from the loopback interface. If you want to connect from external computers to Redis you may adopt one of the following solutions: 1) Just disable protected mode sending the command &#39;CONFIG SET protected-mode no&#39; from the loopback interface by connecting to Redis from the same host the server is running, however MAKE SURE Redis is not publicly accessible from internet if you do so. Use CONFIG REWRITE to make this change permanent. 2) Alternatively you can just disable the protected mode by editing the Redis configuration file, and setting the protected mode option to &#39;no&#39;, and then restarting the server. 3) If you started the server manually just for testing, restart it with the `&#39;--protected-mode no&#39;` option. 4) Setup a bind address or an authentication password. NOTE: You only need to do one of the above things in order for the server to start accepting connections from the outside.
-</code></pre></div><ol start=6>
-<li>按照提示在conf文件中加入protected-mode no并重启redis server</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>root       9080      1  0 22:49 ?        00:00:01 src/redis-server *:6379
-root       9109      1  0 22:50 ?        00:00:01 src/redis-server *:6380
-root       9115      1  0 22:50 ?        00:00:01 src/redis-server *:6381
-root       9330   6487  0 23:09 pts/0    00:00:00 grep --color=auto redis
-[root@worker-02 data]# kill -s 9 9080
-</code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@worker-02 data]# vim ../conf/redis-6379.conf
-&gt;&gt;port 6379
-daemonize yes
-dir /root/redis-6.0.6/data
-logfile &#34;6379.log&#34;
-`protected-mode no`
-</code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@worker-02 data]# ../src/redis-server ../conf/redis-6379.conf
-</code></pre></div><ol start=7>
-<li>Client重新测试</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@worker-01 src]# ./redis-cli -h 192.168.21.12
-192.168.21.12:6379&gt; ping
-PONG
-192.168.21.12:6379&gt; lpush list01 a1 b2 c3 e5
-(integer) 4
-192.168.21.12:6379&gt; lrange list01 0 -1
-&gt;1) &#34;e5&#34;
-&gt;2) &#34;c3&#34;
-&gt;3) &#34;b2&#34;
-&gt;4) &#34;a1&#34;
-</code></pre></div><p>成功！</p>
-</div>
-<footer class=post-footer>
-<div id=wcomments></div>
-</footer>
-</article>
-</section>
-</div>
-</div>
-<div class=sidebar-toggle>
-<div class=sidebar-toggle-line-wrap>
-<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+Download, extract and compile Redis with:</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>$ wget https://download.redis.io/releases/redis-6.2.6.tar.gz
+</span></span><span style=display:flex><span>$ tar xzf redis-6.2.6.tar.gz
+</span></span><span style=display:flex><span>$ cd redis-6.2.6
+</span></span><span style=display:flex><span>$ make
+</span></span></code></pre></div><p>The binaries that are now compiled are available in the src directory. Run Redis with:</p><blockquote><p>$ src/redis-server</p></blockquote><p>You can interact with Redis using the built-in client:</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>$ src/redis-cli
+</span></span><span style=display:flex><span>redis&gt; set foo bar
+</span></span><span style=display:flex><span>OK
+</span></span><span style=display:flex><span>redis&gt; get foo
+</span></span><span style=display:flex><span>&#34;bar&#34;
+</span></span></code></pre></div><p>在安装的时候出现了错误信息：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[root@worker-02 ~]# make
+</span></span><span style=display:flex><span>……
+</span></span><span style=display:flex><span>server.c:5209:176: `error: ‘struct redisServer’ has no member named ‘maxmemory’`
+</span></span><span style=display:flex><span>         serverLog(LL_WARNING,&#34;WARNING: You specified a maxmemory value that is less than 1MB (current value is %llu bytes). Are you sure this is what you really want?&#34;, server.maxmemory);
+</span></span><span style=display:flex><span>                                                                                                                                                                                ^
+</span></span><span style=display:flex><span>server.c:5212:31: `error: ‘struct redisServer’ has no member named ‘server_cpulist’`
+</span></span><span style=display:flex><span>     redisSetCpuAffinity(server.server_cpulist);
+</span></span><span style=display:flex><span>                               ^
+</span></span><span style=display:flex><span>server.c: In function ‘hasActiveChildProcess’:
+</span></span><span style=display:flex><span>server.c:1480:1: warning: control reaches end of non-void function [-Wreturn-type]
+</span></span><span style=display:flex><span> }
+</span></span><span style=display:flex><span> ^
+</span></span><span style=display:flex><span>server.c: In function ‘allPersistenceDisabled’:
+</span></span><span style=display:flex><span>server.c:1486:1: warning: control reaches end of non-void function [-Wreturn-type]
+</span></span><span style=display:flex><span> }
+</span></span><span style=display:flex><span> ^
+</span></span><span style=display:flex><span>server.c: In function ‘writeCommandsDeniedByDiskError’:
+</span></span><span style=display:flex><span>server.c:3826:1: warning: control reaches end of non-void function [-Wreturn-type]
+</span></span><span style=display:flex><span> }
+</span></span><span style=display:flex><span> ^
+</span></span><span style=display:flex><span>server.c: In function ‘iAmMaster’:
+</span></span><span style=display:flex><span>server.c:5000:1: warning: control reaches end of non-void function [-Wreturn-type]
+</span></span><span style=display:flex><span> }
+</span></span><span style=display:flex><span> ^
+</span></span><span style=display:flex><span>make[1]: *** [server.o] Error 1
+</span></span><span style=display:flex><span>make[1]: Leaving directory `/root/redis-6.0.6/src&#39;
+</span></span><span style=display:flex><span>make: *** [all] Error 2
+</span></span></code></pre></div><p>为gcc版本过低，查看gcc的版本。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>#查看gcc的版本是否在 5.3以上，centos7默认是4.8.5.我这里的就是4.8.5
+</span></span><span style=display:flex><span>gcc -v
+</span></span><span style=display:flex><span>[root@worker-02 ~]# gcc -v
+</span></span><span style=display:flex><span>Using built-in specs.
+</span></span><span style=display:flex><span>COLLECT_GCC=gcc
+</span></span><span style=display:flex><span>COLLECT_LTO_WRAPPER=/usr/libexec/gcc/x86_64-redhat-linux/4.8.5/lto-wrapper
+</span></span><span style=display:flex><span>Target: x86_64-redhat-linux
+</span></span><span style=display:flex><span>Configured with: ../configure --prefix=/usr --mandir=/usr/share/man --infodir=/usr/share/info --with-bugurl=http://bugzilla.redhat.com/bugzilla --enable-bootstrap --enable-shared --enable-threads=posix --enable-checking=release --with-system-zlib --enable-__cxa_atexit --disable-libunwind-exceptions --enable-gnu-unique-object --enable-linker-build-id --with-linker-hash-style=gnu --enable-languages=c,c++,objc,obj-c++,java,fortran,ada,go,lto --enable-plugin --enable-initfini-array --disable-libgcj --with-isl=/builddir/build/BUILD/gcc-4.8.5-20150702/obj-x86_64-redhat-linux/isl-install --with-cloog=/builddir/build/BUILD/gcc-4.8.5-20150702/obj-x86_64-redhat-linux/cloog-install --enable-gnu-indirect-function --with-tune=generic --with-arch_32=x86-64 --build=x86_64-redhat-linux
+</span></span><span style=display:flex><span>Thread model: posix
+</span></span><span style=display:flex><span>`gcc version 4.8.5 20150623 (Red Hat 4.8.5-44) (GCC) `
+</span></span></code></pre></div><p>解决方案：</p><p>#升级到 5.3及以上版本</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>yum -y install centos-release-scl
+</span></span><span style=display:flex><span>yum -y install devtoolset-9-gcc devtoolset-9-gcc-c++ devtoolset-9-binutils
+</span></span><span style=display:flex><span>scl enable devtoolset-9 bash
+</span></span></code></pre></div><p>注意：scl命令启用只是临时的，退出xshell或者重启就会恢复到原来的gcc版本。
+如果要长期生效的话，执行如下：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>echo &#34;source /opt/rh/devtoolset-9/enable&#34; &gt;&gt;/etc/profile
+</span></span><span style=display:flex><span>[root@worker-02 ~]# gcc -v
+</span></span><span style=display:flex><span>Using built-in specs.
+</span></span><span style=display:flex><span>COLLECT_GCC=gcc
+</span></span><span style=display:flex><span>COLLECT_LTO_WRAPPER=/opt/rh/devtoolset-9/root/usr/libexec/gcc/x86_64-redhat-linux/9/lto-wrapper
+</span></span><span style=display:flex><span>Target: x86_64-redhat-linux
+</span></span><span style=display:flex><span>Configured with: ../configure --enable-bootstrap --enable-languages=c,c++,fortran,lto --prefix=/opt/rh/devtoolset-9/root/usr --mandir=/opt/rh/devtoolset-9/root/usr/share/man --infodir=/opt/rh/devtoolset-9/root/usr/share/info --with-bugurl=http://bugzilla.redhat.com/bugzilla --enable-shared --enable-threads=posix --enable-checking=release --enable-multilib --with-system-zlib --enable-__cxa_atexit --disable-libunwind-exceptions --enable-gnu-unique-object --enable-linker-build-id --with-gcc-major-version-only --with-linker-hash-style=gnu --with-default-libstdcxx-abi=gcc4-compatible --enable-plugin --enable-initfini-array --with-isl=/builddir/build/BUILD/gcc-9.3.1-20200408/obj-x86_64-redhat-linux/isl-install --disable-libmpx --enable-gnu-indirect-function --with-tune=generic --with-arch_32=x86-64 --build=x86_64-redhat-linux
+</span></span><span style=display:flex><span>Thread model: posix
+</span></span><span style=display:flex><span>`gcc version 9.3.1 20200408 (Red Hat 9.3.1-2) (GCC) `
+</span></span></code></pre></div><h2 id=控制启动端口>控制启动端口</h2><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[root@worker-02 src]# ./redis-server --port 6388
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>![在这里插入图片描述](https://img-blog.csdnimg.cn/7fa5e07765f24861b293e6bd624f0b13.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16)
+</span></span></code></pre></div><p>相应的，从cli命令接入Redis也需要加上端口</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[root@worker-02 redis-6.0.6]# src/redis-cli -p 6388
+</span></span><span style=display:flex><span>127.0.0.1:6388&gt;
+</span></span></code></pre></div><h2 id=利用conf文件启动>利用conf文件启动</h2><p>在安装目录中有一个redis.conf文件，修改该文件</p><ol><li>去除解释和空白信息并写入文件</li></ol><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[root@worker-02 redis-6.0.6]# cat redis.conf |grep -v &#34;#&#34;|grep -v &#34;^$&#34; &gt;redis-1110.conf
+</span></span><span style=display:flex><span>[root@worker-02 redis-6.0.6]# cat redis-1110.conf
+</span></span><span style=display:flex><span>bind 127.0.0.1
+</span></span><span style=display:flex><span>protected-mode yes
+</span></span><span style=display:flex><span>port 6379
+</span></span><span style=display:flex><span>tcp-backlog 511
+</span></span><span style=display:flex><span>timeout 0
+</span></span><span style=display:flex><span>tcp-keepalive 300
+</span></span><span style=display:flex><span>daemonize no
+</span></span><span style=display:flex><span>supervised no
+</span></span><span style=display:flex><span>pidfile /var/run/redis_6379.pid
+</span></span><span style=display:flex><span>loglevel notice
+</span></span><span style=display:flex><span>logfile &#34;&#34;
+</span></span><span style=display:flex><span>databases 16
+</span></span><span style=display:flex><span>always-show-logo yes
+</span></span><span style=display:flex><span>save 900 1
+</span></span><span style=display:flex><span>save 300 10
+</span></span><span style=display:flex><span>save 60 10000
+</span></span><span style=display:flex><span>stop-writes-on-bgsave-error yes
+</span></span><span style=display:flex><span>rdbcompression yes
+</span></span><span style=display:flex><span>rdbchecksum yes
+</span></span><span style=display:flex><span>dbfilename dump.rdb
+</span></span><span style=display:flex><span>rdb-del-sync-files no
+</span></span><span style=display:flex><span>dir ./
+</span></span><span style=display:flex><span>replica-serve-stale-data yes
+</span></span><span style=display:flex><span>replica-read-only yes
+</span></span><span style=display:flex><span>repl-diskless-sync no
+</span></span><span style=display:flex><span>repl-diskless-sync-delay 5
+</span></span><span style=display:flex><span>repl-diskless-load disabled
+</span></span><span style=display:flex><span>repl-disable-tcp-nodelay no
+</span></span><span style=display:flex><span>replica-priority 100
+</span></span><span style=display:flex><span>acllog-max-len 128
+</span></span><span style=display:flex><span>lazyfree-lazy-eviction no
+</span></span><span style=display:flex><span>lazyfree-lazy-expire no
+</span></span><span style=display:flex><span>lazyfree-lazy-server-del no
+</span></span><span style=display:flex><span>replica-lazy-flush no
+</span></span><span style=display:flex><span>lazyfree-lazy-user-del no
+</span></span><span style=display:flex><span>appendonly no
+</span></span><span style=display:flex><span>appendfilename &#34;appendonly.aof&#34;
+</span></span><span style=display:flex><span>appendfsync everysec
+</span></span><span style=display:flex><span>no-appendfsync-on-rewrite no
+</span></span><span style=display:flex><span>auto-aof-rewrite-percentage 100
+</span></span><span style=display:flex><span>auto-aof-rewrite-min-size 64mb
+</span></span><span style=display:flex><span>aof-load-truncated yes
+</span></span><span style=display:flex><span>aof-use-rdb-preamble yes
+</span></span><span style=display:flex><span>lua-time-limit 5000
+</span></span><span style=display:flex><span>slowlog-log-slower-than 10000
+</span></span><span style=display:flex><span>slowlog-max-len 128
+</span></span><span style=display:flex><span>latency-monitor-threshold 0
+</span></span><span style=display:flex><span>notify-keyspace-events &#34;&#34;
+</span></span><span style=display:flex><span>hash-max-ziplist-entries 512
+</span></span><span style=display:flex><span>hash-max-ziplist-value 64
+</span></span><span style=display:flex><span>list-max-ziplist-size -2
+</span></span><span style=display:flex><span>list-compress-depth 0
+</span></span><span style=display:flex><span>set-max-intset-entries 512
+</span></span><span style=display:flex><span>zset-max-ziplist-entries 128
+</span></span><span style=display:flex><span>zset-max-ziplist-value 64
+</span></span><span style=display:flex><span>hll-sparse-max-bytes 3000
+</span></span><span style=display:flex><span>stream-node-max-bytes 4096
+</span></span><span style=display:flex><span>stream-node-max-entries 100
+</span></span><span style=display:flex><span>activerehashing yes
+</span></span><span style=display:flex><span>client-output-buffer-limit normal 0 0 0
+</span></span><span style=display:flex><span>client-output-buffer-limit replica 256mb 64mb 60
+</span></span><span style=display:flex><span>client-output-buffer-limit pubsub 32mb 8mb 60
+</span></span><span style=display:flex><span>hz 10
+</span></span><span style=display:flex><span>dynamic-hz yes
+</span></span><span style=display:flex><span>aof-rewrite-incremental-fsync yes
+</span></span><span style=display:flex><span>rdb-save-incremental-fsync yes
+</span></span><span style=display:flex><span>jemalloc-bg-thread yes
+</span></span></code></pre></div><ol start=2><li>只需要保留几条需要的配置：</li></ol><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>port `6379`
+</span></span><span style=display:flex><span>#执行端口
+</span></span><span style=display:flex><span>daemonize `*yes*`
+</span></span><span style=display:flex><span>#是否作为守护进程后台运行
+</span></span><span style=display:flex><span>logfile `&#34;1110.log&#34;`
+</span></span><span style=display:flex><span>#log文件名字
+</span></span><span style=display:flex><span>dir `/root/redis-6.0.6/data`
+</span></span><span style=display:flex><span>#工作目录
+</span></span></code></pre></div><ol start=3><li>后台启动：</li></ol><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[root@worker-02 redis-6.0.6]# src/redis-server redis-1110.conf
+</span></span><span style=display:flex><span>[root@worker-02 redis-6.0.6]# ps -ef |grep redis
+</span></span><span style=display:flex><span>`root       8616      1  0 22:10 ?        00:00:00 src/redis-server *:6379`
+</span></span><span style=display:flex><span>root       8640   6487  0 22:11 pts/0    00:00:00 grep --color=auto redis
+</span></span></code></pre></div><ol start=4><li>查看日志文件：</li></ol><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[root@worker-02 data]# cat 1110.log
+</span></span><span style=display:flex><span>8615:C 09 Nov 2021 22:10:51.386 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+</span></span><span style=display:flex><span>8615:C 09 Nov 2021 22:10:51.386 # Redis version=6.0.6, bits=64, commit=00000000, modified=0, pid=8615, just started
+</span></span><span style=display:flex><span>8615:C 09 Nov 2021 22:10:51.386 # Configuration loaded
+</span></span><span style=display:flex><span>8616:M 09 Nov 2021 22:10:51.388 * Increased maximum number of open files to 10032 (it was originally set to 1024).
+</span></span><span style=display:flex><span>8616:M 09 Nov 2021 22:10:51.389 * Running mode=standalone, port=6379.
+</span></span><span style=display:flex><span>8616:M 09 Nov 2021 22:10:51.389 # WARNING: The TCP backlog setting of 511 cannot be enforced because /proc/sys/net/core/somaxconn is set to the lower value of 128.
+</span></span><span style=display:flex><span>8616:M 09 Nov 2021 22:10:51.389 # Server initialized
+</span></span><span style=display:flex><span>8616:M 09 Nov 2021 22:10:51.389 # WARNING overcommit_memory is set to 0! Background save may fail under low memory condition. To fix this issue add &#39;vm.overcommit_memory = 1&#39; to /etc/sysctl.conf and then reboot or run the command &#39;sysctl vm.overcommit_memory=1&#39; for this to take effect.
+</span></span><span style=display:flex><span>8616:M 09 Nov 2021 22:10:51.389 # WARNING you have Transparent Huge Pages (THP) support enabled in your kernel. This will create latency and memory usage issues with Redis. To fix this issue run the command &#39;echo never &gt; /sys/kernel/mm/transparent_hugepage/enabled&#39; as root, and add it to your /etc/rc.local in order to retain the setting after a reboot. Redis must be restarted after THP is disabled.
+</span></span><span style=display:flex><span>8616:M 09 Nov 2021 22:10:51.389 * Ready to accept connections
+</span></span></code></pre></div><h2 id=启动多redis进程>启动多Redis进程</h2><p>使用多个配置文件，指定不同端口和log文件</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[root@worker-02 redis-6.0.6]# src/redis-server ./conf/redis-6379.conf
+</span></span><span style=display:flex><span>[root@worker-02 redis-6.0.6]# src/redis-server ./conf/redis-6380.conf
+</span></span><span style=display:flex><span>[root@worker-02 redis-6.0.6]# src/redis-server ./conf/redis-6381.conf
+</span></span><span style=display:flex><span>[root@worker-02 redis-6.0.6]# ps -ef |grep redis
+</span></span><span style=display:flex><span>root       9080      1  0 22:49 ?        00:00:00 `src/redis-server *:6379`
+</span></span><span style=display:flex><span>root       9109      1  0 22:50 ?        00:00:00 `src/redis-server *:6380`
+</span></span><span style=display:flex><span>root       9115      1  1 22:50 ?        00:00:00 `src/redis-server *:6381`
+</span></span><span style=display:flex><span>root       9121   6487  0 22:50 pts/0    00:00:00 grep --color=auto redis
+</span></span></code></pre></div><h2 id=从网络登录redis>从网络登录Redis</h2><table><thead><tr><th>Item</th><th>IP Addr</th></tr></thead><tbody><tr><td>Redis Server</td><td>192.168.21.12</td></tr><tr><td>Redis Client</td><td>192.168.21.11</td></tr></tbody></table><ol><li>在Client上登录</li></ol><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>Could not connect to Redis at 192.168.21.12:6379: `No route to host`
+</span></span><span style=display:flex><span>not connected&gt; exit
+</span></span></code></pre></div><ol start=2><li>测试IP层：</li></ol><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>PING 192.168.21.12 (192.168.21.12) 56(84) bytes of data.
+</span></span><span style=display:flex><span>64 bytes from 192.168.21.12: icmp_seq=1 ttl=64 time=0.451 ms
+</span></span><span style=display:flex><span>64 bytes from 192.168.21.12: icmp_seq=2 ttl=64 time=1.58 ms
+</span></span></code></pre></div><ol start=3><li>在Redis Server上关闭Iptables</li></ol><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[root@worker-02 data]# iptables -F
+</span></span></code></pre></div><ol start=4><li>Redis Client重新登录</li></ol><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>192.168.21.12:6379&gt;
+</span></span></code></pre></div><p>成功！</p><ol start=5><li>测试</li></ol><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>(error) DENIED Redis is running in protected mode because protected mode is enabled, no bind address was specified, no authentication password is requested to clients. In this mode connections are only accepted from the loopback interface. If you want to connect from external computers to Redis you may adopt one of the following solutions: 1) Just disable protected mode sending the command &#39;CONFIG SET protected-mode no&#39; from the loopback interface by connecting to Redis from the same host the server is running, however MAKE SURE Redis is not publicly accessible from internet if you do so. Use CONFIG REWRITE to make this change permanent. 2) Alternatively you can just disable the protected mode by editing the Redis configuration file, and setting the protected mode option to &#39;no&#39;, and then restarting the server. 3) If you started the server manually just for testing, restart it with the `&#39;--protected-mode no&#39;` option. 4) Setup a bind address or an authentication password. NOTE: You only need to do one of the above things in order for the server to start accepting connections from the outside.
+</span></span></code></pre></div><ol start=6><li>按照提示在conf文件中加入protected-mode no并重启redis server</li></ol><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>root       9080      1  0 22:49 ?        00:00:01 src/redis-server *:6379
+</span></span><span style=display:flex><span>root       9109      1  0 22:50 ?        00:00:01 src/redis-server *:6380
+</span></span><span style=display:flex><span>root       9115      1  0 22:50 ?        00:00:01 src/redis-server *:6381
+</span></span><span style=display:flex><span>root       9330   6487  0 23:09 pts/0    00:00:00 grep --color=auto redis
+</span></span><span style=display:flex><span>[root@worker-02 data]# kill -s 9 9080
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[root@worker-02 data]# vim ../conf/redis-6379.conf
+</span></span><span style=display:flex><span>&gt;&gt;port 6379
+</span></span><span style=display:flex><span>daemonize yes
+</span></span><span style=display:flex><span>dir /root/redis-6.0.6/data
+</span></span><span style=display:flex><span>logfile &#34;6379.log&#34;
+</span></span><span style=display:flex><span>`protected-mode no`
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[root@worker-02 data]# ../src/redis-server ../conf/redis-6379.conf
+</span></span></code></pre></div><ol start=7><li>Client重新测试</li></ol><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[root@worker-01 src]# ./redis-cli -h 192.168.21.12
+</span></span><span style=display:flex><span>192.168.21.12:6379&gt; ping
+</span></span><span style=display:flex><span>PONG
+</span></span><span style=display:flex><span>192.168.21.12:6379&gt; lpush list01 a1 b2 c3 e5
+</span></span><span style=display:flex><span>(integer) 4
+</span></span><span style=display:flex><span>192.168.21.12:6379&gt; lrange list01 0 -1
+</span></span><span style=display:flex><span>&gt;1) &#34;e5&#34;
+</span></span><span style=display:flex><span>&gt;2) &#34;c3&#34;
+</span></span><span style=display:flex><span>&gt;3) &#34;b2&#34;
+</span></span><span style=display:flex><span>&gt;4) &#34;a1&#34;
+</span></span></code></pre></div><p>成功！</p></div><footer class=post-footer><div id=wcomments></div></footer></article></section></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
 <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-</div>
-</div>
-<aside id=sidebar class=sidebar>
-<div class=sidebar-inner>
-<ul class="sidebar-nav motion-element">
-<li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>
-文章目录
-</li>
-<li class=sidebar-nav-overview data-target=site-overview>
-站点概览
-</li>
-</ul>
-<section class="site-overview sidebar-panel">
-<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
-<img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon>
-<p class=site-author-name itemprop=name>Etaon</p>
-<p class="site-description motion-element" itemprop=description>
-Kepp Going!
-</p>
-</div>
-<nav class="site-state motion-element">
-<div class="site-state-item site-state-posts">
-<a href=/post/>
-<span class=site-state-item-count>61</span>
-<span class=site-state-item-name>日志</span>
-</a>
-</div>
-<div class="site-state-item site-state-categories">
-<a href=/categories/>
-<span class=site-state-item-count>13</span>
-<span class=site-state-item-name>分类</span>
-</a>
-</div>
-<div class="site-state-item site-state-tags">
-<a href=/tags/>
-<span class=site-state-item-count>34</span>
-<span class=site-state-item-name>标签</span>
-</a>
-</div>
-</nav>
-<div class="links-of-author motion-element">
-<span class=links-of-author-item>
-<a href=https://github.com/etaon target=_blank title=GitHub>
-<i class="fa fa-fw fa-github"></i>
-GitHub
-</a>
-</span>
-<span class=links-of-author-item>
-<a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN>
-<i class="fa fa-fw fa-CSDN"></i>
-CSDN
-</a>
-</span>
-</div>
-<div class="links-of-blogroll motion-element links-of-blogroll-inline">
-<div class=links-of-blogroll-title>
-<i class="fa fa-fw fa-globe"></i>
-友情链接
-</div>
-<ul class=links-of-blogroll-list>
-<li class=links-of-blogroll-item>
-<a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a>
-</li>
-</ul>
-</div>
-<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
-<div class=tagcloud-of-blogroll-title>
-<i class="fa fa-fw fa-tags"></i>
-标签云
-</div>
-<ul class=tagcloud-of-blogroll-list>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mysql>Mysql</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/aws>Aws</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/dql>Dql</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/hadoop>Hadoop</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/redis>Redis</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/cicd>Cicd</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/git>Git</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/istio>Istio</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mongodb>Mongodb</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/azure>Azure</a>
-</li>
-</ul>
-</div>
-</section>
-<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-<div class=post-toc>
-<div class=post-toc-content><nav id=TableOfContents>
-<ul>
-<li><a href=#下载安装>下载安装</a></li>
-<li><a href=#控制启动端口>控制启动端口</a></li>
-<li><a href=#利用conf文件启动>利用conf文件启动</a></li>
-<li><a href=#启动多redis进程>启动多Redis进程</a></li>
-<li><a href=#从网络登录redis>从网络登录Redis</a></li>
-</ul>
-</nav></div>
-</div>
-</section>
-</div>
-</aside>
-</div>
-</main>
-<footer id=footer class=footer>
-<div class=footer-inner>
-<div class=copyright>
-<span class=copyright-year>
-&copy; 2010 - 2022
-</span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id=sidebar class=sidebar><div class=sidebar-inner><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>文章目录</li><li class=sidebar-nav-overview data-target=site-overview>站点概览</li></ul><section class="site-overview sidebar-panel"><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon><p class=site-author-name itemprop=name>Etaon</p><p class="site-description motion-element" itemprop=description>Kepp Going!</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=/post/><span class=site-state-item-count>61</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>13</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>34</span>
+<span class=site-state-item-name>标签</span></a></div></nav><div class="links-of-author motion-element"><span class=links-of-author-item><a href=https://github.com/etaon target=_blank title=GitHub><i class="fa fa-fw fa-github"></i>
+GitHub</a></span>
+<span class=links-of-author-item><a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN><i class="fa fa-fw fa-CSDN"></i>
+CSDN</a></span></div><div class="links-of-blogroll motion-element links-of-blogroll-inline"><div class=links-of-blogroll-title><i class="fa fa-fw fa-globe"></i>
+友情链接</div><ul class=links-of-blogroll-list><li class=links-of-blogroll-item><a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a></li><li class=links-of-blogroll-item><a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a></li><li class=links-of-blogroll-item><a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a></li><li class=links-of-blogroll-item><a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a></li></ul></div><div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline"><div class=tagcloud-of-blogroll-title><i class="fa fa-fw fa-tags"></i>
+标签云</div><ul class=tagcloud-of-blogroll-list><li class=tagcloud-of-blogroll-item><a href=/tags/mysql>Mysql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/aws>Aws</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/dql>Dql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/hadoop>Hadoop</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/redis>Redis</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/cicd>Cicd</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/git>Git</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/istio>Istio</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/mongodb>Mongodb</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/azure>Azure</a></li></ul></div></section><section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active"><div class=post-toc><div class=post-toc-content><nav id=TableOfContents><ul><li><a href=#下载安装>下载安装</a></li><li><a href=#控制启动端口>控制启动端口</a></li><li><a href=#利用conf文件启动>利用conf文件启动</a></li><li><a href=#启动多redis进程>启动多Redis进程</a></li><li><a href=#从网络登录redis>从网络登录Redis</a></li></ul></nav></div></div></section></div></aside></div></main><footer id=footer class=footer><div class=footer-inner><div class=copyright><span class=copyright-year>&copy; 2010 - 2022</span>
 <span class=with-love><i class="fa fa-heart"></i></span>
-<span class=copyright-author>路无止境！</span>
-</div>
-<div class=powered-info>
-<span class=powered-by>
-Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.91.2</a>
-</span>
+<span class=copyright-author>路无止境！</span></div><div class=powered-info><span class=powered-by>Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.101.0</a></span>
 <span class=separator-line>/</span>
-<span class=theme-info>
-Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
-</a>
-</span>
-</div>
-<div class=vistor-info>
-<script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
-<span class=site-uv>
-<i class="fa fa-user"></i>
-<span class=busuanzi-value id=busuanzi_value_site_uv></span>
-</span>
+<span class=theme-info>Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank>NexT</a></span></div><div class=vistor-info><script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<span class=site-uv><i class="fa fa-user"></i>
+<span class=busuanzi-value id=busuanzi_value_site_uv></span></span>
 <span class=separator-line>/</span>
-<span class=site-pv>
-<i class="fa fa-eye"></i>
-<span class=busuanzi-value id=busuanzi_value_site_pv></span>
-</span>
-</div>
-<div class=license-info>
-<span class=storage-info>
-Storage by
-<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a>
-</span>
+<span class=site-pv><i class="fa fa-eye"></i>
+<span class=busuanzi-value id=busuanzi_value_site_pv></span></span></div><div class=license-info><span class=storage-info>Storage by
+<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a></span>
 <span class=separator-line>/</span>
-<span class=license-num>
-<a href target=_blank></a>
-</span>
-</div>
-</div>
-</footer>
-<div class=back-to-top>
-<i class="fa fa-arrow-up"></i>
-<span id=scrollpercent><span>0</span>%</span>
-</div>
-</div>
-<script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
+<span class=license-num><a href target=_blank></a></span></div></div></footer><div class=back-to-top><i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span></div></div><script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
 <script type=text/javascript src=/js/search.js></script>
 <script type=text/javascript src=/js/affix.js></script>
 <script type=text/javascript src=/js/scrollspy.js></script>
-<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.main').css('padding-bottom'),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}}),$(document).on('affixed.bs.affix',function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var b=$('.header-inner').height()+10,c,d,a,e;$('#sidebar').css({'margin-top':b}).show(),c=parseInt($('#sidebar').css('margin-top')),d=parseInt($('.sidebar-inner').css('height')),a=c+d,e=$('.content-wrap').height(),e<a&&$('.content-wrap').css('min-height',a),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
-<script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
-<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
-<script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+'//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js',function(){new Waline({el:'#wcomments',visitor:!0,avatar:'wavatar',avatarCDN:'https://sdn.geekzu.org/avatar/',avatarForce:!1,wordLimit:'200',placeholder:' 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ',requiredFields:['nick','mail'],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$('#wcomments').html('抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。')})</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type=text/javascript>function detectIE(){var e=window.navigator.userAgent,t=e.indexOf("MSIE "),n=e.indexOf("Trident/"),s=e.indexOf("Edge/");return t>0||n>0||s>0?-1:1}function getCntViewHeight(){var t=$("#content").height(),e=$(window).height(),n=t>e?t-e:$(document).height()-e;return n}function getScrollbarWidth(){var e=$("<div />").addClass("scrollbar-measure").prependTo("body"),t=e[0],n=t.offsetWidth-t.clientWidth;return e.remove(),n}function registerBackTop(){var t=50,e=$(".back-to-top");$(window).on("scroll",function(){e.toggleClass("back-to-top-on",window.pageYOffset>t);var s=$(window).scrollTop(),o=getCntViewHeight(),i=s/o,n=Math.round(i*100),a=n>100?100:n;$("#scrollpercent>span").html(a)}),e.on("click",function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var e=".post-toc",s=$(e),t=".active-current";s.on("activate.bs.scrollspy",function(){var t=$(e+" .active").last();n(),t.addClass("active-current")}).on("clear.bs.scrollspy",n),$("body").scrollspy({target:e});function n(){$(e+" "+t).removeClass(t.substring(1))}}function initAffix(){var e=$(".header-inner").height(),t=parseInt($(".main").css("padding-bottom"),10),n=e+10;$(".sidebar-inner").affix({offset:{top:n,bottom:t}}),$(document).on("affixed.bs.affix",function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){$(window).on("resize",function(){e&&clearTimeout(e),e=setTimeout(function(){var e=document.body.clientHeight-100;updateTOCHeight(e)},0)}),updateTOCHeight(document.body.clientHeight-100);var e,t=getScrollbarWidth();$(".post-toc").css("width","calc(100% + "+t+"px)")}function updateTOCHeight(e){e=e||"auto",$(".post-toc").css("max-height",e)}$(function(){var e,t,n,s,o=$(".header-inner").height()+10;$("#sidebar").css({"margin-top":o}).show(),t=parseInt($("#sidebar").css("margin-top")),n=parseInt($(".sidebar-inner").css("height")),e=t+n,s=$(".content-wrap").height(),s<e&&$(".content-wrap").css("min-height",e),$(".site-nav-toggle").on("click",function(){var e=$(".site-nav"),o=$(".toggle"),t="site-nav-on",i="toggle-close",n=e.hasClass(t),a=n?"slideUp":"slideDown",s=n?"removeClass":"addClass";e.stop()[a]("normal",function(){e[s](t),o[s](i)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$(".sidebar-nav-toc").click(function(){$(this).addClass("sidebar-nav-active"),$(this).next().removeClass("sidebar-nav-active"),$("."+$(this).next().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)}),$(".sidebar-nav-overview").click(function(){$(this).addClass("sidebar-nav-active"),$(this).prev().removeClass("sidebar-nav-active"),$("."+$(this).prev().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)})})</script><script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$(".post-body").viewer()})</script><script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+"//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js",function(){new Waline({el:"#wcomments",visitor:!0,avatar:"wavatar",avatarCDN:"https://sdn.geekzu.org/avatar/",avatarForce:!1,wordLimit:"200",placeholder:" 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ",requiredFields:["nick","mail"],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$("#wcomments").html("抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。")})</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
 <script type=text/javascript src="//s7.addthis.com/js/300/addthis_widget.js#pubid=Your%20AddthisId"></script>
-<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
-</body>
-</html>
+<script>(function(){var t,e=document.createElement("script"),n=window.location.protocol.split(":")[0];n==="https"?e.src="https://zz.bdstatic.com/linksubmit/push.js":e.src="http://push.zhanzhang.baidu.com/push.js",t=document.getElementsByTagName("script")[0],t.parentNode.insertBefore(e,t)})()</script></body></html>

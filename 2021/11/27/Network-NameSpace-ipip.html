@@ -1,670 +1,203 @@
-<!doctype html><html lang=zh-cn dir=content/zh-cn>
-<head>
-<meta charset=utf-8>
-<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
-<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
-<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
-<title> Network NameSpace & ipip - 路无止境！ </title>
-<meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云">
-<meta name=author content="Etaon">
-<meta property="og:title" content="Network NameSpace & ipip">
-<meta property="og:site_name" content="路无止境！">
-<meta property="og:image" content="/img/author.jpg">
-<meta name=title content="Network NameSpace & ipip - 路无止境！">
-<meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。">
-<link rel="shortcut icon" href=/img/favicon.ico>
-<link rel=apple-touch-icon href=/img/apple-touch-icon.png>
-<link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png>
-<link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css>
-<link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet>
-<link href=/css/main.css rel=stylesheet type=text/css>
-<link href=/css/syntax.css rel=stylesheet type=text/css>
-</head>
-<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
-<div class="container one-collumn sidebar-position-left page-home">
-<div class=headband></div>
-<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
-<div class=header-inner> <div class=site-brand-container>
-<div class=site-nav-toggle>
-<div class=toggle role=button style=opacity:1;top:0>
+<!doctype html><html lang=zh-cn dir=content/zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=content-security-policy content="upgrade-insecure-requests"><title>Network NameSpace & ipip - 路无止境！</title><meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云"><meta name=author content="Etaon"><meta property="og:title" content="Network NameSpace & ipip"><meta property="og:site_name" content="路无止境！"><meta property="og:image" content="/img/author.jpg"><meta name=title content="Network NameSpace & ipip - 路无止境！"><meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。"><link rel="shortcut icon" href=/img/favicon.ico><link rel=apple-touch-icon href=/img/apple-touch-icon.png><link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png><link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css><link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet><link href=/css/main.css rel=stylesheet type=text/css><link href=/css/syntax.css rel=stylesheet type=text/css></head><body itemscope itemtype=http://schema.org/WebPage lang=zh-hans><div class="container one-collumn sidebar-position-left page-home"><div class=headband></div><header id=header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle role=button style=opacity:1;top:0><span class=toggle-line></span>
 <span class=toggle-line></span>
-<span class=toggle-line></span>
-<span class=toggle-line></span>
-</div>
-</div>
-<div class=site-meta>
-<div class=multi-lang-switch>
-<i class="fa fa-fw fa-language" style=margin-right:5px></i>
-<a class=lang-link id=zh-cn href=#>中文</a>
-</div>
-<div class=custom-logo-site-title>
-<a href=/ class=brand rel=start>
-<span class=logo-line-before><i></i></span>
+<span class=toggle-line></span></div></div><div class=site-meta><div class=multi-lang-switch><i class="fa fa-fw fa-language" style=margin-right:5px></i>
+<a class=lang-link id=zh-cn href=#>中文</a></div><div class=custom-logo-site-title><a href=/ class=brand rel=start><span class=logo-line-before><i></i></span>
 <span class=site-title>路无止境！</span>
-<span class=logo-line-after><i></i></span>
-</a>
-</div>
-<p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p>
-</div>
-<div class=site-nav-right>
-<div class="toggle popup-trigger" style=opacity:1;top:0>
-<i class="fa fa-search fa-fw fa-lg"></i>
-</div>
-</div>
-</div>
-<nav class=site-nav>
-<ul id=menu class=menu>
-<li class=menu-item>
-<a href=/ rel=section>
-<i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页
-</a>
-</li>
-<li class=menu-item>
-<a href=/post rel=section>
-<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档
-</a>
-</li>
-<li class=menu-item>
-<a href=/about.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于我
-</a>
-</li>
-<li class=menu-item>
-<a href=/404.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益404
-</a>
-</li>
-<li class="menu-item menu-item-search">
-<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> 搜索</a>
-</li>
-</ul>
-<div class=site-search>
-<div class="popup search-popup local-search-popup">
-<div class="local-search-header clearfix">
-<span class=search-icon><i class="fa fa-search"></i> </span>
-<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
-<div class=local-search-input-wrapper>
-<input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
-</div>
-</div>
-<div id=local-search-result></div>
-</div>
-</div>
-</nav>
-</div>
-</header>
-<main id=main class=main>
-<div class=main-inner>
-<div class=content-wrap>
-<div id=content class=content>
-<section id=posts class=posts-expand>
-<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
-<header class=post-header>
-<h1 class=post-title itemprop="name headline" style=font-weight:700>
-<a class=post-title-link href=https://www.etaon.link/2021/11/27/network-namespace-ipip.html itemprop=url>
-Network NameSpace & ipip
-</a>
-</h1>
-</header>
-<div class=post-body itemprop=articleBody>
-<h2 id=network-namespace>Network NameSpace</h2>
-<p>Linux的namespace（名字空间）的作用就是“隔离内核资源”。而network namespace（Linux内核2.6版本引入）作用是隔离Linux系统的设备，以及IP地址、端口、路由表、防火墙规则等网络资源。因此，每个network namespace里都有自己的网络设备（如IP地址、路由表、端口范围、/proc/net目录等）。</p>
-<h2 id=linux虚拟网络组件>Linux虚拟网络组件</h2>
-<h3 id=veth-pair>veth pair</h3>
-<ul>
-<li>veth是虚拟以太网卡（Virtual Ethernet）的缩写。veth设备总是成对的，因此被称之为veth pair。</li>
-<li>veth pair常被用于跨network namespace之间的通信，即分别将veth pair的两端放在不同的namespace里，如下图</li>
-</ul>
-<p><img src="https://img-blog.csdnimg.cn/fe99ba31efd749e2bb4b15878ffc7ac4.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="https://img-blog.csdnimg.cn/fe99ba31efd749e2bb4b15878ffc7ac4.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16"></p>
-<ul>
-<li>
-<p>以上方式仅适合于两个Namespace通信，一般我们会利用veth peer于namespace外界相连，如下图</p>
-<p><img src="https://img-blog.csdnimg.cn/e7cd4d25f5be4fb89453ca97bdaeb5c3.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="https://img-blog.csdnimg.cn/e7cd4d25f5be4fb89453ca97bdaeb5c3.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16"></p>
-</li>
-</ul>
-<h3 id=linux-bridge>Linux bridge</h3>
-<p>Linux bridge就是Linux系统中的网桥，但是Linux bridge的行为更像是一台虚拟的网络交换机，任意的真实物理设备（例如eth0）和虚拟设备（例如veth pair和tap设备）都可以连接到Linux bridge上。</p>
-<ul>
-<li>Linux bridge不能跨机连接网络设备。</li>
-</ul>
-<h3 id=tuntap>tun/tap</h3>
-<ul>
-<li>tun表示虚拟的是点对点设备</li>
-<li>tap表示虚拟的是以太网设备</li>
-<li>两种设备针对网络包实施不同的封装</li>
-</ul>
-<h4 id=工作原理>工作原理</h4>
-<p>普通通信情况，app通过socket API到达linux网络协议栈</p>
-<p><img src="https://img-blog.csdnimg.cn/8d54330a56ed4579845ca7e646e4bdf4.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="https://img-blog.csdnimg.cn/8d54330a56ed4579845ca7e646e4bdf4.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16"></p>
-<p>使用Tun/tap以后，tun设备通过一个设备文件（/dev/tunX）收发数据包。所有对这个文件的写操作会通过tun设备转换成一个数据包传送给内核网络协议栈。</p>
-<p><img src="https://img-blog.csdnimg.cn/3811f60744a4422f9ec97e4a25605548.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="https://img-blog.csdnimg.cn/3811f60744a4422f9ec97e4a25605548.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16"></p>
-<ul>
-<li>tun设备的/dev/tunX文件收发的是IP包，只能工作在L3，无法与物理网卡做桥接，但可以通过三层交换（例如ip_forward）与物理网卡连通</li>
-<li>tap设备的/dev/tapX文件收发的是链路层数据包，可以与物理网卡做桥接</li>
-</ul>
-<h2 id=linux-l3隧道>Linux L3隧道</h2>
-<p>Linux L3隧道底层实现原理都基于tun设备，因此可以将Linux L3隧道看作tun设备的高级应用篇。
-Linux原生支持下列5种L3隧道：</p>
-<ul>
-<li>ipip：即IPv4 in IPv4，在IPv4报文的基础上封装一个IPv4报文；</li>
-<li>GRE：即通用路由封装（Generic Routing Encapsulation），定义了在任意一种网络层协议上封装其他任意一种网络层协议的机制，适用于IPv4和IPv6；</li>
-<li>sit：和ipip类似，不同的是sit用IPv4报文封装IPv6报文，即IPv6 over IPv4；</li>
-<li>ISATAP：即站内自动隧道寻址协议（Intra-Site Automatic Tunnel AddressingProtocol），与sit类似，也用于IPv6的隧道封装；</li>
-<li>VTI：即虚拟隧道接口（Virtual Tunnel Interface），是思科提出的一种IPSec隧道技术。</li>
-</ul>
-<p>本文以ipip为例，学习Linux隧道通信的基本原理。</p>
-<h2 id=ipip实验>ipip实验</h2>
-<p>本实验分两部分</p>
-<ol>
-<li>同一主机的不同namespace间通过ipip建立隧道</li>
-<li>不同主机的namespace之间通过ipip建立隧道</li>
-</ol>
-<h3 id=环境拓扑>环境拓扑</h3>
-<p><img src="https://img-blog.csdnimg.cn/bd36204064d14b72aeecab88b37dde71.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="https://img-blog.csdnimg.cn/bd36204064d14b72aeecab88b37dde71.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16"></p>
-<p><a href=Network%20NameSpace%20&%20ipip%20aecf4ac66f1743deb5dec50f73cb3643/IP%E5%9C%B0%E5%9D%80%E8%AE%BE%E7%BD%AE%20f702e67d5eb54ea7864f6ebbf6bbf1fc.csv>IP地址设置</a></p>
-<h3 id=实验步骤>实验步骤</h3>
-<h4 id=同一主机不同namespace的ipip隧道>同一主机不同namespace的ipip隧道</h4>
-<ol>
-<li>Host 01上创建namespace</li>
-</ol>
-<blockquote>
-<p>ip netns add ns1
-ip netns add ns2</p>
-</blockquote>
-<ol start=2>
-<li>创建veth peer，并挂在相应的namespace下</li>
-</ol>
-<blockquote>
-<p>ip link add v1 type veth peer name v1_p
-ip link add v2 type veth peer name v2_p</p>
-</blockquote>
-<blockquote>
-<p>ip link set v1 netns ns1
-ip link set v2 netns ns2</p>
-</blockquote>
-<ol start=3>
-<li>在linux下配置veth peer的一端</li>
-</ol>
-<blockquote>
-<p>ip addr add 10.10.10.1/24 dev v1_p
+<span class=logo-line-after><i></i></span></a></div><p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p></div><div class=site-nav-right><div class="toggle popup-trigger" style=opacity:1;top:0><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class=site-nav><ul id=menu class=menu><li class=menu-item><a href=/ rel=section><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class=menu-item><a href=/post rel=section><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class=menu-item><a href=/about.html rel=section><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于我</a></li><li class=menu-item><a href=/404.html rel=section><i class="menu-item-icon fa fa-fw fa-heartbeat"></i><br>公益404</a></li><li class="menu-item menu-item-search"><a href=javascript:; class=popup-trigger><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class=site-search><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class=search-icon><i class="fa fa-search"></i></span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span><div class=local-search-input-wrapper><input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off></div></div><div id=local-search-result></div></div></div></nav></div></header><main id=main class=main><div class=main-inner><div class=content-wrap><div id=content class=content><section id=posts class=posts-expand><article class="post post-type-normal" itemscope itemtype=http://schema.org/Article><header class=post-header><h1 class=post-title itemprop="name headline" style=font-weight:700><a class=post-title-link href=https://www.etaon.top/2021/11/27/network-namespace-ipip.html itemprop=url>Network NameSpace & ipip</a></h1></header><div class=post-body itemprop=articleBody><h2 id=network-namespace>Network NameSpace</h2><p>Linux的namespace（名字空间）的作用就是“隔离内核资源”。而network namespace（Linux内核2.6版本引入）作用是隔离Linux系统的设备，以及IP地址、端口、路由表、防火墙规则等网络资源。因此，每个network namespace里都有自己的网络设备（如IP地址、路由表、端口范围、/proc/net目录等）。</p><h2 id=linux虚拟网络组件>Linux虚拟网络组件</h2><h3 id=veth-pair>veth pair</h3><ul><li>veth是虚拟以太网卡（Virtual Ethernet）的缩写。veth设备总是成对的，因此被称之为veth pair。</li><li>veth pair常被用于跨network namespace之间的通信，即分别将veth pair的两端放在不同的namespace里，如下图</li></ul><p><img src="https://img-blog.csdnimg.cn/fe99ba31efd749e2bb4b15878ffc7ac4.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="https://img-blog.csdnimg.cn/fe99ba31efd749e2bb4b15878ffc7ac4.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16"></p><ul><li><p>以上方式仅适合于两个Namespace通信，一般我们会利用veth peer于namespace外界相连，如下图</p><p><img src="https://img-blog.csdnimg.cn/e7cd4d25f5be4fb89453ca97bdaeb5c3.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="https://img-blog.csdnimg.cn/e7cd4d25f5be4fb89453ca97bdaeb5c3.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16"></p></li></ul><h3 id=linux-bridge>Linux bridge</h3><p>Linux bridge就是Linux系统中的网桥，但是Linux bridge的行为更像是一台虚拟的网络交换机，任意的真实物理设备（例如eth0）和虚拟设备（例如veth pair和tap设备）都可以连接到Linux bridge上。</p><ul><li>Linux bridge不能跨机连接网络设备。</li></ul><h3 id=tuntap>tun/tap</h3><ul><li>tun表示虚拟的是点对点设备</li><li>tap表示虚拟的是以太网设备</li><li>两种设备针对网络包实施不同的封装</li></ul><h4 id=工作原理>工作原理</h4><p>普通通信情况，app通过socket API到达linux网络协议栈</p><p><img src="https://img-blog.csdnimg.cn/8d54330a56ed4579845ca7e646e4bdf4.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="https://img-blog.csdnimg.cn/8d54330a56ed4579845ca7e646e4bdf4.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16"></p><p>使用Tun/tap以后，tun设备通过一个设备文件（/dev/tunX）收发数据包。所有对这个文件的写操作会通过tun设备转换成一个数据包传送给内核网络协议栈。</p><p><img src="https://img-blog.csdnimg.cn/3811f60744a4422f9ec97e4a25605548.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="https://img-blog.csdnimg.cn/3811f60744a4422f9ec97e4a25605548.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16"></p><ul><li>tun设备的/dev/tunX文件收发的是IP包，只能工作在L3，无法与物理网卡做桥接，但可以通过三层交换（例如ip_forward）与物理网卡连通</li><li>tap设备的/dev/tapX文件收发的是链路层数据包，可以与物理网卡做桥接</li></ul><h2 id=linux-l3隧道>Linux L3隧道</h2><p>Linux L3隧道底层实现原理都基于tun设备，因此可以将Linux L3隧道看作tun设备的高级应用篇。
+Linux原生支持下列5种L3隧道：</p><ul><li>ipip：即IPv4 in IPv4，在IPv4报文的基础上封装一个IPv4报文；</li><li>GRE：即通用路由封装（Generic Routing Encapsulation），定义了在任意一种网络层协议上封装其他任意一种网络层协议的机制，适用于IPv4和IPv6；</li><li>sit：和ipip类似，不同的是sit用IPv4报文封装IPv6报文，即IPv6 over IPv4；</li><li>ISATAP：即站内自动隧道寻址协议（Intra-Site Automatic Tunnel AddressingProtocol），与sit类似，也用于IPv6的隧道封装；</li><li>VTI：即虚拟隧道接口（Virtual Tunnel Interface），是思科提出的一种IPSec隧道技术。</li></ul><p>本文以ipip为例，学习Linux隧道通信的基本原理。</p><h2 id=ipip实验>ipip实验</h2><p>本实验分两部分</p><ol><li>同一主机的不同namespace间通过ipip建立隧道</li><li>不同主机的namespace之间通过ipip建立隧道</li></ol><h3 id=环境拓扑>环境拓扑</h3><p><img src="https://img-blog.csdnimg.cn/bd36204064d14b72aeecab88b37dde71.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="https://img-blog.csdnimg.cn/bd36204064d14b72aeecab88b37dde71.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16"></p><p><a href=Network%20NameSpace%20&%20ipip%20aecf4ac66f1743deb5dec50f73cb3643/IP%E5%9C%B0%E5%9D%80%E8%AE%BE%E7%BD%AE%20f702e67d5eb54ea7864f6ebbf6bbf1fc.csv>IP地址设置</a></p><h3 id=实验步骤>实验步骤</h3><h4 id=同一主机不同namespace的ipip隧道>同一主机不同namespace的ipip隧道</h4><ol><li>Host 01上创建namespace</li></ol><blockquote><p>ip netns add ns1
+ip netns add ns2</p></blockquote><ol start=2><li>创建veth peer，并挂在相应的namespace下</li></ol><blockquote><p>ip link add v1 type veth peer name v1_p
+ip link add v2 type veth peer name v2_p</p></blockquote><blockquote><p>ip link set v1 netns ns1
+ip link set v2 netns ns2</p></blockquote><ol start=3><li>在linux下配置veth peer的一端</li></ol><blockquote><p>ip addr add 10.10.10.1/24 dev v1_p
 ip link set v1_p up
 ip addr add 10.10.20.1/24 dev v2_p
-ip link set v2_p up</p>
-</blockquote>
-<ol start=4>
-<li>在namespace中配置veth peer的另一端</li>
-</ol>
-<blockquote>
-<p>ip netns exec ns1 ip addr add 10.10.10.2/24 dev v1
-ip netns exec ns1 ip link set v1 up</p>
-</blockquote>
-<blockquote>
-<p>ip netns exec ns2 ip addr add 10.10.20.2/24 dev v2
-ip netns exec ns2 ip link set v2 up</p>
-</blockquote>
-<ol start=5>
-<li>查看Linux网络协议栈中的ip_forward状态</li>
-</ol>
-<blockquote>
-<p>[root@worker-01 ~]# cat /proc/sys/net/ipv4/ip_forward
+ip link set v2_p up</p></blockquote><ol start=4><li>在namespace中配置veth peer的另一端</li></ol><blockquote><p>ip netns exec ns1 ip addr add 10.10.10.2/24 dev v1
+ip netns exec ns1 ip link set v1 up</p></blockquote><blockquote><p>ip netns exec ns2 ip addr add 10.10.20.2/24 dev v2
+ip netns exec ns2 ip link set v2 up</p></blockquote><ol start=5><li>查看Linux网络协议栈中的ip_forward状态</li></ol><blockquote><p>[root@worker-01 ~]# cat /proc/sys/net/ipv4/ip_forward
 1
-#1表示ip转发已打开，如是0的化，可以用一下方法打开</p>
-<ul>
-<li>echo 1 /proc/sys/net/ipv4/ip_forward #临时方案</li>
-<li>修改或增加 <code>/etc/sysctl.conf</code>中<code>net.ipv4.ip_forward = 1</code>#永久方案</li>
-</ul>
-</blockquote>
-<ol start=6>
-<li>增加namespace内部的对端路由</li>
-</ol>
-<blockquote>
-<p>ip netns exec ns1 route add -net 10.10.20.0 netmask 255.255.255.0 gw 10.10.10.1
-ip netns exec ns2 route add -net 10.10.10.0 netmask 255.255.255.0 gw 10.10.20.1</p>
-</blockquote>
-<ol start=7>
-<li>在namespace内部检查连通性，确定隧道两点的可达</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@worker-01 ~]#  ip netns exec ns1 ping 10.10.20.2
-PING 10.10.20.2 (10.10.20.2) 56(84) bytes of data.
-64 bytes from 10.10.20.2: icmp_seq=1 ttl=63 time=0.053 ms
-64 bytes from 10.10.20.2: icmp_seq=2 ttl=63 time=0.125 ms
-64 bytes from 10.10.20.2: icmp_seq=3 ttl=63 time=0.104 ms
-^C
---- 10.10.20.2 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 2000ms
-rtt min/avg/max/mdev = 0.053/0.094/0.125/0.030 ms
-[root@worker-01 ~]#  ip netns exec ns2 ping 10.10.10.2
-PING 10.10.10.2 (10.10.10.2) 56(84) bytes of data.
-64 bytes from 10.10.10.2: icmp_seq=1 ttl=63 time=0.071 ms
-64 bytes from 10.10.10.2: icmp_seq=2 ttl=63 time=0.086 ms
-64 bytes from 10.10.10.2: icmp_seq=3 ttl=63 time=0.054 ms
-64 bytes from 10.10.10.2: icmp_seq=4 ttl=63 time=0.098 ms
-^C
---- 10.10.10.2 ping statistics ---
-4 packets transmitted, 4 received, 0% packet loss, time 3004ms
-rtt min/avg/max/mdev = 0.054/0.077/0.098/0.017 ms
-
-</code></pre></div><ol start=8>
-<li>在namespace中创建tunnel</li>
-</ol>
-<blockquote>
-<p>ns1
+#1表示ip转发已打开，如是0的化，可以用一下方法打开</p><ul><li>echo 1 /proc/sys/net/ipv4/ip_forward #临时方案</li><li>修改或增加 <code>/etc/sysctl.conf</code>中<code>net.ipv4.ip_forward = 1</code>#永久方案</li></ul></blockquote><ol start=6><li>增加namespace内部的对端路由</li></ol><blockquote><p>ip netns exec ns1 route add -net 10.10.20.0 netmask 255.255.255.0 gw 10.10.10.1
+ip netns exec ns2 route add -net 10.10.10.0 netmask 255.255.255.0 gw 10.10.20.1</p></blockquote><ol start=7><li>在namespace内部检查连通性，确定隧道两点的可达</li></ol><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[root@worker-01 ~]#  ip netns exec ns1 ping 10.10.20.2
+</span></span><span style=display:flex><span>PING 10.10.20.2 (10.10.20.2) 56(84) bytes of data.
+</span></span><span style=display:flex><span>64 bytes from 10.10.20.2: icmp_seq=1 ttl=63 time=0.053 ms
+</span></span><span style=display:flex><span>64 bytes from 10.10.20.2: icmp_seq=2 ttl=63 time=0.125 ms
+</span></span><span style=display:flex><span>64 bytes from 10.10.20.2: icmp_seq=3 ttl=63 time=0.104 ms
+</span></span><span style=display:flex><span>^C
+</span></span><span style=display:flex><span>--- 10.10.20.2 ping statistics ---
+</span></span><span style=display:flex><span>3 packets transmitted, 3 received, 0% packet loss, time 2000ms
+</span></span><span style=display:flex><span>rtt min/avg/max/mdev = 0.053/0.094/0.125/0.030 ms
+</span></span><span style=display:flex><span>[root@worker-01 ~]#  ip netns exec ns2 ping 10.10.10.2
+</span></span><span style=display:flex><span>PING 10.10.10.2 (10.10.10.2) 56(84) bytes of data.
+</span></span><span style=display:flex><span>64 bytes from 10.10.10.2: icmp_seq=1 ttl=63 time=0.071 ms
+</span></span><span style=display:flex><span>64 bytes from 10.10.10.2: icmp_seq=2 ttl=63 time=0.086 ms
+</span></span><span style=display:flex><span>64 bytes from 10.10.10.2: icmp_seq=3 ttl=63 time=0.054 ms
+</span></span><span style=display:flex><span>64 bytes from 10.10.10.2: icmp_seq=4 ttl=63 time=0.098 ms
+</span></span><span style=display:flex><span>^C
+</span></span><span style=display:flex><span>--- 10.10.10.2 ping statistics ---
+</span></span><span style=display:flex><span>4 packets transmitted, 4 received, 0% packet loss, time 3004ms
+</span></span><span style=display:flex><span>rtt min/avg/max/mdev = 0.054/0.077/0.098/0.017 ms
+</span></span></code></pre></div><ol start=8><li>在namespace中创建tunnel</li></ol><blockquote><p>ns1
 ip netns exec ns1 ip tunnel add tun1 mode ipip remote 10.10.20.2 local 10.10.10.2
-ip netns exec ns1 ip link set tun1 up</p>
-</blockquote>
-<blockquote>
-<p>ns2
+ip netns exec ns1 ip link set tun1 up</p></blockquote><blockquote><p>ns2
 ip netns exec ns2 ip tunnel add tun1 mode ipip remote 10.10.10.2 local 10.10.20.2
-ip netns exec ns1 ip link set tun1 up</p>
-</blockquote>
-<ol start=9>
-<li>端口情况和隧道可达性
-host 01的端口情况</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@worker-01 ~]# ifconfig
-ens33: flags=4163&lt;UP,BROADCAST,RUNNING,MULTICAST&gt;  mtu 1500
-        inet 192.168.21.11  netmask 255.255.255.0  broadcast 192.168.21.255
-        inet6 fe80::f2a:f203:693b:c087  prefixlen 64  scopeid 0x20&lt;link&gt;
-        inet6 fe80::2c94:b9fd:ac8:6411  prefixlen 64  scopeid 0x20&lt;link&gt;
-        inet6 fe80::d95:b4d8:be84:cafa  prefixlen 64  scopeid 0x20&lt;link&gt;
-        ether 00:0c:29:3b:c1:97  txqueuelen 1000  (Ethernet)
-        RX packets 6123689  bytes 4238387536 (3.9 GiB)
-        RX errors 0  dropped 0  overruns 0  frame 0
-        TX packets 5925660  bytes 4772785528 (4.4 GiB)
-        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
-
-...
-v1_p: flags=4163&lt;UP,BROADCAST,RUNNING,MULTICAST&gt;  mtu 1500
-        inet 10.10.10.1  netmask 255.255.255.0  broadcast 0.0.0.0
-        inet6 fe80::bc35:a6ff:fe8c:b03  prefixlen 64  scopeid 0x20&lt;link&gt;
-        ether be:35:a6:8c:0b:03  txqueuelen 1000  (Ethernet)
-        RX packets 138  bytes 12040 (11.7 KiB)
-        RX errors 0  dropped 0  overruns 0  frame 0
-        TX packets 32090  bytes 5790391 (5.5 MiB)
-        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
-
-v2_p: flags=4163&lt;UP,BROADCAST,RUNNING,MULTICAST&gt;  mtu 1500
-        inet 10.10.20.1  netmask 255.255.255.0  broadcast 0.0.0.0
-        inet6 fe80::5808:d2ff:fee9:83ab  prefixlen 64  scopeid 0x20&lt;link&gt;
-        ether 5a:08:d2:e9:83:ab  txqueuelen 1000  (Ethernet)
-        RX packets 46  bytes 3656 (3.5 KiB)
-        RX errors 0  dropped 0  overruns 0  frame 0
-        TX packets 31218  bytes 5637199 (5.3 MiB)
-        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
-
-</code></pre></div><p>查看namespace内部的端口</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@worker-01 ~]#  ip netns exec ns1 ifconfig
-tun1: flags=209&lt;UP,POINTOPOINT,RUNNING,NOARP&gt;  mtu 1480
-     inet 172.16.10.10  netmask 255.255.255.255  destination 172.16.20.20
-     inet6 fe80::5efe:a0a:a02  prefixlen 64  scopeid 0x20&lt;link&gt;
-     tunnel   txqueuelen 1000  (IPIP Tunnel)
-     RX packets 3  bytes 252 (252.0 B)
-     RX errors 0  dropped 0  overruns 0  frame 0
-     TX packets 3  bytes 252 (252.0 B)
-     TX errors 3  dropped 0 overruns 0  carrier 0  collisions 0
-
-v1: flags=4163&lt;UP,BROADCAST,RUNNING,MULTICAST&gt;  mtu 1500
-     inet 10.10.10.2  netmask 255.255.255.0  broadcast 0.0.0.0
-     inet6 fe80::18f7:71ff:fecb:e113  prefixlen 64  scopeid 0x20&lt;link&gt;
-     ether 1a:f7:71:cb:e1:13  txqueuelen 1000  (Ethernet)
-     RX packets 32088  bytes 5790055 (5.5 MiB)
-     RX errors 0  dropped 0  overruns 0  frame 0
-     TX packets 138  bytes 12040 (11.7 KiB)
-     TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
-
-</code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@worker-01 ~]#  ip netns exec ns2 ifconfig
-tun2: flags=209&lt;UP,POINTOPOINT,RUNNING,NOARP&gt;  mtu 1480
-        inet 172.16.20.20  netmask 255.255.255.255  destination 172.16.10.10
-        inet6 fe80::5efe:a0a:1402  prefixlen 64  scopeid 0x20&lt;link&gt;
-        tunnel   txqueuelen 1000  (IPIP Tunnel)
-        RX packets 3  bytes 252 (252.0 B)
-        RX errors 0  dropped 0  overruns 0  frame 0
-        TX packets 3  bytes 252 (252.0 B)
-        TX errors 3  dropped 0 overruns 0  carrier 0  collisions 0
-
-v2: flags=4163&lt;UP,BROADCAST,RUNNING,MULTICAST&gt;  mtu 1500
-        inet 10.10.20.2  netmask 255.255.255.0  broadcast 0.0.0.0
-        inet6 fe80::f483:3eff:feb2:8b3f  prefixlen 64  scopeid 0x20&lt;link&gt;
-        ether f6:83:3e:b2:8b:3f  txqueuelen 1000  (Ethernet)
-        RX packets 31369  bytes 5664578 (5.4 MiB)
-        RX errors 0  dropped 0  overruns 0  frame 0
-        TX packets 46  bytes 3656 (3.5 KiB)
-        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
-
-</code></pre></div><p>可以看到隧道都已经建成。</p>
-<p>隧道访问情况：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@worker-01 ~]#  ip netns exec ns1 ping 172.16.20.20
-PING 172.16.20.20 (172.16.20.20) 56(84) bytes of data.
-64 bytes from 172.16.20.20: icmp_seq=1 ttl=64 time=0.109 ms
-64 bytes from 172.16.20.20: icmp_seq=2 ttl=64 time=0.104 ms
-64 bytes from 172.16.20.20: icmp_seq=3 ttl=64 time=0.087 ms
-^C
---- 172.16.20.20 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 1999ms
-rtt min/avg/max/mdev = 0.087/0.100/0.109/0.009 ms
-[root@worker-01 ~]#  ip netns exec ns2 ping 172.16.10.10
-PING 172.16.10.10 (172.16.10.10) 56(84) bytes of data.
-64 bytes from 172.16.10.10: icmp_seq=1 ttl=64 time=0.078 ms
-64 bytes from 172.16.10.10: icmp_seq=2 ttl=64 time=0.093 ms
-64 bytes from 172.16.10.10: icmp_seq=3 ttl=64 time=0.373 ms
-^C
---- 172.16.10.10 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 1999ms
-rtt min/avg/max/mdev = 0.078/0.181/0.373/0.136 ms
-
-</code></pre></div><p>成功！</p>
-<h4 id=不同主机namespace的ipip隧道>不同主机namespace的ipip隧道</h4>
-<ol>
-<li>Host 02上创建namespace</li>
-</ol>
-<blockquote>
-<p>ip netns add ns3</p>
-</blockquote>
-<ol start=2>
-<li>host 02创建veth peer，并挂在namespace下</li>
-</ol>
-<blockquote>
-<p>ip link add v3 type veth peer name v3_p</p>
-</blockquote>
-<blockquote>
-<p>ip link set v3 netns ns3</p>
-</blockquote>
-<ol start=3>
-<li>在host 02 linux下配置veth peer的一端</li>
-</ol>
-<blockquote>
-<p>ip addr add 10.10.30.1/24 dev v3_p
-ip link set v3_p up</p>
-</blockquote>
-<ol start=4>
-<li>host 02在namespace中配置veth peer的另一端</li>
-</ol>
-<blockquote>
-<p>ip netns exec ns3 ip addr add 10.10.30.2/24 dev v3
-ip netns exec ns3 ip link set v3 up</p>
-</blockquote>
-<ol start=5>
-<li>host 02查看Linux网络协议栈中的ip_forward状态
-略</li>
-<li>host 01 和02中配置路由，确保到veth peer的子网联通</li>
-</ol>
-<blockquote>
-<p>ns1
+ip netns exec ns1 ip link set tun1 up</p></blockquote><ol start=9><li>端口情况和隧道可达性
+host 01的端口情况</li></ol><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[root@worker-01 ~]# ifconfig
+</span></span><span style=display:flex><span>ens33: flags=4163&lt;UP,BROADCAST,RUNNING,MULTICAST&gt;  mtu 1500
+</span></span><span style=display:flex><span>        inet 192.168.21.11  netmask 255.255.255.0  broadcast 192.168.21.255
+</span></span><span style=display:flex><span>        inet6 fe80::f2a:f203:693b:c087  prefixlen 64  scopeid 0x20&lt;link&gt;
+</span></span><span style=display:flex><span>        inet6 fe80::2c94:b9fd:ac8:6411  prefixlen 64  scopeid 0x20&lt;link&gt;
+</span></span><span style=display:flex><span>        inet6 fe80::d95:b4d8:be84:cafa  prefixlen 64  scopeid 0x20&lt;link&gt;
+</span></span><span style=display:flex><span>        ether 00:0c:29:3b:c1:97  txqueuelen 1000  (Ethernet)
+</span></span><span style=display:flex><span>        RX packets 6123689  bytes 4238387536 (3.9 GiB)
+</span></span><span style=display:flex><span>        RX errors 0  dropped 0  overruns 0  frame 0
+</span></span><span style=display:flex><span>        TX packets 5925660  bytes 4772785528 (4.4 GiB)
+</span></span><span style=display:flex><span>        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>...
+</span></span><span style=display:flex><span>v1_p: flags=4163&lt;UP,BROADCAST,RUNNING,MULTICAST&gt;  mtu 1500
+</span></span><span style=display:flex><span>        inet 10.10.10.1  netmask 255.255.255.0  broadcast 0.0.0.0
+</span></span><span style=display:flex><span>        inet6 fe80::bc35:a6ff:fe8c:b03  prefixlen 64  scopeid 0x20&lt;link&gt;
+</span></span><span style=display:flex><span>        ether be:35:a6:8c:0b:03  txqueuelen 1000  (Ethernet)
+</span></span><span style=display:flex><span>        RX packets 138  bytes 12040 (11.7 KiB)
+</span></span><span style=display:flex><span>        RX errors 0  dropped 0  overruns 0  frame 0
+</span></span><span style=display:flex><span>        TX packets 32090  bytes 5790391 (5.5 MiB)
+</span></span><span style=display:flex><span>        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>v2_p: flags=4163&lt;UP,BROADCAST,RUNNING,MULTICAST&gt;  mtu 1500
+</span></span><span style=display:flex><span>        inet 10.10.20.1  netmask 255.255.255.0  broadcast 0.0.0.0
+</span></span><span style=display:flex><span>        inet6 fe80::5808:d2ff:fee9:83ab  prefixlen 64  scopeid 0x20&lt;link&gt;
+</span></span><span style=display:flex><span>        ether 5a:08:d2:e9:83:ab  txqueuelen 1000  (Ethernet)
+</span></span><span style=display:flex><span>        RX packets 46  bytes 3656 (3.5 KiB)
+</span></span><span style=display:flex><span>        RX errors 0  dropped 0  overruns 0  frame 0
+</span></span><span style=display:flex><span>        TX packets 31218  bytes 5637199 (5.3 MiB)
+</span></span><span style=display:flex><span>        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+</span></span></code></pre></div><p>查看namespace内部的端口</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[root@worker-01 ~]#  ip netns exec ns1 ifconfig
+</span></span><span style=display:flex><span>tun1: flags=209&lt;UP,POINTOPOINT,RUNNING,NOARP&gt;  mtu 1480
+</span></span><span style=display:flex><span>     inet 172.16.10.10  netmask 255.255.255.255  destination 172.16.20.20
+</span></span><span style=display:flex><span>     inet6 fe80::5efe:a0a:a02  prefixlen 64  scopeid 0x20&lt;link&gt;
+</span></span><span style=display:flex><span>     tunnel   txqueuelen 1000  (IPIP Tunnel)
+</span></span><span style=display:flex><span>     RX packets 3  bytes 252 (252.0 B)
+</span></span><span style=display:flex><span>     RX errors 0  dropped 0  overruns 0  frame 0
+</span></span><span style=display:flex><span>     TX packets 3  bytes 252 (252.0 B)
+</span></span><span style=display:flex><span>     TX errors 3  dropped 0 overruns 0  carrier 0  collisions 0
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>v1: flags=4163&lt;UP,BROADCAST,RUNNING,MULTICAST&gt;  mtu 1500
+</span></span><span style=display:flex><span>     inet 10.10.10.2  netmask 255.255.255.0  broadcast 0.0.0.0
+</span></span><span style=display:flex><span>     inet6 fe80::18f7:71ff:fecb:e113  prefixlen 64  scopeid 0x20&lt;link&gt;
+</span></span><span style=display:flex><span>     ether 1a:f7:71:cb:e1:13  txqueuelen 1000  (Ethernet)
+</span></span><span style=display:flex><span>     RX packets 32088  bytes 5790055 (5.5 MiB)
+</span></span><span style=display:flex><span>     RX errors 0  dropped 0  overruns 0  frame 0
+</span></span><span style=display:flex><span>     TX packets 138  bytes 12040 (11.7 KiB)
+</span></span><span style=display:flex><span>     TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[root@worker-01 ~]#  ip netns exec ns2 ifconfig
+</span></span><span style=display:flex><span>tun2: flags=209&lt;UP,POINTOPOINT,RUNNING,NOARP&gt;  mtu 1480
+</span></span><span style=display:flex><span>        inet 172.16.20.20  netmask 255.255.255.255  destination 172.16.10.10
+</span></span><span style=display:flex><span>        inet6 fe80::5efe:a0a:1402  prefixlen 64  scopeid 0x20&lt;link&gt;
+</span></span><span style=display:flex><span>        tunnel   txqueuelen 1000  (IPIP Tunnel)
+</span></span><span style=display:flex><span>        RX packets 3  bytes 252 (252.0 B)
+</span></span><span style=display:flex><span>        RX errors 0  dropped 0  overruns 0  frame 0
+</span></span><span style=display:flex><span>        TX packets 3  bytes 252 (252.0 B)
+</span></span><span style=display:flex><span>        TX errors 3  dropped 0 overruns 0  carrier 0  collisions 0
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>v2: flags=4163&lt;UP,BROADCAST,RUNNING,MULTICAST&gt;  mtu 1500
+</span></span><span style=display:flex><span>        inet 10.10.20.2  netmask 255.255.255.0  broadcast 0.0.0.0
+</span></span><span style=display:flex><span>        inet6 fe80::f483:3eff:feb2:8b3f  prefixlen 64  scopeid 0x20&lt;link&gt;
+</span></span><span style=display:flex><span>        ether f6:83:3e:b2:8b:3f  txqueuelen 1000  (Ethernet)
+</span></span><span style=display:flex><span>        RX packets 31369  bytes 5664578 (5.4 MiB)
+</span></span><span style=display:flex><span>        RX errors 0  dropped 0  overruns 0  frame 0
+</span></span><span style=display:flex><span>        TX packets 46  bytes 3656 (3.5 KiB)
+</span></span><span style=display:flex><span>        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+</span></span></code></pre></div><p>可以看到隧道都已经建成。</p><p>隧道访问情况：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[root@worker-01 ~]#  ip netns exec ns1 ping 172.16.20.20
+</span></span><span style=display:flex><span>PING 172.16.20.20 (172.16.20.20) 56(84) bytes of data.
+</span></span><span style=display:flex><span>64 bytes from 172.16.20.20: icmp_seq=1 ttl=64 time=0.109 ms
+</span></span><span style=display:flex><span>64 bytes from 172.16.20.20: icmp_seq=2 ttl=64 time=0.104 ms
+</span></span><span style=display:flex><span>64 bytes from 172.16.20.20: icmp_seq=3 ttl=64 time=0.087 ms
+</span></span><span style=display:flex><span>^C
+</span></span><span style=display:flex><span>--- 172.16.20.20 ping statistics ---
+</span></span><span style=display:flex><span>3 packets transmitted, 3 received, 0% packet loss, time 1999ms
+</span></span><span style=display:flex><span>rtt min/avg/max/mdev = 0.087/0.100/0.109/0.009 ms
+</span></span><span style=display:flex><span>[root@worker-01 ~]#  ip netns exec ns2 ping 172.16.10.10
+</span></span><span style=display:flex><span>PING 172.16.10.10 (172.16.10.10) 56(84) bytes of data.
+</span></span><span style=display:flex><span>64 bytes from 172.16.10.10: icmp_seq=1 ttl=64 time=0.078 ms
+</span></span><span style=display:flex><span>64 bytes from 172.16.10.10: icmp_seq=2 ttl=64 time=0.093 ms
+</span></span><span style=display:flex><span>64 bytes from 172.16.10.10: icmp_seq=3 ttl=64 time=0.373 ms
+</span></span><span style=display:flex><span>^C
+</span></span><span style=display:flex><span>--- 172.16.10.10 ping statistics ---
+</span></span><span style=display:flex><span>3 packets transmitted, 3 received, 0% packet loss, time 1999ms
+</span></span><span style=display:flex><span>rtt min/avg/max/mdev = 0.078/0.181/0.373/0.136 ms
+</span></span></code></pre></div><p>成功！</p><h4 id=不同主机namespace的ipip隧道>不同主机namespace的ipip隧道</h4><ol><li>Host 02上创建namespace</li></ol><blockquote><p>ip netns add ns3</p></blockquote><ol start=2><li>host 02创建veth peer，并挂在namespace下</li></ol><blockquote><p>ip link add v3 type veth peer name v3_p</p></blockquote><blockquote><p>ip link set v3 netns ns3</p></blockquote><ol start=3><li>在host 02 linux下配置veth peer的一端</li></ol><blockquote><p>ip addr add 10.10.30.1/24 dev v3_p
+ip link set v3_p up</p></blockquote><ol start=4><li>host 02在namespace中配置veth peer的另一端</li></ol><blockquote><p>ip netns exec ns3 ip addr add 10.10.30.2/24 dev v3
+ip netns exec ns3 ip link set v3 up</p></blockquote><ol start=5><li>host 02查看Linux网络协议栈中的ip_forward状态
+略</li><li>host 01 和02中配置路由，确保到veth peer的子网联通</li></ol><blockquote><p>ns1
 route add -net 10.10.30.0/24 gw 192.168.21.12 dev ens33
 ns3
-route add -net 10.10.10.0/24 gw 192.168.21.11 dev ens33</p>
-</blockquote>
-<ol start=7>
-<li>host 01和 02增加namespace内部的对端路由</li>
-</ol>
-<blockquote>
-<p>ip netns exec ns1 route add -net 10.10.30.0 netmask 255.255.255.0 gw 10.10.10.1
-ip netns exec ns3 route add -net 10.10.10.0 netmask 255.255.255.0 gw 10.10.30.1</p>
-</blockquote>
-<ol start=8>
-<li>host 01和host 02创建namespace中tunnel并配置IP地址</li>
-</ol>
-<blockquote>
-<p>ns1
+route add -net 10.10.10.0/24 gw 192.168.21.11 dev ens33</p></blockquote><ol start=7><li>host 01和 02增加namespace内部的对端路由</li></ol><blockquote><p>ip netns exec ns1 route add -net 10.10.30.0 netmask 255.255.255.0 gw 10.10.10.1
+ip netns exec ns3 route add -net 10.10.10.0 netmask 255.255.255.0 gw 10.10.30.1</p></blockquote><ol start=8><li>host 01和host 02创建namespace中tunnel并配置IP地址</li></ol><blockquote><p>ns1
 ip netns exec ns1 ip tunnel add tun2 mode ipip remote 10.10.30.2 local 10.10.10.2
 ip netns exec ns1 ip link set tun2 up
 ip netns exec ns1 ip addr add 172.16.100.10 peer 172.16.30.30 dev tun2ns2
 ip netns exec ns3 ip tunnel add tun1 mode ipip remote 10.10.10.2 local 10.10.30.2
 ip netns exec ns3 ip link set tun1 up
-ip netns exec ns3 ip addr add 172.16.30.30 peer 172.16.100.10 dev tun1</p>
-</blockquote>
-<p>查看namespace内部路由和隧道：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@worker-01 ~]# ip netns exec ns1 route -n
-Kernel IP routing table
-Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
-10.10.10.0      0.0.0.0         255.255.255.0   U     0      0        0 v1
-10.10.20.0      10.10.10.1      255.255.255.0   UG    0      0        0 v1
-10.10.30.0      10.10.10.1      255.255.255.0   UG    0      0        0 v1
-172.16.20.20    0.0.0.0         255.255.255.255 UH    0      0        0 tun1
-172.16.30.30    0.0.0.0         255.255.255.255 UH    0      0        0 tun2
-
-[root@worker-01 ~]# ip netns exec ns1 ip tunnel
-tun1: ip/ip remote 10.10.20.2 local 10.10.10.2 ttl inherit
-tun2: ip/ip remote 10.10.30.2 local 10.10.10.2 ttl inherit
-tunl0: ip/ip remote any local any ttl inherit nopmtudisc
-
-</code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@worker-02 ~]# ip netns exec ns3 route -n
-Kernel IP routing table
-Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
-10.10.10.0      10.10.30.1      255.255.255.0   UG    0      0        0 v3
-10.10.30.0      0.0.0.0         255.255.255.0   U     0      0        0 v3
-172.16.100.10   0.0.0.0         255.255.255.255 UH    0      0        0 tun1
-
-[root@worker-02 ~]# ip netns exec ns3 ip tunnel
-tun1: ip/ip remote 10.10.10.2 local 10.10.30.2 ttl inherit
-tunl0: ip/ip remote any local any ttl inherit nopmtudisc
-
-</code></pre></div><p>隧道联通情况：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@worker-02 ~]# ip netns exec ns3 ping 172.16.100.10
-PING 172.16.100.10 (172.16.100.10) 56(84) bytes of data.
-64 bytes from 172.16.100.10: icmp_seq=1 ttl=64 time=0.743 ms
-64 bytes from 172.16.100.10: icmp_seq=2 ttl=64 time=0.737 ms
-64 bytes from 172.16.100.10: icmp_seq=3 ttl=64 time=0.746 ms
-64 bytes from 172.16.100.10: icmp_seq=4 ttl=64 time=1.03 ms
-^C
---- 172.16.100.10 ping statistics ---
-4 packets transmitted, 4 received, 0% packet loss, time 3005ms
-rtt min/avg/max/mdev = 0.737/0.815/1.035/0.128 ms
-
-</code></pre></div><p>成功！</p>
-<p>附：ipip包结构</p>
-<p><img src="https://img-blog.csdnimg.cn/438ae13f05cb40a19df2f2c0e6cd5cfa.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="https://img-blog.csdnimg.cn/438ae13f05cb40a19df2f2c0e6cd5cfa.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16"></p>
-</div>
-<footer class=post-footer>
-<div id=wcomments></div>
-</footer>
-</article>
-</section>
-</div>
-</div>
-<div class=sidebar-toggle>
-<div class=sidebar-toggle-line-wrap>
-<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+ip netns exec ns3 ip addr add 172.16.30.30 peer 172.16.100.10 dev tun1</p></blockquote><p>查看namespace内部路由和隧道：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[root@worker-01 ~]# ip netns exec ns1 route -n
+</span></span><span style=display:flex><span>Kernel IP routing table
+</span></span><span style=display:flex><span>Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+</span></span><span style=display:flex><span>10.10.10.0      0.0.0.0         255.255.255.0   U     0      0        0 v1
+</span></span><span style=display:flex><span>10.10.20.0      10.10.10.1      255.255.255.0   UG    0      0        0 v1
+</span></span><span style=display:flex><span>10.10.30.0      10.10.10.1      255.255.255.0   UG    0      0        0 v1
+</span></span><span style=display:flex><span>172.16.20.20    0.0.0.0         255.255.255.255 UH    0      0        0 tun1
+</span></span><span style=display:flex><span>172.16.30.30    0.0.0.0         255.255.255.255 UH    0      0        0 tun2
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>[root@worker-01 ~]# ip netns exec ns1 ip tunnel
+</span></span><span style=display:flex><span>tun1: ip/ip remote 10.10.20.2 local 10.10.10.2 ttl inherit
+</span></span><span style=display:flex><span>tun2: ip/ip remote 10.10.30.2 local 10.10.10.2 ttl inherit
+</span></span><span style=display:flex><span>tunl0: ip/ip remote any local any ttl inherit nopmtudisc
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[root@worker-02 ~]# ip netns exec ns3 route -n
+</span></span><span style=display:flex><span>Kernel IP routing table
+</span></span><span style=display:flex><span>Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+</span></span><span style=display:flex><span>10.10.10.0      10.10.30.1      255.255.255.0   UG    0      0        0 v3
+</span></span><span style=display:flex><span>10.10.30.0      0.0.0.0         255.255.255.0   U     0      0        0 v3
+</span></span><span style=display:flex><span>172.16.100.10   0.0.0.0         255.255.255.255 UH    0      0        0 tun1
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>[root@worker-02 ~]# ip netns exec ns3 ip tunnel
+</span></span><span style=display:flex><span>tun1: ip/ip remote 10.10.10.2 local 10.10.30.2 ttl inherit
+</span></span><span style=display:flex><span>tunl0: ip/ip remote any local any ttl inherit nopmtudisc
+</span></span></code></pre></div><p>隧道联通情况：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[root@worker-02 ~]# ip netns exec ns3 ping 172.16.100.10
+</span></span><span style=display:flex><span>PING 172.16.100.10 (172.16.100.10) 56(84) bytes of data.
+</span></span><span style=display:flex><span>64 bytes from 172.16.100.10: icmp_seq=1 ttl=64 time=0.743 ms
+</span></span><span style=display:flex><span>64 bytes from 172.16.100.10: icmp_seq=2 ttl=64 time=0.737 ms
+</span></span><span style=display:flex><span>64 bytes from 172.16.100.10: icmp_seq=3 ttl=64 time=0.746 ms
+</span></span><span style=display:flex><span>64 bytes from 172.16.100.10: icmp_seq=4 ttl=64 time=1.03 ms
+</span></span><span style=display:flex><span>^C
+</span></span><span style=display:flex><span>--- 172.16.100.10 ping statistics ---
+</span></span><span style=display:flex><span>4 packets transmitted, 4 received, 0% packet loss, time 3005ms
+</span></span><span style=display:flex><span>rtt min/avg/max/mdev = 0.737/0.815/1.035/0.128 ms
+</span></span></code></pre></div><p>成功！</p><p>附：ipip包结构</p><p><img src="https://img-blog.csdnimg.cn/438ae13f05cb40a19df2f2c0e6cd5cfa.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="https://img-blog.csdnimg.cn/438ae13f05cb40a19df2f2c0e6cd5cfa.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16"></p></div><footer class=post-footer><div id=wcomments></div></footer></article></section></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
 <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-</div>
-</div>
-<aside id=sidebar class=sidebar>
-<div class=sidebar-inner>
-<ul class="sidebar-nav motion-element">
-<li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>
-文章目录
-</li>
-<li class=sidebar-nav-overview data-target=site-overview>
-站点概览
-</li>
-</ul>
-<section class="site-overview sidebar-panel">
-<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
-<img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon>
-<p class=site-author-name itemprop=name>Etaon</p>
-<p class="site-description motion-element" itemprop=description>
-Kepp Going!
-</p>
-</div>
-<nav class="site-state motion-element">
-<div class="site-state-item site-state-posts">
-<a href=/post/>
-<span class=site-state-item-count>61</span>
-<span class=site-state-item-name>日志</span>
-</a>
-</div>
-<div class="site-state-item site-state-categories">
-<a href=/categories/>
-<span class=site-state-item-count>13</span>
-<span class=site-state-item-name>分类</span>
-</a>
-</div>
-<div class="site-state-item site-state-tags">
-<a href=/tags/>
-<span class=site-state-item-count>34</span>
-<span class=site-state-item-name>标签</span>
-</a>
-</div>
-</nav>
-<div class="links-of-author motion-element">
-<span class=links-of-author-item>
-<a href=https://github.com/etaon target=_blank title=GitHub>
-<i class="fa fa-fw fa-github"></i>
-GitHub
-</a>
-</span>
-<span class=links-of-author-item>
-<a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN>
-<i class="fa fa-fw fa-CSDN"></i>
-CSDN
-</a>
-</span>
-</div>
-<div class="links-of-blogroll motion-element links-of-blogroll-inline">
-<div class=links-of-blogroll-title>
-<i class="fa fa-fw fa-globe"></i>
-友情链接
-</div>
-<ul class=links-of-blogroll-list>
-<li class=links-of-blogroll-item>
-<a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a>
-</li>
-</ul>
-</div>
-<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
-<div class=tagcloud-of-blogroll-title>
-<i class="fa fa-fw fa-tags"></i>
-标签云
-</div>
-<ul class=tagcloud-of-blogroll-list>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mysql>Mysql</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/aws>Aws</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/dql>Dql</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/hadoop>Hadoop</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/redis>Redis</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/cicd>Cicd</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/git>Git</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/istio>Istio</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mongodb>Mongodb</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/azure>Azure</a>
-</li>
-</ul>
-</div>
-</section>
-<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-<div class=post-toc>
-<div class=post-toc-content><nav id=TableOfContents>
-<ul>
-<li><a href=#network-namespace>Network NameSpace</a></li>
-<li><a href=#linux虚拟网络组件>Linux虚拟网络组件</a>
-<ul>
-<li><a href=#veth-pair>veth pair</a></li>
-<li><a href=#linux-bridge>Linux bridge</a></li>
-<li><a href=#tuntap>tun/tap</a></li>
-</ul>
-</li>
-<li><a href=#linux-l3隧道>Linux L3隧道</a></li>
-<li><a href=#ipip实验>ipip实验</a>
-<ul>
-<li><a href=#环境拓扑>环境拓扑</a></li>
-<li><a href=#实验步骤>实验步骤</a></li>
-</ul>
-</li>
-</ul>
-</nav></div>
-</div>
-</section>
-</div>
-</aside>
-</div>
-</main>
-<footer id=footer class=footer>
-<div class=footer-inner>
-<div class=copyright>
-<span class=copyright-year>
-&copy; 2010 - 2022
-</span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id=sidebar class=sidebar><div class=sidebar-inner><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>文章目录</li><li class=sidebar-nav-overview data-target=site-overview>站点概览</li></ul><section class="site-overview sidebar-panel"><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon><p class=site-author-name itemprop=name>Etaon</p><p class="site-description motion-element" itemprop=description>Kepp Going!</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=/post/><span class=site-state-item-count>61</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>13</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>34</span>
+<span class=site-state-item-name>标签</span></a></div></nav><div class="links-of-author motion-element"><span class=links-of-author-item><a href=https://github.com/etaon target=_blank title=GitHub><i class="fa fa-fw fa-github"></i>
+GitHub</a></span>
+<span class=links-of-author-item><a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN><i class="fa fa-fw fa-CSDN"></i>
+CSDN</a></span></div><div class="links-of-blogroll motion-element links-of-blogroll-inline"><div class=links-of-blogroll-title><i class="fa fa-fw fa-globe"></i>
+友情链接</div><ul class=links-of-blogroll-list><li class=links-of-blogroll-item><a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a></li><li class=links-of-blogroll-item><a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a></li><li class=links-of-blogroll-item><a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a></li><li class=links-of-blogroll-item><a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a></li></ul></div><div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline"><div class=tagcloud-of-blogroll-title><i class="fa fa-fw fa-tags"></i>
+标签云</div><ul class=tagcloud-of-blogroll-list><li class=tagcloud-of-blogroll-item><a href=/tags/mysql>Mysql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/aws>Aws</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/dql>Dql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/hadoop>Hadoop</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/redis>Redis</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/cicd>Cicd</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/git>Git</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/istio>Istio</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/mongodb>Mongodb</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/azure>Azure</a></li></ul></div></section><section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active"><div class=post-toc><div class=post-toc-content><nav id=TableOfContents><ul><li><a href=#network-namespace>Network NameSpace</a></li><li><a href=#linux虚拟网络组件>Linux虚拟网络组件</a><ul><li><a href=#veth-pair>veth pair</a></li><li><a href=#linux-bridge>Linux bridge</a></li><li><a href=#tuntap>tun/tap</a></li></ul></li><li><a href=#linux-l3隧道>Linux L3隧道</a></li><li><a href=#ipip实验>ipip实验</a><ul><li><a href=#环境拓扑>环境拓扑</a></li><li><a href=#实验步骤>实验步骤</a></li></ul></li></ul></nav></div></div></section></div></aside></div></main><footer id=footer class=footer><div class=footer-inner><div class=copyright><span class=copyright-year>&copy; 2010 - 2022</span>
 <span class=with-love><i class="fa fa-heart"></i></span>
-<span class=copyright-author>路无止境！</span>
-</div>
-<div class=powered-info>
-<span class=powered-by>
-Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.91.2</a>
-</span>
+<span class=copyright-author>路无止境！</span></div><div class=powered-info><span class=powered-by>Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.101.0</a></span>
 <span class=separator-line>/</span>
-<span class=theme-info>
-Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
-</a>
-</span>
-</div>
-<div class=vistor-info>
-<script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
-<span class=site-uv>
-<i class="fa fa-user"></i>
-<span class=busuanzi-value id=busuanzi_value_site_uv></span>
-</span>
+<span class=theme-info>Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank>NexT</a></span></div><div class=vistor-info><script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<span class=site-uv><i class="fa fa-user"></i>
+<span class=busuanzi-value id=busuanzi_value_site_uv></span></span>
 <span class=separator-line>/</span>
-<span class=site-pv>
-<i class="fa fa-eye"></i>
-<span class=busuanzi-value id=busuanzi_value_site_pv></span>
-</span>
-</div>
-<div class=license-info>
-<span class=storage-info>
-Storage by
-<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a>
-</span>
+<span class=site-pv><i class="fa fa-eye"></i>
+<span class=busuanzi-value id=busuanzi_value_site_pv></span></span></div><div class=license-info><span class=storage-info>Storage by
+<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a></span>
 <span class=separator-line>/</span>
-<span class=license-num>
-<a href target=_blank></a>
-</span>
-</div>
-</div>
-</footer>
-<div class=back-to-top>
-<i class="fa fa-arrow-up"></i>
-<span id=scrollpercent><span>0</span>%</span>
-</div>
-</div>
-<script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
+<span class=license-num><a href target=_blank></a></span></div></div></footer><div class=back-to-top><i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span></div></div><script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
 <script type=text/javascript src=/js/search.js></script>
 <script type=text/javascript src=/js/affix.js></script>
 <script type=text/javascript src=/js/scrollspy.js></script>
-<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.main').css('padding-bottom'),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}}),$(document).on('affixed.bs.affix',function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var b=$('.header-inner').height()+10,c,d,a,e;$('#sidebar').css({'margin-top':b}).show(),c=parseInt($('#sidebar').css('margin-top')),d=parseInt($('.sidebar-inner').css('height')),a=c+d,e=$('.content-wrap').height(),e<a&&$('.content-wrap').css('min-height',a),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
-<script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
-<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
-<script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+'//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js',function(){new Waline({el:'#wcomments',visitor:!0,avatar:'wavatar',avatarCDN:'https://sdn.geekzu.org/avatar/',avatarForce:!1,wordLimit:'200',placeholder:' 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ',requiredFields:['nick','mail'],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$('#wcomments').html('抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。')})</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type=text/javascript>function detectIE(){var e=window.navigator.userAgent,t=e.indexOf("MSIE "),n=e.indexOf("Trident/"),s=e.indexOf("Edge/");return t>0||n>0||s>0?-1:1}function getCntViewHeight(){var t=$("#content").height(),e=$(window).height(),n=t>e?t-e:$(document).height()-e;return n}function getScrollbarWidth(){var e=$("<div />").addClass("scrollbar-measure").prependTo("body"),t=e[0],n=t.offsetWidth-t.clientWidth;return e.remove(),n}function registerBackTop(){var t=50,e=$(".back-to-top");$(window).on("scroll",function(){e.toggleClass("back-to-top-on",window.pageYOffset>t);var s=$(window).scrollTop(),o=getCntViewHeight(),i=s/o,n=Math.round(i*100),a=n>100?100:n;$("#scrollpercent>span").html(a)}),e.on("click",function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var e=".post-toc",s=$(e),t=".active-current";s.on("activate.bs.scrollspy",function(){var t=$(e+" .active").last();n(),t.addClass("active-current")}).on("clear.bs.scrollspy",n),$("body").scrollspy({target:e});function n(){$(e+" "+t).removeClass(t.substring(1))}}function initAffix(){var e=$(".header-inner").height(),t=parseInt($(".main").css("padding-bottom"),10),n=e+10;$(".sidebar-inner").affix({offset:{top:n,bottom:t}}),$(document).on("affixed.bs.affix",function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){$(window).on("resize",function(){e&&clearTimeout(e),e=setTimeout(function(){var e=document.body.clientHeight-100;updateTOCHeight(e)},0)}),updateTOCHeight(document.body.clientHeight-100);var e,t=getScrollbarWidth();$(".post-toc").css("width","calc(100% + "+t+"px)")}function updateTOCHeight(e){e=e||"auto",$(".post-toc").css("max-height",e)}$(function(){var e,t,n,s,o=$(".header-inner").height()+10;$("#sidebar").css({"margin-top":o}).show(),t=parseInt($("#sidebar").css("margin-top")),n=parseInt($(".sidebar-inner").css("height")),e=t+n,s=$(".content-wrap").height(),s<e&&$(".content-wrap").css("min-height",e),$(".site-nav-toggle").on("click",function(){var e=$(".site-nav"),o=$(".toggle"),t="site-nav-on",i="toggle-close",n=e.hasClass(t),a=n?"slideUp":"slideDown",s=n?"removeClass":"addClass";e.stop()[a]("normal",function(){e[s](t),o[s](i)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$(".sidebar-nav-toc").click(function(){$(this).addClass("sidebar-nav-active"),$(this).next().removeClass("sidebar-nav-active"),$("."+$(this).next().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)}),$(".sidebar-nav-overview").click(function(){$(this).addClass("sidebar-nav-active"),$(this).prev().removeClass("sidebar-nav-active"),$("."+$(this).prev().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)})})</script><script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$(".post-body").viewer()})</script><script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+"//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js",function(){new Waline({el:"#wcomments",visitor:!0,avatar:"wavatar",avatarCDN:"https://sdn.geekzu.org/avatar/",avatarForce:!1,wordLimit:"200",placeholder:" 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ",requiredFields:["nick","mail"],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$("#wcomments").html("抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。")})</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
 <script type=text/javascript src="//s7.addthis.com/js/300/addthis_widget.js#pubid=Your%20AddthisId"></script>
-<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
-</body>
-</html>
+<script>(function(){var t,e=document.createElement("script"),n=window.location.protocol.split(":")[0];n==="https"?e.src="https://zz.bdstatic.com/linksubmit/push.js":e.src="http://push.zhanzhang.baidu.com/push.js",t=document.getElementsByTagName("script")[0],t.parentNode.insertBefore(e,t)})()</script></body></html>
