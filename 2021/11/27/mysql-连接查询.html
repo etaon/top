@@ -1,0 +1,437 @@
+<!doctype html><html lang=zh-cn dir=content/zh-cn>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
+<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
+<title> MySQL-连接查询 - 路无止境！ </title>
+<meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云">
+<meta name=author content="Etaon">
+<meta property="og:title" content="MySQL-连接查询">
+<meta property="og:site_name" content="路无止境！">
+<meta property="og:image" content="/img/author.jpg">
+<meta name=title content="MySQL-连接查询 - 路无止境！">
+<meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。">
+<link rel="shortcut icon" href=/img/favicon.ico>
+<link rel=apple-touch-icon href=/img/apple-touch-icon.png>
+<link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png>
+<link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css>
+<link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet>
+<link href=/css/main.css rel=stylesheet type=text/css>
+<link href=/css/syntax.css rel=stylesheet type=text/css>
+</head>
+<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
+<div class="container one-collumn sidebar-position-left page-home">
+<div class=headband></div>
+<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
+<div class=header-inner> <div class=site-brand-container>
+<div class=site-nav-toggle>
+<div class=toggle role=button style=opacity:1;top:0>
+<span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span>
+</div>
+</div>
+<div class=site-meta>
+<div class=multi-lang-switch>
+<i class="fa fa-fw fa-language" style=margin-right:5px></i>
+<a class=lang-link id=zh-cn href=#>中文</a>
+</div>
+<div class=custom-logo-site-title>
+<a href=/ class=brand rel=start>
+<span class=logo-line-before><i></i></span>
+<span class=site-title>路无止境！</span>
+<span class=logo-line-after><i></i></span>
+</a>
+</div>
+<p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p>
+</div>
+<div class=site-nav-right>
+<div class="toggle popup-trigger" style=opacity:1;top:0>
+<i class="fa fa-search fa-fw fa-lg"></i>
+</div>
+</div>
+</div>
+<nav class=site-nav>
+<ul id=menu class=menu>
+<li class=menu-item>
+<a href=/ rel=section>
+<i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页
+</a>
+</li>
+<li class=menu-item>
+<a href=/post rel=section>
+<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档
+</a>
+</li>
+<li class=menu-item>
+<a href=/about.html rel=section>
+<i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于我
+</a>
+</li>
+<li class=menu-item>
+<a href=/404.html rel=section>
+<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益404
+</a>
+</li>
+<li class="menu-item menu-item-search">
+<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> 搜索</a>
+</li>
+</ul>
+<div class=site-search>
+<div class="popup search-popup local-search-popup">
+<div class="local-search-header clearfix">
+<span class=search-icon><i class="fa fa-search"></i> </span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
+<div class=local-search-input-wrapper>
+<input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
+</div>
+</div>
+<div id=local-search-result></div>
+</div>
+</div>
+</nav>
+</div>
+</header>
+<main id=main class=main>
+<div class=main-inner>
+<div class=content-wrap>
+<div id=content class=content>
+<section id=posts class=posts-expand>
+<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
+<header class=post-header>
+<h1 class=post-title itemprop="name headline" style=font-weight:700>
+<a class=post-title-link href=https://www.etaon.link/2021/11/27/mysql-%E8%BF%9E%E6%8E%A5%E6%9F%A5%E8%AF%A2.html itemprop=url>
+MySQL-连接查询
+</a>
+</h1>
+</header>
+<div class=post-body itemprop=articleBody>
+<h2 id=连接查询>连接查询</h2>
+<p>当查询中涉及到了多个表的字段，需要使用多表连接
+select 字段1，字段2
+from 表1，表2,&mldr;;</p>
+<p>笛卡尔乘积：当查询多个表时，没有添加有效的连接条件，导致多个表所有行实现完全连接
+如何解决：<strong>添加有效的连接条件</strong></p>
+<p><img src=%E8%BF%9E%E6%8E%A5%E6%9F%A5%E8%AF%A2%20e102ea3c16cf40b0874e870f243f3999/Untitled.png alt=Untitled></p>
+<p>分类</p>
+<p>按年代分类：
+sql92：
+<em>等值
+非等值
+自连接
+也支持一部分外连接（用于oracle、sqlserver，mysql不支持）</em>
+sql99【推荐使用】
+<em>内连接
+等值
+非等值
+自连接
+外连接
+左外
+右外
+全外（mysql不支持）
+交叉连接</em></p>
+<h2 id=等值连接>等值连接</h2>
+<p><img src=%E8%BF%9E%E6%8E%A5%E6%9F%A5%E8%AF%A2%20e102ea3c16cf40b0874e870f243f3999/Untitled%201.png alt=Untitled></p>
+<p>#2.为表起别名
+#查询员工的名，工种号和工种名
+#如果起了别名，就不能在语句中使用原来的字段</p>
+<p><img src=%E8%BF%9E%E6%8E%A5%E6%9F%A5%E8%AF%A2%20e102ea3c16cf40b0874e870f243f3999/Untitled%202.png alt=Untitled></p>
+<p><img src=%E8%BF%9E%E6%8E%A5%E6%9F%A5%E8%AF%A2%20e102ea3c16cf40b0874e870f243f3999/Untitled%203.png alt=Untitled></p>
+<p>#3.from 表的顺序，可以调换</p>
+<p><img src=%E8%BF%9E%E6%8E%A5%E6%9F%A5%E8%AF%A2%20e102ea3c16cf40b0874e870f243f3999/Untitled%204.png alt=Untitled></p>
+<p>#4.加筛选条件，AND
+#查询有奖金的员工和部门</p>
+<p><img src=%E8%BF%9E%E6%8E%A5%E6%9F%A5%E8%AF%A2%20e102ea3c16cf40b0874e870f243f3999/Untitled%205.png alt=Untitled></p>
+<p>#5. 加分组
+#查询每个城市的部门个数</p>
+<p><img src=%E8%BF%9E%E6%8E%A5%E6%9F%A5%E8%AF%A2%20e102ea3c16cf40b0874e870f243f3999/Untitled%206.png alt=Untitled></p>
+<p>#查询有奖金的每个部门的名字和领导编号即该部门的最低工资</p>
+<p><img src=%E8%BF%9E%E6%8E%A5%E6%9F%A5%E8%AF%A2%20e102ea3c16cf40b0874e870f243f3999/Untitled%207.png alt=Untitled></p>
+<p>#查询每个工种的名字和员工个数，并按个数降序排列</p>
+<p><img src=%E8%BF%9E%E6%8E%A5%E6%9F%A5%E8%AF%A2%20e102ea3c16cf40b0874e870f243f3999/Untitled%208.png alt=Untitled></p>
+<p>#7.三表连接，多条件用AND</p>
+<p><img src=%E8%BF%9E%E6%8E%A5%E6%9F%A5%E8%AF%A2%20e102ea3c16cf40b0874e870f243f3999/Untitled%209.png alt=Untitled></p>
+<p>总结：</p>
+<ol>
+<li>多表等值连接为多表的交集</li>
+<li>多表条件为n-1</li>
+<li>一般会起别名</li>
+<li>可以搭配分组、排序等</li>
+</ol>
+<h2 id=非等值连接>非等值连接</h2>
+<p>#查询员工工资和等级，先建一个等级表</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=color:#a2f;font-weight:700>CREATE</span><span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>TABLE</span><span style=color:#bbb> </span>job_grades<span style=color:#bbb>
+</span><span style=color:#bbb></span>(grade_level<span style=color:#bbb> </span><span style=color:#a2f>VARCHAR</span>(<span style=color:#666>3</span>),<span style=color:#bbb>
+</span><span style=color:#bbb></span>lowest_sal<span style=color:#bbb> </span><span style=color:#a2f>INT</span>,<span style=color:#bbb>
+</span><span style=color:#bbb></span>highest_sal<span style=color:#bbb> </span><span style=color:#a2f>INT</span>);<span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#a2f;font-weight:700>INSERT</span><span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>INTO</span><span style=color:#bbb> </span>job_grades<span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#a2f;font-weight:700>VALUES</span><span style=color:#bbb> </span>(<span style=color:#b44>&#39;A&#39;</span>,<span style=color:#bbb> </span><span style=color:#666>1000</span>,<span style=color:#bbb> </span><span style=color:#666>2999</span>);<span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#a2f;font-weight:700>INSERT</span><span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>INTO</span><span style=color:#bbb> </span>job_grades<span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#a2f;font-weight:700>VALUES</span><span style=color:#bbb> </span>(<span style=color:#b44>&#39;B&#39;</span>,<span style=color:#bbb> </span><span style=color:#666>3000</span>,<span style=color:#bbb> </span><span style=color:#666>5999</span>);<span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#a2f;font-weight:700>INSERT</span><span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>INTO</span><span style=color:#bbb> </span>job_grades<span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#a2f;font-weight:700>VALUES</span>(<span style=color:#b44>&#39;C&#39;</span>,<span style=color:#bbb> </span><span style=color:#666>6000</span>,<span style=color:#bbb> </span><span style=color:#666>9999</span>);<span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#a2f;font-weight:700>INSERT</span><span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>INTO</span><span style=color:#bbb> </span>job_grades<span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#a2f;font-weight:700>VALUES</span>(<span style=color:#b44>&#39;D&#39;</span>,<span style=color:#bbb> </span><span style=color:#666>10000</span>,<span style=color:#bbb> </span><span style=color:#666>14999</span>);<span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#a2f;font-weight:700>INSERT</span><span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>INTO</span><span style=color:#bbb> </span>job_grades<span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#a2f;font-weight:700>VALUES</span>(<span style=color:#b44>&#39;E&#39;</span>,<span style=color:#666>15000</span>,<span style=color:#666>24999</span>);<span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#a2f;font-weight:700>INSERT</span><span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>INTO</span><span style=color:#bbb> </span>job_grades<span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#a2f;font-weight:700>VALUES</span>(<span style=color:#b44>&#39;F&#39;</span>,<span style=color:#666>25000</span>,<span style=color:#666>40000</span>);<span style=color:#bbb>
+</span></code></pre></div><p><img src=%E8%BF%9E%E6%8E%A5%E6%9F%A5%E8%AF%A2%20e102ea3c16cf40b0874e870f243f3999/Untitled%2010.png alt=Untitled></p>
+<h2 id=自连接>自连接</h2>
+<p>表内的等值连接</p>
+<p>#查询员工名字和上级名字，注意别名的应用</p>
+<p><img src=%E8%BF%9E%E6%8E%A5%E6%9F%A5%E8%AF%A2%20e102ea3c16cf40b0874e870f243f3999/Untitled%2011.png alt=Untitled></p>
+<h2 id=sql99>Sql99</h2>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span>语法：</span><span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#a2f;font-weight:700>select</span><span style=color:#bbb> </span><span>查询列表</span><span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#a2f;font-weight:700>from</span><span style=color:#bbb> </span><span>表</span><span style=color:#666>1</span><span style=color:#bbb> </span>[<span>别名</span>]<span style=color:#bbb> </span>[<span>连接类型</span>]<span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#a2f;font-weight:700>join</span><span style=color:#bbb> </span><span>表</span><span style=color:#bbb> </span><span style=color:#666>2</span><span style=color:#bbb> </span>[<span>别名</span>]<span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#a2f;font-weight:700>on</span><span style=color:#bbb> </span><span>连接条件</span><span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#a2f;font-weight:700>where</span><span style=color:#bbb> </span><span>筛选条件</span><span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#a2f;font-weight:700>group</span><span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>by</span><span style=color:#bbb> </span><span>分组条件</span><span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#a2f;font-weight:700>having</span><span style=color:#bbb> </span><span>筛选条件</span><span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#a2f;font-weight:700>order</span><span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>by</span><span style=color:#bbb> </span><span>排序条件</span><span style=color:#bbb>
+</span></code></pre></div><p>连接类型：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span>內连</span><span style=color:#bbb> </span><span>：</span><span style=color:#a2f;font-weight:700>inner</span><span style=color:#bbb>
+</span><span style=color:#bbb>       </span><span>等值，非等值，自连接</span><span style=color:#bbb>
+</span><span style=color:#bbb></span><span>外连：</span><span style=color:#bbb>
+</span><span style=color:#bbb>    </span><span>左外：</span><span style=color:#a2f;font-weight:700>left</span><span style=color:#bbb> </span>[<span style=color:#a2f;font-weight:700>outer</span>]<span style=color:#bbb>
+</span><span style=color:#bbb>    </span><span>右外：</span><span style=color:#a2f;font-weight:700>right</span><span style=color:#bbb> </span>[<span style=color:#a2f;font-weight:700>outer</span>]<span style=color:#bbb>
+</span><span style=color:#bbb>    </span><span>全外：</span><span style=color:#a2f;font-weight:700>full</span><span style=color:#bbb> </span>[<span style=color:#a2f;font-weight:700>outer</span>]<span style=color:#bbb>
+</span><span style=color:#bbb></span><span>交叉连接：</span><span style=color:#a2f;font-weight:700>cross</span><span style=color:#bbb>
+</span></code></pre></div><p><img src=%E8%BF%9E%E6%8E%A5%E6%9F%A5%E8%AF%A2%20e102ea3c16cf40b0874e870f243f3999/Untitled%2012.png alt=Untitled></p>
+<h3 id=外连接>外连接</h3>
+<p>①查询的结果=主表中所有的行，如果从表和它匹配的将显示匹配行，如果从表没有匹配的则显示null
+②left join 左边的就是主表，right join 右边的就是主表
+full join 两边都是主表
+③一般用于查询除了交集部分的剩余的不匹配的行</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=color:#666>#</span><span>查询没有男朋友的</span><span style=color:#bbb>
+</span><span style=color:#bbb></span>USE<span style=color:#bbb> </span>girls;<span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#a2f;font-weight:700>SELECT</span><span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>g</span>.name,b.<span style=color:#666>*</span><span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#a2f;font-weight:700>FROM</span><span style=color:#bbb>  </span>beauty<span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>g</span><span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#a2f;font-weight:700>LEFT</span><span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>OUTER</span><span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>JOIN</span><span style=color:#bbb> </span>boys<span style=color:#bbb> </span>b<span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#a2f;font-weight:700>ON</span><span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>g</span>.id<span style=color:#666>=</span>b.id<span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#a2f;font-weight:700>WHERE</span><span style=color:#bbb> </span>b.id<span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>IS</span><span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>NULL</span>;<span style=color:#bbb>
+</span></code></pre></div><p><img src=%E8%BF%9E%E6%8E%A5%E6%9F%A5%E8%AF%A2%20e102ea3c16cf40b0874e870f243f3999/Untitled%2013.png alt=Untitled></p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=color:#666>#</span><span>查询没有人的部门</span><span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#a2f;font-weight:700>SELECT</span><span style=color:#bbb> </span>d.department_name,e.department_id<span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#a2f;font-weight:700>FROM</span><span style=color:#bbb> </span>employees<span style=color:#bbb> </span>e<span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#a2f;font-weight:700>RIGHT</span><span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>OUTER</span><span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>JOIN</span><span style=color:#bbb> </span>departments<span style=color:#bbb> </span>d<span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#a2f;font-weight:700>ON</span><span style=color:#bbb> </span>e.department_id<span style=color:#666>=</span>d.department_id<span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#a2f;font-weight:700>WHERE</span><span style=color:#bbb> </span>e.department_id<span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>IS</span><span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>NULL</span>;<span style=color:#bbb>
+</span></code></pre></div><p><img src=%E8%BF%9E%E6%8E%A5%E6%9F%A5%E8%AF%A2%20e102ea3c16cf40b0874e870f243f3999/Untitled%2014.png alt=Untitled></p>
+<p><img src=%E8%BF%9E%E6%8E%A5%E6%9F%A5%E8%AF%A2%20e102ea3c16cf40b0874e870f243f3999/Untitled%2015.png alt=Untitled></p>
+<p><img src=%E8%BF%9E%E6%8E%A5%E6%9F%A5%E8%AF%A2%20e102ea3c16cf40b0874e870f243f3999/Untitled%2016.png alt=Untitled></p>
+<h3 id=交叉连接>交叉连接</h3>
+<p>sql99下的笛卡尔集</p>
+<p><img src=%E8%BF%9E%E6%8E%A5%E6%9F%A5%E8%AF%A2%20e102ea3c16cf40b0874e870f243f3999/Untitled%2017.png alt=Untitled></p>
+</div>
+<footer class=post-footer>
+<div id=wcomments></div>
+</footer>
+</article>
+</section>
+</div>
+</div>
+<div class=sidebar-toggle>
+<div class=sidebar-toggle-line-wrap>
+<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+</div>
+</div>
+<aside id=sidebar class=sidebar>
+<div class=sidebar-inner>
+<ul class="sidebar-nav motion-element">
+<li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>
+文章目录
+</li>
+<li class=sidebar-nav-overview data-target=site-overview>
+站点概览
+</li>
+</ul>
+<section class="site-overview sidebar-panel">
+<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
+<img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon>
+<p class=site-author-name itemprop=name>Etaon</p>
+<p class="site-description motion-element" itemprop=description>
+Kepp Going!
+</p>
+</div>
+<nav class="site-state motion-element">
+<div class="site-state-item site-state-posts">
+<a href=/post/>
+<span class=site-state-item-count>61</span>
+<span class=site-state-item-name>日志</span>
+</a>
+</div>
+<div class="site-state-item site-state-categories">
+<a href=/categories/>
+<span class=site-state-item-count>13</span>
+<span class=site-state-item-name>分类</span>
+</a>
+</div>
+<div class="site-state-item site-state-tags">
+<a href=/tags/>
+<span class=site-state-item-count>34</span>
+<span class=site-state-item-name>标签</span>
+</a>
+</div>
+</nav>
+<div class="links-of-author motion-element">
+<span class=links-of-author-item>
+<a href=https://github.com/etaon target=_blank title=GitHub>
+<i class="fa fa-fw fa-github"></i>
+GitHub
+</a>
+</span>
+<span class=links-of-author-item>
+<a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN>
+<i class="fa fa-fw fa-CSDN"></i>
+CSDN
+</a>
+</span>
+</div>
+<div class="links-of-blogroll motion-element links-of-blogroll-inline">
+<div class=links-of-blogroll-title>
+<i class="fa fa-fw fa-globe"></i>
+友情链接
+</div>
+<ul class=links-of-blogroll-list>
+<li class=links-of-blogroll-item>
+<a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a>
+</li>
+</ul>
+</div>
+<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
+<div class=tagcloud-of-blogroll-title>
+<i class="fa fa-fw fa-tags"></i>
+标签云
+</div>
+<ul class=tagcloud-of-blogroll-list>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/mysql>Mysql</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/aws>Aws</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/dql>Dql</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/hadoop>Hadoop</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/redis>Redis</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/cicd>Cicd</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/git>Git</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/istio>Istio</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/mongodb>Mongodb</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/azure>Azure</a>
+</li>
+</ul>
+</div>
+</section>
+<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+<div class=post-toc>
+<div class=post-toc-content><nav id=TableOfContents>
+<ul>
+<li><a href=#连接查询>连接查询</a></li>
+<li><a href=#等值连接>等值连接</a></li>
+<li><a href=#非等值连接>非等值连接</a></li>
+<li><a href=#自连接>自连接</a></li>
+<li><a href=#sql99>Sql99</a>
+<ul>
+<li><a href=#外连接>外连接</a></li>
+<li><a href=#交叉连接>交叉连接</a></li>
+</ul>
+</li>
+</ul>
+</nav></div>
+</div>
+</section>
+</div>
+</aside>
+</div>
+</main>
+<footer id=footer class=footer>
+<div class=footer-inner>
+<div class=copyright>
+<span class=copyright-year>
+&copy; 2010 - 2022
+</span>
+<span class=with-love><i class="fa fa-heart"></i></span>
+<span class=copyright-author>路无止境！</span>
+</div>
+<div class=powered-info>
+<span class=powered-by>
+Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.91.2</a>
+</span>
+<span class=separator-line>/</span>
+<span class=theme-info>
+Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
+</a>
+</span>
+</div>
+<div class=vistor-info>
+<script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<span class=site-uv>
+<i class="fa fa-user"></i>
+<span class=busuanzi-value id=busuanzi_value_site_uv></span>
+</span>
+<span class=separator-line>/</span>
+<span class=site-pv>
+<i class="fa fa-eye"></i>
+<span class=busuanzi-value id=busuanzi_value_site_pv></span>
+</span>
+</div>
+<div class=license-info>
+<span class=storage-info>
+Storage by
+<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a>
+</span>
+<span class=separator-line>/</span>
+<span class=license-num>
+<a href target=_blank></a>
+</span>
+</div>
+</div>
+</footer>
+<div class=back-to-top>
+<i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span>
+</div>
+</div>
+<script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
+<script type=text/javascript src=/js/search.js></script>
+<script type=text/javascript src=/js/affix.js></script>
+<script type=text/javascript src=/js/scrollspy.js></script>
+<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.main').css('padding-bottom'),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}}),$(document).on('affixed.bs.affix',function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var b=$('.header-inner').height()+10,c,d,a,e;$('#sidebar').css({'margin-top':b}).show(),c=parseInt($('#sidebar').css('margin-top')),d=parseInt($('.sidebar-inner').css('height')),a=c+d,e=$('.content-wrap').height(),e<a&&$('.content-wrap').css('min-height',a),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
+<script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
+<script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+'//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js',function(){new Waline({el:'#wcomments',visitor:!0,avatar:'wavatar',avatarCDN:'https://sdn.geekzu.org/avatar/',avatarForce:!1,wordLimit:'200',placeholder:' 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ',requiredFields:['nick','mail'],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$('#wcomments').html('抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。')})</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type=text/javascript src="//s7.addthis.com/js/300/addthis_widget.js#pubid=Your%20AddthisId"></script>
+<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
+</body>
+</html>

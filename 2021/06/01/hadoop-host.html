@@ -1,22 +1,22 @@
 <!doctype html><html lang=zh-cn dir=content/zh-cn>
 <head>
-<meta name=generator content="Hugo 0.91.2">
 <meta charset=utf-8>
 <meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
 <meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
 <meta http-equiv=content-security-policy content="upgrade-insecure-requests">
-<title> 路无止境！ </title>
+<title> HADOOP-单机部署 - 路无止境！ </title>
 <meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云">
 <meta name=author content="Etaon">
-<meta property="og:title" content="Home">
+<meta property="og:title" content="HADOOP-单机部署">
 <meta property="og:site_name" content="路无止境！">
 <meta property="og:image" content="/img/author.jpg">
-<meta name=title content="Home - 路无止境！">
+<meta name=title content="HADOOP-单机部署 - 路无止境！">
 <meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。">
 <link rel="shortcut icon" href=/img/favicon.ico>
 <link rel=apple-touch-icon href=/img/apple-touch-icon.png>
 <link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png>
 <link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css>
+<link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet>
 <link href=/css/main.css rel=stylesheet type=text/css>
 <link href=/css/syntax.css rel=stylesheet type=text/css>
 </head>
@@ -36,8 +36,6 @@
 <div class=multi-lang-switch>
 <i class="fa fa-fw fa-language" style=margin-right:5px></i>
 <a class=lang-link id=zh-cn href=#>中文</a>
-<span class=lang-line> / </span>
-<a class=lang-link id=en href=https://www.etaon.link/en/>English</a>
 </div>
 <div class=custom-logo-site-title>
 <a href=/ class=brand rel=start>
@@ -102,266 +100,138 @@
 <section id=posts class=posts-expand>
 <article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
 <header class=post-header>
-<h1 class=post-title itemprop="name headline">
-<a class=post-title-link href=https://www.etaon.link/2022/06/6/Install-Kubernetes-1.24.html itemprop=url>
-Install Kubernetes 1.24
+<h1 class=post-title itemprop="name headline" style=font-weight:700>
+<a class=post-title-link href=https://www.etaon.link/2021/06/01/hadoop-host.html itemprop=url>
+HADOOP-单机部署
 </a>
 </h1>
-<div class=post-meta>
-<span class=post-time>
-<i class="fa fa-calendar-o fa-fw"></i>
-<span class=post-meta-item-text>时间：</span>
-<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2022-06-06">
-2022-06-06
-</time>
-</span>
-<span class=post-category>
-&nbsp; | &nbsp;
-<i class="fa fa-folder-o fa-fw"></i>
-<span class=post-meta-item-text>分类：</span>
-<span itemprop=about itemscope itemtype=https://schema.org/Thing>
-<a href=/categories/kubernetes itemprop=url rel=index style=text-decoration:underline>
-<span itemprop=name>kubernetes</span>
-</a>
-&nbsp;
-</span>
-</span>
-<span>
-|
-<i class="fa fa-file-word-o fa-fw"></i>
-<span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>8731 字</span>
-</span>
-<span>
-|
-<i class="fa fa-eye fa-fw"></i>
-<span class=post-meta-item-text>阅读：</span>
-<span class=leancloud-view-count>18分钟</span>
-</span>
-</div>
 </header>
 <div class=post-body itemprop=articleBody>
-Kubernetes容器运行时演进 早期的kubernetes runtime架构，远没这么复杂，kubelet创建容器，直接调用docker d
+<h2 id=环境参数>环境参数</h2>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>参数</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>操作系统</td>
+<td>CentOS7</td>
+<td>1908</td>
+</tr>
+<tr>
+<td>JDK</td>
+<td>1.8.0_212</td>
+<td></td>
+</tr>
+<tr>
+<td>hadoop</td>
+<td>3.1.3</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id=前期准备>前期准备</h2>
+<p>Centos 1908单台安装
+1）配置IP等，能够上网
+2）安装epel-release
+注：Extra Packages for Enterprise Linux 是为“红帽系”的操作系统提供额外的软件包，
+适用于RHEL、CentOS 和Scientific Linux。相当于是一个软件仓库，大多数rpm 包在官方repository 中是找不到的）</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@hadoop100 ~]# yum install -y epel-release
+</code></pre></div><p>3）如果Linux 安装的是最小系统版，还需要安装如下工具；如果安装的是Linu桌面标准版，不需要执行如下操作</p>
+<p>➢ net-tool：工具包集合，包含ifconfig 等命令</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@hadoop100 ~]# yum install -y net-tools
+</code></pre></div><p>➢ vim：编辑器</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@hadoop100 ~]# yum install -y vim
+</code></pre></div><p>4）关闭防火墙，关闭防火墙开机自启</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@hadoop100 ~]# systemctl stop firewalld
+[root@hadoop100 ~]# systemctl disable firewalld.service
+</code></pre></div><p>5）创建用户并配置root权限</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@hadoop100 ~]# useradd zyi
+[root@hadoop100 ~]# passwd zyi
+[root@hadoop100 ~]# vim /etc/sudoers
+</code></pre></div><p>修改/etc/sudoers 文件，在%wheel 这行下面添加一行，如下所示：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>#Allow root to run any commands anywhere
+root ALL=(ALL) ALL
+#Allows people in group wheel to run all commands
+%wheel ALL=(ALL) ALL
+zyi    ALL=(ALL)    NOPASSWD: ALL
+</code></pre></div><p>这一行不要直接放到root行下面，因为所有用户都属于 wheel组，先 配置了zyi具有免密功能，但是程序执行到 %wheel行时， 该功能又被覆盖回。所以zyi要放到要放到 %wheel这行下面。</p>
+<p>6）在/opt目录下创建文件夹 ，并修改所属主和组</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>root@h102 software]#  mkdir /opt/module
+root@h102 software]#  mkdir /opt/software
+root@h102 software]#  chown zyi:zyi /opt/module/
+root@h102 software]# chown zyi:zyi /opt/software/
+</code></pre></div><p>7）卸载虚拟机自带的 JDK</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@h102 jdk1.8.0_212]# rpm -qa | grep -i java # 查看现有哪些JDK
+[root@h102 jdk1.8.0_212]#  rpm -qa | grep -i java | xargs -n1 rpm -e --nodeps #卸载
+</code></pre></div><p>➢ rpm -qa：查询所安装的所有rpm软件包</p>
+<p>➢ grep -i：忽略大小写</p>
+<p>➢ xargs -n1：表示每次只传递一个参数</p>
+<p>➢ rpm -e –nodeps：强制卸载软件</p>
+<p>根据需要克隆一定数量虚机</p>
+<h2 id=安装步骤>安装步骤</h2>
+<p>Hadoop下载地址 下载地址 ：https://archive.apache.org/dist/hadoop/common/hadoop-3.1.3/</p>
+<p>1）Scp两个安装包到/opt/software</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>root@h102 software]# ll
+total 520600
+-rw-r--r--. 1 root root 338075860 Jun  1 02:26 hadoop-3.1.3.tar.gz
+-rw-r--r--. 1 root root 195013152 Jun  1 02:40 jdk-8u212-linux-x64.tar.gz
+</code></pre></div><p>2）解压两个包到工作目录/opt/module</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>tar -zxvf jdk-8u212-linux-x64.tar.gz -C /opt/module/
+tar -zxvf  hadoop-3.1.3.tar.gz -C /opt/module/
+</code></pre></div><p>3）配置环境变量
+新建 /etc/profile.d/my_env.sh（在/etc/profile下，可以看到启动时遍历/etc/profile.d/*.sh)</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback> vim /etc/profile.d/my_env.sh
+</code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>#JAVA_HOME
+export JAVA_HOME=/opt/module/jdk1.8.0_212
+export PATH=$PATH:$JAVA_HOME/bin
+
+#HADOOP
+export HADOOP_HOME=/opt/module/hadoop-3.1.3
+export PATH=$PATH:$HADOOP_HOME/bin
+export PATH=$PATH:$HADOOP_HOME/sbin
+</code></pre></div><p>source一下，使得新的环境变量生效</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>source /etc/profile
+</code></pre></div><p>4）测试安装情况</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@h102 software]# java -version
+java version &#34;1.8.0_212&#34;
+Java(TM) SE Runtime Environment (build 1.8.0_212-b10)
+Java HotSpot(TM) 64-Bit Server VM (build 25.212-b10, mixed mode)
+</code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@h102 software]# hadoop version
+Hadoop 3.1.3
+Source code repository https://gitbox.apache.org/repos/asf/hadoop.git -r ba631c436b806728f8ec2f54ab1e289526c90579
+Compiled by ztang on 2019-09-12T02:47Z
+Compiled with protoc 2.5.0
+From source with checksum ec785077c385118ac91aadde5ec9799
+This command was run using /opt/module/hadoop-3.1.3/share/hadoop/common/hadoop-common-3.1.3.jar
+</code></pre></div><p>hadoop目录结构</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@h102 hadoop-3.1.3]# ll
+total 176
+drwxr-xr-x. 2 zyi zyi    183 Sep 12  2019 bin
+drwxr-xr-x. 3 zyi zyi     20 Sep 11  2019 etc
+drwxr-xr-x. 2 zyi zyi    106 Sep 12  2019 include
+drwxr-xr-x. 3 zyi zyi     20 Sep 12  2019 lib
+drwxr-xr-x. 4 zyi zyi    288 Sep 12  2019 libexec
+-rw-rw-r--. 1 zyi zyi 147145 Sep  4  2019 LICENSE.txt
+-rw-rw-r--. 1 zyi zyi  21867 Sep  4  2019 NOTICE.txt
+-rw-rw-r--. 1 zyi zyi   1366 Sep  4  2019 README.txt
+drwxr-xr-x. 3 zyi zyi   4096 Sep 11  2019 sbin
+drwxr-xr-x. 4 zyi zyi     31 Sep 12  2019 share
+</code></pre></div><p>（1）bin目录：存放对 Hadoop相关服务（ hdfs，yarn，mapred）进行操作的脚本</p>
+<p>（2）etc目录：Hadoop的配置文件目录，存放 Hadoop的配置文件</p>
+<p>（3）lib目录：存放 Hadoop的本地库（对数据进行压缩解功能）</p>
+<p>（4）sbin目录：存放启动或停止 Hadoop相关服务的脚本</p>
+<p>（5）share目录：存放 Hadoop的依赖 jar包、文档 、和官方案例</p>
 </div>
-<div class="post-more-link text-center">
-<a class=btn href=https://www.etaon.link/2022/06/6/Install-Kubernetes-1.24.html rel=contents>
-阅读全文 &#187;
-</a>
-</div>
-<footer class=post-footer><div class=post-eof></div></footer>
-</article>
-<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
-<header class=post-header>
-<h1 class=post-title itemprop="name headline">
-<a class=post-title-link href=https://www.etaon.link/2022/06/06/sql-infra.html itemprop=url>
-SQL Server 体系结构
-</a>
-</h1>
-<div class=post-meta>
-<span class=post-time>
-<i class="fa fa-calendar-o fa-fw"></i>
-<span class=post-meta-item-text>时间：</span>
-<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2022-06-06">
-2022-06-06
-</time>
-</span>
-<span class=post-category>
-&nbsp; | &nbsp;
-<i class="fa fa-folder-o fa-fw"></i>
-<span class=post-meta-item-text>分类：</span>
-<span itemprop=about itemscope itemtype=https://schema.org/Thing>
-<a href=/categories/database itemprop=url rel=index style=text-decoration:underline>
-<span itemprop=name>Database</span>
-</a>
-&nbsp;
-</span>
-</span>
-<span>
-|
-<i class="fa fa-file-word-o fa-fw"></i>
-<span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>5070 字</span>
-</span>
-<span>
-|
-<i class="fa fa-eye fa-fw"></i>
-<span class=post-meta-item-text>阅读：</span>
-<span class=leancloud-view-count>11分钟</span>
-</span>
-</div>
-</header>
-<div class=post-body itemprop=articleBody>
-整体结构 Microsoft SQL Server 服务由一个实例（Instance）和多个数据库（Databases）组成， 实例包含了后台线程和占用的内存，数据库在存在于存储上
-</div>
-<div class="post-more-link text-center">
-<a class=btn href=https://www.etaon.link/2022/06/06/sql-infra.html rel=contents>
-阅读全文 &#187;
-</a>
-</div>
-<footer class=post-footer><div class=post-eof></div></footer>
-</article>
-<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
-<header class=post-header>
-<h1 class=post-title itemprop="name headline">
-<a class=post-title-link href=https://www.etaon.link/2022/06/05/oracle-basic.html itemprop=url>
-Oracle基本概念和结构
-</a>
-</h1>
-<div class=post-meta>
-<span class=post-time>
-<i class="fa fa-calendar-o fa-fw"></i>
-<span class=post-meta-item-text>时间：</span>
-<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2022-06-05">
-2022-06-05
-</time>
-</span>
-<span class=post-category>
-&nbsp; | &nbsp;
-<i class="fa fa-folder-o fa-fw"></i>
-<span class=post-meta-item-text>分类：</span>
-<span itemprop=about itemscope itemtype=https://schema.org/Thing>
-<a href=/categories/database itemprop=url rel=index style=text-decoration:underline>
-<span itemprop=name>Database</span>
-</a>
-&nbsp;
-</span>
-</span>
-<span>
-|
-<i class="fa fa-file-word-o fa-fw"></i>
-<span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>2679 字</span>
-</span>
-<span>
-|
-<i class="fa fa-eye fa-fw"></i>
-<span class=post-meta-item-text>阅读：</span>
-<span class=leancloud-view-count>6分钟</span>
-</span>
-</div>
-</header>
-<div class=post-body itemprop=articleBody>
-什么是关系型数据库？ 基于关系模型的数据库，即基于二维表（行、列）存储数据的库。 什么是数据库? 数据库是存储介质上的文件—>物理存储结构 什
-</div>
-<div class="post-more-link text-center">
-<a class=btn href=https://www.etaon.link/2022/06/05/oracle-basic.html rel=contents>
-阅读全文 &#187;
-</a>
-</div>
-<footer class=post-footer><div class=post-eof></div></footer>
-</article>
-<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
-<header class=post-header>
-<h1 class=post-title itemprop="name headline">
-<a class=post-title-link href=https://www.etaon.link/2022/05/26/oracle-install-19c.html itemprop=url>
-Oracle Install 19c@CentOS 7.6
-</a>
-</h1>
-<div class=post-meta>
-<span class=post-time>
-<i class="fa fa-calendar-o fa-fw"></i>
-<span class=post-meta-item-text>时间：</span>
-<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2022-05-26">
-2022-05-26
-</time>
-</span>
-<span class=post-category>
-&nbsp; | &nbsp;
-<i class="fa fa-folder-o fa-fw"></i>
-<span class=post-meta-item-text>分类：</span>
-<span itemprop=about itemscope itemtype=https://schema.org/Thing>
-<a href=/categories/database itemprop=url rel=index style=text-decoration:underline>
-<span itemprop=name>Database</span>
-</a>
-&nbsp;
-</span>
-</span>
-<span>
-|
-<i class="fa fa-file-word-o fa-fw"></i>
-<span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>3833 字</span>
-</span>
-<span>
-|
-<i class="fa fa-eye fa-fw"></i>
-<span class=post-meta-item-text>阅读：</span>
-<span class=leancloud-view-count>8分钟</span>
-</span>
-</div>
-</header>
-<div class=post-body itemprop=articleBody>
-基础环境 CentOS 7 1908 ELF 5.0.2 CPU绑定，在NUMA结构中，尽量把vCPU放到最少的NUMA #virsh list查看哪些虚机和序号 [root@smtx-01 19:08:10 smartx]$virsh list Id Name State ---------------------------------------------------- 1 e9eafd7a-9b19-4dd3-bce4-60635252528c running 2 c4ea06f4-8084-4cdb-8010-a72e05402ce8 running #查
-</div>
-<div class="post-more-link text-center">
-<a class=btn href=https://www.etaon.link/2022/05/26/oracle-install-19c.html rel=contents>
-阅读全文 &#187;
-</a>
-</div>
-<footer class=post-footer><div class=post-eof></div></footer>
-</article>
-<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
-<header class=post-header>
-<h1 class=post-title itemprop="name headline">
-<a class=post-title-link href=https://www.etaon.link/2022/02/21/k8s-nfs-csi.html itemprop=url>
-NFS-Volume for K8S
-</a>
-</h1>
-<div class=post-meta>
-<span class=post-time>
-<i class="fa fa-calendar-o fa-fw"></i>
-<span class=post-meta-item-text>时间：</span>
-<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2022-02-21">
-2022-02-21
-</time>
-</span>
-<span class=post-category>
-&nbsp; | &nbsp;
-<i class="fa fa-folder-o fa-fw"></i>
-<span class=post-meta-item-text>分类：</span>
-<span itemprop=about itemscope itemtype=https://schema.org/Thing>
-<a href=/categories/kubernetes itemprop=url rel=index style=text-decoration:underline>
-<span itemprop=name>kubernetes</span>
-</a>
-&nbsp;
-</span>
-</span>
-<span>
-|
-<i class="fa fa-file-word-o fa-fw"></i>
-<span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>3178 字</span>
-</span>
-<span>
-|
-<i class="fa fa-eye fa-fw"></i>
-<span class=post-meta-item-text>阅读：</span>
-<span class=leancloud-view-count>7分钟</span>
-</span>
-</div>
-</header>
-<div class=post-body itemprop=articleBody>
-环境 Alma：Linux Alma 8.5 CP/Worker：ubuntu 18.04 NFS安装 Alma： #安装 yum install -y nfs-utils #nfs主节点 echo "/nfs/data/ *(insecure,rw,sync,no_root_squash)" > /etc/exports mkdir -p /nfs/data systemctl enable rpcbind --now systemctl enable nfs-server
-</div>
-<div class="post-more-link text-center">
-<a class=btn href=https://www.etaon.link/2022/02/21/k8s-nfs-csi.html rel=contents>
-阅读全文 &#187;
-</a>
-</div>
-<footer class=post-footer><div class=post-eof></div></footer>
+<footer class=post-footer>
+<div id=wcomments></div>
+</footer>
 </article>
 </section>
-<nav class=pagination>
-<span class="page-number current">1</span>
-<a class=page-number href=/p/2/>2</a>
-<a class=page-number href=/p/3/>3</a>
-<a class=page-number href=/p/4/>4</a>
-<a class=page-number href=/p/5/>5</a>
-<a class=page-number href=/p/6/>6</a>
-<a class=page-number href=/p/7/>7</a>
-<a class=page-number href=/p/8/>8</a>
-<a class="extend next" rel=next href=/p/2/><i class="fa fa-angle-right"></i></a>
-</nav>
 </div>
 </div>
 <div class=sidebar-toggle>
@@ -373,7 +243,15 @@ NFS-Volume for K8S
 </div>
 <aside id=sidebar class=sidebar>
 <div class=sidebar-inner>
-<section class="site-overview sidebar-panel sidebar-panel-active">
+<ul class="sidebar-nav motion-element">
+<li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>
+文章目录
+</li>
+<li class=sidebar-nav-overview data-target=site-overview>
+站点概览
+</li>
+</ul>
+<section class="site-overview sidebar-panel">
 <div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
 <img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon>
 <p class=site-author-name itemprop=name>Etaon</p>
@@ -401,12 +279,6 @@ Kepp Going!
 </a>
 </div>
 </nav>
-<div class="feed-link motion-element">
-<a href=/index.xml rel=alternate type=application/rss+xml target=_blank>
-<i class="fa fa-rss"></i>
-RSS 订阅
-</a>
-</div>
 <div class="links-of-author motion-element">
 <span class=links-of-author-item>
 <a href=https://github.com/etaon target=_blank title=GitHub>
@@ -480,6 +352,17 @@ CSDN
 </ul>
 </div>
 </section>
+<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+<div class=post-toc>
+<div class=post-toc-content><nav id=TableOfContents>
+<ul>
+<li><a href=#环境参数>环境参数</a></li>
+<li><a href=#前期准备>前期准备</a></li>
+<li><a href=#安装步骤>安装步骤</a></li>
+</ul>
+</nav></div>
+</div>
+</section>
 </div>
 </aside>
 </div>
@@ -537,6 +420,11 @@ Storage by
 <script type=text/javascript src=/js/affix.js></script>
 <script type=text/javascript src=/js/scrollspy.js></script>
 <script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.main').css('padding-bottom'),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}}),$(document).on('affixed.bs.affix',function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var b=$('.header-inner').height()+10,c,d,a,e;$('#sidebar').css({'margin-top':b}).show(),c=parseInt($('#sidebar').css('margin-top')),d=parseInt($('.sidebar-inner').css('height')),a=c+d,e=$('.content-wrap').height(),e<a&&$('.content-wrap').css('min-height',a),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
+<script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
+<script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+'//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js',function(){new Waline({el:'#wcomments',visitor:!0,avatar:'wavatar',avatarCDN:'https://sdn.geekzu.org/avatar/',avatarForce:!1,wordLimit:'200',placeholder:' 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ',requiredFields:['nick','mail'],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$('#wcomments').html('抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。')})</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type=text/javascript src="//s7.addthis.com/js/300/addthis_widget.js#pubid=Your%20AddthisId"></script>
 <script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
 </body>
 </html>

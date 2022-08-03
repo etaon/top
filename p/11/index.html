@@ -103,16 +103,16 @@
 <article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
 <header class=post-header>
 <h1 class=post-title itemprop="name headline">
-<a class=post-title-link href=https://www.etaon.link/2022/06/6/Install-Kubernetes-1.24.html itemprop=url>
-Install Kubernetes 1.24
+<a class=post-title-link href=https://www.etaon.link/2021/07/15/cicd-gitlab-install.html itemprop=url>
+Gitlab Server 本地部署
 </a>
 </h1>
 <div class=post-meta>
 <span class=post-time>
 <i class="fa fa-calendar-o fa-fw"></i>
 <span class=post-meta-item-text>时间：</span>
-<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2022-06-06">
-2022-06-06
+<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2021-07-15">
+2021-07-15
 </time>
 </span>
 <span class=post-category>
@@ -120,8 +120,8 @@ Install Kubernetes 1.24
 <i class="fa fa-folder-o fa-fw"></i>
 <span class=post-meta-item-text>分类：</span>
 <span itemprop=about itemscope itemtype=https://schema.org/Thing>
-<a href=/categories/kubernetes itemprop=url rel=index style=text-decoration:underline>
-<span itemprop=name>kubernetes</span>
+<a href=/categories/cicd itemprop=url rel=index style=text-decoration:underline>
+<span itemprop=name>cicd</span>
 </a>
 &nbsp;
 </span>
@@ -130,21 +130,21 @@ Install Kubernetes 1.24
 |
 <i class="fa fa-file-word-o fa-fw"></i>
 <span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>8731 字</span>
+<span class=leancloud-world-count>1136 字</span>
 </span>
 <span>
 |
 <i class="fa fa-eye fa-fw"></i>
 <span class=post-meta-item-text>阅读：</span>
-<span class=leancloud-view-count>18分钟</span>
+<span class=leancloud-view-count>3分钟</span>
 </span>
 </div>
 </header>
 <div class=post-body itemprop=articleBody>
-Kubernetes容器运行时演进 早期的kubernetes runtime架构，远没这么复杂，kubelet创建容器，直接调用docker d
+环境配置 关闭防火墙、关闭SELinux 尝试邮件服务，开启邮件服务 [root@git-server /]# systemctl start postfix [root@git-server /]# systemctl enable postfix 部署 Gitlab 安装 gitlab 依赖包 Centos7: [root@git-server /]# yum install -y curl openssh-server openssh-clients postfix cronie policycoreutils-python # gitlab-ce 10.x.
 </div>
 <div class="post-more-link text-center">
-<a class=btn href=https://www.etaon.link/2022/06/6/Install-Kubernetes-1.24.html rel=contents>
+<a class=btn href=https://www.etaon.link/2021/07/15/cicd-gitlab-install.html rel=contents>
 阅读全文 &#187;
 </a>
 </div>
@@ -153,16 +153,16 @@ Kubernetes容器运行时演进 早期的kubernetes runtime架构，远没这么
 <article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
 <header class=post-header>
 <h1 class=post-title itemprop="name headline">
-<a class=post-title-link href=https://www.etaon.link/2022/06/06/sql-infra.html itemprop=url>
-SQL Server 体系结构
+<a class=post-title-link href=https://www.etaon.link/2021/07/15/cicd-gitlab-process.html itemprop=url>
+Gitlab开发代码提交处理流程
 </a>
 </h1>
 <div class=post-meta>
 <span class=post-time>
 <i class="fa fa-calendar-o fa-fw"></i>
 <span class=post-meta-item-text>时间：</span>
-<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2022-06-06">
-2022-06-06
+<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2021-07-15">
+2021-07-15
 </time>
 </span>
 <span class=post-category>
@@ -170,8 +170,8 @@ SQL Server 体系结构
 <i class="fa fa-folder-o fa-fw"></i>
 <span class=post-meta-item-text>分类：</span>
 <span itemprop=about itemscope itemtype=https://schema.org/Thing>
-<a href=/categories/database itemprop=url rel=index style=text-decoration:underline>
-<span itemprop=name>Database</span>
+<a href=/categories/cicd itemprop=url rel=index style=text-decoration:underline>
+<span itemprop=name>cicd</span>
 </a>
 &nbsp;
 </span>
@@ -180,21 +180,21 @@ SQL Server 体系结构
 |
 <i class="fa fa-file-word-o fa-fw"></i>
 <span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>5070 字</span>
+<span class=leancloud-world-count>1537 字</span>
 </span>
 <span>
 |
 <i class="fa fa-eye fa-fw"></i>
 <span class=post-meta-item-text>阅读：</span>
-<span class=leancloud-view-count>11分钟</span>
+<span class=leancloud-view-count>4分钟</span>
 </span>
 </div>
 </header>
 <div class=post-body itemprop=articleBody>
-整体结构 Microsoft SQL Server 服务由一个实例（Instance）和多个数据库（Databases）组成， 实例包含了后台线程和占用的内存，数据库在存在于存储上
+一般公司代码提交及合并流程 PM（项目主管/项目经理）在gitlab创建任务，分配给开发人员 开发人员领取任务后，在本地使用git clone拉取
 </div>
 <div class="post-more-link text-center">
-<a class=btn href=https://www.etaon.link/2022/06/06/sql-infra.html rel=contents>
+<a class=btn href=https://www.etaon.link/2021/07/15/cicd-gitlab-process.html rel=contents>
 阅读全文 &#187;
 </a>
 </div>
@@ -203,16 +203,16 @@ SQL Server 体系结构
 <article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
 <header class=post-header>
 <h1 class=post-title itemprop="name headline">
-<a class=post-title-link href=https://www.etaon.link/2022/06/05/oracle-basic.html itemprop=url>
-Oracle基本概念和结构
+<a class=post-title-link href=https://www.etaon.link/2021/07/11/hadoop-yarn.html itemprop=url>
+HADOOP-Yarn
 </a>
 </h1>
 <div class=post-meta>
 <span class=post-time>
 <i class="fa fa-calendar-o fa-fw"></i>
 <span class=post-meta-item-text>时间：</span>
-<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2022-06-05">
-2022-06-05
+<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2021-07-11">
+2021-07-11
 </time>
 </span>
 <span class=post-category>
@@ -220,8 +220,8 @@ Oracle基本概念和结构
 <i class="fa fa-folder-o fa-fw"></i>
 <span class=post-meta-item-text>分类：</span>
 <span itemprop=about itemscope itemtype=https://schema.org/Thing>
-<a href=/categories/database itemprop=url rel=index style=text-decoration:underline>
-<span itemprop=name>Database</span>
+<a href=/categories/hadoop itemprop=url rel=index style=text-decoration:underline>
+<span itemprop=name>Hadoop</span>
 </a>
 &nbsp;
 </span>
@@ -230,7 +230,7 @@ Oracle基本概念和结构
 |
 <i class="fa fa-file-word-o fa-fw"></i>
 <span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>2679 字</span>
+<span class=leancloud-world-count>2829 字</span>
 </span>
 <span>
 |
@@ -241,10 +241,10 @@ Oracle基本概念和结构
 </div>
 </header>
 <div class=post-body itemprop=articleBody>
-什么是关系型数据库？ 基于关系模型的数据库，即基于二维表（行、列）存储数据的库。 什么是数据库? 数据库是存储介质上的文件—>物理存储结构 什
+Yarn 是一个资源调度平台，负责为运算程序提供服务器运算资源，相当于一个分布式 的操作系统平台，而 MapReduce 等运算程序则相当于运行于操作系统之上的应用程序。
 </div>
 <div class="post-more-link text-center">
-<a class=btn href=https://www.etaon.link/2022/06/05/oracle-basic.html rel=contents>
+<a class=btn href=https://www.etaon.link/2021/07/11/hadoop-yarn.html rel=contents>
 阅读全文 &#187;
 </a>
 </div>
@@ -253,16 +253,16 @@ Oracle基本概念和结构
 <article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
 <header class=post-header>
 <h1 class=post-title itemprop="name headline">
-<a class=post-title-link href=https://www.etaon.link/2022/05/26/oracle-install-19c.html itemprop=url>
-Oracle Install 19c@CentOS 7.6
+<a class=post-title-link href=https://www.etaon.link/2021/07/07/hadoop-dn.html itemprop=url>
+HADOOP-DataNode
 </a>
 </h1>
 <div class=post-meta>
 <span class=post-time>
 <i class="fa fa-calendar-o fa-fw"></i>
 <span class=post-meta-item-text>时间：</span>
-<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2022-05-26">
-2022-05-26
+<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2021-07-07">
+2021-07-07
 </time>
 </span>
 <span class=post-category>
@@ -270,8 +270,8 @@ Oracle Install 19c@CentOS 7.6
 <i class="fa fa-folder-o fa-fw"></i>
 <span class=post-meta-item-text>分类：</span>
 <span itemprop=about itemscope itemtype=https://schema.org/Thing>
-<a href=/categories/database itemprop=url rel=index style=text-decoration:underline>
-<span itemprop=name>Database</span>
+<a href=/categories/hadoop itemprop=url rel=index style=text-decoration:underline>
+<span itemprop=name>Hadoop</span>
 </a>
 &nbsp;
 </span>
@@ -280,21 +280,21 @@ Oracle Install 19c@CentOS 7.6
 |
 <i class="fa fa-file-word-o fa-fw"></i>
 <span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>3833 字</span>
+<span class=leancloud-world-count>558 字</span>
 </span>
 <span>
 |
 <i class="fa fa-eye fa-fw"></i>
 <span class=post-meta-item-text>阅读：</span>
-<span class=leancloud-view-count>8分钟</span>
+<span class=leancloud-view-count>2分钟</span>
 </span>
 </div>
 </header>
 <div class=post-body itemprop=articleBody>
-基础环境 CentOS 7 1908 ELF 5.0.2 CPU绑定，在NUMA结构中，尽量把vCPU放到最少的NUMA #virsh list查看哪些虚机和序号 [root@smtx-01 19:08:10 smartx]$virsh list Id Name State ---------------------------------------------------- 1 e9eafd7a-9b19-4dd3-bce4-60635252528c running 2 c4ea06f4-8084-4cdb-8010-a72e05402ce8 running #查
+DataNode数据存在的形式 [root@h102 subdir0]# pwd /opt/module/hadoop-3.1.3/data/dfs/data/current/BP-1568640629-192.168.110.82-1622624666933/current/finalized/subdir0/subdir0 [root@h102 subdir0]# ll total 48 -rw-rw-r--. 1 zyi zyi 1248 Jun 2 22:28 blk_1073741825 -rw-rw-r--. 1 zyi zyi 19 Jun 2 22:28 blk_1073741825_1001.meta -rw-rw-r--. 1 zyi zyi 1013 Jun 3 03:46 blk_1073741854 -rw-rw-r--. 1 zyi zyi 15 Jun 3 03:46 blk_1073741854_1030.meta -rw-rw-r--. 1 zyi zyi 7 Jun 11 07:34 blk_1073741861 -rw-rw-r--.
 </div>
 <div class="post-more-link text-center">
-<a class=btn href=https://www.etaon.link/2022/05/26/oracle-install-19c.html rel=contents>
+<a class=btn href=https://www.etaon.link/2021/07/07/hadoop-dn.html rel=contents>
 阅读全文 &#187;
 </a>
 </div>
@@ -303,16 +303,16 @@ Oracle Install 19c@CentOS 7.6
 <article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
 <header class=post-header>
 <h1 class=post-title itemprop="name headline">
-<a class=post-title-link href=https://www.etaon.link/2022/02/21/k8s-nfs-csi.html itemprop=url>
-NFS-Volume for K8S
+<a class=post-title-link href=https://www.etaon.link/2021/07/01/hadoop-nn2nn.html itemprop=url>
+HADOOP-NN & 2NN
 </a>
 </h1>
 <div class=post-meta>
 <span class=post-time>
 <i class="fa fa-calendar-o fa-fw"></i>
 <span class=post-meta-item-text>时间：</span>
-<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2022-02-21">
-2022-02-21
+<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2021-07-01">
+2021-07-01
 </time>
 </span>
 <span class=post-category>
@@ -320,8 +320,8 @@ NFS-Volume for K8S
 <i class="fa fa-folder-o fa-fw"></i>
 <span class=post-meta-item-text>分类：</span>
 <span itemprop=about itemscope itemtype=https://schema.org/Thing>
-<a href=/categories/kubernetes itemprop=url rel=index style=text-decoration:underline>
-<span itemprop=name>kubernetes</span>
+<a href=/categories/hadoop itemprop=url rel=index style=text-decoration:underline>
+<span itemprop=name>Hadoop</span>
 </a>
 &nbsp;
 </span>
@@ -330,21 +330,21 @@ NFS-Volume for K8S
 |
 <i class="fa fa-file-word-o fa-fw"></i>
 <span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>3178 字</span>
+<span class=leancloud-world-count>2918 字</span>
 </span>
 <span>
 |
 <i class="fa fa-eye fa-fw"></i>
 <span class=post-meta-item-text>阅读：</span>
-<span class=leancloud-view-count>7分钟</span>
+<span class=leancloud-view-count>6分钟</span>
 </span>
 </div>
 </header>
 <div class=post-body itemprop=articleBody>
-环境 Alma：Linux Alma 8.5 CP/Worker：ubuntu 18.04 NFS安装 Alma： #安装 yum install -y nfs-utils #nfs主节点 echo "/nfs/data/ *(insecure,rw,sync,no_root_squash)" > /etc/exports mkdir -p /nfs/data systemctl enable rpcbind --now systemctl enable nfs-server
+几个概念 NameNode被格式化之后，将在/opt/module/hadoop-3.1.3/data/tmp/dfs/name/curren
 </div>
 <div class="post-more-link text-center">
-<a class=btn href=https://www.etaon.link/2022/02/21/k8s-nfs-csi.html rel=contents>
+<a class=btn href=https://www.etaon.link/2021/07/01/hadoop-nn2nn.html rel=contents>
 阅读全文 &#187;
 </a>
 </div>
@@ -352,15 +352,17 @@ NFS-Volume for K8S
 </article>
 </section>
 <nav class=pagination>
-<span class="page-number current">1</span>
-<a class=page-number href=/p/2/>2</a>
-<a class=page-number href=/p/3/>3</a>
-<a class=page-number href=/p/4/>4</a>
+<a class="extend prev" rel=prev href=/p/10/><i class="fa fa-angle-left"></i></a>
 <a class=page-number href=/p/5/>5</a>
 <a class=page-number href=/p/6/>6</a>
 <a class=page-number href=/p/7/>7</a>
 <a class=page-number href=/p/8/>8</a>
-<a class="extend next" rel=next href=/p/2/><i class="fa fa-angle-right"></i></a>
+<a class=page-number href=/p/9/>9</a>
+<a class=page-number href=/p/10/>10</a>
+<span class="page-number current">11</span>
+<a class=page-number href=/p/12/>12</a>
+<a class=page-number href=/p/13/>13</a>
+<a class="extend next" rel=next href=/p/12/><i class="fa fa-angle-right"></i></a>
 </nav>
 </div>
 </div>

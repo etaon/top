@@ -1,0 +1,686 @@
+<!doctype html><html lang=zh-cn dir=content/zh-cn>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
+<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
+<title> AWS-利用Fargate创建ECS集群 - 路无止境！ </title>
+<meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云">
+<meta name=author content="Etaon">
+<meta property="og:title" content="AWS-利用Fargate创建ECS集群">
+<meta property="og:site_name" content="路无止境！">
+<meta property="og:image" content="/img/author.jpg">
+<meta name=title content="AWS-利用Fargate创建ECS集群 - 路无止境！">
+<meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。">
+<link rel="shortcut icon" href=/img/favicon.ico>
+<link rel=apple-touch-icon href=/img/apple-touch-icon.png>
+<link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png>
+<link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css>
+<link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet>
+<link href=/css/main.css rel=stylesheet type=text/css>
+<link href=/css/syntax.css rel=stylesheet type=text/css>
+</head>
+<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
+<div class="container one-collumn sidebar-position-left page-home">
+<div class=headband></div>
+<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
+<div class=header-inner> <div class=site-brand-container>
+<div class=site-nav-toggle>
+<div class=toggle role=button style=opacity:1;top:0>
+<span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span>
+</div>
+</div>
+<div class=site-meta>
+<div class=multi-lang-switch>
+<i class="fa fa-fw fa-language" style=margin-right:5px></i>
+<a class=lang-link id=zh-cn href=#>中文</a>
+</div>
+<div class=custom-logo-site-title>
+<a href=/ class=brand rel=start>
+<span class=logo-line-before><i></i></span>
+<span class=site-title>路无止境！</span>
+<span class=logo-line-after><i></i></span>
+</a>
+</div>
+<p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p>
+</div>
+<div class=site-nav-right>
+<div class="toggle popup-trigger" style=opacity:1;top:0>
+<i class="fa fa-search fa-fw fa-lg"></i>
+</div>
+</div>
+</div>
+<nav class=site-nav>
+<ul id=menu class=menu>
+<li class=menu-item>
+<a href=/ rel=section>
+<i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页
+</a>
+</li>
+<li class=menu-item>
+<a href=/post rel=section>
+<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档
+</a>
+</li>
+<li class=menu-item>
+<a href=/about.html rel=section>
+<i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于我
+</a>
+</li>
+<li class=menu-item>
+<a href=/404.html rel=section>
+<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益404
+</a>
+</li>
+<li class="menu-item menu-item-search">
+<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> 搜索</a>
+</li>
+</ul>
+<div class=site-search>
+<div class="popup search-popup local-search-popup">
+<div class="local-search-header clearfix">
+<span class=search-icon><i class="fa fa-search"></i> </span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
+<div class=local-search-input-wrapper>
+<input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
+</div>
+</div>
+<div id=local-search-result></div>
+</div>
+</div>
+</nav>
+</div>
+</header>
+<main id=main class=main>
+<div class=main-inner>
+<div class=content-wrap>
+<div id=content class=content>
+<section id=posts class=posts-expand>
+<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
+<header class=post-header>
+<h1 class=post-title itemprop="name headline" style=font-weight:700>
+<a class=post-title-link href=https://www.etaon.link/2021/07/27/aws-ecssetup.html itemprop=url>
+AWS-利用Fargate创建ECS集群
+</a>
+</h1>
+</header>
+<div class=post-body itemprop=articleBody>
+<p>Fargate 是使用 Amazon Elastic Container Service 托管容器的无服务器方式。</p>
+<p>本实验来自于Building Containerized Applications on AWS第二周的内容：AWS Fargate Demonstration</p>
+<h2 id=实验拓扑>实验拓扑</h2>
+<p><img src="https://img-blog.csdnimg.cn/208b0a4f85f64c7b9d728f28de1ed906.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p>
+<h2 id=实验说明>实验说明</h2>
+<ol>
+<li>本实验将创建一个集群，集群是承载容器的基础架构的逻辑隔离边界。
+该集群位于默认VPC内，跨越两个可用区。在每个可用区设定私有子网，分别为172.31.111.0/24和172.31.112.0/24。Fargate 将自动配置和管理集群。</li>
+<li>创建任务Task，任务在基本级别是一个用于运行容器的包装器。创建任务定义的时候将对要运行的一个或多个容器的配置进行规定。</li>
+<li>创建服务，服务是对外提供的。将匹配创建的集群和任务。</li>
+<li>容器使用的Image来自于ECR。</li>
+<li>需要对Task创建等提供Role。</li>
+<li>创建ALB对外提供服务，对内监听ECS容器服务。</li>
+</ol>
+<h2 id=实验配置步骤>实验配置步骤</h2>
+<h3 id=创建role>创建Role</h3>
+<p><img src="https://img-blog.csdnimg.cn/0581cf25ef774ba6abde2e70909e9198.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt></p>
+<h3 id=创建alb>创建ALB</h3>
+<h4 id=使用命令创建alb>使用命令创建ALB</h4>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>aws elbv2 create-load-balancer --name FargateLoadBalancer \
+--subnets subnet-050355db94fb6330f subnet-06a74586eefb96d0a \
+--security-groups sg-0b784f3107ad6fe28 --scheme internet-facing \
+--type application --ip-address-type ipv4
+</code></pre></div><p>系统将生成</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>{
+    &#34;LoadBalancers&#34;: [
+        {
+            &#34;IpAddressType&#34;: &#34;ipv4&#34;,
+            &#34;VpcId&#34;: &#34;vpc-ffc10199&#34;,
+            &#34;LoadBalancerArn&#34;: `&#34;arn:aws:elasticloadbalancing:ap-southeast-1:098246620002:loadbalancer/app/FargateLoadBalancer/bb0a690e091b071b&#34;`,
+            &#34;State&#34;: {
+                &#34;Code&#34;: &#34;provisioning&#34;
+            },
+            &#34;DNSName&#34;: &#34;FargateLoadBalancer-1422969215.ap-southeast-1.elb.amazonaws.com&#34;,
+            &#34;SecurityGroups&#34;: [
+                &#34;sg-0b784f3107ad6fe28&#34;
+            ],
+            &#34;LoadBalancerName&#34;: &#34;FargateLoadBalancer&#34;,
+            &#34;CreatedTime&#34;: &#34;2021-07-27T09:28:12.320Z&#34;,
+            &#34;Scheme&#34;: &#34;internet-facing&#34;,
+            &#34;Type&#34;: &#34;application&#34;,
+            &#34;CanonicalHostedZoneId&#34;: &#34;Z1LMS91P8CMLE5&#34;,
+            &#34;AvailabilityZones&#34;: [
+                {
+                    &#34;SubnetId&#34;: &#34;subnet-050355db94fb6330f&#34;,
+                    &#34;LoadBalancerAddresses&#34;: [],
+                    &#34;ZoneName&#34;: &#34;ap-southeast-1b&#34;
+                },
+                {
+                    &#34;SubnetId&#34;: &#34;subnet-06a74586eefb96d0a&#34;,
+                    &#34;LoadBalancerAddresses&#34;: [],
+                    &#34;ZoneName&#34;: &#34;ap-southeast-1c&#34;
+                }
+            ]
+        }
+    ]
+}
+</code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback> ` ` 部分下面会用到
+</code></pre></div><h4 id=指定alb监听目标组>指定ALB监听目标组</h4>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>aws elbv2 create-target-group --name FargateTargetGroup --protocol HTTP \
+--port 8080 --vpc-id vpc-ffc10199 --target-type ip
+</code></pre></div><p>这里的vpc-xxxxxx是VPC的ID</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>{
+    &#34;TargetGroups&#34;: [
+        {
+            &#34;HealthCheckPath&#34;: &#34;/&#34;,
+            &#34;HealthCheckIntervalSeconds&#34;: 30,
+            &#34;VpcId&#34;: &#34;vpc-ffc10199&#34;,
+            &#34;Protocol&#34;: &#34;HTTP&#34;,
+            &#34;HealthCheckTimeoutSeconds&#34;: 5,
+            &#34;TargetType&#34;: &#34;ip&#34;,
+            &#34;HealthCheckProtocol&#34;: &#34;HTTP&#34;,
+            &#34;ProtocolVersion&#34;: &#34;HTTP1&#34;,
+            &#34;Matcher&#34;: {
+                &#34;HttpCode&#34;: &#34;200&#34;
+            },
+            &#34;UnhealthyThresholdCount&#34;: 2,
+            &#34;HealthyThresholdCount&#34;: 5,
+            &#34;TargetGroupArn&#34;: `&#34;arn:aws:elasticloadbalancing:ap-southeast-1:098246620002:targetgroup/FargateTargetGroup/9e4630794653255a&#34;`,
+            &#34;HealthCheckEnabled&#34;: true,
+            &#34;HealthCheckPort&#34;: &#34;traffic-port&#34;,
+            &#34;Port&#34;: 8080,
+            &#34;TargetGroupName&#34;: &#34;FargateTargetGroup&#34;
+        }
+    ]
+}
+</code></pre></div><h4 id=配置alb和目标组>配置ALB和目标组</h4>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback> aws elbv2 create-listener --load-balancer-arn `arn:aws:elasticloadbalancing:ap-southeast-1:098246620002:loadbalancer/app/FargateLoadBalancer/bb0a690e091b071b` --protocol HTTP --port 80 \
+--default-actions Type=forward,TargetGroupArn=`arn:aws:elasticloadbalancing:ap-southeast-1:098246620002:targetgroup/FargateTargetGroup/9e4630794653255a`
+</code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback> {
+    &#34;Listeners&#34;: [
+        {
+            &#34;Protocol&#34;: &#34;HTTP&#34;,
+            &#34;DefaultActions&#34;: [
+                {
+                    &#34;ForwardConfig&#34;: {
+                        &#34;TargetGroupStickinessConfig&#34;: {
+                            &#34;Enabled&#34;: false
+                        },
+                        &#34;TargetGroups&#34;: [
+                            {
+                                &#34;TargetGroupArn&#34;: &#34;arn:aws:elasticloadbalancing:ap-southeast-1:098246620002:targetgroup/FargateTargetGroup/9e4630794653255a&#34;,
+                                &#34;Weight&#34;: 1
+                            }
+                        ]
+                    },
+                    &#34;TargetGroupArn&#34;: &#34;arn:aws:elasticloadbalancing:ap-southeast-1:098246620002:targetgroup/FargateTargetGroup/9e4630794653255a&#34;,
+                    &#34;Type&#34;: &#34;forward&#34;
+                }
+            ],
+            &#34;LoadBalancerArn&#34;: &#34;arn:aws:elasticloadbalancing:ap-southeast-1:098246620002:loadbalancer/app/FargateLoadBalancer/bb0a690e091b071b&#34;,
+            &#34;Port&#34;: 80,
+            &#34;ListenerArn&#34;: &#34;arn:aws:elasticloadbalancing:ap-southeast-1:098246620002:listener/app/FargateLoadBalancer/bb0a690e091b071b/0795bc3f32c9641d&#34;
+        }
+    ]
+}
+</code></pre></div><h3 id=创建cluster>创建Cluster</h3>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>aws ecs create-cluster --cluster-name farget-cluster
+</code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>{
+    &#34;cluster&#34;: {
+        &#34;status&#34;: &#34;ACTIVE&#34;,
+        &#34;defaultCapacityProviderStrategy&#34;: [],
+        &#34;statistics&#34;: [],
+        &#34;capacityProviders&#34;: [],
+        &#34;tags&#34;: [],
+        &#34;clusterName&#34;: &#34;farget-cluster&#34;,
+        &#34;settings&#34;: [
+            {
+                &#34;name&#34;: &#34;containerInsights&#34;,
+                &#34;value&#34;: &#34;disabled&#34;
+            }
+        ],
+        &#34;registeredContainerInstancesCount&#34;: 0,
+        &#34;pendingTasksCount&#34;: 0,
+        &#34;runningTasksCount&#34;: 0,
+        &#34;activeServicesCount&#34;: 0,
+        &#34;clusterArn&#34;: `&#34;arn:aws:ecs:ap-southeast-1:098246620002:cluster/farget-cluster&#34;`
+    }
+}
+</code></pre></div><h3 id=创建task>创建Task</h3>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>aws ecs register-task-definition --family hello-web-app --task-role-arn `arn:aws:iam::098246620002:role/PythonECSTask` \
+--execution-role-arn `arn:aws:iam::098246620002:role/ecsTaskExecutionRole` --network-mode awsvpc \
+--container-definitions `file://fargate-container.json` --cpu .5vCPU --memory 1GB \
+--requires-compatibilities FARGATE
+</code></pre></div><ul>
+<li>定义了Task中Container的创建文件，资源需求</li>
+<li>使用了前面定义的Role</li>
+<li>网络模式为VPC，Fargate仅支持VPC</li>
+<li>创建Container的JSON文件</li>
+</ul>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[
+    {
+        &#34;environment&#34;: [
+            {
+                &#34;name&#34;: &#34;MESSAGE&#34;,
+                &#34;value&#34;: &#34;I just deployed a PodVM on the AWS ECS Cluster!!&#34;
+            }
+        ],
+        &#34;name&#34;: &#34;webapp&#34;,
+        &#34;mountPoints&#34;: [],
+        &#34;image&#34;: `&#34;public.ecr.aws/y2y0q7a2/hello-kubernetes:1.5&#34;`,
+        &#34;portMappings&#34;: [
+            {
+                &#34;protocol&#34;: &#34;tcp&#34;,
+                &#34;containerPort&#34;: 8080,
+                &#34;hostPort&#34;: 8080
+            }
+        ]    
+    }    
+]
+</code></pre></div><p>使用了ECR中的Public Image并传递了环境值MESSAGE
+<img src="https://img-blog.csdnimg.cn/b7f4393d4f404db49fb0526bbc9be473.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>{
+    &#34;taskDefinition&#34;: {
+        &#34;status&#34;: &#34;ACTIVE&#34;,
+        &#34;memory&#34;: &#34;1024&#34;,
+        &#34;registeredAt&#34;: 1627378294.665,
+        &#34;networkMode&#34;: &#34;awsvpc&#34;,
+        &#34;family&#34;: `&#34;hello-web-app&#34;`,
+        &#34;registeredBy&#34;: &#34;arn:aws:iam::098246620002:user/Administrator&#34;,
+        &#34;placementConstraints&#34;: [],
+        &#34;requiresAttributes&#34;: [
+            {
+                &#34;name&#34;: &#34;com.amazonaws.ecs.capability.task-iam-role&#34;
+            },
+            {
+                &#34;name&#34;: &#34;com.amazonaws.ecs.capability.docker-remote-api.1.18&#34;
+            },
+            {
+                &#34;name&#34;: &#34;ecs.capability.task-eni&#34;
+            }
+        ],
+        &#34;cpu&#34;: &#34;512&#34;,
+        &#34;executionRoleArn&#34;: &#34;arn:aws:iam::098246620002:role/ecsTaskExecutionRole&#34;,
+        &#34;compatibilities&#34;: [
+            &#34;EC2&#34;,
+            &#34;FARGATE&#34;
+        ],
+        &#34;volumes&#34;: [],
+        &#34;requiresCompatibilities&#34;: [
+            &#34;FARGATE&#34;
+        ],
+        &#34;taskRoleArn&#34;: &#34;arn:aws:iam::098246620002:role/PythonECSTask&#34;,
+        &#34;taskDefinitionArn&#34;: &#34;arn:aws:ecs:ap-southeast-1:098246620002:task-definition/hello-web-app:2&#34;,
+        &#34;containerDefinitions&#34;: [
+            {
+                &#34;environment&#34;: [
+                    {
+                        &#34;name&#34;: &#34;MESSAGE&#34;,
+                        &#34;value&#34;: &#34;I just deployed a PodVM on the AWS ECS Cluster!!&#34;
+                    }
+                ],
+                &#34;name&#34;: &#34;webapp&#34;,
+                &#34;mountPoints&#34;: [],
+                &#34;image&#34;: &#34;public.ecr.aws/y2y0q7a2/hello-kubernetes:1.5&#34;,
+                &#34;cpu&#34;: 0,
+                &#34;portMappings&#34;: [
+                    {
+                        &#34;protocol&#34;: &#34;tcp&#34;,
+                        &#34;containerPort&#34;: 8080,
+                        &#34;hostPort&#34;: 8080
+                    }
+                ],
+                &#34;essential&#34;: true,
+                &#34;volumesFrom&#34;: []
+            }
+        ],
+        &#34;revision&#34;: 2
+    }
+}
+</code></pre></div><h3 id=创建服务>创建服务</h3>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>aws ecs create-service --cluster `arn:aws:ecs:ap-southeast-1:098246620002:cluster/farget-cluster` --service-name `FargateDemoService-01` \
+--task-definition `arn:aws:ecs:ap-southeast-1:098246620002:task-definition/hello-web-app:2` --load-balancers `file://load-balancer.json` --desired-count 2 --launch-type FARGATE \
+--network-configuration `file://task-networking.json` --scheduling-strategy REPLICA \
+--deployment-controller type=ECS
+</code></pre></div><p>这里用到了Load balancer和network的两个JSON文件
+load-balancer.json：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[
+    {
+        &#34;targetGroupArn&#34;: &#34;arn:aws:elasticloadbalancing:ap-southeast-1:098246620002:targetgroup/FargateTargetGroup/9e4630794653255a&#34;,
+        &#34;containerName&#34;: &#34;webapp&#34;,
+        &#34;containerPort&#34;: 8080
+    }
+]    
+</code></pre></div><p>task-networking.json：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>{
+    &#34;awsvpcConfiguration&#34;: {
+        &#34;subnets&#34;: [&#34;subnet-050355db94fb6330f&#34;, &#34;subnet-06a74586eefb96d0a&#34;],
+        &#34;securityGroups&#34;: [&#34;sg-0b784f3107ad6fe28&#34;],
+        &#34;assignPublicIp&#34;: &#34;ENABLED&#34;
+    }
+}
+</code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>{
+    &#34;service&#34;: {
+        &#34;networkConfiguration&#34;: {
+            &#34;awsvpcConfiguration&#34;: {
+                &#34;subnets&#34;: [
+                    &#34;subnet-06a74586eefb96d0a&#34;,
+                    &#34;subnet-050355db94fb6330f&#34;
+                ],
+                &#34;securityGroups&#34;: [
+                    &#34;sg-0b784f3107ad6fe28&#34;
+                ],
+                &#34;assignPublicIp&#34;: &#34;ENABLED&#34;
+            }
+        },
+        &#34;launchType&#34;: &#34;FARGATE&#34;,
+        &#34;enableECSManagedTags&#34;: false,
+        &#34;loadBalancers&#34;: [
+            {
+                &#34;containerName&#34;: &#34;webapp&#34;,
+                &#34;targetGroupArn&#34;: &#34;arn:aws:elasticloadbalancing:ap-southeast-1:098246620002:targetgroup/FargateTargetGroup/9e4630794653255a&#34;,
+                &#34;containerPort&#34;: 8080
+            }
+        ],
+        &#34;desiredCount&#34;: 2,
+        &#34;clusterArn&#34;: &#34;arn:aws:ecs:ap-southeast-1:098246620002:cluster/farget-cluster&#34;,
+        &#34;serviceArn&#34;: `&#34;arn:aws:ecs:ap-southeast-1:098246620002:service/farget-cluster/FargateDemoService-01&#34;`,
+        &#34;deploymentConfiguration&#34;: {
+            &#34;deploymentCircuitBreaker&#34;: {
+                &#34;enable&#34;: false,
+                &#34;rollback&#34;: false
+            },
+            &#34;maximumPercent&#34;: 200,
+            &#34;minimumHealthyPercent&#34;: 100
+        },
+        &#34;createdAt&#34;: 1627378533.605,
+        &#34;healthCheckGracePeriodSeconds&#34;: 0,
+        &#34;schedulingStrategy&#34;: &#34;REPLICA&#34;,
+        &#34;placementConstraints&#34;: [],
+        &#34;deployments&#34;: [
+            {
+                &#34;status&#34;: &#34;PRIMARY&#34;,
+                &#34;networkConfiguration&#34;: {
+                    &#34;awsvpcConfiguration&#34;: {
+                        &#34;subnets&#34;: [
+                            &#34;subnet-06a74586eefb96d0a&#34;,
+                            &#34;subnet-050355db94fb6330f&#34;
+                        ],
+                        &#34;securityGroups&#34;: [
+                            &#34;sg-0b784f3107ad6fe28&#34;
+                        ],
+                        &#34;assignPublicIp&#34;: &#34;ENABLED&#34;
+                    }
+                },
+                &#34;pendingCount&#34;: 0,
+                &#34;launchType&#34;: &#34;FARGATE&#34;,
+                &#34;rolloutState&#34;: &#34;IN_PROGRESS&#34;,
+                &#34;rolloutStateReason&#34;: &#34;ECS deployment ecs-svc/0105513691090167931 in progress.&#34;,
+                &#34;createdAt&#34;: 1627378533.605,
+                &#34;desiredCount&#34;: 2,
+                &#34;failedTasks&#34;: 0,
+                &#34;taskDefinition&#34;: &#34;arn:aws:ecs:ap-southeast-1:098246620002:task-definition/hello-web-app:2&#34;,
+                &#34;updatedAt&#34;: 1627378533.605,
+                &#34;platformVersion&#34;: &#34;1.4.0&#34;,
+                &#34;id&#34;: &#34;ecs-svc/0105513691090167931&#34;,
+                &#34;runningCount&#34;: 0
+            }
+        ],
+        &#34;serviceName&#34;: &#34;FargateDemoService-01&#34;,
+        &#34;events&#34;: [],
+        &#34;runningCount&#34;: 0,
+        &#34;status&#34;: &#34;ACTIVE&#34;,
+        &#34;serviceRegistries&#34;: [],
+        &#34;pendingCount&#34;: 0,
+        &#34;createdBy&#34;: &#34;arn:aws:iam::098246620002:user/Administrator&#34;,
+        &#34;platformVersion&#34;: &#34;LATEST&#34;,
+        &#34;placementStrategy&#34;: [],
+        &#34;propagateTags&#34;: &#34;NONE&#34;,
+        &#34;roleArn&#34;: &#34;arn:aws:iam::098246620002:role/aws-service-role/ecs.amazonaws.com/AWSServiceRoleForECS&#34;,
+        &#34;taskDefinition&#34;: &#34;arn:aws:ecs:ap-southeast-1:098246620002:task-definition/hello-web-app:2&#34;,
+        &#34;enableExecuteCommand&#34;: false
+    }
+}
+</code></pre></div><h3 id=查看cluster>查看Cluster</h3>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>Administrator:~/environment/Fargate demo $ **aws ecs list-services --cluster farget-cluster**
+{
+    &#34;serviceArns&#34;: [
+        &#34;arn:aws:ecs:ap-southeast-1:098246620002:service/farget-cluster/FargateDemoService-01&#34;
+    ]
+}
+</code></pre></div><h2 id=实验结果>实验结果</h2>
+<h3 id=cluster>Cluster</h3>
+<p><img src="https://img-blog.csdnimg.cn/0c25850037d74cc3b1690d9754c8420c.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述>
+<img src="https://img-blog.csdnimg.cn/b9d83afd86964a728685fda039c06b25.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p>
+<h3 id=service>Service</h3>
+<p><img src="https://img-blog.csdnimg.cn/beb1bb64fccf4f48a2ecb56abb9c573a.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p>
+<h3 id=task>TASK</h3>
+<p><img src="https://img-blog.csdnimg.cn/e85d51dfa6214a7eb89650489ca6e3a5.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p>
+<h3 id=load-balancer>Load Balancer</h3>
+<p><img src="https://img-blog.csdnimg.cn/f551891542ab4d88a9e29dd0403cbeb7.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p>
+<h3 id=test>Test</h3>
+<p>从LBer的对外DNS名称，我们可以访问
+<img src="https://img-blog.csdnimg.cn/f857bab07a98421291bec5657db62e6f.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述>
+<img src="https://img-blog.csdnimg.cn/ff8251b357b446d4b571d20d2d31a191.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述>
+注意POD的私网地址和我们设计一致。</p>
+<p>以上</p>
+</div>
+<footer class=post-footer>
+<div id=wcomments></div>
+</footer>
+</article>
+</section>
+</div>
+</div>
+<div class=sidebar-toggle>
+<div class=sidebar-toggle-line-wrap>
+<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+</div>
+</div>
+<aside id=sidebar class=sidebar>
+<div class=sidebar-inner>
+<ul class="sidebar-nav motion-element">
+<li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>
+文章目录
+</li>
+<li class=sidebar-nav-overview data-target=site-overview>
+站点概览
+</li>
+</ul>
+<section class="site-overview sidebar-panel">
+<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
+<img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon>
+<p class=site-author-name itemprop=name>Etaon</p>
+<p class="site-description motion-element" itemprop=description>
+Kepp Going!
+</p>
+</div>
+<nav class="site-state motion-element">
+<div class="site-state-item site-state-posts">
+<a href=/post/>
+<span class=site-state-item-count>61</span>
+<span class=site-state-item-name>日志</span>
+</a>
+</div>
+<div class="site-state-item site-state-categories">
+<a href=/categories/>
+<span class=site-state-item-count>13</span>
+<span class=site-state-item-name>分类</span>
+</a>
+</div>
+<div class="site-state-item site-state-tags">
+<a href=/tags/>
+<span class=site-state-item-count>34</span>
+<span class=site-state-item-name>标签</span>
+</a>
+</div>
+</nav>
+<div class="links-of-author motion-element">
+<span class=links-of-author-item>
+<a href=https://github.com/etaon target=_blank title=GitHub>
+<i class="fa fa-fw fa-github"></i>
+GitHub
+</a>
+</span>
+<span class=links-of-author-item>
+<a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN>
+<i class="fa fa-fw fa-CSDN"></i>
+CSDN
+</a>
+</span>
+</div>
+<div class="links-of-blogroll motion-element links-of-blogroll-inline">
+<div class=links-of-blogroll-title>
+<i class="fa fa-fw fa-globe"></i>
+友情链接
+</div>
+<ul class=links-of-blogroll-list>
+<li class=links-of-blogroll-item>
+<a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a>
+</li>
+</ul>
+</div>
+<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
+<div class=tagcloud-of-blogroll-title>
+<i class="fa fa-fw fa-tags"></i>
+标签云
+</div>
+<ul class=tagcloud-of-blogroll-list>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/mysql>Mysql</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/aws>Aws</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/dql>Dql</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/hadoop>Hadoop</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/redis>Redis</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/cicd>Cicd</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/git>Git</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/istio>Istio</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/mongodb>Mongodb</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/azure>Azure</a>
+</li>
+</ul>
+</div>
+</section>
+<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+<div class=post-toc>
+<div class=post-toc-content><nav id=TableOfContents>
+<ul>
+<li><a href=#实验拓扑>实验拓扑</a></li>
+<li><a href=#实验说明>实验说明</a></li>
+<li><a href=#实验配置步骤>实验配置步骤</a>
+<ul>
+<li><a href=#创建role>创建Role</a></li>
+<li><a href=#创建alb>创建ALB</a></li>
+<li><a href=#创建cluster>创建Cluster</a></li>
+<li><a href=#创建task>创建Task</a></li>
+<li><a href=#创建服务>创建服务</a></li>
+<li><a href=#查看cluster>查看Cluster</a></li>
+</ul>
+</li>
+<li><a href=#实验结果>实验结果</a>
+<ul>
+<li><a href=#cluster>Cluster</a></li>
+<li><a href=#service>Service</a></li>
+<li><a href=#task>TASK</a></li>
+<li><a href=#load-balancer>Load Balancer</a></li>
+<li><a href=#test>Test</a></li>
+</ul>
+</li>
+</ul>
+</nav></div>
+</div>
+</section>
+</div>
+</aside>
+</div>
+</main>
+<footer id=footer class=footer>
+<div class=footer-inner>
+<div class=copyright>
+<span class=copyright-year>
+&copy; 2010 - 2022
+</span>
+<span class=with-love><i class="fa fa-heart"></i></span>
+<span class=copyright-author>路无止境！</span>
+</div>
+<div class=powered-info>
+<span class=powered-by>
+Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.91.2</a>
+</span>
+<span class=separator-line>/</span>
+<span class=theme-info>
+Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
+</a>
+</span>
+</div>
+<div class=vistor-info>
+<script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<span class=site-uv>
+<i class="fa fa-user"></i>
+<span class=busuanzi-value id=busuanzi_value_site_uv></span>
+</span>
+<span class=separator-line>/</span>
+<span class=site-pv>
+<i class="fa fa-eye"></i>
+<span class=busuanzi-value id=busuanzi_value_site_pv></span>
+</span>
+</div>
+<div class=license-info>
+<span class=storage-info>
+Storage by
+<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a>
+</span>
+<span class=separator-line>/</span>
+<span class=license-num>
+<a href target=_blank></a>
+</span>
+</div>
+</div>
+</footer>
+<div class=back-to-top>
+<i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span>
+</div>
+</div>
+<script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
+<script type=text/javascript src=/js/search.js></script>
+<script type=text/javascript src=/js/affix.js></script>
+<script type=text/javascript src=/js/scrollspy.js></script>
+<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.main').css('padding-bottom'),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}}),$(document).on('affixed.bs.affix',function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var b=$('.header-inner').height()+10,c,d,a,e;$('#sidebar').css({'margin-top':b}).show(),c=parseInt($('#sidebar').css('margin-top')),d=parseInt($('.sidebar-inner').css('height')),a=c+d,e=$('.content-wrap').height(),e<a&&$('.content-wrap').css('min-height',a),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
+<script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
+<script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+'//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js',function(){new Waline({el:'#wcomments',visitor:!0,avatar:'wavatar',avatarCDN:'https://sdn.geekzu.org/avatar/',avatarForce:!1,wordLimit:'200',placeholder:' 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ',requiredFields:['nick','mail'],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$('#wcomments').html('抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。')})</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type=text/javascript src="//s7.addthis.com/js/300/addthis_widget.js#pubid=Your%20AddthisId"></script>
+<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
+</body>
+</html>

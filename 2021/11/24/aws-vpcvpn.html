@@ -1,0 +1,700 @@
+<!doctype html><html lang=zh-cn dir=content/zh-cn>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
+<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
+<title> AWS-VPC VPN - 路无止境！ </title>
+<meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云">
+<meta name=author content="Etaon">
+<meta property="og:title" content="AWS-VPC VPN">
+<meta property="og:site_name" content="路无止境！">
+<meta property="og:image" content="/img/author.jpg">
+<meta name=title content="AWS-VPC VPN - 路无止境！">
+<meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。">
+<link rel="shortcut icon" href=/img/favicon.ico>
+<link rel=apple-touch-icon href=/img/apple-touch-icon.png>
+<link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png>
+<link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css>
+<link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet>
+<link href=/css/main.css rel=stylesheet type=text/css>
+<link href=/css/syntax.css rel=stylesheet type=text/css>
+</head>
+<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
+<div class="container one-collumn sidebar-position-left page-home">
+<div class=headband></div>
+<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
+<div class=header-inner> <div class=site-brand-container>
+<div class=site-nav-toggle>
+<div class=toggle role=button style=opacity:1;top:0>
+<span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span>
+</div>
+</div>
+<div class=site-meta>
+<div class=multi-lang-switch>
+<i class="fa fa-fw fa-language" style=margin-right:5px></i>
+<a class=lang-link id=zh-cn href=#>中文</a>
+</div>
+<div class=custom-logo-site-title>
+<a href=/ class=brand rel=start>
+<span class=logo-line-before><i></i></span>
+<span class=site-title>路无止境！</span>
+<span class=logo-line-after><i></i></span>
+</a>
+</div>
+<p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p>
+</div>
+<div class=site-nav-right>
+<div class="toggle popup-trigger" style=opacity:1;top:0>
+<i class="fa fa-search fa-fw fa-lg"></i>
+</div>
+</div>
+</div>
+<nav class=site-nav>
+<ul id=menu class=menu>
+<li class=menu-item>
+<a href=/ rel=section>
+<i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页
+</a>
+</li>
+<li class=menu-item>
+<a href=/post rel=section>
+<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档
+</a>
+</li>
+<li class=menu-item>
+<a href=/about.html rel=section>
+<i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于我
+</a>
+</li>
+<li class=menu-item>
+<a href=/404.html rel=section>
+<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益404
+</a>
+</li>
+<li class="menu-item menu-item-search">
+<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> 搜索</a>
+</li>
+</ul>
+<div class=site-search>
+<div class="popup search-popup local-search-popup">
+<div class="local-search-header clearfix">
+<span class=search-icon><i class="fa fa-search"></i> </span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
+<div class=local-search-input-wrapper>
+<input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
+</div>
+</div>
+<div id=local-search-result></div>
+</div>
+</div>
+</nav>
+</div>
+</header>
+<main id=main class=main>
+<div class=main-inner>
+<div class=content-wrap>
+<div id=content class=content>
+<section id=posts class=posts-expand>
+<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
+<header class=post-header>
+<h1 class=post-title itemprop="name headline" style=font-weight:700>
+<a class=post-title-link href=https://www.etaon.link/2021/11/24/aws-vpcvpn.html itemprop=url>
+AWS-VPC VPN
+</a>
+</h1>
+</header>
+<div class=post-body itemprop=articleBody>
+<h1 id=配置客户端-vpn>配置客户端 VPN</h1>
+<h2 id=aws-客户端-vpn概述>AWS 客户端 VPN概述</h2>
+<p>AWS 客户端 VPN是一种基于客户端的托管 VPN 服务，让用户能够安全地访问 AWS 资源和本地网络中的资源。</p>
+<h2 id=示例拓扑>示例拓扑</h2>
+<p><img src="https://img-blog.csdnimg.cn/fdb2aadeaab6494bbcfc6cd92e2f8701.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt="https://img-blog.csdnimg.cn/fdb2aadeaab6494bbcfc6cd92e2f8701.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70"></p>
+<h2 id=客户端-vpn-的组件>客户端 VPN 的组件</h2>
+<p>以下是客户端 VPN 的主要概念：</p>
+<ul>
+<li>客户端 VPN 终端节点
+客户端 VPN 终端节点是创建并配置以用于启用和管理客户端 VPN 会话的资源。它是所有客户端 VPN 会话终止时所在的资源。</li>
+<li>目标网络
+目标网络是与客户端 VPN 终端节点关联的网络。VPC 中的子网是目标网络。通过将子网与客户端 VPN 终端节点关联，可以建立 VPN 会话。也可以将多个子网与一个客户端 VPN 终端节点关联以实现高可用性。所有子网都必须来自同一 VPC。每个子网都必须属于不同的可用区。</li>
+<li>路由
+每个客户端 VPN 终端节点都具有一个路由表，用于描述可用的目标网络路由。路由表中的每个路由都指定了到特定资源或网络的途径。</li>
+<li>授权规则
+授权规则限制可访问网络的用户。对于指定的网络，可以配置允许访问的 Active Directory 或身份提供商 (IdP) 组。只有属于此组的用户才能访问指定的网络。默认情况下，没有授权规则，必须配置授权规则来允许用户访问资源和网络。</li>
+<li>客户端
+连接到客户端 VPN 终端节点以建立 VPN 会话的最终用户。最终用户需要下载 OpenVPN 客户端，并使用以上创建的客户端 VPN 配置文件来建立 VPN 会话。</li>
+<li>客户端 CIDR 范围
+从中分配客户端 IP 地址的 IP 地址范围。将从客户端 CIDR 范围中为每个到客户端 VPN 终端节点的连接分配一个唯一的 IP 地址。可以选择客户端 CIDR 范围，例如 10.2.0.0/16。</li>
+<li>客户端 VPN 端口
+AWS 客户端 VPN 支持 TCP 和 UDP 的端口 443 和 1194。默认值为端口 443。</li>
+<li>客户端 VPN 网络接口
+将子网与客户端 VPN 终端节点关联时，我们在该子网中创建客户端 VPN 网络接口。从客户端 VPN 终端节点发送到 VPC 的流量将通过客户端 VPN 网络接口发送。然后应用源网络地址转换 (SNAT)，将客户端 CIDR 范围内的源 IP 地址转换为客户端 VPN 网络接口 IP 地址。</li>
+<li>连接日志记录
+可以为客户端 VPN 终端节点启用连接日志记录以记录连接事件。可以使用此信息运行取证、分析客户端 VPN 终端节点的使用方式或调试连接问题。</li>
+<li>自助服务门户
+可以为客户端 VPN 终端节点启用自助服务门户。客户端可以使用其凭证登录基于 Web 的门户，然后下载客户端 VPN 终端节点配置文件的最新版本或 AWS 提供的客户端的最新版本。</li>
+</ul>
+<h2 id=实验步骤>实验步骤</h2>
+<p>本实验参考：<a href=https://docs.aws.amazon.com/zh_cn/vpn/latest/clientvpn-admin/cvpn-getting-started.html>客户端 VPN 入门</a></p>
+<h3 id=配置双向身份验证>配置双向身份验证</h3>
+<p>借助双向身份验证，客户端 VPN 使用证书在客户端和服务器之间执行身份验证。
+证书是由证书颁发机构 (CA) 颁发的数字化身份。当客户端尝试连接到客户端 VPN 终端节点时，服务器使用客户端证书对客户端进行身份验证。如果没有由证书颁发机构 (CA) 颁发的证书，必须创建服务器证书和密钥，以及至少一个客户端证书和密钥。</p>
+<p>然后，必须将服务器证书上传到 AWS Certificate Manager (ACM)，并在创建客户端 VPN 终端节点时指定该证书。</p>
+<ol>
+<li>将 OpenVPN easy-rsa 存储库克隆到本地计算机并导航到 easy-rsa/easyrsa3 文件夹。</li>
+</ol>
+<blockquote>
+<p>[root@aws-client ~]# <strong>git clone <a href=https://github.com/OpenVPN/easy-rsa.git>https://github.com/OpenVPN/easy-rsa.git</a></strong></p>
+</blockquote>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>Cloning into &#39;easy-rsa&#39;...
+remote: Enumerating objects: 2095, done.
+remote: Counting objects: 100% (13/13), done.
+remote: Compressing objects: 100% (11/11), done.
+remote: Total 2095 (delta 3), reused 4 (delta 0), pack-reused 2082
+Receiving objects: 100% (2095/2095), 11.72 MiB | 8.53 MiB/s, done.
+Resolving deltas: 100% (916/916), done.
+[root@aws-client ~]# cd easy-rsa/easyrsa3
+</code></pre></div><ol start=2>
+<li>初始化一个新的 PKI 环境。</li>
+</ol>
+<blockquote>
+<p>[root@aws-client easyrsa3]# ./easyrsa init-pki</p>
+</blockquote>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>init-pki complete; you may now create a CA or requests.
+Your newly created PKI dir is: /root/easy-rsa/easyrsa3/pki
+</code></pre></div><ol start=3>
+<li>要构建新的证书颁发机构 (CA)，运行此命令并按照提示进行操作。</li>
+</ol>
+<blockquote>
+<p>[root@aws-client easyrsa3]# ./easyrsa build-ca nopass</p>
+</blockquote>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>Using SSL: openssl OpenSSL 1.0.2k-fips  26 Jan 2017
+Generating RSA private key, 2048 bit long modulus
+...........................................................+++
+.............................................+++
+e is 65537 (0x10001)
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter &#39;.&#39;, the field will be left blank.
+
+
+---
+
+&gt; Common Name (eg: your user, host, or server name) [Easy-RSA CA]:
+&gt;
+
+&gt; CA creation complete and you may now import and sign cert requests.
+Your new CA certificate file for publishing is at:
+/root/easy-rsa/easyrsa3/pki/ca.crt
+</code></pre></div><ol start=4>
+<li>生成服务器证书和密钥。</li>
+</ol>
+<blockquote>
+<p>[root@aws-client easyrsa3]# ./easyrsa build-server-full server nopass</p>
+</blockquote>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>Using SSL: openssl OpenSSL 1.0.2k-fips  26 Jan 2017
+Generating a 2048 bit RSA private key
+.........................................+++
+................................................................................................................................................................................................+++
+writing new private key to &#39;/root/easy-rsa/easyrsa3/pki/easy-rsa-20150.jkFOvJ/tmp.IxfNyt&#39;
+&gt;
+
+---
+
+&gt; Using configuration from /root/easy-rsa/easyrsa3/pki/easy-rsa-20150.jkFOvJ/tmp.VOFQ28
+Check that the request matches the signature
+Signature ok
+The Subject&#39;s Distinguished Name is as follows
+commonName            :ASN.1 12:&#39;server&#39;
+Certificate is to be certified until Nov  7 05:14:23 2023 GMT (825 days)
+Write out database with 1 new entries
+Data Base Updated
+</code></pre></div><ol start=5>
+<li>生成客户端证书和密钥。</li>
+</ol>
+<blockquote>
+<p>[root@aws-client easyrsa3]# ./easyrsa build-client-full client1.domain.tld nopass</p>
+</blockquote>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>Using SSL: openssl OpenSSL 1.0.2k-fips  26 Jan 2017
+Generating a 2048 bit RSA private key
+.............................+++
+...+++
+writing new private key to &#39;/root/easy-rsa/easyrsa3/pki/easy-rsa-20238.mmgI0l/tmp.jCo3XW&#39;
+&gt;
+
+---
+
+&gt; Using configuration from /root/easy-rsa/easyrsa3/pki/easy-rsa-20238.mmgI0l/tmp.yN78YF
+Check that the request matches the signature
+Signature ok
+The Subject&#39;s Distinguished Name is as follows
+commonName            :ASN.1 12:&#39;client1.domain.tld&#39;
+Certificate is to be certified until Nov  7 05:14:37 2023 GMT (825 days)
+Write out database with 1 new entries
+Data Base Updated
+</code></pre></div><ol start=6>
+<li>将服务器证书和密钥和客户端证书和密钥复制到自定义文件夹，然后导航到此自定义文件夹。</li>
+</ol>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback> mkdir ~/custom_folder/
+cp pki/ca.crt ~/custom_folder/
+cp pki/issued/server.crt ~/custom_folder/
+cp pki/private/server.key ~/custom_folder/
+cp pki/issued/client1.domain.tld.crt ~/custom_folder
+cp pki/private/client1.domain.tld.key ~/custom_folder/
+cd ~/custom_folder/
+</code></pre></div><ol start=7>
+<li>将服务器证书和密钥以及客户端证书和密钥上传到 ACM。确保在打算在其中创建客户端 VPN 终端节点的同一区域中上传证书。</li>
+</ol>
+<blockquote>
+<p>[root@aws-client custom_folder]# aws acm import-certificate &ndash;certificate fileb://server.crt &ndash;private-key fileb://server.key &ndash;certificate-chain fileb://ca.crt</p>
+</blockquote>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>{
+&#34;CertificateArn&#34;: &#34;arn:aws:acm:ap-southeast-1:098246620002:certificate/8c1134dd-4b27-440c-91bd-466f41ce53ae&#34;
+}
+[root@aws-client custom_folder]# aws acm import-certificate --certificate fileb://client1.domain.tld.crt --private-key fileb://client1.domain.tld.key --certificate-chain fileb://ca.crt
+{
+&#34;CertificateArn&#34;: &#34;arn:aws:acm:ap-southeast-1:098246620002:certificate/4d99213e-b684-4de9-889b-f2cd87819c48&#34;
+}
+</code></pre></div><ol start=8>
+<li>
+<p>在ACM控制台检查</p>
+<p><img src="https://img-blog.csdnimg.cn/e428b8d2e2e441c296761512c689c926.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt="https://img-blog.csdnimg.cn/e428b8d2e2e441c296761512c689c926.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70"></p>
+</li>
+</ol>
+<h3 id=创建客户端-vpn-终端节点>创建客户端 VPN 终端节点</h3>
+<ol>
+<li>
+<p>打开 Amazon VPC 控制台：<a href=https://console.aws.amazon.com/vpc/>https://console.aws.amazon.com/vpc/</a></p>
+</li>
+<li>
+<p>选择 客户端 VPN 终端节点，然后选择创建客户端 VPN 终端节点</p>
+<p><img src="https://img-blog.csdnimg.cn/e5bdb5b8fd2e4be38cd3f1f67701626e.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt="https://img-blog.csdnimg.cn/e5bdb5b8fd2e4be38cd3f1f67701626e.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70"></p>
+</li>
+</ol>
+<ul>
+<li>对于 Client IPv4 CIDR (客户端 IPv4 CIDR)，客户端 CIDR 范围必须有介于 /12 和 /22 之间的块大小，且不得与 VPC CIDR 或路由表中的任何其他路由重叠。创建客户端 VPN 终端节点后，无法更改客户端 CIDR。</li>
+<li>Server certificate ARN (服务器证书 ARN)，指定服务器要使用的 TLS 证书的 ARN（上一步骤）。</li>
+<li>指定当客户端建立 VPN 连接时要用来对客户端进行身份验证的身份验证方法，选择使用相互身份验，然后对于客户端证书 ARN，指定在上一步骤 中生成的客户端证书的 ARN。</li>
+</ul>
+<h3 id=为客户端启用-vpn-连接>为客户端启用 VPN 连接</h3>
+<p>要使客户端能够建立 VPN 会话，必须将一个目标网络与客户端 VPN 终端节点关联。目标网络是 VPC 中的一个子网。</p>
+<p><img src=https://img-blog.csdnimg.cn/77f62f1b20a545e0a6092b78bc3d6927.png alt=https://img-blog.csdnimg.cn/77f62f1b20a545e0a6092b78bc3d6927.png></p>
+<p><img src="https://img-blog.csdnimg.cn/28471b1135d648f687e5b5faa8eab734.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt="https://img-blog.csdnimg.cn/28471b1135d648f687e5b5faa8eab734.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70"></p>
+<p>将第一个子网与客户端 VPN 终端节点关联时，会发生以下情况：</p>
+<ul>
+<li>客户端 VPN 终端节点的状态更改为 available。客户端现在可以建立 VPN 连接，但无法访问 VPC 中的任何资源，直到添加授权规则。</li>
+<li>VPC 的本地路由会自动添加到客户端 VPN 终端节点路由表中。</li>
+<li>VPC 的默认安全组将自动应用于子网关联。</li>
+</ul>
+<p>本实验仅仅测试VPN的连接建立。</p>
+<h3 id=授权客户端访问网络>授权客户端访问网络</h3>
+<p><img src="https://img-blog.csdnimg.cn/b42dd8786d4f47c196b2bc40ede45120.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt="https://img-blog.csdnimg.cn/b42dd8786d4f47c196b2bc40ede45120.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70"></p>
+<p>我们选择了对VPC所有资源可以访问。
+确保 VPC 中资源的安全组具有允许从安全组访问子网关联的规则。</p>
+<h3 id=下载客户端-vpn-终端节点配置文件>下载客户端 VPN 终端节点配置文件</h3>
+<ol>
+<li>
+<p>下载配置文件</p>
+<p><img src="https://img-blog.csdnimg.cn/0bb04a6909a44701ac7a45baf4e43177.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt="https://img-blog.csdnimg.cn/0bb04a6909a44701ac7a45baf4e43177.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70"></p>
+</li>
+<li>
+<p>找到步骤 1 中生成的客户端证书和密钥。可以在克隆的 OpenVPN easy-rsa 存储库中的以下位置找到客户端证书和密钥：</p>
+</li>
+</ol>
+<p>客户端证书 – easy-rsa/easyrsa3/pki/issued/client1.domain.tld.crt</p>
+<p>客户端密钥 – easy-rsa/easyrsa3/pki/private/client1.domain.tld.key</p>
+<ol start=3>
+<li>打开客户端 VPN 终端节点配置文件，并在 <cert></cert> 标签之间添加客户端证书的内容，而在 <key></key> 标签之间添加私有密钥的内容。</li>
+<li>在客户端 VPN 终端节点 DNS 名称前附加随机字符串。找到指定客户端 VPN 终端节点 DNS 名称的行，并在该行的前面添加随机字符串，以使格式成为 random_string.displayed_DNS_name。例如：
+原始 DNS 名称：<a href=http://cvpn-endpoint-0102bc4c2eexample.prod.clientvpn.us-west-2.amazonaws.com/>cvpn-endpoint-0102bc4c2eEXAMPLE.prod.clientvpn.us-west-2.amazonaws.com</a>
+修改的 DNS 名称：<a href=http://asdfa.cvpn-endpoint-0102bc4c2eexample.prod.clientvpn.us-west-2.amazonaws.com/>asdfa.cvpn-endpoint-0102bc4c2eEXAMPLE.prod.clientvpn.us-west-2.amazonaws.com</a></li>
+</ol>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>client
+dev tun
+proto udp
+remote asdffw.cvpn-endpoint-01a0f760dbbf46f8a.prod.clientvpn.ap-southeast-1.amazonaws.com 443
+remote-random-hostname
+resolv-retry infinite
+nobind
+remote-cert-tls server
+cipher AES-256-GCM
+verb 3
+&lt;ca&gt;
+-----BEGIN CERTIFICATE-----
+MIIDNTCCAh2gAwIBAgIJAK2NJev4Jr9sMA0GCSqGSIb3DQEBCwUAMBYxFDASBgNV
+BAMMC0Vhc3ktUlNBIENBMB4XDTIxMDgwNDA1MTQwN1oXDTMxMDgwMjA1MTQwN1ow
+FjEUMBIGA1UEAwwLRWFzeS1SU0EgQ0EwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAw
+ggEKAoIBAQCzY7PqwoBAqdAc/3Nl07w7DWbt/OzgmKPQ9aIY6az2yD9rq8zm3J9E
+aXwJyMUCMLzMDgKXOICIcKRsP/xJ16Rpo48ZHd0z5t0xHYqGIJkaEYlIm4inT3B3
+ofJvNGhKo6jRKklVJravH6B2I5U2VWcDrBv+HNZkbFV13BSn36uCkzMf2EUU/W2X
+1aRkhitZg9qpuLaf9NPhj54+QN8lnUz9O5qN0/Cwa/V5u4k3xlFya2P4ut/n0s/T
+QwD/0+hJFlMPtNNZQTUoDsKnExXwAxYML2/x4QOULGeFVqLwq5amCptcTz30gqKV
+EiVWc7b3rKaAG16gmiQ3bt6W+YlzYmlPAgMBAAGjgYUwgYIwHQYDVR0OBBYEFOJt
+5dVskMAXjCYpvQaqPYVylFTNMEYGA1UdIwQ/MD2AFOJt5dVskMAXjCYpvQaqPYVy
+lFTNoRqkGDAWMRQwEgYDVQQDDAtFYXN5LVJTQSBDQYIJAK2NJev4Jr9sMAwGA1Ud
+EwQFMAMBAf8wCwYDVR0PBAQDAgEGMA0GCSqGSIb3DQEBCwUAA4IBAQBk1j35k+ge
+YLYE37CpgUhj8+BPoHSkhyvA7oRmDaugjgm06eqSpoMbLLl1SeMxs8hYfImJ2dAZ
+T2oNBQEwUjBwut9Wb80EfjBG6TIy/zEvsdrWypGvZsx7Bbdu1P/P744IeatvVDJA
+fV63iB1lFBasmzxN2Y+FUmlAvvtf5+HWVn6apFD2mDo7FLT/POFk8J2nU9vL689m
+jZ1xCOUYWHIBIIycaKbTs/hkqUA0TeVIYvCah7Px0vgGiku9vfCoPPnZ4OE0dDYb
+AXWsoN79LbaS71SUVrKrdxnkoO/tsfwmDeqn/arIKMBBNI7LYfQur38g+lo+zvAP
+H8HDuGUIzUf4
+-----END CERTIFICATE-----
+
+&lt;/ca&gt;
+
+&lt;cert&gt;
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            2c:d5:25:48:12:7d:4d:aa:ef:16:03:b0:9e:8b:44:e6
+    Signature Algorithm: sha256WithRSAEncryption
+        Issuer: CN=Easy-RSA CA
+        Validity
+            Not Before: Aug  4 05:14:37 2021 GMT
+            Not After : Nov  7 05:14:37 2023 GMT
+        Subject: CN=client1.domain.tld
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (2048 bit)
+                Modulus:
+                    00:cc:1a:61:3c:8a:f8:cc:55:bf:f6:82:58:a5:7c:
+                    cb:cb:ad:bf:43:16:dd:cb:27:d5:f1:6a:de:11:61:
+                    6c:10:5a:70:92:e6:ab:2f:f1:99:9b:77:91:4e:b6:
+                    ef:12:93:1b:a7:76:fc:0c:85:ff:c0:35:65:ea:a9:
+                    60:c0:73:45:4d:27:0c:51:09:62:27:f8:26:55:d3:
+                    3f:16:4e:d8:36:a7:91:50:89:fb:b8:7c:27:f5:98:
+                    ee:a7:e5:8a:46:fa:62:f6:4c:91:33:2b:f7:b8:c3:
+                    66:6b:1b:3e:e2:9a:25:df:38:ff:80:cf:a7:54:e8:
+                    20:14:3d:5b:c7:2c:10:03:5f:d9:57:6b:be:18:f3:
+                    58:dd:9b:0e:e7:45:41:a4:42:c8:27:6e:b6:4b:18:
+                    b7:b7:7b:73:0c:7a:8a:76:0b:4b:96:e2:6c:6b:02:
+                    c0:40:11:ce:84:92:5a:e3:22:b0:02:d3:cf:a3:b2:
+                    cd:74:11:dd:1d:da:0c:d1:1f:b1:46:1c:02:7e:8a:
+                    aa:6b:7e:d1:29:e7:7c:3e:17:29:25:b8:e7:a8:01:
+                    20:27:f5:6d:65:f0:a6:5c:06:8e:4d:74:f8:75:88:
+                    3e:d7:5e:0f:a9:a5:67:04:44:29:75:13:a0:f6:ab:
+                    7b:ce:f5:e8:3d:57:ed:42:92:b6:75:37:39:20:22:
+                    e4:85
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Basic Constraints:
+                CA:FALSE
+            X509v3 Subject Key Identifier:
+                F7:B8:6C:42:EF:69:18:33:B6:29:46:48:48:FA:B6:3A:3A:29:B3:4A
+            X509v3 Authority Key Identifier:
+                keyid:E2:6D:E5:D5:6C:90:C0:17:8C:26:29:BD:06:AA:3D:85:72:94:54:CD
+                DirName:/CN=Easy-RSA CA
+                serial:AD:8D:25:EB:F8:26:BF:6C
+
+            X509v3 Extended Key Usage:
+                TLS Web Client Authentication
+            X509v3 Key Usage:
+                Digital Signature
+    Signature Algorithm: sha256WithRSAEncryption
+         2d:6d:aa:2e:8e:15:02:17:d6:aa:37:07:f0:30:48:67:bd:23:
+         50:fa:7d:6d:ef:2d:8a:d1:62:58:60:91:b8:9c:5f:cc:72:c8:
+         6e:52:6c:05:4c:cb:ea:ec:94:a7:c2:2d:8b:68:a2:bd:36:50:
+         e7:97:76:8b:70:db:3d:61:30:20:24:f3:69:dd:bc:39:55:6f:
+         38:32:1d:a4:d9:a9:5d:52:a5:8d:a2:46:ee:13:7c:a7:a7:98:
+         0f:43:2a:31:4e:b6:58:3e:10:84:60:6e:ff:74:50:2f:dc:d1:
+         9d:5d:f3:cc:1d:6d:8e:55:3d:5c:dc:f1:46:13:59:8c:17:75:
+         c2:3e:74:d4:8a:99:7e:a2:6d:89:2a:dd:4d:84:4b:1d:98:5d:
+         9d:41:11:aa:4e:51:06:a4:0f:31:52:5e:a4:9e:57:2b:3a:f0:
+         90:59:7d:f1:eb:ec:00:e4:df:07:20:8c:4b:73:f2:49:8d:a3:
+         24:00:7e:66:21:12:6d:23:b4:3a:2b:3b:81:4a:71:7b:28:2c:
+         f6:db:8f:bc:b7:79:b9:21:20:f7:42:ff:76:80:7b:cc:d7:d8:
+         99:0a:3e:23:2e:25:1a:42:86:3b:1e:a8:7f:81:37:0c:59:d5:
+         4e:ee:58:00:8e:50:c1:ce:8a:8c:ff:3d:67:0e:06:c5:76:54:
+         8b:cb:67:84
+-----BEGIN CERTIFICATE-----
+MIIDVTCCAj2gAwIBAgIQLNUlSBJ9TarvFgOwnotE5jANBgkqhkiG9w0BAQsFADAW
+MRQwEgYDVQQDDAtFYXN5LVJTQSBDQTAeFw0yMTA4MDQwNTE0MzdaFw0yMzExMDcw
+NTE0MzdaMB0xGzAZBgNVBAMMEmNsaWVudDEuZG9tYWluLnRsZDCCASIwDQYJKoZI
+hvcNAQEBBQADggEPADCCAQoCggEBAMwaYTyK+MxVv/aCWKV8y8utv0MW3csn1fFq
+3hFhbBBacJLmqy/xmZt3kU627xKTG6d2/AyF/8A1ZeqpYMBzRU0nDFEJYif4JlXT
+PxZO2DankVCJ+7h8J/WY7qflikb6YvZMkTMr97jDZmsbPuKaJd84/4DPp1ToIBQ9
+W8csEANf2VdrvhjzWN2bDudFQaRCyCdutksYt7d7cwx6inYLS5bibGsCwEARzoSS
+WuMisALTz6OyzXQR3R3aDNEfsUYcAn6Kqmt+0SnnfD4XKSW456gBICf1bWXwplwG
+jk10+HWIPtdeD6mlZwREKXUToPare8716D1X7UKStnU3OSAi5IUCAwEAAaOBlzCB
+lDAJBgNVHRMEAjAAMB0GA1UdDgQWBBT3uGxC72kYM7YpRkhI+rY6OimzSjBGBgNV
+HSMEPzA9gBTibeXVbJDAF4wmKb0Gqj2FcpRUzaEapBgwFjEUMBIGA1UEAwwLRWFz
+eS1SU0EgQ0GCCQCtjSXr+Ca/bDATBgNVHSUEDDAKBggrBgEFBQcDAjALBgNVHQ8E
+BAMCB4AwDQYJKoZIhvcNAQELBQADggEBAC1tqi6OFQIX1qo3B/AwSGe9I1D6fW3v
+LYrRYlhgkbicX8xyyG5SbAVMy+rslKfCLYtoor02UOeXdotw2z1hMCAk82ndvDlV
+bzgyHaTZqV1SpY2iRu4TfKenmA9DKjFOtlg+EIRgbv90UC/c0Z1d88wdbY5VPVzc
+8UYTWYwXdcI+dNSKmX6ibYkq3U2ESx2YXZ1BEapOUQakDzFSXqSeVys68JBZffHr
+7ADk3wcgjEtz8kmNoyQAfmYhEm0jtDorO4FKcXsoLPbbj7y3ebkhIPdC/3aAe8zX
+2JkKPiMuJRpChjseqH+BNwxZ1U7uWACOUMHOioz/PWcOBsV2VIvLZ4Q=
+-----END CERTIFICATE-----
+
+&lt;/cert&gt;
+
+&lt;key&gt;
+-----BEGIN PRIVATE KEY-----
+MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDMGmE8ivjMVb/2
+glilfMvLrb9DFt3LJ9Xxat4RYWwQWnCS5qsv8Zmbd5FOtu8SkxundvwMhf/ANWXq
+qWDAc0VNJwxRCWIn+CZV0z8WTtg2p5FQifu4fCf1mO6n5YpG+mL2TJEzK/e4w2Zr
+Gz7imiXfOP+Az6dU6CAUPVvHLBADX9lXa74Y81jdmw7nRUGkQsgnbrZLGLe3e3MM
+eop2C0uW4mxrAsBAEc6EklrjIrAC08+jss10Ed0d2gzRH7FGHAJ+iqprftEp53w+
+FykluOeoASAn9W1l8KZcBo5NdPh1iD7XXg+ppWcERCl1E6D2q3vO9eg9V+1CkrZ1
+NzkgIuSFAgMBAAECggEAGIjbQ3HZMobkSnekvE/iF5vNL/1hr/gb6adVBnXVjamx
+epcr4NmEA4I9/15SIsN4QYs2BTNeaPaCR9EQhlHU9M9K1brxB6j2wr5gCQh1SSyf
+dTUBA045Z3Z4ycn380xJ9R2DHsmcP6ONfjaKOqcZAlpRrGRJ0xUMNiKiE7EiQ6Vc
+4t+IOW3JGVba1mCtlkEfOUab3P46gLDDUdPTvT3t9m9wFAlxHtOYoe+yG6W+mYI5
+fgwRLg9juStdMMrHCND00UgN778yTkHGWx1kSd7T1DhpKrloSCjPM1Zo1/4ZCYjb
+2/Mfrpu2aNl1Ena11rZ7QfrvhnYNQE9y5LWZqW6WiQKBgQDz4H/6fq5zOi501Law
+WZ5ztKtZvhg/gyRlGtoZRJLRH8AZ7BKIQ/NjBsMWpNzHHL/9U4nnceTgngm/1sNa
+85iNQLLlz1HthOxLznjo9yGQ8Sgx3ZcXWPN5ZcWQF05wi95+iqXo3IurFjP6rpjD
+6uWjLs4Ox05DYRyXn++uUouj8wKBgQDWP7ra5zfhs82xXT9YMvZM9h2Y4B9bUYuA
+gQZcwFT0PzI6d1mYv3V157wHG6M6nekW//mcLKlSRPYdI7IyM1FtPWywJPHgJxc+
+1cran/biq8qF0Bn/boFSyDAW5SQXwAHVdeRK4UR3Fgl9vfkhoV855v1cgLXE+GFq
+Bc/RBmKLpwKBgQCY8v2Qjo6+OYkVQKrq4unbSz4D5JK0knzq4/JQ0o75lN4X49Sj
+nWoxevYzZ2YHgmJucEwW2Xlf3f3jUL/odMoCHMeWFXYebrT7vhxaj1N/4Z8B1yWB
+QQpB4rAK9HL/Ztk9p5rx9g+qVxx2ZbXteY5Xz2zwG9NbsrYJ6gaZ368wPQKBgQCi
+WfzAcMIZ2GSgaKbdsRCPVVksRXm9e1eY8yzdECnQRCtNvq84Xq0lwYrsX/cbLho5
+gZOm0vkkDHnrrucTv2uOuiMof3aCg1zMErn7XYh6T+/R4tYwh46cKnK2hsEI9kjt
+dr6eN4HoM9zRWin1YBGHEREhDa+wKP+4ldra7Fm0tQKBgFgU5iEgxGvjnD+M4P6I
+lg/HceJUzqDqvKXibERc0Jyru/E/ZJ13HgyLnPFQzTKm5ZRGmKu6RbvoLOFNv9SW
+m8ABsPrRnpfppki0ZsBTboIMFjeg/iQOGFF5MD800uP1kmueYxxeT73wrR5N+ZCw
+MiRH51+8RuYLVzuA7XFa+Vso
+-----END PRIVATE KEY-----
+
+&lt;/key&gt;
+
+reneg-sec 0
+
+</code></pre></div><ol start=5>
+<li>保存并关闭客户端 VPN 终端节点配置文件。</li>
+</ol>
+<h3 id=连接到客户端-vpn-终端节点>连接到客户端 VPN 终端节点</h3>
+<ol>
+<li>下载客户端软件并安装
+<a href=https://aws.amazon.com/cn/vpn/client-vpn-download/>https://aws.amazon.com/cn/vpn/client-vpn-download/</a></li>
+<li>配置</li>
+</ol>
+<p><img src="https://img-blog.csdnimg.cn/aa160f591fdc4a6482547883a3f23e13.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt="https://img-blog.csdnimg.cn/aa160f591fdc4a6482547883a3f23e13.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70"></p>
+<ol start=3>
+<li>连接</li>
+</ol>
+<p><img src="https://img-blog.csdnimg.cn/7cd54c8ee5b44305ae53b97c96ca730e.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt="https://img-blog.csdnimg.cn/7cd54c8ee5b44305ae53b97c96ca730e.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70"></p>
+<p><img src="https://img-blog.csdnimg.cn/8f71a50e0305439fb5d5792d63b32a5d.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt="https://img-blog.csdnimg.cn/8f71a50e0305439fb5d5792d63b32a5d.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70"></p>
+<p>以上</p>
+</div>
+<footer class=post-footer>
+<div id=wcomments></div>
+</footer>
+</article>
+</section>
+</div>
+</div>
+<div class=sidebar-toggle>
+<div class=sidebar-toggle-line-wrap>
+<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+</div>
+</div>
+<aside id=sidebar class=sidebar>
+<div class=sidebar-inner>
+<ul class="sidebar-nav motion-element">
+<li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>
+文章目录
+</li>
+<li class=sidebar-nav-overview data-target=site-overview>
+站点概览
+</li>
+</ul>
+<section class="site-overview sidebar-panel">
+<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
+<img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon>
+<p class=site-author-name itemprop=name>Etaon</p>
+<p class="site-description motion-element" itemprop=description>
+Kepp Going!
+</p>
+</div>
+<nav class="site-state motion-element">
+<div class="site-state-item site-state-posts">
+<a href=/post/>
+<span class=site-state-item-count>61</span>
+<span class=site-state-item-name>日志</span>
+</a>
+</div>
+<div class="site-state-item site-state-categories">
+<a href=/categories/>
+<span class=site-state-item-count>13</span>
+<span class=site-state-item-name>分类</span>
+</a>
+</div>
+<div class="site-state-item site-state-tags">
+<a href=/tags/>
+<span class=site-state-item-count>34</span>
+<span class=site-state-item-name>标签</span>
+</a>
+</div>
+</nav>
+<div class="links-of-author motion-element">
+<span class=links-of-author-item>
+<a href=https://github.com/etaon target=_blank title=GitHub>
+<i class="fa fa-fw fa-github"></i>
+GitHub
+</a>
+</span>
+<span class=links-of-author-item>
+<a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN>
+<i class="fa fa-fw fa-CSDN"></i>
+CSDN
+</a>
+</span>
+</div>
+<div class="links-of-blogroll motion-element links-of-blogroll-inline">
+<div class=links-of-blogroll-title>
+<i class="fa fa-fw fa-globe"></i>
+友情链接
+</div>
+<ul class=links-of-blogroll-list>
+<li class=links-of-blogroll-item>
+<a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a>
+</li>
+</ul>
+</div>
+<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
+<div class=tagcloud-of-blogroll-title>
+<i class="fa fa-fw fa-tags"></i>
+标签云
+</div>
+<ul class=tagcloud-of-blogroll-list>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/mysql>Mysql</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/aws>Aws</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/dql>Dql</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/hadoop>Hadoop</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/redis>Redis</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/cicd>Cicd</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/git>Git</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/istio>Istio</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/mongodb>Mongodb</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/azure>Azure</a>
+</li>
+</ul>
+</div>
+</section>
+<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+<div class=post-toc>
+<div class=post-toc-content><nav id=TableOfContents>
+<ul>
+<li><a href=#aws-客户端-vpn概述>AWS 客户端 VPN概述</a></li>
+<li><a href=#示例拓扑>示例拓扑</a></li>
+<li><a href=#客户端-vpn-的组件>客户端 VPN 的组件</a></li>
+<li><a href=#实验步骤>实验步骤</a>
+<ul>
+<li><a href=#配置双向身份验证>配置双向身份验证</a></li>
+<li><a href=#创建客户端-vpn-终端节点>创建客户端 VPN 终端节点</a></li>
+<li><a href=#为客户端启用-vpn-连接>为客户端启用 VPN 连接</a></li>
+<li><a href=#授权客户端访问网络>授权客户端访问网络</a></li>
+<li><a href=#下载客户端-vpn-终端节点配置文件>下载客户端 VPN 终端节点配置文件</a></li>
+<li><a href=#连接到客户端-vpn-终端节点>连接到客户端 VPN 终端节点</a></li>
+</ul>
+</li>
+</ul>
+</nav></div>
+</div>
+</section>
+</div>
+</aside>
+</div>
+</main>
+<footer id=footer class=footer>
+<div class=footer-inner>
+<div class=copyright>
+<span class=copyright-year>
+&copy; 2010 - 2022
+</span>
+<span class=with-love><i class="fa fa-heart"></i></span>
+<span class=copyright-author>路无止境！</span>
+</div>
+<div class=powered-info>
+<span class=powered-by>
+Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.91.2</a>
+</span>
+<span class=separator-line>/</span>
+<span class=theme-info>
+Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
+</a>
+</span>
+</div>
+<div class=vistor-info>
+<script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<span class=site-uv>
+<i class="fa fa-user"></i>
+<span class=busuanzi-value id=busuanzi_value_site_uv></span>
+</span>
+<span class=separator-line>/</span>
+<span class=site-pv>
+<i class="fa fa-eye"></i>
+<span class=busuanzi-value id=busuanzi_value_site_pv></span>
+</span>
+</div>
+<div class=license-info>
+<span class=storage-info>
+Storage by
+<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a>
+</span>
+<span class=separator-line>/</span>
+<span class=license-num>
+<a href target=_blank></a>
+</span>
+</div>
+</div>
+</footer>
+<div class=back-to-top>
+<i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span>
+</div>
+</div>
+<script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
+<script type=text/javascript src=/js/search.js></script>
+<script type=text/javascript src=/js/affix.js></script>
+<script type=text/javascript src=/js/scrollspy.js></script>
+<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.main').css('padding-bottom'),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}}),$(document).on('affixed.bs.affix',function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var b=$('.header-inner').height()+10,c,d,a,e;$('#sidebar').css({'margin-top':b}).show(),c=parseInt($('#sidebar').css('margin-top')),d=parseInt($('.sidebar-inner').css('height')),a=c+d,e=$('.content-wrap').height(),e<a&&$('.content-wrap').css('min-height',a),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
+<script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
+<script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+'//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js',function(){new Waline({el:'#wcomments',visitor:!0,avatar:'wavatar',avatarCDN:'https://sdn.geekzu.org/avatar/',avatarForce:!1,wordLimit:'200',placeholder:' 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ',requiredFields:['nick','mail'],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$('#wcomments').html('抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。')})</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type=text/javascript src="//s7.addthis.com/js/300/addthis_widget.js#pubid=Your%20AddthisId"></script>
+<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
+</body>
+</html>

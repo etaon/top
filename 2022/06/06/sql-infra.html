@@ -1,0 +1,498 @@
+<!doctype html><html lang=zh-cn dir=content/zh-cn>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
+<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
+<title> SQL Server 体系结构 - 路无止境！ </title>
+<meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云">
+<meta name=author content="Etaon">
+<meta property="og:title" content="SQL Server 体系结构">
+<meta property="og:site_name" content="路无止境！">
+<meta property="og:image" content="/img/author.jpg">
+<meta name=title content="SQL Server 体系结构 - 路无止境！">
+<meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。">
+<link rel="shortcut icon" href=/img/favicon.ico>
+<link rel=apple-touch-icon href=/img/apple-touch-icon.png>
+<link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png>
+<link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css>
+<link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet>
+<link href=/css/main.css rel=stylesheet type=text/css>
+<link href=/css/syntax.css rel=stylesheet type=text/css>
+</head>
+<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
+<div class="container one-collumn sidebar-position-left page-home">
+<div class=headband></div>
+<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
+<div class=header-inner> <div class=site-brand-container>
+<div class=site-nav-toggle>
+<div class=toggle role=button style=opacity:1;top:0>
+<span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span>
+</div>
+</div>
+<div class=site-meta>
+<div class=multi-lang-switch>
+<i class="fa fa-fw fa-language" style=margin-right:5px></i>
+<a class=lang-link id=zh-cn href=#>中文</a>
+</div>
+<div class=custom-logo-site-title>
+<a href=/ class=brand rel=start>
+<span class=logo-line-before><i></i></span>
+<span class=site-title>路无止境！</span>
+<span class=logo-line-after><i></i></span>
+</a>
+</div>
+<p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p>
+</div>
+<div class=site-nav-right>
+<div class="toggle popup-trigger" style=opacity:1;top:0>
+<i class="fa fa-search fa-fw fa-lg"></i>
+</div>
+</div>
+</div>
+<nav class=site-nav>
+<ul id=menu class=menu>
+<li class=menu-item>
+<a href=/ rel=section>
+<i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页
+</a>
+</li>
+<li class=menu-item>
+<a href=/post rel=section>
+<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档
+</a>
+</li>
+<li class=menu-item>
+<a href=/about.html rel=section>
+<i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于我
+</a>
+</li>
+<li class=menu-item>
+<a href=/404.html rel=section>
+<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益404
+</a>
+</li>
+<li class="menu-item menu-item-search">
+<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> 搜索</a>
+</li>
+</ul>
+<div class=site-search>
+<div class="popup search-popup local-search-popup">
+<div class="local-search-header clearfix">
+<span class=search-icon><i class="fa fa-search"></i> </span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
+<div class=local-search-input-wrapper>
+<input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
+</div>
+</div>
+<div id=local-search-result></div>
+</div>
+</div>
+</nav>
+</div>
+</header>
+<main id=main class=main>
+<div class=main-inner>
+<div class=content-wrap>
+<div id=content class=content>
+<section id=posts class=posts-expand>
+<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
+<header class=post-header>
+<h1 class=post-title itemprop="name headline" style=font-weight:700>
+<a class=post-title-link href=https://www.etaon.link/2022/06/06/sql-infra.html itemprop=url>
+SQL Server 体系结构
+</a>
+</h1>
+</header>
+<div class=post-body itemprop=articleBody>
+<h2 id=整体结构><strong>整体结构</strong></h2>
+<p>Microsoft SQL Server 服务由一个实例（Instance）和多个数据库（Databases）组成，</p>
+<p>实例包含了后台线程和占用的<a href="https://so.csdn.net/so/search?q=%E5%86%85%E5%AD%98&spm=1001.2101.3001.7020">内存</a>，数据库在存在于存储上的文件。默认的<a href="https://docs.microsoft.com/zh-cn/sql/relational-databases/databases/system-databases?view=sql-server-ver15">系统数据库</a>包括 master、model、msdb、Resource 以及 tempdb。</p>
+<p><img src=SQL%20Server%20%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84%20d23888955c6946ce9e8ada005fade141/7D38CED1-A9B4-47F2-8CC0-D185C90FD692.jpeg alt=7D38CED1-A9B4-47F2-8CC0-D185C90FD692.jpeg></p>
+<p>实例主要包含以下三个组件：</p>
+<ul>
+<li>协议层（Protocol Layer）：主要负责客户端的连接请求和数据通信；</li>
+<li>关系引擎（Relational Engine）：主要负责 SQL 语句的解析、优化和执行；</li>
+<li>存储引擎（Storage Engine）：主要负责数据和日志的存储和访问、内存和缓存管理、事务和锁管理。</li>
+</ul>
+<h2 id=sql-server客户端访问工具>SQL Server客户端访问工具</h2>
+<p>SQL Server客户端访问工具，提供了远程访问技术，它与SQL Server服务端基于一定的协议，使其能够远程访问数据库，就像在本地操作数据库一样，如我们经常用的Microsoft SQL Server Management Studio。</p>
+<p>SQL Server客户端访问工具是比较多的，其中比较流行的要数Microsoft SQL Server Management Studio 和Navicat(Navicat在MySQL中也是比较常用的)</p>
+<h2 id=sql-server网络协议>SQL Server网络协议</h2>
+<p>SQL Server网络协议，又叫SQL Server网络接口(SNI)，它是构成客户端和服务端通信的桥梁，它与SQL Server服务端基于一定协议，方可通信。</p>
+<p>SQL Server网络协议，由一组API构成，这些API供SQL Server数据库引擎和SQL Server本地客户端调用，如实现最基本的CRUD通信。</p>
+<p>SQL Server 网络接口(SQL Server Network Interface,SNI)只需要在客户端和服务端配置网络协议即可，它支持以下协议：</p>
+<p>（1）共享内存-Shared Memory</p>
+<p>（2）TCP/IP</p>
+<p>（3）命名管道-Named Pipes</p>
+<h3 id=共享内存协议><strong>共享内存协议</strong></h3>
+<p>当客户端应用和 Microsoft SQL Server 服务位于<strong>同一台机器</strong>时，可以使用共享内存协议进行通信。</p>
+<p>使用 SSMS 连接本地数据库时的配置Server name 选项可以设置为以下内容之一：</p>
+<ul>
+<li>.</li>
+<li>localhost</li>
+<li>127.0.0.1</li>
+<li>computer name\instance name</li>
+</ul>
+<h3 id=tcpip-协议><strong>TCP/IP 协议</strong></h3>
+<p>TCP/IP 是<strong>远程客户端</strong>连接 Microsoft SQL Server 服务器默认使用的方式。</p>
+<p>在 SSMS 工具中通过 TCP/IP 连接数据库的配置服务器的地址和端口；Microsoft SQL Server 默认监听的 TCP/IP 端口为 1433。</p>
+<h3 id=命名管道协议>命名管道协议</h3>
+<p>命名管道是一种实现进程间通信的 FIFO 机制，两个进程可以通过管道的名字打开、读写管道。如果客户端应用和 Microsoft SQL Server 服务位于同一局域网内或者同一台机器时，可以使用命名管道协议进行通信。</p>
+<p>在 SSMS 工具中通过命名管道连接数据库的配置为</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#b62;font-weight:700>\\</span>&lt;server_name&gt;<span style=color:#b62;font-weight:700>\p</span>ipe<span style=color:#b62;font-weight:700>\s</span>ql<span style=color:#b62;font-weight:700>\&lt;</span>pipeline_name&gt;
+</code></pre></div><p>默认情况下 Microsoft SQL Server 服务器没有启用命名管道协议，可以通过 SQL Server Configuration Manager 工具进行配置。对于本地数据库，默认创建的命名管道为</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#b62;font-weight:700>\\</span>.<span style=color:#b62;font-weight:700>\p</span>ipe<span style=color:#b62;font-weight:700>\s</span>ql<span style=color:#b62;font-weight:700>\q</span>uery
+</code></pre></div><h3 id=tds-协议>TDS 协议</h3>
+<p>客户端连接建立后，可以发送查询语句给服务器，服务器执行完成之后再将结果返回给客户端。Microsoft SQL Server 在应用层使用 TDS（ Tabular Data Stream、表格数据流）协议实现客户端和服务器之间的数据传输请求和响应。</p>
+<p><img src=SQL%20Server%20%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84%20d23888955c6946ce9e8ada005fade141/EAB1046A-5193-4474-A586-2B4999FC5029.jpeg alt=EAB1046A-5193-4474-A586-2B4999FC5029.jpeg></p>
+<p>TDS 会话直接与底层的传输级会话绑定，意味着在建立传输级连接之后，服务器接收到建立 TDS 连接的请求时建立 TDS 会话。TDS 会话一直持续到传输级连接终止（例如关闭 TCP 套接字时）。</p>
+<p>TDS 包含了用于身份验证和标识、通道加密协商、SQL 批处理命令提交、存储过程调用、数据返回以及事务管理器请求等功能。返回的数据具有自描述性并且是面向记录的。</p>
+<p>数据流包含了要返回的数据行名称、类型以及可选的描述。</p>
+<p>下图描绘了 TDS 协议中一个典型的（简化的）通信流程：</p>
+<p><img src=SQL%20Server%20%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84%20d23888955c6946ce9e8ada005fade141/57738146-F67B-4551-8F4B-715F9B77BDFD.jpeg alt=57738146-F67B-4551-8F4B-715F9B77BDFD.jpeg></p>
+<h2 id=关系引擎>关系引擎</h2>
+<p>Microsoft SQL Server 协议层接收到客户端的请求并处理之后，将语句传递给关系引擎进行处理。关系引擎也被称为查询处理器（Query Processor）。关系引擎决定了查询需要执行的操作以及如何最好地实现该操作，负责请求存储引擎获取用户所需的数据并且对结果进行处理，然后通过协议层将结果返回给客户端。</p>
+<p>关系引擎包含了以下三个主要部分：</p>
+<ul>
+<li>命令解析器（CMD Parser）；</li>
+<li>查询优化器（Query Optimizer）；</li>
+<li>查询执行器（Query Executor）。</li>
+</ul>
+<h3 id=命令解析器>命令解析器</h3>
+<p>命令解析器主要的作用是检查 T-SQL 语句的语法和语义错误，并创建一个内部的查询树（Query Tree）。</p>
+<p>Microsoft SQL Server 和其他编程语言一样预定义了很多关键字，同时具有自己的语法格式。例如，SELECT、INSERT、UPDATE、CREATE、DROP 等都属于预定义的关键字。命令解析器首先对输入的语句进行语法检查，如果违反了语法规则，将会返回一个错误。</p>
+<p>完成检查之后，命令解析器为 T-SQL 语句创建一个查询树，然后传递给查询优化器。</p>
+<h3 id=查询优化器>查询优化器</h3>
+<p>查询优化器的作用是创建一个执行计划，也就是执行查询语句的具体操作。</p>
+<p>需要注意的是，并非所有的查询都会进行优化。</p>
+<p>DML 命令（例如 SELECT、INSERT、DELETE 以及 UPDATE 等）会发送给优化器；</p>
+<p>DDL 命令（例如 CREATE、ALTER 等）不会进行优化，而是直接编译成内部格式。</p>
+<p>查询优化器的输入包括查询语句、数据库模式（表和索引的定义）以及数据库统计信息。 查询优化器的输出称为“查询执行计划”，有时也称为“查询计划”或为“执行计划”。</p>
+<p>在优化单个 SELECT 语句期间查询优化器的输入和输出如下图中所示：</p>
+<p><img src=SQL%20Server%20%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84%20d23888955c6946ce9e8ada005fade141/Untitled.png alt=Untitled></p>
+<p>Microsoft SQL Server 查询优化器是基于成本的优化器，基于输入参数和各种因素，例如所需的 CPU 使用率、内存以及 I/O 等，对查询成本进行计算，然后找出最佳（而不是成本最低）的执行计划。</p>
+<p>执行计划包含了从每个表提取数据的方法（表扫描或者索引访问）、多个表的访问顺序、执行计算的方法以及对每个表中的数据进行筛选、聚合和排序的方法。</p>
+<h3 id=查询执行器>查询执行器</h3>
+<p>查询执行器负责调用存储引擎执行具体的计划。存储引擎提供了获取数据的访问方法（Access Method），查询执行器将存储引擎返回的数据处理成为结果集定义的格式后，通过协议层将结果集返回客户端。</p>
+<h2 id=存储引擎>存储引擎</h2>
+<p>存储引擎负责存储系统（例如磁盘或者 SAN）中的数据存储和检索。存储引擎包含了 3 个组件：</p>
+<ul>
+<li>访问方法（Access Method）；</li>
+<li>缓冲管理器（Buffer Manager）；</li>
+<li>事务管理器（Transaction Manager）。</li>
+</ul>
+<h3 id=访问方法>访问方法</h3>
+<p>访问方法是查询执行器和缓冲管理器/事务日志之间的一个接口。</p>
+<p><img src=SQL%20Server%20%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84%20d23888955c6946ce9e8ada005fade141/02A3A194-D0C7-4FC2-8F5E-B06F4A35DDC6.jpeg alt=02A3A194-D0C7-4FC2-8F5E-B06F4A35DDC6.jpeg></p>
+<ul>
+<li>首先，它会判断查询的类型是 SELECT 语句还是 DDL/DML 语句；</li>
+<li>如果是 SELECT 语句，则将其传递给缓冲管理器进行处理；</li>
+<li>如果是 DDL 或者 DML 语句（例如 UPDATE），则将其传递给事务管理器进行处理。</li>
+</ul>
+<h3 id=缓冲管理器>缓冲管理器</h3>
+<p>缓冲管理器实现了以下核心功能模块：</p>
+<ul>
+<li>执行计划缓存（Plan Cache）；</li>
+<li>数据解析（Data Parsing）：缓冲区缓存（Buffer cache）和数据存储（Data storage）；</li>
+<li>脏页（Dirty Page）：脏页是指内存中被修改过但还没有写入磁盘的数据，它由事务管理器产生。</li>
+</ul>
+<p>第一次生成查询计划时，如果计划比较复杂，缓冲管理器会将该查询和相应的执行计划存储到缓存中。缓存管理器对每次查询进行检查，如果服务器接收到相同的查询，可以重用缓存的查询计划和数据。</p>
+<p>缓存管理器还提供了数据的访问操作：</p>
+<p><img src=SQL%20Server%20%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84%20d23888955c6946ce9e8ada005fade141/AB05526F-492A-46B0-A5B3-9C3C9C0A3BF9.jpeg alt=AB05526F-492A-46B0-A5B3-9C3C9C0A3BF9.jpeg></p>
+<ul>
+<li>如果数据已经位于数据缓存（Data cache）中，直接通过缓存返回数据；这种方式减少了磁盘 I/O，提高了数据访问的性能，被称为数据的软解析（Soft Parsing）。</li>
+<li>如果所需的数据不在数据缓存中，通过磁盘 I/O 访问数据存储设备中的文件，同时将数据存储到缓存中，这种方式被称为数据的硬解析（Hard Parsing）。</li>
+</ul>
+<p>下面列出了一些访问方法类型：</p>
+<ul>
+<li>行和索引操作（Row and Index Operations）：负责操作和维护磁盘上的数据结构，也就是数据行和 B 树索引。</li>
+<li>页分配操作（Page Allocation Operations）：每个数据库都是 8KB 磁盘页的集合，这些磁盘页分布在多个物理文件中。SQL Server 使用 13 种磁盘页面结构，包括数据页面、索引页面等。</li>
+<li>版本操作（Versioning Operations）：用于维护行变化的版本，以支持快照隔离（Snapshot Isolation）功能等。</li>
+</ul>
+<p>访问方法并不直接检索页面，它向缓冲区管理器（Buffer Manager）发送请求，缓冲区管理器在其管理的缓存中扫描页面，或者将页面从磁盘读取到缓存中。在扫描启动时，会使用预测先行（Look-ahead Mechanism）机制对页面中的行或索引进行验证。</p>
+<h3 id=事务管理器>事务管理器</h3>
+<p>**事务服务（Transaction Services）**用于提供事务的 ACID 属性支持。ACID 属性包括：</p>
+<ul>
+<li>原子性（Atomicity）</li>
+<li>一致性（Consistency）</li>
+<li>隔离性（Isolation）</li>
+<li>持久性（Durability）</li>
+</ul>
+<p>如果查询属于<strong>修改</strong>对象或者数据的语句，需要调用事务管理器。</p>
+<p>事务管理器包括日志管理器（Log Manager）和锁管理器（Lock Manager）。</p>
+<ul>
+<li>日志管理器利用事务日志（Transaction Log）中的日志项记录了系统的所有更新操作，每条日志记录由一个日志序列号（LSN）标识，同时包含了事务 ID 和数据修改记录。 Microsoft SQL Server 使用预写日志 (Write-ahead Logging) ，可以确保在<strong>将相关日志记录写入磁盘后再将数据修改写入磁盘</strong>，维护了事务的 ACID 属性。如果系统出现故障，则可能需要使用事务日志将数据库恢复到一致状态。
+但写入数据页可以是异步的，所以可以在缓存中组织需要写入的数据页进行批量写入，以提高写入性能。</li>
+<li>锁管理器用于在事务处理期间管理事务对所依赖的资源（如行、页或表）上请求的锁。 锁可以阻止其他事务以某种可能会导致事务请求锁出错的方式修改资源，实现事务的隔离性和一致性。</li>
+</ul>
+<p>数据库事务的处理流程如下：</p>
+<ol>
+<li>日志管理器开始记录日志，同时锁定管理器锁定相关的数据。</li>
+<li>在缓冲区缓存中维护数据的副本；</li>
+<li>在日志缓冲区中记录被修改数据的前后镜像，并且更新数据缓冲区中的数据副本，此时也就产生了数据的脏页；</li>
+<li>检查点线程（Checkpoint）定期将数据脏页和缓冲日志写入磁盘。
+SQL Server 通过 Lazy Writer 线程使用 LRU（Least recently Used）算法将数据脏页刷新到磁盘文件。</li>
+</ol>
+<blockquote>
+<p>SQL Server 支持两种并发模型来保证事务的 ACID 属性：</p>
+<ul>
+<li>悲观并发（Pessimistic Concurrency）假设冲突始终会发生，通过锁定数据来确保正确性和并发性。</li>
+<li>乐观并发（Optimistic Concurrency）假设不会发生冲突，在碰到冲突再进行处理。</li>
+</ul>
+<p>在乐观并发模型中，用户读数据时不锁定数据。在执行更新时，系统进行检查，查看另一个用户读过数据后是否更改了数据。如果另一个用户更改了数据，则产生一个错误，接收错误信息的用户将回滚事务。该模型主要用在数据争夺少的环境中，以及锁定数据的成本超过回滚事务的成本时。</p>
+<p>SQL Server 提供了 5 中隔离级别（Isolation Level），在处理多用户并发时可以支持不同的并发模型。</p>
+<ul>
+<li>Read Uncommitted：仅支持悲观并发；</li>
+<li>Repeatable Read：仅支持悲观并发；</li>
+<li>Serializable：仅支持悲观并发；</li>
+<li>Snapshot: 支持乐观并发；</li>
+<li>Read Committed：默认隔离级别，依据配置既可支持悲观并发也可支持乐观并发。</li>
+</ul>
+</blockquote>
+<p>另外，Microsoft SQL Server 还提供了基于行版本控制的隔离，数据库引擎将会维护修改的每一行的版本。</p>
+<p>应用程序可以指定事务使用行版本查看事务或查询开始时存在的数据，而不是使用锁保护所有读取。 通过使用行版本控制，读取操作阻止其他事务的可能性将大大降低。</p>
+<h3 id=数据库文件>数据库文件</h3>
+<p>每个 SQL Server 数据库至少具有两个操作系统文件：一个数据文件和一个日志文件。</p>
+<ul>
+<li>数据文件包含数据和对象，例如表、索引、存储过程和视图。</li>
+<li>日志文件包含恢复数据库中的所有事务所需的信息。 为了便于分配和管理，可以将数据文件集合起来，放到文件组中。</li>
+</ul>
+<p>SQL Server 数据库具有三种类型的文件：</p>
+<ul>
+<li>主要数据文件（Primary file），包含数据库的启动信息，并指向数据库中的其他文件。 每个数据库有一个主要数据文件。 主要数据文件的建议文件扩展名是 .mdf。</li>
+<li>辅助数据文件（Secondary file），用户定义的可选数据文件。 通过将每个文件放在不同的磁盘驱动器上，可将数据分散到多个磁盘中。次要数据文件的建议文件扩展名是.ndf。</li>
+<li>事务日志文件（Log file），此日志包含用于恢复数据库的信息。 每个数据库必须至少有一个日志文件。 事务日志的建议文件扩展名是.ldf。</li>
+</ul>
+<p>数据文件是存储数据的物理文件，由多个数据页（data page）组成； 数据页是磁盘 I/O 操作的基本单位，每个数据页大小为 8KB，是 Microsoft SQL Server 中最小的存储单元。8 个物理上连续的数据页组成一个区（extent），区是管理空间的基本单位。</p>
+<p><img src=SQL%20Server%20%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84%20d23888955c6946ce9e8ada005fade141/Untitled%201.png alt=Untitled></p>
+<p>每页的开头是 96 字节的标头（Page Header），用于存储有关页的系统信息，包括页码（Page Number）、页类型（Page Type）、页的可用空间以及拥有该页的对象的分配单元 ID、指向下一页和上一页的指针等。</p>
+<p>日志文件不包含页，而是包含一系列日志记录。</p>
+<p>默认情况下，数据和事务日志放在单磁盘系统的同一驱动器和路径上。</p>
+<p>对于生产环境， 建议将数据和日志文件放在不同的磁盘上。</p>
+</div>
+<footer class=post-footer>
+<div id=wcomments></div>
+</footer>
+</article>
+</section>
+</div>
+</div>
+<div class=sidebar-toggle>
+<div class=sidebar-toggle-line-wrap>
+<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+</div>
+</div>
+<aside id=sidebar class=sidebar>
+<div class=sidebar-inner>
+<ul class="sidebar-nav motion-element">
+<li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>
+文章目录
+</li>
+<li class=sidebar-nav-overview data-target=site-overview>
+站点概览
+</li>
+</ul>
+<section class="site-overview sidebar-panel">
+<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
+<img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon>
+<p class=site-author-name itemprop=name>Etaon</p>
+<p class="site-description motion-element" itemprop=description>
+Kepp Going!
+</p>
+</div>
+<nav class="site-state motion-element">
+<div class="site-state-item site-state-posts">
+<a href=/post/>
+<span class=site-state-item-count>61</span>
+<span class=site-state-item-name>日志</span>
+</a>
+</div>
+<div class="site-state-item site-state-categories">
+<a href=/categories/>
+<span class=site-state-item-count>13</span>
+<span class=site-state-item-name>分类</span>
+</a>
+</div>
+<div class="site-state-item site-state-tags">
+<a href=/tags/>
+<span class=site-state-item-count>34</span>
+<span class=site-state-item-name>标签</span>
+</a>
+</div>
+</nav>
+<div class="links-of-author motion-element">
+<span class=links-of-author-item>
+<a href=https://github.com/etaon target=_blank title=GitHub>
+<i class="fa fa-fw fa-github"></i>
+GitHub
+</a>
+</span>
+<span class=links-of-author-item>
+<a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN>
+<i class="fa fa-fw fa-CSDN"></i>
+CSDN
+</a>
+</span>
+</div>
+<div class="links-of-blogroll motion-element links-of-blogroll-inline">
+<div class=links-of-blogroll-title>
+<i class="fa fa-fw fa-globe"></i>
+友情链接
+</div>
+<ul class=links-of-blogroll-list>
+<li class=links-of-blogroll-item>
+<a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a>
+</li>
+</ul>
+</div>
+<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
+<div class=tagcloud-of-blogroll-title>
+<i class="fa fa-fw fa-tags"></i>
+标签云
+</div>
+<ul class=tagcloud-of-blogroll-list>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/mysql>Mysql</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/aws>Aws</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/dql>Dql</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/hadoop>Hadoop</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/redis>Redis</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/cicd>Cicd</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/git>Git</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/istio>Istio</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/mongodb>Mongodb</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/azure>Azure</a>
+</li>
+</ul>
+</div>
+</section>
+<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+<div class=post-toc>
+<div class=post-toc-content><nav id=TableOfContents>
+<ul>
+<li><a href=#整体结构><strong>整体结构</strong></a></li>
+<li><a href=#sql-server客户端访问工具>SQL Server客户端访问工具</a></li>
+<li><a href=#sql-server网络协议>SQL Server网络协议</a>
+<ul>
+<li><a href=#共享内存协议><strong>共享内存协议</strong></a></li>
+<li><a href=#tcpip-协议><strong>TCP/IP 协议</strong></a></li>
+<li><a href=#命名管道协议>命名管道协议</a></li>
+<li><a href=#tds-协议>TDS 协议</a></li>
+</ul>
+</li>
+<li><a href=#关系引擎>关系引擎</a>
+<ul>
+<li><a href=#命令解析器>命令解析器</a></li>
+<li><a href=#查询优化器>查询优化器</a></li>
+<li><a href=#查询执行器>查询执行器</a></li>
+</ul>
+</li>
+<li><a href=#存储引擎>存储引擎</a>
+<ul>
+<li><a href=#访问方法>访问方法</a></li>
+<li><a href=#缓冲管理器>缓冲管理器</a></li>
+<li><a href=#事务管理器>事务管理器</a></li>
+<li><a href=#数据库文件>数据库文件</a></li>
+</ul>
+</li>
+</ul>
+</nav></div>
+</div>
+</section>
+</div>
+</aside>
+</div>
+</main>
+<footer id=footer class=footer>
+<div class=footer-inner>
+<div class=copyright>
+<span class=copyright-year>
+&copy; 2010 - 2022
+</span>
+<span class=with-love><i class="fa fa-heart"></i></span>
+<span class=copyright-author>路无止境！</span>
+</div>
+<div class=powered-info>
+<span class=powered-by>
+Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.91.2</a>
+</span>
+<span class=separator-line>/</span>
+<span class=theme-info>
+Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
+</a>
+</span>
+</div>
+<div class=vistor-info>
+<script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<span class=site-uv>
+<i class="fa fa-user"></i>
+<span class=busuanzi-value id=busuanzi_value_site_uv></span>
+</span>
+<span class=separator-line>/</span>
+<span class=site-pv>
+<i class="fa fa-eye"></i>
+<span class=busuanzi-value id=busuanzi_value_site_pv></span>
+</span>
+</div>
+<div class=license-info>
+<span class=storage-info>
+Storage by
+<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a>
+</span>
+<span class=separator-line>/</span>
+<span class=license-num>
+<a href target=_blank></a>
+</span>
+</div>
+</div>
+</footer>
+<div class=back-to-top>
+<i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span>
+</div>
+</div>
+<script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
+<script type=text/javascript src=/js/search.js></script>
+<script type=text/javascript src=/js/affix.js></script>
+<script type=text/javascript src=/js/scrollspy.js></script>
+<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.main').css('padding-bottom'),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}}),$(document).on('affixed.bs.affix',function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var b=$('.header-inner').height()+10,c,d,a,e;$('#sidebar').css({'margin-top':b}).show(),c=parseInt($('#sidebar').css('margin-top')),d=parseInt($('.sidebar-inner').css('height')),a=c+d,e=$('.content-wrap').height(),e<a&&$('.content-wrap').css('min-height',a),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
+<script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
+<script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+'//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js',function(){new Waline({el:'#wcomments',visitor:!0,avatar:'wavatar',avatarCDN:'https://sdn.geekzu.org/avatar/',avatarForce:!1,wordLimit:'200',placeholder:' 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ',requiredFields:['nick','mail'],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$('#wcomments').html('抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。')})</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type=text/javascript src="//s7.addthis.com/js/300/addthis_widget.js#pubid=Your%20AddthisId"></script>
+<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
+</body>
+</html>

@@ -1,22 +1,22 @@
 <!doctype html><html lang=zh-cn dir=content/zh-cn>
 <head>
-<meta name=generator content="Hugo 0.91.2">
 <meta charset=utf-8>
 <meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
 <meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
 <meta http-equiv=content-security-policy content="upgrade-insecure-requests">
-<title> 路无止境！ </title>
+<title> AWS-EC2 Lab - 路无止境！ </title>
 <meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云">
 <meta name=author content="Etaon">
-<meta property="og:title" content="Home">
+<meta property="og:title" content="AWS-EC2 Lab">
 <meta property="og:site_name" content="路无止境！">
 <meta property="og:image" content="/img/author.jpg">
-<meta name=title content="Home - 路无止境！">
+<meta name=title content="AWS-EC2 Lab - 路无止境！">
 <meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。">
 <link rel="shortcut icon" href=/img/favicon.ico>
 <link rel=apple-touch-icon href=/img/apple-touch-icon.png>
 <link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png>
 <link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css>
+<link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet>
 <link href=/css/main.css rel=stylesheet type=text/css>
 <link href=/css/syntax.css rel=stylesheet type=text/css>
 </head>
@@ -36,8 +36,6 @@
 <div class=multi-lang-switch>
 <i class="fa fa-fw fa-language" style=margin-right:5px></i>
 <a class=lang-link id=zh-cn href=#>中文</a>
-<span class=lang-line> / </span>
-<a class=lang-link id=en href=https://www.etaon.link/en/>English</a>
 </div>
 <div class=custom-logo-site-title>
 <a href=/ class=brand rel=start>
@@ -102,266 +100,115 @@
 <section id=posts class=posts-expand>
 <article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
 <header class=post-header>
-<h1 class=post-title itemprop="name headline">
-<a class=post-title-link href=https://www.etaon.link/2022/06/6/Install-Kubernetes-1.24.html itemprop=url>
-Install Kubernetes 1.24
+<h1 class=post-title itemprop="name headline" style=font-weight:700>
+<a class=post-title-link href=https://www.etaon.link/2021/08/27/aws-ec2lab.html itemprop=url>
+AWS-EC2 Lab
 </a>
 </h1>
-<div class=post-meta>
-<span class=post-time>
-<i class="fa fa-calendar-o fa-fw"></i>
-<span class=post-meta-item-text>时间：</span>
-<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2022-06-06">
-2022-06-06
-</time>
-</span>
-<span class=post-category>
-&nbsp; | &nbsp;
-<i class="fa fa-folder-o fa-fw"></i>
-<span class=post-meta-item-text>分类：</span>
-<span itemprop=about itemscope itemtype=https://schema.org/Thing>
-<a href=/categories/kubernetes itemprop=url rel=index style=text-decoration:underline>
-<span itemprop=name>kubernetes</span>
-</a>
-&nbsp;
-</span>
-</span>
-<span>
-|
-<i class="fa fa-file-word-o fa-fw"></i>
-<span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>8731 字</span>
-</span>
-<span>
-|
-<i class="fa fa-eye fa-fw"></i>
-<span class=post-meta-item-text>阅读：</span>
-<span class=leancloud-view-count>18分钟</span>
-</span>
-</div>
 </header>
 <div class=post-body itemprop=articleBody>
-Kubernetes容器运行时演进 早期的kubernetes runtime架构，远没这么复杂，kubelet创建容器，直接调用docker d
+<h2 id=概述>概述</h2>
+<p>本实验包括：</p>
+<ol>
+<li>EC2实例建立；</li>
+<li>预制Apache服务；</li>
+<li>使用实例创建AMI镜像</li>
+<li>使用AMI创建实例</li>
+</ol>
+<h2 id=建立ec2实例包含预制apache>建立EC2实例(包含预制Apache)</h2>
+<p>在控制台选择：服务&ndash;实例&ndash;启动新实例
+<img src="https://img-blog.csdnimg.cn/7f897ceebbf14dcea1ec9ccf9e88caa7.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p>
+<ul>
+<li>步骤1：现在AMI
+<img src="https://img-blog.csdnimg.cn/a24055d6f8444bb4b3024e81420ebb88.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt>
+这里选择一个免费的Amazon Linux 2</li>
+<li>步骤2：选择实例类型
+实例类型简单总结如下：
+<img src="https://img-blog.csdnimg.cn/0a15251c423a4522991578ec0410d3c2.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述>
+更多的信息可以参考：
+<a href=https://instances.vantage.sh/>https://instances.vantage.sh/</a>
+<img src="https://img-blog.csdnimg.cn/7819c325f04445ae9cd55730aa2c0ab1.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt>
+这里也选择免费的t2.micro实例
+<img src="https://img-blog.csdnimg.cn/42d34c079f794feeb6899efccf1d6d37.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></li>
+<li>步骤3：实例详细信息
+在这一步，可以通过<strong>高级详细信息</strong>中的<strong>用户数据</strong>，传递预制命令
+<img src="https://img-blog.csdnimg.cn/2ae2d153e6f840af979ca7782964e5b1.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述>
+这里我们使用一个shell脚本：</li>
+</ul>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=color:#080>#!/bin/bash
+</span><span style=color:#080></span>sudo yum update -y
+sudo yum install -y httpd
+sudo systemctl <span style=color:#a2f>enable</span> httpd
+sudo systemctl start httpd
+sudo <span style=color:#a2f>echo</span> <span style=color:#b44>&#34;Hello World from </span><span style=color:#a2f;font-weight:700>$(</span>hostname -f<span style=color:#a2f;font-weight:700>)</span><span style=color:#b44>&#34;</span> &gt; /var/www/html/index.html
+</code></pre></div><p>以上脚本里，我们预制了httpd service，即Apache，并启动。
+将初始页面index.html的内容改变成来自主机的问候。</p>
+<ul>
+<li>
+<p>步骤4：添加存储
+使用默认配置</p>
+</li>
+<li>
+<p>步骤5：添加biaoqian
+按需添加</p>
+</li>
+<li>
+<p>步骤6：添加安全组
+新建安全组并增加Http访问的允许规则
+<img src="https://img-blog.csdnimg.cn/6c89b4684b714e0e8815acb8921e6c6d.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p>
+</li>
+<li>
+<p>审核和启动
+需要选择或创建一个密钥对，如果是旧密钥，系统提示需要私钥文件。
+<img src="https://img-blog.csdnimg.cn/fa53ec36246345f99f58834132d3af8d.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p>
+</li>
+<li>
+<p>查看实例运行
+<img src="https://img-blog.csdnimg.cn/e29477597ee1489ea2e19d771237df70.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p>
+</li>
+<li>
+<p>查看Web页面
+注意：在实例公有IP或DNS旁边有打开地址链接，这里的打开方式是：<strong>https</strong>，我们点击会得到不仅可达页面。
+<img src="https://img-blog.csdnimg.cn/a0a602526ab04949bcf9960040165101.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述>
+<img src=https://img-blog.csdnimg.cn/02caeab769db4b368bb1dd6cc7bb4f6a.png alt>
+正确的是打开http
+<img src=https://img-blog.csdnimg.cn/c3f73e90e3f34d6898aab6ddc595e025.png alt=在这里插入图片描述></p>
+</li>
+</ul>
+<h2 id=创建ami>创建AMI</h2>
+<ul>
+<li>通过实例路径
+在实例操作菜单下面可以找到创建映像
+<img src="https://img-blog.csdnimg.cn/885cc7318ff143a387b1467d207f9001.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述>
+然后输入名字和描述等
+<img src="https://img-blog.csdnimg.cn/275ae268db794f3f880e14ca6507ae2b.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述>我们可以看到，AMI中包含了EBS挂载信息，也可以增加新的EBS设备。
+之后创建映像。</li>
+<li>查看新映像
+<img src="https://img-blog.csdnimg.cn/8cf2c4ffec5b4563af6fc28bf37c83a5.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></li>
+</ul>
+<h2 id=使用新ami启动实例>使用新AMI启动实例</h2>
+<p>创建实例的时候选择AMI&ndash;我的AMI
+<img src="https://img-blog.csdnimg.cn/b39547c733d24a4e9ec465b8d61a3f34.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述>
+<img src="https://img-blog.csdnimg.cn/1de152a785164088b52e52de70d31f29.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p>
+<ul>
+<li>查看实例创建情况
+<img src="https://img-blog.csdnimg.cn/3c74cd647d61479b91286f9b7e2484d1.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></li>
+<li>Apache Service
+<img src="https://img-blog.csdnimg.cn/897a52a4f3f349e2b578088b2618c963.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述>
+打不开，原因在安全组并没有继承功能。
+修改安全组：
+<img src="https://img-blog.csdnimg.cn/63a4f9563abf4c379418acb24537e917.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></li>
+<li>再次查看web页面
+<img src=https://img-blog.csdnimg.cn/c1df8bf6235a487b82d690b1c5850056.png alt>
+服务正常</li>
+</ul>
+<p>以上</p>
 </div>
-<div class="post-more-link text-center">
-<a class=btn href=https://www.etaon.link/2022/06/6/Install-Kubernetes-1.24.html rel=contents>
-阅读全文 &#187;
-</a>
-</div>
-<footer class=post-footer><div class=post-eof></div></footer>
-</article>
-<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
-<header class=post-header>
-<h1 class=post-title itemprop="name headline">
-<a class=post-title-link href=https://www.etaon.link/2022/06/06/sql-infra.html itemprop=url>
-SQL Server 体系结构
-</a>
-</h1>
-<div class=post-meta>
-<span class=post-time>
-<i class="fa fa-calendar-o fa-fw"></i>
-<span class=post-meta-item-text>时间：</span>
-<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2022-06-06">
-2022-06-06
-</time>
-</span>
-<span class=post-category>
-&nbsp; | &nbsp;
-<i class="fa fa-folder-o fa-fw"></i>
-<span class=post-meta-item-text>分类：</span>
-<span itemprop=about itemscope itemtype=https://schema.org/Thing>
-<a href=/categories/database itemprop=url rel=index style=text-decoration:underline>
-<span itemprop=name>Database</span>
-</a>
-&nbsp;
-</span>
-</span>
-<span>
-|
-<i class="fa fa-file-word-o fa-fw"></i>
-<span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>5070 字</span>
-</span>
-<span>
-|
-<i class="fa fa-eye fa-fw"></i>
-<span class=post-meta-item-text>阅读：</span>
-<span class=leancloud-view-count>11分钟</span>
-</span>
-</div>
-</header>
-<div class=post-body itemprop=articleBody>
-整体结构 Microsoft SQL Server 服务由一个实例（Instance）和多个数据库（Databases）组成， 实例包含了后台线程和占用的内存，数据库在存在于存储上
-</div>
-<div class="post-more-link text-center">
-<a class=btn href=https://www.etaon.link/2022/06/06/sql-infra.html rel=contents>
-阅读全文 &#187;
-</a>
-</div>
-<footer class=post-footer><div class=post-eof></div></footer>
-</article>
-<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
-<header class=post-header>
-<h1 class=post-title itemprop="name headline">
-<a class=post-title-link href=https://www.etaon.link/2022/06/05/oracle-basic.html itemprop=url>
-Oracle基本概念和结构
-</a>
-</h1>
-<div class=post-meta>
-<span class=post-time>
-<i class="fa fa-calendar-o fa-fw"></i>
-<span class=post-meta-item-text>时间：</span>
-<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2022-06-05">
-2022-06-05
-</time>
-</span>
-<span class=post-category>
-&nbsp; | &nbsp;
-<i class="fa fa-folder-o fa-fw"></i>
-<span class=post-meta-item-text>分类：</span>
-<span itemprop=about itemscope itemtype=https://schema.org/Thing>
-<a href=/categories/database itemprop=url rel=index style=text-decoration:underline>
-<span itemprop=name>Database</span>
-</a>
-&nbsp;
-</span>
-</span>
-<span>
-|
-<i class="fa fa-file-word-o fa-fw"></i>
-<span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>2679 字</span>
-</span>
-<span>
-|
-<i class="fa fa-eye fa-fw"></i>
-<span class=post-meta-item-text>阅读：</span>
-<span class=leancloud-view-count>6分钟</span>
-</span>
-</div>
-</header>
-<div class=post-body itemprop=articleBody>
-什么是关系型数据库？ 基于关系模型的数据库，即基于二维表（行、列）存储数据的库。 什么是数据库? 数据库是存储介质上的文件—>物理存储结构 什
-</div>
-<div class="post-more-link text-center">
-<a class=btn href=https://www.etaon.link/2022/06/05/oracle-basic.html rel=contents>
-阅读全文 &#187;
-</a>
-</div>
-<footer class=post-footer><div class=post-eof></div></footer>
-</article>
-<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
-<header class=post-header>
-<h1 class=post-title itemprop="name headline">
-<a class=post-title-link href=https://www.etaon.link/2022/05/26/oracle-install-19c.html itemprop=url>
-Oracle Install 19c@CentOS 7.6
-</a>
-</h1>
-<div class=post-meta>
-<span class=post-time>
-<i class="fa fa-calendar-o fa-fw"></i>
-<span class=post-meta-item-text>时间：</span>
-<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2022-05-26">
-2022-05-26
-</time>
-</span>
-<span class=post-category>
-&nbsp; | &nbsp;
-<i class="fa fa-folder-o fa-fw"></i>
-<span class=post-meta-item-text>分类：</span>
-<span itemprop=about itemscope itemtype=https://schema.org/Thing>
-<a href=/categories/database itemprop=url rel=index style=text-decoration:underline>
-<span itemprop=name>Database</span>
-</a>
-&nbsp;
-</span>
-</span>
-<span>
-|
-<i class="fa fa-file-word-o fa-fw"></i>
-<span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>3833 字</span>
-</span>
-<span>
-|
-<i class="fa fa-eye fa-fw"></i>
-<span class=post-meta-item-text>阅读：</span>
-<span class=leancloud-view-count>8分钟</span>
-</span>
-</div>
-</header>
-<div class=post-body itemprop=articleBody>
-基础环境 CentOS 7 1908 ELF 5.0.2 CPU绑定，在NUMA结构中，尽量把vCPU放到最少的NUMA #virsh list查看哪些虚机和序号 [root@smtx-01 19:08:10 smartx]$virsh list Id Name State ---------------------------------------------------- 1 e9eafd7a-9b19-4dd3-bce4-60635252528c running 2 c4ea06f4-8084-4cdb-8010-a72e05402ce8 running #查
-</div>
-<div class="post-more-link text-center">
-<a class=btn href=https://www.etaon.link/2022/05/26/oracle-install-19c.html rel=contents>
-阅读全文 &#187;
-</a>
-</div>
-<footer class=post-footer><div class=post-eof></div></footer>
-</article>
-<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
-<header class=post-header>
-<h1 class=post-title itemprop="name headline">
-<a class=post-title-link href=https://www.etaon.link/2022/02/21/k8s-nfs-csi.html itemprop=url>
-NFS-Volume for K8S
-</a>
-</h1>
-<div class=post-meta>
-<span class=post-time>
-<i class="fa fa-calendar-o fa-fw"></i>
-<span class=post-meta-item-text>时间：</span>
-<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2022-02-21">
-2022-02-21
-</time>
-</span>
-<span class=post-category>
-&nbsp; | &nbsp;
-<i class="fa fa-folder-o fa-fw"></i>
-<span class=post-meta-item-text>分类：</span>
-<span itemprop=about itemscope itemtype=https://schema.org/Thing>
-<a href=/categories/kubernetes itemprop=url rel=index style=text-decoration:underline>
-<span itemprop=name>kubernetes</span>
-</a>
-&nbsp;
-</span>
-</span>
-<span>
-|
-<i class="fa fa-file-word-o fa-fw"></i>
-<span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>3178 字</span>
-</span>
-<span>
-|
-<i class="fa fa-eye fa-fw"></i>
-<span class=post-meta-item-text>阅读：</span>
-<span class=leancloud-view-count>7分钟</span>
-</span>
-</div>
-</header>
-<div class=post-body itemprop=articleBody>
-环境 Alma：Linux Alma 8.5 CP/Worker：ubuntu 18.04 NFS安装 Alma： #安装 yum install -y nfs-utils #nfs主节点 echo "/nfs/data/ *(insecure,rw,sync,no_root_squash)" > /etc/exports mkdir -p /nfs/data systemctl enable rpcbind --now systemctl enable nfs-server
-</div>
-<div class="post-more-link text-center">
-<a class=btn href=https://www.etaon.link/2022/02/21/k8s-nfs-csi.html rel=contents>
-阅读全文 &#187;
-</a>
-</div>
-<footer class=post-footer><div class=post-eof></div></footer>
+<footer class=post-footer>
+<div id=wcomments></div>
+</footer>
 </article>
 </section>
-<nav class=pagination>
-<span class="page-number current">1</span>
-<a class=page-number href=/p/2/>2</a>
-<a class=page-number href=/p/3/>3</a>
-<a class=page-number href=/p/4/>4</a>
-<a class=page-number href=/p/5/>5</a>
-<a class=page-number href=/p/6/>6</a>
-<a class=page-number href=/p/7/>7</a>
-<a class=page-number href=/p/8/>8</a>
-<a class="extend next" rel=next href=/p/2/><i class="fa fa-angle-right"></i></a>
-</nav>
 </div>
 </div>
 <div class=sidebar-toggle>
@@ -373,7 +220,15 @@ NFS-Volume for K8S
 </div>
 <aside id=sidebar class=sidebar>
 <div class=sidebar-inner>
-<section class="site-overview sidebar-panel sidebar-panel-active">
+<ul class="sidebar-nav motion-element">
+<li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>
+文章目录
+</li>
+<li class=sidebar-nav-overview data-target=site-overview>
+站点概览
+</li>
+</ul>
+<section class="site-overview sidebar-panel">
 <div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
 <img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon>
 <p class=site-author-name itemprop=name>Etaon</p>
@@ -401,12 +256,6 @@ Kepp Going!
 </a>
 </div>
 </nav>
-<div class="feed-link motion-element">
-<a href=/index.xml rel=alternate type=application/rss+xml target=_blank>
-<i class="fa fa-rss"></i>
-RSS 订阅
-</a>
-</div>
 <div class="links-of-author motion-element">
 <span class=links-of-author-item>
 <a href=https://github.com/etaon target=_blank title=GitHub>
@@ -480,6 +329,18 @@ CSDN
 </ul>
 </div>
 </section>
+<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+<div class=post-toc>
+<div class=post-toc-content><nav id=TableOfContents>
+<ul>
+<li><a href=#概述>概述</a></li>
+<li><a href=#建立ec2实例包含预制apache>建立EC2实例(包含预制Apache)</a></li>
+<li><a href=#创建ami>创建AMI</a></li>
+<li><a href=#使用新ami启动实例>使用新AMI启动实例</a></li>
+</ul>
+</nav></div>
+</div>
+</section>
 </div>
 </aside>
 </div>
@@ -537,6 +398,11 @@ Storage by
 <script type=text/javascript src=/js/affix.js></script>
 <script type=text/javascript src=/js/scrollspy.js></script>
 <script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.main').css('padding-bottom'),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}}),$(document).on('affixed.bs.affix',function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var b=$('.header-inner').height()+10,c,d,a,e;$('#sidebar').css({'margin-top':b}).show(),c=parseInt($('#sidebar').css('margin-top')),d=parseInt($('.sidebar-inner').css('height')),a=c+d,e=$('.content-wrap').height(),e<a&&$('.content-wrap').css('min-height',a),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
+<script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
+<script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+'//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js',function(){new Waline({el:'#wcomments',visitor:!0,avatar:'wavatar',avatarCDN:'https://sdn.geekzu.org/avatar/',avatarForce:!1,wordLimit:'200',placeholder:' 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ',requiredFields:['nick','mail'],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$('#wcomments').html('抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。')})</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type=text/javascript src="//s7.addthis.com/js/300/addthis_widget.js#pubid=Your%20AddthisId"></script>
 <script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
 </body>
 </html>

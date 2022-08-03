@@ -1,0 +1,996 @@
+<!doctype html><html lang=zh-cn dir=content/zh-cn>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
+<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
+<title> Oracle Install 19c@CentOS 7.6 - 路无止境！ </title>
+<meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云">
+<meta name=author content="Etaon">
+<meta property="og:title" content="Oracle Install 19c@CentOS 7.6">
+<meta property="og:site_name" content="路无止境！">
+<meta property="og:image" content="/img/author.jpg">
+<meta name=title content="Oracle Install 19c@CentOS 7.6 - 路无止境！">
+<meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。">
+<link rel="shortcut icon" href=/img/favicon.ico>
+<link rel=apple-touch-icon href=/img/apple-touch-icon.png>
+<link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png>
+<link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css>
+<link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet>
+<link href=/css/main.css rel=stylesheet type=text/css>
+<link href=/css/syntax.css rel=stylesheet type=text/css>
+</head>
+<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
+<div class="container one-collumn sidebar-position-left page-home">
+<div class=headband></div>
+<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
+<div class=header-inner> <div class=site-brand-container>
+<div class=site-nav-toggle>
+<div class=toggle role=button style=opacity:1;top:0>
+<span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span>
+</div>
+</div>
+<div class=site-meta>
+<div class=multi-lang-switch>
+<i class="fa fa-fw fa-language" style=margin-right:5px></i>
+<a class=lang-link id=zh-cn href=#>中文</a>
+</div>
+<div class=custom-logo-site-title>
+<a href=/ class=brand rel=start>
+<span class=logo-line-before><i></i></span>
+<span class=site-title>路无止境！</span>
+<span class=logo-line-after><i></i></span>
+</a>
+</div>
+<p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p>
+</div>
+<div class=site-nav-right>
+<div class="toggle popup-trigger" style=opacity:1;top:0>
+<i class="fa fa-search fa-fw fa-lg"></i>
+</div>
+</div>
+</div>
+<nav class=site-nav>
+<ul id=menu class=menu>
+<li class=menu-item>
+<a href=/ rel=section>
+<i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页
+</a>
+</li>
+<li class=menu-item>
+<a href=/post rel=section>
+<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档
+</a>
+</li>
+<li class=menu-item>
+<a href=/about.html rel=section>
+<i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于我
+</a>
+</li>
+<li class=menu-item>
+<a href=/404.html rel=section>
+<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益404
+</a>
+</li>
+<li class="menu-item menu-item-search">
+<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> 搜索</a>
+</li>
+</ul>
+<div class=site-search>
+<div class="popup search-popup local-search-popup">
+<div class="local-search-header clearfix">
+<span class=search-icon><i class="fa fa-search"></i> </span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
+<div class=local-search-input-wrapper>
+<input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
+</div>
+</div>
+<div id=local-search-result></div>
+</div>
+</div>
+</nav>
+</div>
+</header>
+<main id=main class=main>
+<div class=main-inner>
+<div class=content-wrap>
+<div id=content class=content>
+<section id=posts class=posts-expand>
+<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
+<header class=post-header>
+<h1 class=post-title itemprop="name headline" style=font-weight:700>
+<a class=post-title-link href=https://www.etaon.link/2022/05/26/oracle-install-19c.html itemprop=url>
+Oracle Install 19c@CentOS 7.6
+</a>
+</h1>
+</header>
+<div class=post-body itemprop=articleBody>
+<h1 id=基础环境>基础环境</h1>
+<ul>
+<li>CentOS 7 1908</li>
+</ul>
+<p><img src=Oracle%20Install%2019c@CentOS%207%206%20447ba1587f3a451a9fa59991ff03563f/AFAB6D62-A8A1-480F-BD1D-D32DA8565CB9.jpeg alt=AFAB6D62-A8A1-480F-BD1D-D32DA8565CB9.jpeg></p>
+<ul>
+<li>ELF 5.0.2</li>
+<li>CPU绑定，在NUMA结构中，尽量把vCPU放到最少的NUMA</li>
+</ul>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#080;font-style:italic>#virsh list查看哪些虚机和序号</span>
+<span style=color:#666>[</span>root@smtx-01 19:08:10 smartx<span style=color:#666>]</span><span style=color:#b8860b>$virsh</span> list
+ Id    Name                           State
+----------------------------------------------------
+ <span style=color:#666>1</span>     e9eafd7a-9b19-4dd3-bce4-60635252528c running
+ <span style=color:#666>2</span>     c4ea06f4-8084-4cdb-8010-a72e05402ce8 running
+
+<span style=color:#080;font-style:italic>#查看vcpu和vm的绑定</span>
+<span style=color:#666>[</span>root@smtx-01 19:53:54 smartx<span style=color:#666>]</span><span style=color:#b8860b>$virsh</span> vcpuinfo <span style=color:#666>1</span>
+VCPU:           <span style=color:#666>0</span>
+CPU:            <span style=color:#666>31</span>
+State:          running
+CPU time:       619.7s
+CPU Affinity:   -y-y-y-y-y-yyyyyyyyyyyyyyyyyyyyy
+
+VCPU:           <span style=color:#666>1</span>
+CPU:            <span style=color:#666>7</span>
+State:          running
+CPU time:       616.4s
+CPU Affinity:   -y-y-y-y-y-yyyyyyyyyyyyyyyyyyyyy
+
+<span style=color:#080;font-style:italic>#总cores</span>
+<span style=color:#666>[</span>root@smtx-01 20:01:02 smartx<span style=color:#666>]</span><span style=color:#b8860b>$cat</span> /proc/cpuinfo | grep <span style=color:#b44>&#39;processor&#39;</span> | wc -l
+<span style=color:#666>32</span>
+<span style=color:#080;font-style:italic>#物理cores</span>
+<span style=color:#666>[</span>root@smtx-01 20:03:34 smartx<span style=color:#666>]</span><span style=color:#b8860b>$cat</span> /proc/cpuinfo | grep <span style=color:#b44>&#34;cores&#34;</span>|uniq
+cpu cores       : <span style=color:#666>8</span>
+<span style=color:#080;font-style:italic>#cpus</span>
+<span style=color:#666>[</span>root@smtx-01 20:03:40 smartx<span style=color:#666>]</span><span style=color:#b8860b>$grep</span> <span style=color:#b44>&#39;physical id&#39;</span> /proc/cpuinfo | sort -u | wc -l
+<span style=color:#666>2</span>
+
+<span style=color:#666>[</span>root@smtx-01 15:00:22 smartx<span style=color:#666>]</span><span style=color:#b8860b>$virsh</span> vcpupin <span style=color:#666>2</span> <span style=color:#666>4</span> 20#绑定2号虚拟机的4号vCPU到20 core
+<span style=color:#666>[</span>root@smtx-01 14:31:30 smartx<span style=color:#666>]</span><span style=color:#b8860b>$virsh</span> vcpupin <span style=color:#666>2</span> --current
+VCPU: CPU Affinity
+----------------------------------
+   0: <span style=color:#666>16</span>
+   1: <span style=color:#666>17</span>
+   2: <span style=color:#666>18</span>
+   3: <span style=color:#666>19</span>
+   4: <span style=color:#666>20</span>
+   5: <span style=color:#666>21</span>
+   6: <span style=color:#666>22</span>
+   7: <span style=color:#666>23</span>
+   8: <span style=color:#666>24</span>
+   9: <span style=color:#666>25</span>
+......
+</code></pre></div><ul>
+<li>16C+64G+200G+100G(/u01)</li>
+</ul>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#080;font-style:italic># 挂载/u01</span>
+*mkdir /u01
+mkfs -t xfs /dev/vdb   
+mount /dev/vdb /u01
+<span style=color:#a2f>echo</span> <span style=color:#b44>&#34;/dev/vdb  /u01                   xfs     defaults        0 0&#34;</span> &gt;&gt; /etc/fstab*
+
+<span style=color:#666>[</span>root@oracle-19 ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># lsblk</span>
+NAME                       MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sr0                         11:0    <span style=color:#666>1</span>  4.4G  <span style=color:#666>0</span> rom  
+vda                        252:0    <span style=color:#666>0</span>  200G  <span style=color:#666>0</span> disk
+├─vda1                     252:1    <span style=color:#666>0</span>    1G  <span style=color:#666>0</span> part /boot
+└─vda2                     252:2    <span style=color:#666>0</span>  199G  <span style=color:#666>0</span> part
+  ├─centos_oracle--19-root 253:0    <span style=color:#666>0</span>   50G  <span style=color:#666>0</span> lvm  /
+  ├─centos_oracle--19-swap 253:1    <span style=color:#666>0</span>   20G  <span style=color:#666>0</span> lvm  <span style=color:#666>[</span>SWAP<span style=color:#666>]</span>
+  └─centos_oracle--19-home 253:2    <span style=color:#666>0</span>  129G  <span style=color:#666>0</span> lvm  /home
+vdb                        252:16   <span style=color:#666>0</span>  100G  <span style=color:#666>0</span> disk
+<span style=color:#666>[</span>root@oracle-19 ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># mkdir /u01</span>
+<span style=color:#666>[</span>root@oracle-19 ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># mkfs.xfs -f /dev/vdb</span>
+meta-data<span style=color:#666>=</span>/dev/vdb               <span style=color:#b8860b>isize</span><span style=color:#666>=</span><span style=color:#666>512</span>    <span style=color:#b8860b>agcount</span><span style=color:#666>=</span>4, <span style=color:#b8860b>agsize</span><span style=color:#666>=</span><span style=color:#666>6553600</span> <span style=color:#b8860b>blks</span>
+         <span style=color:#666>=</span>                       <span style=color:#b8860b>sectsz</span><span style=color:#666>=</span><span style=color:#666>512</span>   <span style=color:#b8860b>attr</span><span style=color:#666>=</span>2, <span style=color:#b8860b>projid32bit</span><span style=color:#666>=</span><span style=color:#b8860b>1</span>
+         <span style=color:#666>=</span>                       <span style=color:#b8860b>crc</span><span style=color:#666>=</span><span style=color:#666>1</span>        <span style=color:#b8860b>finobt</span><span style=color:#666>=</span>0, <span style=color:#b8860b>sparse</span><span style=color:#666>=</span><span style=color:#666>0</span>
+<span style=color:#b8860b>data</span>     <span style=color:#666>=</span>                       <span style=color:#b8860b>bsize</span><span style=color:#666>=</span><span style=color:#666>4096</span>   <span style=color:#b8860b>blocks</span><span style=color:#666>=</span>26214400, <span style=color:#b8860b>imaxpct</span><span style=color:#666>=</span><span style=color:#b8860b>25</span>
+         <span style=color:#666>=</span>                       <span style=color:#b8860b>sunit</span><span style=color:#666>=</span><span style=color:#666>0</span>      <span style=color:#b8860b>swidth</span><span style=color:#666>=</span><span style=color:#666>0</span> blks
+<span style=color:#b8860b>naming</span>   <span style=color:#666>=</span>version <span style=color:#666>2</span>              <span style=color:#b8860b>bsize</span><span style=color:#666>=</span><span style=color:#666>4096</span>   ascii-ci<span style=color:#666>=</span><span style=color:#666>0</span> <span style=color:#b8860b>ftype</span><span style=color:#666>=</span><span style=color:#666>1</span>
+<span style=color:#b8860b>log</span>      <span style=color:#666>=</span>internal log           <span style=color:#b8860b>bsize</span><span style=color:#666>=</span><span style=color:#666>4096</span>   <span style=color:#b8860b>blocks</span><span style=color:#666>=</span>12800, <span style=color:#b8860b>version</span><span style=color:#666>=</span><span style=color:#b8860b>2</span>
+         <span style=color:#666>=</span>                       <span style=color:#b8860b>sectsz</span><span style=color:#666>=</span><span style=color:#666>512</span>   <span style=color:#b8860b>sunit</span><span style=color:#666>=</span><span style=color:#666>0</span> blks, lazy-count<span style=color:#666>=</span><span style=color:#666>1</span>
+<span style=color:#b8860b>realtime</span> <span style=color:#666>=</span>none                   <span style=color:#b8860b>extsz</span><span style=color:#666>=</span><span style=color:#666>4096</span>   <span style=color:#b8860b>blocks</span><span style=color:#666>=</span>0, <span style=color:#b8860b>rtextents</span><span style=color:#666>=</span><span style=color:#666>0</span>
+<span style=color:#666>[</span>root@oracle-19 ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># mount /dev/vdb /u01</span>
+<span style=color:#666>[</span>root@oracle-19 ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># df -h</span>
+Filesystem                          Size  Used Avail Use% Mounted on
+devtmpfs                             32G     <span style=color:#666>0</span>   32G   0% /dev
+tmpfs                                32G     <span style=color:#666>0</span>   32G   0% /dev/shm
+tmpfs                                32G   12M   32G   1% /run
+tmpfs                                32G     <span style=color:#666>0</span>   32G   0% /sys/fs/cgroup
+/dev/mapper/centos_oracle--19-root   50G  4.0G   47G   8% /
+/dev/vda1                          1014M  184M  831M  19% /boot
+/dev/mapper/centos_oracle--19-home  129G   33M  129G   1% /home
+tmpfs                               6.3G   20K  6.3G   1% /run/user/988
+tmpfs                               6.3G     <span style=color:#666>0</span>  6.3G   0% /run/user/0
+/dev/vdb                            100G   33M  100G   1% /u01
+
+<span style=color:#666>[</span>root@oracle-19 ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># vim /etc/fstab</span>
+
+<span style=color:#080;font-style:italic>#</span>
+/dev/vdb                /u01                    xfs     defaults        <span style=color:#666>0</span> <span style=color:#666>0</span>
+</code></pre></div><ul>
+<li>网络接口调优</li>
+</ul>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>ethtool -g enp94s0f0np0  <span style=color:#080;font-style:italic>#查看10G端口，如果没有设置为8K，可用修改</span>
+ethtool -G enp94s0f0np0 rx <span style=color:#666>8192</span>
+ethtool -G enp94s0f0np0 tx <span style=color:#666>8192</span>
+
+<span style=color:#666>[</span>root@smtx-02 20:07:56 smartx<span style=color:#666>]</span><span style=color:#b8860b>$ethtool</span> -g enp94s0f0np0
+Ring parameters <span style=color:#a2f;font-weight:700>for</span> enp94s0f0np0:
+Pre-set maximums:
+RX:             <span style=color:#666>8192</span>
+RX Mini:        <span style=color:#666>0</span>
+RX Jumbo:       <span style=color:#666>0</span>
+TX:             <span style=color:#666>8192</span>
+Current hardware settings:
+RX:             <span style=color:#666>1024</span>
+RX Mini:        <span style=color:#666>0</span>
+RX Jumbo:       <span style=color:#666>0</span>
+TX:             <span style=color:#666>1024</span>
+
+<span style=color:#666>[</span>root@smtx-02 20:08:00 smartx<span style=color:#666>]</span><span style=color:#b8860b>$ethtool</span> -G enp94s0f0np0 rx <span style=color:#666>8192</span>
+<span style=color:#666>[</span>root@smtx-02 20:08:27 smartx<span style=color:#666>]</span><span style=color:#b8860b>$ethtool</span> -G enp94s0f0np0 tx <span style=color:#666>8192</span>
+<span style=color:#666>[</span>root@smtx-02 20:08:28 smartx<span style=color:#666>]</span><span style=color:#b8860b>$ethtool</span> -g enp94s0f0np0
+Ring parameters <span style=color:#a2f;font-weight:700>for</span> enp94s0f0np0:
+Pre-set maximums:
+RX:             <span style=color:#666>8192</span>
+RX Mini:        <span style=color:#666>0</span>
+RX Jumbo:       <span style=color:#666>0</span>
+TX:             <span style=color:#666>8192</span>
+Current hardware settings:
+RX:             <span style=color:#666>8192</span>
+RX Mini:        <span style=color:#666>0</span>
+RX Jumbo:       <span style=color:#666>0</span>
+TX:             <span style=color:#666>8192</span>
+
+ethtool -g enp24s0f0  <span style=color:#080;font-style:italic>#查看1G端口，如果没有设置为4K，可用修改</span>
+ethtool -G enp24s0f0 rx <span style=color:#666>4096</span>
+ethtool -G enp24s0f0 tx <span style=color:#666>4096</span>
+</code></pre></div><ul>
+<li>禁用防火墙等系统服务</li>
+</ul>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>*systemctl disable firewalld
+systemctl stop firewalld
+systemctl disable avahi-daemon
+systemctl disable bluetooth
+systemctl disable cups
+systemctl stop NetworkManager.service   
+systemctl disable NetworkManager.service*
+
+<span style=color:#666>[</span>root@oracle-19 ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># systemctl disable firewalld.service</span>
+Removed symlink /etc/systemd/system/multi-user.target.wants/firewalld.service.
+Removed symlink /etc/systemd/system/dbus-org.fedoraproject.FirewallD1.service.
+<span style=color:#666>[</span>root@oracle-19 ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># systemctl stop firewalld.service</span>
+<span style=color:#666>[</span>root@oracle-19 ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># systemctl disable avahi-daemon</span>
+Removed symlink /etc/systemd/system/multi-user.target.wants/avahi-daemon.service.
+Removed symlink /etc/systemd/system/sockets.target.wants/avahi-daemon.socket.
+Removed symlink /etc/systemd/system/dbus-org.freedesktop.Avahi.service.
+<span style=color:#666>[</span>root@oracle-19 ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># systemctl disable bluetooth.service</span>
+Removed symlink /etc/systemd/system/dbus-org.bluez.service.
+Removed symlink /etc/systemd/system/bluetooth.target.wants/bluetooth.service.
+<span style=color:#666>[</span>root@oracle-19 ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># systemctl disable cups.service</span>
+Removed symlink /etc/systemd/system/multi-user.target.wants/cups.path.
+Removed symlink /etc/systemd/system/multi-user.target.wants/cups.service.
+Removed symlink /etc/systemd/system/sockets.target.wants/cups.socket.
+Removed symlink /etc/systemd/system/printer.target.wants/cups.service.
+<span style=color:#666>[</span>root@oracle-19 ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># systemctl disable NetworkManager</span>
+Removed symlink /etc/systemd/system/multi-user.target.wants/NetworkManager.service.
+Removed symlink /etc/systemd/system/dbus-org.freedesktop.nm-dispatcher.service.
+Removed symlink /etc/systemd/system/network-online.target.wants/NetworkManager-wait-online.service.
+<span style=color:#666>[</span>root@oracle-19 ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># systemctl stop NetworkManager</span>
+</code></pre></div><ul>
+<li>启用系统服务</li>
+</ul>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>chmod +x /etc/rc.d/rc.local
+systemctl <span style=color:#a2f>enable</span> rc-local
+systemctl start rc-local
+systemctl is-active rc-local
+systemctl <span style=color:#a2f>enable</span> polkit
+
+<span style=color:#666>[</span>root@oracle-19 ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># chmod +x /etc/rc.d/rc.local</span>
+<span style=color:#666>[</span>root@oracle-19 ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># systemctl enable rc-local</span>
+<span style=color:#666>[</span>root@oracle-19 ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># systemctl start rc-local.service</span>
+<span style=color:#666>[</span>root@oracle-19 ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># systemctl is-active rc-local.service</span>
+active
+<span style=color:#666>[</span>root@oracle-19 ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># systemctl enable polkit</span>
+</code></pre></div><ul>
+<li>安装依赖</li>
+</ul>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>yum install -y binutils  compat-libstdc++-33  compat-libcap1  elfutils-libelf  elfutils-libelf-devel  gcc  gcc-c++  glibc  glibc-common  glibc-devel  glibc-headers  ksh libaio  libaio-devel  libgcc  libstdc++  libXext  libXtst  kde-l10n-Chinese.noarch  libstdc++-devel  make  xclock  sysstat  libvirt-devel  man  nfs-utils  lsof  expect  unzip  redhat-lsb  openssh-clients  smartmontools  unixODBC  perl  telnet  vsftpd  ntsysv  lsscsi  libX11  libxcb  libXau  libXi  strace  sg3_utils  kexec-tools  net-tools  nmap  lrzsz  tree  dos2unix  ncurses  ncurses-devel  unixODBC-devel
+
+</code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#666>[</span>root@oracle-19 ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># rpm -ivh compat-libstdc++-33-3.2.3-72.el7.x86_64.rpm</span>
+Preparing...                          <span style=color:#080;font-style:italic>################################# [100%]</span>
+        package compat-libstdc++-33-3.2.3-72.el7.x86_64 is already installed
+
+<span style=color:#080;font-style:italic>#这个rpm yum的方法很难装上</span>
+链接：https://pan.baidu.com/s/1JG4Nm6t9El_OT6vEeb13pg
+提取码：erl1
+--19c安装软件也在此
+</code></pre></div><ul>
+<li>禁用SELUNIX</li>
+</ul>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>sed -i <span style=color:#b44>&#39;s/SELINUX=enforcing/SELINUX=disabled/&#39;</span> /etc/selinux/config
+setenforce <span style=color:#666>0</span>
+</code></pre></div><ul>
+<li>创建scsi_id软连接</li>
+</ul>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>ln -s /lib/udev/scsi_id /sbin/scsi_id
+ll /sbin/scsi_id
+
+<span style=color:#666>[</span>root@oracle-19 ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># ln -s /lib/udev/scsi_id /sbin/scsi_id</span>
+<span style=color:#666>[</span>root@oracle-19 ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># ll /sbin/scsi_id</span>
+lrwxrwxrwx. <span style=color:#666>1</span> root root <span style=color:#666>17</span> May <span style=color:#666>24</span> 20:17 /sbin/scsi_id -&gt; /lib/udev/scsi_id
+</code></pre></div><ul>
+<li>禁用透明大页
+原因</li>
+</ul>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>- Huge pages（标准大页）和Transparent Hugepages（透明大页）
+    - 透明HugePages内存与标准HugePages内存不同，因为内核khugepaged线程在运行时动态分配内存。
+    - 标准HugePages内存在启动时预先分配，并且在运行时不会更改。
+    - 透明Hugepages可能会在运行时导致内存分配延迟。
+    - 为避免性能问题，Oracle建议您在所有Oracle数据库服务器上禁用透明HugePages。
+    - Oracle建议使用标准HugePages来提高性能
+</code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#a2f>echo</span> <span style=color:#b44>&#34;### disable transparent_hugepage&#34;</span>  &gt;&gt;/etc/rc.local
+<span style=color:#a2f>echo</span> <span style=color:#b44>&#34;if test -f /sys/kernel/mm/transparent_hugepage/enabled; then &#34;</span>  &gt;&gt;/etc/rc.local
+<span style=color:#a2f>echo</span> <span style=color:#b44>&#34;echo never &gt; /sys/kernel/mm/transparent_hugepage/enabled&#34;</span>  &gt;&gt;/etc/rc.local
+<span style=color:#a2f>echo</span> <span style=color:#b44>&#34;fi&#34;</span>  &gt;&gt;/etc/rc.local
+<span style=color:#a2f>echo</span> <span style=color:#b44>&#34;if test -f /sys/kernel/mm/transparent_hugepage/defrag; then&#34;</span>  &gt;&gt;/etc/rc.local
+<span style=color:#a2f>echo</span> <span style=color:#b44>&#34;echo never &gt; /sys/kernel/mm/transparent_hugepage/defrag&#34;</span>  &gt;&gt;/etc/rc.local
+<span style=color:#a2f>echo</span> <span style=color:#b44>&#34;fi&#34;</span>  &gt;&gt;/etc/rc.local
+
+chmod +x /etc/rc.local
+<span style=color:#a2f>source</span> /etc/rc.local
+sh /etc/rc.local
+cat /sys/kernel/mm/transparent_hugepage/defrag
+</code></pre></div><p>也可用使用<a href=https://www.notion.so/Oracle-Install-12c-RHEL7-9-9a817ca5808e4a8d9329a36f629406ea>Oracle Install 12c@RHEL7.9</a> 提到的方法</p>
+<h1 id=oracle环境准备>Oracle环境准备</h1>
+<ul>
+<li>创建用户组</li>
+</ul>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>groupadd -g <span style=color:#666>1001</span> oinstall
+groupadd -g <span style=color:#666>1002</span> dba
+groupadd -g <span style=color:#666>1003</span> oper
+groupadd -g <span style=color:#666>1004</span> asmadmin
+groupadd -g <span style=color:#666>1005</span> asmoper
+groupadd -g <span style=color:#666>1006</span> asmdba  
+
+useradd -u <span style=color:#666>1001</span> -g oinstall -G dba,asmadmin,asmdba,oper oracle
+useradd -u <span style=color:#666>1002</span> -g oinstall -G asmadmin,asmdba,asmoper,oper,dba grid
+
+chage -M -1 oracle
+chage -M -1 grid
+<span style=color:#a2f>echo</span> <span style=color:#b44>&#34;cisco123&#34;</span> |passwd oracle --stdin
+<span style=color:#a2f>echo</span> <span style=color:#b44>&#34;cisco123&#34;</span> |passwd grid --stdin
+</code></pre></div><ul>
+<li>修改内核参数</li>
+</ul>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>cat&gt;&gt;/etc/sysctl.conf<span style=color:#b44>&lt;&lt;EOF
+</span><span style=color:#b44>fs.aio-max-nr = 1048576
+</span><span style=color:#b44>fs.file-max = 6815744
+</span><span style=color:#b44>kernel.shmall = 16443117
+</span><span style=color:#b44>kernel.shmmax = 53880805785
+</span><span style=color:#b44>kernel.shmmni = 4096
+</span><span style=color:#b44>kernel.sem = 250 256000 100 1024
+</span><span style=color:#b44>net.ipv4.ip_local_port_range = 9000 65500  
+</span><span style=color:#b44>net.core.rmem_default = 262144
+</span><span style=color:#b44>net.core.rmem_max = 10485860
+</span><span style=color:#b44>net.core.wmem_default = 262144
+</span><span style=color:#b44>net.core.wmem_max = 10485860
+</span><span style=color:#b44>vm.min_free_kbytes = 524288
+</span><span style=color:#b44>
+</span><span style=color:#b44>net.ipv4.ipfrag_high_thresh = 16777216
+</span><span style=color:#b44>net.ipv4.ipfrag_low_thresh = 15728640
+</span><span style=color:#b44>
+</span><span style=color:#b44>vm.swappiness = 0
+</span><span style=color:#b44>vm.dirty_background_ratio = 5
+</span><span style=color:#b44>vm.dirty_ratio = 15
+</span><span style=color:#b44>vm.dirty_expire_centisecs = 500
+</span><span style=color:#b44>vm.dirty_writeback_centisecs = 100
+</span><span style=color:#b44>vm.overcommit_memory = 1
+</span><span style=color:#b44>EOF</span>
+
+sysctl -p
+</code></pre></div><p>kernel.shmall = memory size / pagesize （这个pagesize是OS的，可以通过getconf PAGESIZE得知，可以通过执行以下命令获取到）</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#a2f>echo</span> <span style=color:#b44>&#34;`cat /proc/meminfo | grep &#34;</span>MemTotal<span style=color:#b44>&#34; | awk &#39;{print </span><span style=color:#b8860b>$2</span><span style=color:#b44>}&#39;` / (`getconf PAGESIZE` / 1024)&#34;</span> | bc
+</code></pre></div><p>kernel.shmmax   推荐: 1/2 memory &lt; shmmax &lt;= memory - 1. Limit max SGA size.</p>
+<p>（注意，这里的单位是byte，可以通过下面命令计算&ndash;此处示例以物理内存的80%进行设置：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#a2f>echo</span> <span style=color:#b44>&#34;`cat /proc/meminfo | grep &#34;</span>MemTotal<span style=color:#b44>&#34; | awk &#39;{print </span><span style=color:#b8860b>$2</span><span style=color:#b44>}&#39;` * 1024 * 0.8&#34;</span> | bc  | sed <span style=color:#b44>&#39;s#\..*$##&#39;</span>
+
+</code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#666>[</span>root@oracle-19 ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># echo &#34;`cat /proc/meminfo | grep &#34;MemTotal&#34; | awk &#39;{print $2}&#39;` / (`getconf PAGESIZE` / 1024)&#34; | bc</span>
+<span style=color:#666>16443117</span>
+<span style=color:#666>[</span>root@oracle-19 ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># echo &#34;`cat /proc/meminfo | grep &#34;MemTotal&#34; | awk &#39;{print $2}&#39;` * 1024 * 0.8&#34; | bc  | sed &#39;s#\..*$##&#39;</span>
+<span style=color:#666>53880805785</span>
+</code></pre></div><blockquote>
+<p>注：
+对于OLTP类，Oracle数据库：SGA=系统内存*80%<em>70%，PGA=系统内存</em>80%<em>20%
+对于OLAP类，Oracle数据库：SGA=系统内存</em>80%<em>50%，PGA=系统内存</em>80%*50%</p>
+</blockquote>
+<p>别忘了执行命令生效：sysctl -p</p>
+<ul>
+<li>修改Limits配置</li>
+</ul>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>cp /etc/security/limits.conf /etc/security/limits.conf.<span style=color:#b44>`</span>date +%Y%m%d<span style=color:#b44>`</span>
+
+<span style=color:#a2f>echo</span> <span style=color:#b44>&#34; grid soft nofile 1024
+</span><span style=color:#b44>grid hard nofile 65536
+</span><span style=color:#b44>grid soft stack 10240
+</span><span style=color:#b44>grid hard stack 32768
+</span><span style=color:#b44>grid soft nproc 4096
+</span><span style=color:#b44>grid hard nproc 16384
+</span><span style=color:#b44>oracle soft nofile 1024
+</span><span style=color:#b44>oracle hard nofile 65536
+</span><span style=color:#b44>oracle soft stack 10240
+</span><span style=color:#b44>oracle hard stack 32768
+</span><span style=color:#b44>oracle soft nproc 4096
+</span><span style=color:#b44>oracle hard nproc 16384
+</span><span style=color:#b44>root soft nproc 2047 &#34;</span> &gt;&gt; /etc/security/limits.conf
+
+<span style=color:#a2f>echo</span> <span style=color:#b44>&#34;session required pam_limits.so&#34;</span>   &gt;&gt;/etc/pam.d/login
+<span style=color:#a2f>echo</span> <span style=color:#b44>&#34;NOZEROCONF=yes&#34;</span> &gt;&gt; /etc/sysconfig/network
+</code></pre></div><ul>
+<li><strong>修改默认shell启动配置</strong></li>
+</ul>
+<p>修改/etc/profile，添加如下设置：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>cat &gt;&gt;/etc/profile <span style=color:#b44>&lt;&lt;EOF
+</span><span style=color:#b44>
+</span><span style=color:#b44>if [ \$USER = &#34;oracle&#34; ] || [ \$USER = &#34;grid&#34; ]; then
+</span><span style=color:#b44> if [ \$SHELL = &#34;/bin/ksh&#34; ]; then
+</span><span style=color:#b44>    ulimit -p 16384
+</span><span style=color:#b44>    ulimit -n 65536
+</span><span style=color:#b44> else
+</span><span style=color:#b44>    ulimit -u 16384 -n 65536
+</span><span style=color:#b44> fi
+</span><span style=color:#b44>umask 022
+</span><span style=color:#b44>fi
+</span><span style=color:#b44>EOF</span>
+</code></pre></div><p>修改/etc/csh.login，添加如下设置：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>cat &gt;&gt;/etc/csh.log <span style=color:#b44>&lt;&lt;EOF
+</span><span style=color:#b44>
+</span><span style=color:#b44>if ( \$USER = &#34;oracle&#34; || \$USER = &#34;grid&#34; ) then
+</span><span style=color:#b44>limit maxproc 16384
+</span><span style=color:#b44>limit descriptors 65536
+</span><span style=color:#b44>endif
+</span><span style=color:#b44>EOF</span>
+</code></pre></div><ul>
+<li>创建目录</li>
+</ul>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>mkdir -p /u01/app/oraInventory
+chown -R grid:oinstall /u01/app/oraInventory
+chmod -R <span style=color:#666>775</span> /u01/app/oraInventory
+
+mkdir -p /u01/app/grid
+chown -R grid:oinstall /u01/app/grid
+chmod -R <span style=color:#666>775</span> /u01/app/grid
+
+mkdir -p /u01/app/19c/grid
+chown -R grid:oinstall /u01/app/19c/grid
+chmod -R <span style=color:#666>775</span> /u01/app/19c/grid
+
+mkdir -p /u01/app/oracle
+chown -R oracle:oinstall /u01/app/oracle
+chmod -R <span style=color:#666>775</span> /u01/app/oracle
+
+mkdir -p /u01/app/oracle/product/19c/db_1
+chown -R oracle:oinstall /u01/app/oracle/product/19c/db_1
+chmod -R <span style=color:#666>775</span> /u01/app/oracle/product/19c/db_1
+</code></pre></div><ul>
+<li><strong>设置grid 环境变量</strong></li>
+</ul>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#080;font-style:italic>#vim /home/grid/.bash_profile</span>
+
+<span style=color:#a2f>export</span> <span style=color:#b8860b>ORACLE_BASE</span><span style=color:#666>=</span>/u01/app/grid
+<span style=color:#a2f>export</span> <span style=color:#b8860b>ORACLE_SID</span><span style=color:#666>=</span>+ASM1
+<span style=color:#a2f>export</span> <span style=color:#b8860b>ORACLE_HOME</span><span style=color:#666>=</span>/home/u01/app/19c/grid
+<span style=color:#a2f>export</span> <span style=color:#b8860b>PATH</span><span style=color:#666>=</span><span style=color:#b8860b>$ORACLE_HOME</span>/bin:<span style=color:#b8860b>$ORACLE_HOME</span>/OPatch:<span style=color:#b8860b>$PATH</span>
+<span style=color:#b8860b>NAME</span><span style=color:#666>=</span>oracle-19
+<span style=color:#b8860b>PS1</span><span style=color:#666>=</span><span style=color:#b44>&#34;[</span><span style=color:#b8860b>$NAME</span><span style=color:#b44>:</span><span style=color:#b8860b>$LOGNAME</span><span style=color:#b44>]:\${PWD}&gt;&#34;</span>  
+<span style=color:#a2f>umask</span> <span style=color:#666>022</span>
+</code></pre></div><ul>
+<li><strong>设置oracle 环境变量</strong></li>
+</ul>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#080;font-style:italic>#vim /home/oracle/.bash_profile</span>
+
+<span style=color:#a2f>export</span> <span style=color:#b8860b>ORACLE_SID</span><span style=color:#666>=</span>odb
+<span style=color:#a2f>export</span> <span style=color:#b8860b>ORACLE_BASE</span><span style=color:#666>=</span>/u01/app/oracle
+<span style=color:#a2f>export</span> <span style=color:#b8860b>ORACLE_HOME</span><span style=color:#666>=</span><span style=color:#b8860b>$ORACLE_BASE</span>/product/19c/db_1
+<span style=color:#a2f>export</span> <span style=color:#b8860b>LD_LIBRARY_PATH</span><span style=color:#666>=</span><span style=color:#b8860b>$ORACLE_HOME</span>/lib:/lib:/usr/lib
+<span style=color:#a2f>export</span> <span style=color:#b8860b>PATH</span><span style=color:#666>=</span><span style=color:#b8860b>$ORACLE_HOME</span>/bin:<span style=color:#b8860b>$ORACLE_HOME</span>/OPatch:<span style=color:#b8860b>$PATH</span>
+
+<span style=color:#a2f>export</span> <span style=color:#b8860b>TMP</span><span style=color:#666>=</span>/tmp
+<span style=color:#a2f>export</span> <span style=color:#b8860b>TMPDIR</span><span style=color:#666>=</span><span style=color:#b8860b>$TMP</span>
+
+<span style=color:#b8860b>NAME</span><span style=color:#666>=</span>oracle-19
+<span style=color:#b8860b>PS1</span><span style=color:#666>=</span><span style=color:#b44>&#34;[</span><span style=color:#b8860b>$NAME</span><span style=color:#b44>:</span><span style=color:#b8860b>$LOGNAME</span><span style=color:#b44>]:\${PWD}&gt;&#34;</span>
+
+<span style=color:#a2f>umask</span> <span style=color:#666>022</span>
+</code></pre></div><ul>
+<li><strong>检查操作系统时区</strong></li>
+</ul>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#666>[</span>root@oracle-19 ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># date</span>
+Tue May <span style=color:#666>24</span> 21:54:45 CST <span style=color:#666>2022</span>
+</code></pre></div><ul>
+<li><strong>设置NOZEROCON</strong></li>
+</ul>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#a2f>echo</span> <span style=color:#b44>&#34;NOZEROCONF=yes&#34;</span> &gt;&gt; /etc/sysconfig/network
+</code></pre></div><ul>
+<li>修改<strong>grid 和 oracle 进程数量限制</strong></li>
+</ul>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#a2f>echo</span> <span style=color:#b44>&#34;oracle soft nproc 16384&#34;</span>  &gt;&gt;/etc/security/limits.d/20-nproc.conf
+<span style=color:#a2f>echo</span> <span style=color:#b44>&#34;grid soft nproc 16384&#34;</span>    &gt;&gt;/etc/security/limits.d/20-nproc.conf
+<span style=color:#a2f>echo</span> <span style=color:#b44>&#34;oracle hard nproc 16384&#34;</span>  &gt;&gt;/etc/security/limits.d/20-nproc.conf
+<span style=color:#a2f>echo</span> <span style=color:#b44>&#34;grid hard nproc 16384&#34;</span>    &gt;&gt;/etc/security/limits.d/20-nproc.conf
+</code></pre></div><ul>
+<li><strong>修改GRUB参数</strong></li>
+</ul>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#080;font-style:italic>#vim /etc/default/grub</span>
+</code></pre></div><p>在GRUB_CMDLINE_LINUX后增加</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#b8860b>iommu</span><span style=color:#666>=</span>soft <span style=color:#b8860b>elevator</span><span style=color:#666>=</span>noop <span style=color:#b8860b>apm</span><span style=color:#666>=</span>off <span style=color:#b8860b>transparent_hugepage</span><span style=color:#666>=</span>never <span style=color:#b8860b>numa</span><span style=color:#666>=</span>off <span style=color:#b8860b>powersaved</span><span style=color:#666>=</span>off <span style=color:#b8860b>spectre_v2</span><span style=color:#666>=</span>off nopti
+</code></pre></div><p>保存</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#080;font-style:italic>#grub2-mkconfig -o /boot/grub2/grub.cfg</span>
+</code></pre></div><ul>
+<li></li>
+</ul>
+<h2 id=配置磁盘根据配置修改><strong>配置磁盘(根据配置修改)</strong></h2>
+<p>根据系统使用存储的不同而配置磁盘，进行磁盘名称持久化的方法略有不同。</p>
+<p>编辑 /etc/udev/rules.d/99-oracle-asmdevice.rules</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#080;font-style:italic>#vim /etc/udev/rules.d/99-oracle-asmdevice.rules</span>
+</code></pre></div><p>本次部署的虚拟机的虚拟磁盘选择Virtio总线方式，可以发挥更好的I/O性能，</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#666>[</span>root@oracle-19 ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># lsblk</span>
+NAME                       MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sr0                         11:0    <span style=color:#666>1</span>  4.4G  <span style=color:#666>0</span> rom  /run/media/grid/CentOS <span style=color:#666>7</span> x86_64
+vda                        252:0    <span style=color:#666>0</span>  200G  <span style=color:#666>0</span> disk
+├─vda1                     252:1    <span style=color:#666>0</span>    1G  <span style=color:#666>0</span> part /boot
+└─vda2                     252:2    <span style=color:#666>0</span>  199G  <span style=color:#666>0</span> part
+  ├─centos_oracle--19-root 253:0    <span style=color:#666>0</span>   50G  <span style=color:#666>0</span> lvm  /
+  ├─centos_oracle--19-swap 253:1    <span style=color:#666>0</span>   20G  <span style=color:#666>0</span> lvm  <span style=color:#666>[</span>SWAP<span style=color:#666>]</span>
+  └─centos_oracle--19-home 253:2    <span style=color:#666>0</span>  129G  <span style=color:#666>0</span> lvm  /home
+vdb                        252:16   <span style=color:#666>0</span>  100G  <span style=color:#666>0</span> disk /u01
+vdc                        252:32   <span style=color:#666>0</span>   80G  <span style=color:#666>0</span> disk
+vdd                        252:48   <span style=color:#666>0</span>   80G  <span style=color:#666>0</span> disk
+vde                        252:64   <span style=color:#666>0</span>   80G  <span style=color:#666>0</span> disk
+vdf                        252:80   <span style=color:#666>0</span>   80G  <span style=color:#666>0</span> disk
+vdg                        252:96   <span style=color:#666>0</span>   40G  <span style=color:#666>0</span> disk
+vdh                        252:112  <span style=color:#666>0</span>   40G  <span style=color:#666>0</span> disk
+vdi                        252:128  <span style=color:#666>0</span>   40G  <span style=color:#666>0</span> disk
+vdj                        252:144  <span style=color:#666>0</span>   40G  <span style=color:#666>0</span> disk
+</code></pre></div><p><strong>具体格式为:</strong></p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#b8860b>SUBSYSTEM</span><span style=color:#666>==</span><span style=color:#b44>&#34;block&#34;</span>,KERNEL<span style=color:#666>==</span><span style=color:#b44>&#34;vdc&#34;</span>,GROUP<span style=color:#666>=</span><span style=color:#b44>&#34;asmadmin&#34;</span>,OWNER<span style=color:#666>=</span><span style=color:#b44>&#34;grid&#34;</span>,MODE<span style=color:#666>=</span><span style=color:#b44>&#34;0660&#34;</span>
+<span style=color:#b8860b>SUBSYSTEM</span><span style=color:#666>==</span><span style=color:#b44>&#34;block&#34;</span>,KERNEL<span style=color:#666>==</span><span style=color:#b44>&#34;vdd&#34;</span>,GROUP<span style=color:#666>=</span><span style=color:#b44>&#34;asmadmin&#34;</span>,OWNER<span style=color:#666>=</span><span style=color:#b44>&#34;grid&#34;</span>,MODE<span style=color:#666>=</span><span style=color:#b44>&#34;0660&#34;</span>
+<span style=color:#b8860b>SUBSYSTEM</span><span style=color:#666>==</span><span style=color:#b44>&#34;block&#34;</span>,KERNEL<span style=color:#666>==</span><span style=color:#b44>&#34;vde&#34;</span>,GROUP<span style=color:#666>=</span><span style=color:#b44>&#34;asmadmin&#34;</span>,OWNER<span style=color:#666>=</span><span style=color:#b44>&#34;grid&#34;</span>,MODE<span style=color:#666>=</span><span style=color:#b44>&#34;0660&#34;</span>
+<span style=color:#b8860b>SUBSYSTEM</span><span style=color:#666>==</span><span style=color:#b44>&#34;block&#34;</span>,KERNEL<span style=color:#666>==</span><span style=color:#b44>&#34;vdf&#34;</span>,GROUP<span style=color:#666>=</span><span style=color:#b44>&#34;asmadmin&#34;</span>,OWNER<span style=color:#666>=</span><span style=color:#b44>&#34;grid&#34;</span>,MODE<span style=color:#666>=</span><span style=color:#b44>&#34;0660&#34;</span>
+
+<span style=color:#b8860b>SUBSYSTEM</span><span style=color:#666>==</span><span style=color:#b44>&#34;block&#34;</span>,KERNEL<span style=color:#666>==</span><span style=color:#b44>&#34;vdg&#34;</span>,GROUP<span style=color:#666>=</span><span style=color:#b44>&#34;asmadmin&#34;</span>,OWNER<span style=color:#666>=</span><span style=color:#b44>&#34;grid&#34;</span>,MODE<span style=color:#666>=</span><span style=color:#b44>&#34;0660&#34;</span>
+<span style=color:#b8860b>SUBSYSTEM</span><span style=color:#666>==</span><span style=color:#b44>&#34;block&#34;</span>,KERNEL<span style=color:#666>==</span><span style=color:#b44>&#34;vdh&#34;</span>,GROUP<span style=color:#666>=</span><span style=color:#b44>&#34;asmadmin&#34;</span>,OWNER<span style=color:#666>=</span><span style=color:#b44>&#34;grid&#34;</span>,MODE<span style=color:#666>=</span><span style=color:#b44>&#34;0660&#34;</span>
+<span style=color:#b8860b>SUBSYSTEM</span><span style=color:#666>==</span><span style=color:#b44>&#34;block&#34;</span>,KERNEL<span style=color:#666>==</span><span style=color:#b44>&#34;vdi&#34;</span>,GROUP<span style=color:#666>=</span><span style=color:#b44>&#34;asmadmin&#34;</span>,OWNER<span style=color:#666>=</span><span style=color:#b44>&#34;grid&#34;</span>,MODE<span style=color:#666>=</span><span style=color:#b44>&#34;0660&#34;</span>
+<span style=color:#b8860b>SUBSYSTEM</span><span style=color:#666>==</span><span style=color:#b44>&#34;block&#34;</span>,KERNEL<span style=color:#666>==</span><span style=color:#b44>&#34;vdj&#34;</span>,GROUP<span style=color:#666>=</span><span style=color:#b44>&#34;asmadmin&#34;</span>,OWNER<span style=color:#666>=</span><span style=color:#b44>&#34;grid&#34;</span>,MODE<span style=color:#666>=</span><span style=color:#b44>&#34;0660&#34;</span>
+</code></pre></div><p>执行配置：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#080;font-style:italic>#/sbin/udevadm trigger --type=devices --action=change</span>
+</code></pre></div><p>reboot</p>
+<h1 id=开始安装>开始安装</h1>
+<h2 id=grid-安装图形化安装><strong>GRID 安装(图形化安装)</strong></h2>
+<h3 id=解压安装介质root><strong>解压安装介质,root</strong></h3>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>unzip V982068-01.zip -d /u01/app/19c/grid/
+chown -R grid:oinstall /u01/app/19c/grid/
+chmod +x -R /u01/app/19c/grid/
+</code></pre></div><p>注：V982068-01.zip是GRID安装介质</p>
+<h3 id=以grid用户登陆><strong>以grid用户登陆</strong></h3>
+<p><strong>图形化安装Grid</strong></p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#a2f>cd</span> /u01/app/19c/grid
+./gridSetup.sh
+</code></pre></div><p><a href=https://lh3.googleusercontent.com/CiHZKjALBd5A0MoYj36dLaN-YZUU7MpKhbTs6dikhPFMOQYxxCnJs0PgsbrUhCNyA--kzsRFfWIAO81WT1qSPcAFM1NSHWaAm_JYnDPnIDkganMAW1ZtHhloLxd4U6L_wMtKP0yZcR6_vr7YXQ>https://lh3.googleusercontent.com/CiHZKjALBd5A0MoYj36dLaN-YZUU7MpKhbTs6dikhPFMOQYxxCnJs0PgsbrUhCNyA&ndash;kzsRFfWIAO81WT1qSPcAFM1NSHWaAm_JYnDPnIDkganMAW1ZtHhloLxd4U6L_wMtKP0yZcR6_vr7YXQ</a></p>
+<h4 id=第1步配置选项><strong>第1步：配置选项</strong></h4>
+<p><a href=https://lh6.googleusercontent.com/CvQG8SJ9psTuySJC1Ztfni9Ywp5vl4wsydZCbx0KsXVnUkUEKMXDUu2HinSI6QjusPGUGVGXEAKjuWhAr1FWylobFtabmOnMRumkPviu1r97RwNDwtMk8inShjOjmHDrk6vtxQNX-1Bc9mMfkg>https://lh6.googleusercontent.com/CvQG8SJ9psTuySJC1Ztfni9Ywp5vl4wsydZCbx0KsXVnUkUEKMXDUu2HinSI6QjusPGUGVGXEAKjuWhAr1FWylobFtabmOnMRumkPviu1r97RwNDwtMk8inShjOjmHDrk6vtxQNX-1Bc9mMfkg</a></p>
+<h4 id=第2步选择磁盘组><strong>第2步：选择磁盘组</strong></h4>
+<p><a href=https://lh3.googleusercontent.com/W16xdY28iCYZXJMrBlTE7dEHOAxqtWDA3AMTR8n7n_LOErhCk9xWUVt4GJC13S6I7i-l42wARwQWOMmsrd6H7IO8yZTtHt-X2dSrNsJz4rVBWOtnfCbBD5pFY255zxcMakdDm0sjDrA_bNKQQg>https://lh3.googleusercontent.com/W16xdY28iCYZXJMrBlTE7dEHOAxqtWDA3AMTR8n7n_LOErhCk9xWUVt4GJC13S6I7i-l42wARwQWOMmsrd6H7IO8yZTtHt-X2dSrNsJz4rVBWOtnfCbBD5pFY255zxcMakdDm0sjDrA_bNKQQg</a></p>
+<p>更改搜索路径为 /dev/vd*</p>
+<p><a href=https://lh3.googleusercontent.com/Br4NcYuLmeeNVx1R2bidzDhzioeXXIz03JCBpErjxRDP8pQ-X3YSHRwbtq6locUx7u5l-A1HeY96G9e24_j8jkvsNlmPixxy4U7dVuiqpVfgJQNHRhybbJJBsSKx_LqtL3oiB27JZH8P5BIbKQ>https://lh3.googleusercontent.com/Br4NcYuLmeeNVx1R2bidzDhzioeXXIz03JCBpErjxRDP8pQ-X3YSHRwbtq6locUx7u5l-A1HeY96G9e24_j8jkvsNlmPixxy4U7dVuiqpVfgJQNHRhybbJJBsSKx_LqtL3oiB27JZH8P5BIbKQ</a></p>
+<p>冗余：选择 外部</p>
+<p>选择磁盘：勾选需要的磁盘</p>
+<p><a href=https://lh3.googleusercontent.com/nwU6CekrNddxC2C5BGR51FQlGwcL51T_BFjQpXIR68ZlWpd6CEVcZBqgTFBIV67lPD5aKqooGWSX-MgtBdiB7xe_Xyau8KIW80pw4OITvOYdmU2cmdLZk8eZ0oc3oU28kiAHOxcIXh1EEFvmPg>https://lh3.googleusercontent.com/nwU6CekrNddxC2C5BGR51FQlGwcL51T_BFjQpXIR68ZlWpd6CEVcZBqgTFBIV67lPD5aKqooGWSX-MgtBdiB7xe_Xyau8KIW80pw4OITvOYdmU2cmdLZk8eZ0oc3oU28kiAHOxcIXh1EEFvmPg</a></p>
+<h4 id=第3步指定asm口令><strong>第3步：指定ASM口令</strong></h4>
+<p><a href=https://lh3.googleusercontent.com/5SoUYkWuSaHKfDjwmqQm58zDJkURNYvbVNgn7H3z790ESFL0rFaYvHSNPPC92x1N7ZGZ4j2D2_3KZXVuTDoHhDCfFd1akuHhMpJhfUe1QtI7vDqJwUFXnDQGQdX1dKxcg5Hz_riNXFDf9wazmA>https://lh3.googleusercontent.com/5SoUYkWuSaHKfDjwmqQm58zDJkURNYvbVNgn7H3z790ESFL0rFaYvHSNPPC92x1N7ZGZ4j2D2_3KZXVuTDoHhDCfFd1akuHhMpJhfUe1QtI7vDqJwUFXnDQGQdX1dKxcg5Hz_riNXFDf9wazmA</a></p>
+<p>对这些账户使用同一口令：VMware1!</p>
+<h4 id=第4步管理选项><strong>第4步：管理选项</strong></h4>
+<p><a href=https://lh3.googleusercontent.com/Pybpnap5XPPvt91eGHMH2ewLTGdYUUXApKoG5VqaYNLmDODlkUUVRt0c-h7-AXXXUNnr4RDBTJpEz-0NcxYyIWICISs5toNOntLmlFjY8VrKmH5Tl2lRoNBSWuLSMgx6u0jUNkXQU_YgFcknag>https://lh3.googleusercontent.com/Pybpnap5XPPvt91eGHMH2ewLTGdYUUXApKoG5VqaYNLmDODlkUUVRt0c-h7-AXXXUNnr4RDBTJpEz-0NcxYyIWICISs5toNOntLmlFjY8VrKmH5Tl2lRoNBSWuLSMgx6u0jUNkXQU_YgFcknag</a></p>
+<p>不用注册，略过</p>
+<h4 id=第5步特权操作系统组><strong>第5步：特权操作系统组</strong></h4>
+<p><a href=https://lh5.googleusercontent.com/04x3bLnQK0wi0wFdu32mk8R7sllTcN_Z0GPrNzvg7E-RWlnwsQZ6OqLJH8ABvC8crBQgNoi90WczVMeJaCAz39APUlU3ArsONT4wLLAdt31J1upOVbaPn4psD5wuw0Bs3J5vWBXcdl0j-qC1mQ>https://lh5.googleusercontent.com/04x3bLnQK0wi0wFdu32mk8R7sllTcN_Z0GPrNzvg7E-RWlnwsQZ6OqLJH8ABvC8crBQgNoi90WczVMeJaCAz39APUlU3ArsONT4wLLAdt31J1upOVbaPn4psD5wuw0Bs3J5vWBXcdl0j-qC1mQ</a></p>
+<h4 id=第6步指定安装位置><strong>第6步：指定安装位置</strong></h4>
+<p><a href=https://lh4.googleusercontent.com/mfpO23hAnCvzYRg7ZU-HtwH98-qn_EYcyrLPJ-PQC-NPDLRaL-EZ9ny72v3-qCO6ZtHj2Qm6Y1LyZnUH67SgTjh9vqk_z1VtcJsaBG8SmcqyIGi1B0DzX_nZh3zFvG7jGSE2Ne2saZ1yvah9zQ>https://lh4.googleusercontent.com/mfpO23hAnCvzYRg7ZU-HtwH98-qn_EYcyrLPJ-PQC-NPDLRaL-EZ9ny72v3-qCO6ZtHj2Qm6Y1LyZnUH67SgTjh9vqk_z1VtcJsaBG8SmcqyIGi1B0DzX_nZh3zFvG7jGSE2Ne2saZ1yvah9zQ</a></p>
+<h4 id=第7步创建产品清单><strong>第7步：创建产品清单</strong></h4>
+<p><a href=https://lh4.googleusercontent.com/IWXj20ZhbtKBZD0V1QUxhhgwTbeOmnR2RfpaIX_elSZLlJSodl9t7vo1xbt31aZ78XeYyXU0h-J2AF34m5BaLDqhldVp8vaIQtKTUQ-fg--91RRzP4qtMNGPDtwSLBA4zYqr1Km3fzs6m9wwIA>https://lh4.googleusercontent.com/IWXj20ZhbtKBZD0V1QUxhhgwTbeOmnR2RfpaIX_elSZLlJSodl9t7vo1xbt31aZ78XeYyXU0h-J2AF34m5BaLDqhldVp8vaIQtKTUQ-fg&ndash;91RRzP4qtMNGPDtwSLBA4zYqr1Km3fzs6m9wwIA</a></p>
+<h4 id=第8步root脚本执行配置><strong>第8步：Root脚本执行配置</strong></h4>
+<p><a href=https://lh4.googleusercontent.com/EWl5m1eZ7SA1FnPa_CYcznHTslVmr7Mn5lQH_ezAQS0sCCjO10DK1lq1D4sTD_cik3W1AFHvrxW7XDsEUOADwKcOWmrDiC6mkg_lEiKjXpPo4poaO_6Kz-EiYkmzxt7wACObrlE_3zjxKQYM8A>https://lh4.googleusercontent.com/EWl5m1eZ7SA1FnPa_CYcznHTslVmr7Mn5lQH_ezAQS0sCCjO10DK1lq1D4sTD_cik3W1AFHvrxW7XDsEUOADwKcOWmrDiC6mkg_lEiKjXpPo4poaO_6Kz-EiYkmzxt7wACObrlE_3zjxKQYM8A</a></p>
+<h4 id=第9步执行先决条件检查><strong>第9步：执行先决条件检查</strong></h4>
+<p><a href=https://lh4.googleusercontent.com/z0K1liLuBKTA0NGBkp5se-vbXnvDRQZgISP1feF6eDjfasEsF_Xmc05UTkc08bnL5QEvW3zDr265LO3kV0EjHV8I2YA4ldQY9yBnkuLzU1OrI5s_AQtsQL3r_wBjD8lyJ4tu6cvMpUFKNRea3Q>https://lh4.googleusercontent.com/z0K1liLuBKTA0NGBkp5se-vbXnvDRQZgISP1feF6eDjfasEsF_Xmc05UTkc08bnL5QEvW3zDr265LO3kV0EjHV8I2YA4ldQY9yBnkuLzU1OrI5s_AQtsQL3r_wBjD8lyJ4tu6cvMpUFKNRea3Q</a></p>
+<p>交换空间大小告警可忽略（不使用交换空间）</p>
+<p>包：cvuqdisk-1.0.10.1 本次部署不使用，告警可忽略</p>
+<p><a href=https://lh5.googleusercontent.com/hawIJuZIlr1FYX1iwsJjLq-_b4MyiQBH6hdJyx2rzPAQ9cMLdZ1zYxaTpFnbdEA9L8ah-RCDPHaazMM0jpTo3zm4jQ7Rd5L2f3BmoyFuLwI2ZHuyFDT5f3UoA0asPKRsY9Oe8RpR2wpcOGVw6w>https://lh5.googleusercontent.com/hawIJuZIlr1FYX1iwsJjLq-_b4MyiQBH6hdJyx2rzPAQ9cMLdZ1zYxaTpFnbdEA9L8ah-RCDPHaazMM0jpTo3zm4jQ7Rd5L2f3BmoyFuLwI2ZHuyFDT5f3UoA0asPKRsY9Oe8RpR2wpcOGVw6w</a></p>
+<p>忽略告警，选择继续</p>
+<p><a href=https://lh6.googleusercontent.com/wJX-Zj2EhPXtsHivjfDmLJaiO3-0EETpKRMqR4yDQQq4eWpqfpzMtIvq5MmRXtBD1jrcOCKQ4CerqVfKa5mlxmsOuItzPKWwAmfMh82e-J5tWKguHFb4lD3QWvm3ezHG-fO0IjvOlqVdXDxeoA>https://lh6.googleusercontent.com/wJX-Zj2EhPXtsHivjfDmLJaiO3-0EETpKRMqR4yDQQq4eWpqfpzMtIvq5MmRXtBD1jrcOCKQ4CerqVfKa5mlxmsOuItzPKWwAmfMh82e-J5tWKguHFb4lD3QWvm3ezHG-fO0IjvOlqVdXDxeoA</a></p>
+<h4 id=第10步-概要><strong>第10步 概要</strong></h4>
+<p><a href=https://lh3.googleusercontent.com/Yw9s4jJXAgfTs6g6EoCSiKkEg6I1M3XWeLSD88xBQJhRGJdVx3ovCN7g-HTlCQlDH1fjLzE1CO2vPMRKGo2QLXtZAdgQHhsj0uCD1ZIoRuYGaYWVEGjj23_e64yHc_Q_rU8AL94uSnhDo1oyLA>https://lh3.googleusercontent.com/Yw9s4jJXAgfTs6g6EoCSiKkEg6I1M3XWeLSD88xBQJhRGJdVx3ovCN7g-HTlCQlDH1fjLzE1CO2vPMRKGo2QLXtZAdgQHhsj0uCD1ZIoRuYGaYWVEGjj23_e64yHc_Q_rU8AL94uSnhDo1oyLA</a></p>
+<h4 id=第11步-安装产品><strong>第11步 安装产品</strong></h4>
+<p><a href=https://lh5.googleusercontent.com/eay0tiKYgdg1oyxdQafPDcN9UVHtSJa9hDFVy7BNPM9-dAz3f5l9Mp2Kk0zHJZNioYFixqz0_r5lrc5aI-oAMj0OeLBbFop_ikq87bGDaP9cABnO0-Bo-cU36xiEL8XD_KYTjN7ynYKf1GNDjQ>https://lh5.googleusercontent.com/eay0tiKYgdg1oyxdQafPDcN9UVHtSJa9hDFVy7BNPM9-dAz3f5l9Mp2Kk0zHJZNioYFixqz0_r5lrc5aI-oAMj0OeLBbFop_ikq87bGDaP9cABnO0-Bo-cU36xiEL8XD_KYTjN7ynYKf1GNDjQ</a></p>
+<p>执行配置脚本：</p>
+<p><a href=https://lh6.googleusercontent.com/lUDoYKCB-vNH2L7TwpRAPMfQggiTn9A9zpbNeGxxU0Fq9F8ccZJJwet41eTuPeg_G0xyZ_pTwed3JEpcodeLoLKw0K8PZfB8yX9xOJksZ7hqdv_HFAbNciXQoa2hJs3TCoq5EJufx1UFLdBXoQ>https://lh6.googleusercontent.com/lUDoYKCB-vNH2L7TwpRAPMfQggiTn9A9zpbNeGxxU0Fq9F8ccZJJwet41eTuPeg_G0xyZ_pTwed3JEpcodeLoLKw0K8PZfB8yX9xOJksZ7hqdv_HFAbNciXQoa2hJs3TCoq5EJufx1UFLdBXoQ</a></p>
+<p>执行1：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>/u01/app/oraInventory/orainstRoot.sh
+</code></pre></div><p><a href=https://lh3.googleusercontent.com/ahST4Nz8QHRyTuDJOf2edUc3T7_YMEfiWGian7Ywy2Coicf0Cxpit8kWGYBBeDROwOBJ_eT1viaBgf3uyxdezoVEUecM3QJ7CHkH8nvxLXP1xACeJlQnL4Ir8Ff4yzSOrOLzCLyUmdqldZn4xQ>https://lh3.googleusercontent.com/ahST4Nz8QHRyTuDJOf2edUc3T7_YMEfiWGian7Ywy2Coicf0Cxpit8kWGYBBeDROwOBJ_eT1viaBgf3uyxdezoVEUecM3QJ7CHkH8nvxLXP1xACeJlQnL4Ir8Ff4yzSOrOLzCLyUmdqldZn4xQ</a></p>
+<p>执行2：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>/u01/app/19c/grid/root.sh
+</code></pre></div><p><a href=https://lh6.googleusercontent.com/1dIltgzGJvh7Q19uSxb-XQMrN9LDtBdk-O31fEEykjriwUwiCEkw5Ov6Dj93MUyQ1oUtVMTvUpbufMHdYff6mG8SzLn8S6cIKPgYB-SDb__ARzY0NuELwCxKa5fG61RC0zCHNOInQfoYyv_MqA>https://lh6.googleusercontent.com/1dIltgzGJvh7Q19uSxb-XQMrN9LDtBdk-O31fEEykjriwUwiCEkw5Ov6Dj93MUyQ1oUtVMTvUpbufMHdYff6mG8SzLn8S6cIKPgYB-SDb__ARzY0NuELwCxKa5fG61RC0zCHNOInQfoYyv_MqA</a></p>
+<p>继续执行：</p>
+<p><a href=https://lh5.googleusercontent.com/7H96Z14IZspeQQ4KVO4BcJAmIwG592pKa42wdNTilwDSJsWm-3AZZzOEyzytj08pAm-4Q7DC8nNJJAIyBAZ1AyHnnL3xv1nrKEOOUJlXA-C3E3L3wcq6luzjVkAj8zyViYx5RZC2-qIMAZIHww>https://lh5.googleusercontent.com/7H96Z14IZspeQQ4KVO4BcJAmIwG592pKa42wdNTilwDSJsWm-3AZZzOEyzytj08pAm-4Q7DC8nNJJAIyBAZ1AyHnnL3xv1nrKEOOUJlXA-C3E3L3wcq6luzjVkAj8zyViYx5RZC2-qIMAZIHww</a></p>
+<h4 id=第12步-完成><strong>第12步 完成</strong></h4>
+<p><a href=https://lh5.googleusercontent.com/tjxx0fePZUq6i7GDMzGGbFuohCuoApbUj8H38Ynm9Rp-sZwY5QD3xBPLygS9VPgGTJNnVisNknfc3G4He9iHUX-G9EJwh_8klqFXDmIKCUmx0ig6kRvwVNpEcQwyu7OLT8DekhGxgpoYbEDGCQ>https://lh5.googleusercontent.com/tjxx0fePZUq6i7GDMzGGbFuohCuoApbUj8H38Ynm9Rp-sZwY5QD3xBPLygS9VPgGTJNnVisNknfc3G4He9iHUX-G9EJwh_8klqFXDmIKCUmx0ig6kRvwVNpEcQwyu7OLT8DekhGxgpoYbEDGCQ</a></p>
+<ul>
+<li><strong>ASM磁盘管理</strong></li>
+</ul>
+<h3 id=前面安装grid的作用就是可用asm使用磁盘>前面安装Grid的作用就是可用ASM使用磁盘</h3>
+<p><strong>在VM中增加磁盘</strong></p>
+<p>在DBVM增加4块磁盘用于REDO log文件。</p>
+<p><a href=https://lh4.googleusercontent.com/PdOT5KGWCSwRGVpHZxI_vMUFuJYv6t1i8DaQZWifUsDjVM0wdgrGaR8i0Qn7F12PlIqpntla7ULGLKqkFjM_Ecbo4hM8kg1ZT3cXTQwX-O_V7xa5T3voHJglnROQIcxjhn5ZD0Ff0eKmQH8qHw>https://lh4.googleusercontent.com/PdOT5KGWCSwRGVpHZxI_vMUFuJYv6t1i8DaQZWifUsDjVM0wdgrGaR8i0Qn7F12PlIqpntla7ULGLKqkFjM_Ecbo4hM8kg1ZT3cXTQwX-O_V7xa5T3voHJglnROQIcxjhn5ZD0Ff0eKmQH8qHw</a></p>
+<p>在DBVM的操作系统OS中显示为：vdg、vdh、vdi、vdj</p>
+<p><a href=https://lh6.googleusercontent.com/ErxzQX1YxoN4_8F8kCPiYQp1mGorlu38XUDQa84xhiWijU1E4mLkq9teNrNUmA0wiPZexwEkHZcpBzRgbUQYq39c81DH4c72-iMTENI6CJIcx9SlsmGKfjdkL5mKfxltWukko7KjTnw1g5h0jQ>https://lh6.googleusercontent.com/ErxzQX1YxoN4_8F8kCPiYQp1mGorlu38XUDQa84xhiWijU1E4mLkq9teNrNUmA0wiPZexwEkHZcpBzRgbUQYq39c81DH4c72-iMTENI6CJIcx9SlsmGKfjdkL5mKfxltWukko7KjTnw1g5h0jQ</a></p>
+<h4 id=配置磁盘><strong>配置磁盘</strong></h4>
+<p>根据系统使用存储的不同而配置磁盘，进行磁盘名称持久化的方法略有不同。</p>
+<p>编辑 /etc/udev/rules.d/99-oracle-asmdevice.rules</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#080;font-style:italic>#vim /etc/udev/rules.d/99-oracle-asmdevice.rules</span>
+</code></pre></div><p>本次部署的虚拟机的虚拟磁盘选择Virtio总线方式，可以发挥更好的I/O性能，</p>
+<p><strong>具体格式为:</strong></p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#b8860b>SUBSYSTEM</span><span style=color:#666>==</span><span style=color:#b44>&#34;block&#34;</span>,KERNEL<span style=color:#666>==</span><span style=color:#b44>&#34;vdc&#34;</span>,GROUP<span style=color:#666>=</span><span style=color:#b44>&#34;asmadmin&#34;</span>,OWNER<span style=color:#666>=</span><span style=color:#b44>&#34;grid&#34;</span>,MODE<span style=color:#666>=</span><span style=color:#b44>&#34;0660&#34;</span>
+<span style=color:#b8860b>SUBSYSTEM</span><span style=color:#666>==</span><span style=color:#b44>&#34;block&#34;</span>,KERNEL<span style=color:#666>==</span><span style=color:#b44>&#34;vdd&#34;</span>,GROUP<span style=color:#666>=</span><span style=color:#b44>&#34;asmadmin&#34;</span>,OWNER<span style=color:#666>=</span><span style=color:#b44>&#34;grid&#34;</span>,MODE<span style=color:#666>=</span><span style=color:#b44>&#34;0660&#34;</span>
+<span style=color:#b8860b>SUBSYSTEM</span><span style=color:#666>==</span><span style=color:#b44>&#34;block&#34;</span>,KERNEL<span style=color:#666>==</span><span style=color:#b44>&#34;vde&#34;</span>,GROUP<span style=color:#666>=</span><span style=color:#b44>&#34;asmadmin&#34;</span>,OWNER<span style=color:#666>=</span><span style=color:#b44>&#34;grid&#34;</span>,MODE<span style=color:#666>=</span><span style=color:#b44>&#34;0660&#34;</span>
+<span style=color:#b8860b>SUBSYSTEM</span><span style=color:#666>==</span><span style=color:#b44>&#34;block&#34;</span>,KERNEL<span style=color:#666>==</span><span style=color:#b44>&#34;vdf&#34;</span>,GROUP<span style=color:#666>=</span><span style=color:#b44>&#34;asmadmin&#34;</span>,OWNER<span style=color:#666>=</span><span style=color:#b44>&#34;grid&#34;</span>,MODE<span style=color:#666>=</span><span style=color:#b44>&#34;0660&#34;</span>
+
+<span style=color:#b8860b>SUBSYSTEM</span><span style=color:#666>==</span><span style=color:#b44>&#34;block&#34;</span>,KERNEL<span style=color:#666>==</span><span style=color:#b44>&#34;vdg&#34;</span>,GROUP<span style=color:#666>=</span><span style=color:#b44>&#34;asmadmin&#34;</span>,OWNER<span style=color:#666>=</span><span style=color:#b44>&#34;grid&#34;</span>,MODE<span style=color:#666>=</span><span style=color:#b44>&#34;0660&#34;</span>
+<span style=color:#b8860b>SUBSYSTEM</span><span style=color:#666>==</span><span style=color:#b44>&#34;block&#34;</span>,KERNEL<span style=color:#666>==</span><span style=color:#b44>&#34;vdh&#34;</span>,GROUP<span style=color:#666>=</span><span style=color:#b44>&#34;asmadmin&#34;</span>,OWNER<span style=color:#666>=</span><span style=color:#b44>&#34;grid&#34;</span>,MODE<span style=color:#666>=</span><span style=color:#b44>&#34;0660&#34;</span>
+<span style=color:#b8860b>SUBSYSTEM</span><span style=color:#666>==</span><span style=color:#b44>&#34;block&#34;</span>,KERNEL<span style=color:#666>==</span><span style=color:#b44>&#34;vdi&#34;</span>,GROUP<span style=color:#666>=</span><span style=color:#b44>&#34;asmadmin&#34;</span>,OWNER<span style=color:#666>=</span><span style=color:#b44>&#34;grid&#34;</span>,MODE<span style=color:#666>=</span><span style=color:#b44>&#34;0660&#34;</span>
+<span style=color:#b8860b>SUBSYSTEM</span><span style=color:#666>==</span><span style=color:#b44>&#34;block&#34;</span>,KERNEL<span style=color:#666>==</span><span style=color:#b44>&#34;vdj&#34;</span>,GROUP<span style=color:#666>=</span><span style=color:#b44>&#34;asmadmin&#34;</span>,OWNER<span style=color:#666>=</span><span style=color:#b44>&#34;grid&#34;</span>,MODE<span style=color:#666>=</span><span style=color:#b44>&#34;0660&#34;</span>
+</code></pre></div><p><a href=https://lh6.googleusercontent.com/luMyxQzGfPHdNxCm-IMMSg8FLnUR2uYMSVwxzQX2LtTQSOTrAbDrZNycBIeUopqu7Yhh6EobQWipuTAZufaOEviF8c76ZUa24uNNqt5SyP4-MvFrbjUFVM4v-Y6fT5kEUlDvAm_Mu15XSEjgKg>https://lh6.googleusercontent.com/luMyxQzGfPHdNxCm-IMMSg8FLnUR2uYMSVwxzQX2LtTQSOTrAbDrZNycBIeUopqu7Yhh6EobQWipuTAZufaOEviF8c76ZUa24uNNqt5SyP4-MvFrbjUFVM4v-Y6fT5kEUlDvAm_Mu15XSEjgKg</a></p>
+<p>执行配置：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>/sbin/udevadm trigger --type<span style=color:#666>=</span>devices --action<span style=color:#666>=</span>change
+</code></pre></div><h4 id=asm磁盘组配置><strong>ASM磁盘组配置</strong></h4>
+<p>以grid用户登陆DBVM</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#a2f>cd</span> /u01/app/19c/grid/bin
+./asmca
+</code></pre></div><h4 id=运行asmca><strong>运行asmca</strong></h4>
+<p><a href=https://lh5.googleusercontent.com/RlsB_vW01W9BC8_FQmmPo4CPppKo6Sq6aLO8N40YloOoIepe-2vTBZL6NuJIK0kXWViLBmZzNhdejwr6FYLTyGX6ow7dwj9AnulYhUog5BG5neubD_ySux4AfroCZ2NVgBnxqQfNQpcb0uBzcQ>https://lh5.googleusercontent.com/RlsB_vW01W9BC8_FQmmPo4CPppKo6Sq6aLO8N40YloOoIepe-2vTBZL6NuJIK0kXWViLBmZzNhdejwr6FYLTyGX6ow7dwj9AnulYhUog5BG5neubD_ySux4AfroCZ2NVgBnxqQfNQpcb0uBzcQ</a></p>
+<h4 id=选择磁盘组><strong>选择磁盘组</strong></h4>
+<p><a href=https://lh3.googleusercontent.com/4Hn_QzgSG7Uj_8E1nnJ7xUomiA4xrP9RDZPw0ETYtTLMpPuseXukjRY-7dKSn9tKoWxkWEFqsa1gPYQtuNnqHRz_xSjYgw4UCQHeJ-K1SFhF1pXn1CFq7EmPGQHdAtiFe3ekrn2b7ZH4nNMxNw>https://lh3.googleusercontent.com/4Hn_QzgSG7Uj_8E1nnJ7xUomiA4xrP9RDZPw0ETYtTLMpPuseXukjRY-7dKSn9tKoWxkWEFqsa1gPYQtuNnqHRz_xSjYgw4UCQHeJ-K1SFhF1pXn1CFq7EmPGQHdAtiFe3ekrn2b7ZH4nNMxNw</a></p>
+<h4 id=创建磁盘组><strong>创建磁盘组</strong></h4>
+<p><a href=https://lh6.googleusercontent.com/QJxyiKlbuSZ7TZjiFTtiO_lOR_RT9F_FiD2rSUIKJv7Lzr8wWG1WmVo-qdjqenE0o8HWmKtodfun3HrBQaddV0G2e5JyI4rwpan5vB1P2FA2_1XNEfEU6304NkqHrzdEqvfDhXan2GWj0Mi2kA>https://lh6.googleusercontent.com/QJxyiKlbuSZ7TZjiFTtiO_lOR_RT9F_FiD2rSUIKJv7Lzr8wWG1WmVo-qdjqenE0o8HWmKtodfun3HrBQaddV0G2e5JyI4rwpan5vB1P2FA2_1XNEfEU6304NkqHrzdEqvfDhXan2GWj0Mi2kA</a></p>
+<p>选择之前配置的4块redo磁盘vdg、vdh、vdi、vdj。</p>
+<p>选用 外部 冗余模式。</p>
+<h4 id=执行操作><strong>执行操作</strong></h4>
+<p>点击确定，执行操作</p>
+<p><a href=https://lh5.googleusercontent.com/R-j-fU6QAfzu9ifsmj94V1PTNe9rBAnniczx9Rv0l76WhhgW_0lt3ByKmBfLpFuAnAUBp3EeL4Opb40RlLAqAYF-7k2WtXQQYb6mGGaC2Gx8PlVb-go42NbfwDKd2T35X0aFN3Hko2UA3X1hQw>https://lh5.googleusercontent.com/R-j-fU6QAfzu9ifsmj94V1PTNe9rBAnniczx9Rv0l76WhhgW_0lt3ByKmBfLpFuAnAUBp3EeL4Opb40RlLAqAYF-7k2WtXQQYb6mGGaC2Gx8PlVb-go42NbfwDKd2T35X0aFN3Hko2UA3X1hQw</a></p>
+<h4 id=完成><strong>完成</strong></h4>
+<p>完成后，可以看到新建的REDO磁盘组。</p>
+<p><a href=https://lh5.googleusercontent.com/dd9kJ58Sq8DVBb38ov5-2KEg1f9E7FOSy7fuO9icM6S3ydP_QLc6-VzdG35zhNegq5bcmMJwwIYDBPeHK6DDjO8G2betGoyJSN8nDajw9CbshnDT_tDkWnIqxSQAibRLeDuNKaWPupZKVfOHFA>https://lh5.googleusercontent.com/dd9kJ58Sq8DVBb38ov5-2KEg1f9E7FOSy7fuO9icM6S3ydP_QLc6-VzdG35zhNegq5bcmMJwwIYDBPeHK6DDjO8G2betGoyJSN8nDajw9CbshnDT_tDkWnIqxSQAibRLeDuNKaWPupZKVfOHFA</a></p>
+<ul>
+<li><strong>安装Oracle数据库</strong></li>
+</ul>
+<h3 id=解压安装介质oracle-login><strong>解压安装介质,oracle login</strong></h3>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>unzip V982063-01.zip -d /u01/app/oracle/product/19c/db_1/
+</code></pre></div><h3 id=图形化安装oracle数据库><strong>图形化安装Oracle数据库</strong></h3>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#a2f>cd</span> /u01/app/oracle/product/19c/db_1/
+./runInstaller
+</code></pre></div><h4 id=第1步-配置选项><strong>第1步 配置选项</strong></h4>
+<p>选择 仅设置软件</p>
+<p><a href=https://lh5.googleusercontent.com/vOZjrfmMNC5d4YEKQHsuiA_RECh_9rHr9pRqBvT6KjaF47rGaNJhW8-bpDMyP_JpSN2u5XYImKV94Q2x57d1NC_DI14lJ-tOwOBubZiC7hCKAUXbpZ0InvIXBRubdl0fiX9qhonHHlsqn4lblg>https://lh5.googleusercontent.com/vOZjrfmMNC5d4YEKQHsuiA_RECh_9rHr9pRqBvT6KjaF47rGaNJhW8-bpDMyP_JpSN2u5XYImKV94Q2x57d1NC_DI14lJ-tOwOBubZiC7hCKAUXbpZ0InvIXBRubdl0fiX9qhonHHlsqn4lblg</a></p>
+<h4 id=第2步-数据库安装选项><strong>第2步 数据库安装选项</strong></h4>
+<p>选择单实例数据库安装</p>
+<p><a href=https://lh6.googleusercontent.com/A86u7cOo-LA58XAEFRSGu6pj4j0wzJJlsUTkvTgEV7auSsowvFB_eNtjHXVW65ptHS7VLoOLoZClP4g03nSf415q43fCPI9UwNADruccC_nm41Uk64d-R6zuTpT-YoVA92pvYRHQz1MsiaICqw>https://lh6.googleusercontent.com/A86u7cOo-LA58XAEFRSGu6pj4j0wzJJlsUTkvTgEV7auSsowvFB_eNtjHXVW65ptHS7VLoOLoZClP4g03nSf415q43fCPI9UwNADruccC_nm41Uk64d-R6zuTpT-YoVA92pvYRHQz1MsiaICqw</a></p>
+<h4 id=第3步-数据库版本><strong>第3步 数据库版本</strong></h4>
+<p>选择 企业版</p>
+<p><a href=https://lh5.googleusercontent.com/4phHW-Eo91iqAKQVfsCeVBSKlbH6AZB4IQ_4Xe4ci74JVqLKCR9egcFV2upoKUFiTwI0tlt6iWGXmcas-uPRLi1JCWIOM0DhV154D0GqmmS_Zz9qk-zpuGGD3JszrKn2LBI1r0-eCeZSEHlamw>https://lh5.googleusercontent.com/4phHW-Eo91iqAKQVfsCeVBSKlbH6AZB4IQ_4Xe4ci74JVqLKCR9egcFV2upoKUFiTwI0tlt6iWGXmcas-uPRLi1JCWIOM0DhV154D0GqmmS_Zz9qk-zpuGGD3JszrKn2LBI1r0-eCeZSEHlamw</a></p>
+<h4 id=第4步-指定安装位置><strong>第4步 指定安装位置</strong></h4>
+<p><a href=https://lh3.googleusercontent.com/5kunQB9ORwnRZ4jgsgCOxQ0ePsMqBPrtzS8yaA4U-a2vwwDLA3TyW9G2T_lJYgHNFjeNMcn10JVIFG3GLjz45lkNPza2OHjwk1YDm6k-PdVqqyqJZFZ_AKnt4Dx_-54GuhaAziLXs0c4bSBEMg>https://lh3.googleusercontent.com/5kunQB9ORwnRZ4jgsgCOxQ0ePsMqBPrtzS8yaA4U-a2vwwDLA3TyW9G2T_lJYgHNFjeNMcn10JVIFG3GLjz45lkNPza2OHjwk1YDm6k-PdVqqyqJZFZ_AKnt4Dx_-54GuhaAziLXs0c4bSBEMg</a></p>
+<h4 id=第5步-已授权的操作系统组><strong>第5步 已授权的操作系统组</strong></h4>
+<p><a href=https://lh6.googleusercontent.com/6qt2Qy54z-XLY_VOab7SI2dPzFYlNNVr3rqYTn7S77rE1G5GX1WKl8YADgJ0qCZG8XmrLjscuUhiOhRkQCSwpPBBYzJGNGxwws72M-RVeamD6r4WWSVNCKYqFW-ZdHJYNr0RQx0sy2he9DfVdw>https://lh6.googleusercontent.com/6qt2Qy54z-XLY_VOab7SI2dPzFYlNNVr3rqYTn7S77rE1G5GX1WKl8YADgJ0qCZG8XmrLjscuUhiOhRkQCSwpPBBYzJGNGxwws72M-RVeamD6r4WWSVNCKYqFW-ZdHJYNr0RQx0sy2he9DfVdw</a></p>
+<h4 id=第6步-root脚本执行><strong>第6步 Root脚本执行</strong></h4>
+<p><a href=https://lh6.googleusercontent.com/SSBn9bD3r7qEh9DSkc_f0v0Z-CMV1WF7i639Q_PeNAkwQB6jh-aoBxszprGYd_W0C7sLIbmjjMpsDssUh_dXua8xapMgkDJcOokCfb_OOKCZ-p7zDu0xNFR7dBLvExRN8TW79yMXxaI4pl9JRg>https://lh6.googleusercontent.com/SSBn9bD3r7qEh9DSkc_f0v0Z-CMV1WF7i639Q_PeNAkwQB6jh-aoBxszprGYd_W0C7sLIbmjjMpsDssUh_dXua8xapMgkDJcOokCfb_OOKCZ-p7zDu0xNFR7dBLvExRN8TW79yMXxaI4pl9JRg</a></p>
+<h4 id=第7步-先决条件检查><strong>第7步 先决条件检查</strong></h4>
+<p><a href=https://lh3.googleusercontent.com/fuFJcJ7aKq-8Fuook5Uw128g-Qj7AoVCqsu-h1tgpt0isSJFwjPDaAMZR46Jb_g8XwbqdF6ZQuY5PgM5qxNvNGDZB1H3OJt1WB51MmLR4ticWUwGbiFyQmAGJ4kEYxLZWgIR0JdanpOTTE_kYw>https://lh3.googleusercontent.com/fuFJcJ7aKq-8Fuook5Uw128g-Qj7AoVCqsu-h1tgpt0isSJFwjPDaAMZR46Jb_g8XwbqdF6ZQuY5PgM5qxNvNGDZB1H3OJt1WB51MmLR4ticWUwGbiFyQmAGJ4kEYxLZWgIR0JdanpOTTE_kYw</a></p>
+<p>交换空间大小告警可忽略（不使用交换空间）</p>
+<p><a href=https://lh4.googleusercontent.com/x3KBvW_nkGdSD8E3s-w6X-PGROxOAyXjlj-H5DXJp93Ma6Ksbd5hi6qNdiNLJnLMiVW4BTeIgw2q1RoYoh-ySybH5ZgjVlwIjbfX1MA_QQxnEOFazuWrwEwpvybS93NXCr2MTbSIRzzMQ2_CDg>https://lh4.googleusercontent.com/x3KBvW_nkGdSD8E3s-w6X-PGROxOAyXjlj-H5DXJp93Ma6Ksbd5hi6qNdiNLJnLMiVW4BTeIgw2q1RoYoh-ySybH5ZgjVlwIjbfX1MA_QQxnEOFazuWrwEwpvybS93NXCr2MTbSIRzzMQ2_CDg</a></p>
+<p><a href=https://lh5.googleusercontent.com/_EkDfX1rvGOdzUxjq_CmYg2D_YdIjCy1UqtErwG0ThuEv8WSpmGzrpa7b-vz4gkmhT62XYWcoBsyXogj3yLEZBQGmA6vkTSv5KBoEso4oOD0n20rxYG1e0rfuMdiE8x7SCxtimRNSBBikvqpqg>https://lh5.googleusercontent.com/_EkDfX1rvGOdzUxjq_CmYg2D_YdIjCy1UqtErwG0ThuEv8WSpmGzrpa7b-vz4gkmhT62XYWcoBsyXogj3yLEZBQGmA6vkTSv5KBoEso4oOD0n20rxYG1e0rfuMdiE8x7SCxtimRNSBBikvqpqg</a></p>
+<p>选择 是</p>
+<h4 id=第8步-概要><strong>第8步 概要</strong></h4>
+<p><a href=https://lh5.googleusercontent.com/Ipekb9UhXEeds7fRv7MF9M4kmNjrRg3QthU5XhPgetOHC-fv-91powrNkQWL6ws4z7TCpZC-g8CyX8PTq8k45oWAocDt-lFT1QqE0FgsTK9sVic8q0RsKYItLpRyWPoCGdqaspmGrlQjrqjNLg>https://lh5.googleusercontent.com/Ipekb9UhXEeds7fRv7MF9M4kmNjrRg3QthU5XhPgetOHC-fv-91powrNkQWL6ws4z7TCpZC-g8CyX8PTq8k45oWAocDt-lFT1QqE0FgsTK9sVic8q0RsKYItLpRyWPoCGdqaspmGrlQjrqjNLg</a></p>
+<h4 id=第9步-安装产品><strong>第9步 安装产品</strong></h4>
+<p><a href=https://lh5.googleusercontent.com/5xpUGQHbNhfXFMCu6g6IWEjvlytOFoP_uD4SjvWEb4YbG1EeXWUB09jjOxCarKqhlJ_pwwp_ez1JyKZtmAgrnbL1ugqOt0CEX1u5hpQmUiHF2dGrlI0m8gJyRf7hYlfjqcV7HOPy8SxuqS9SPg>https://lh5.googleusercontent.com/5xpUGQHbNhfXFMCu6g6IWEjvlytOFoP_uD4SjvWEb4YbG1EeXWUB09jjOxCarKqhlJ_pwwp_ez1JyKZtmAgrnbL1ugqOt0CEX1u5hpQmUiHF2dGrlI0m8gJyRf7hYlfjqcV7HOPy8SxuqS9SPg</a></p>
+<p><a href=https://lh5.googleusercontent.com/2DrpsODZyXANWxUtuyd2oiicmqb3ZT_F-C8DtMSPC4NgN9r0fzF0XfiD109VdZN4sUEe0WDUtCG7N6ubGZaQosOoeFn1YJn3-QgOmk3oaN82UieVdBSWLpv7PPnYGo7Gbq17VGI59LuynkKquw>https://lh5.googleusercontent.com/2DrpsODZyXANWxUtuyd2oiicmqb3ZT_F-C8DtMSPC4NgN9r0fzF0XfiD109VdZN4sUEe0WDUtCG7N6ubGZaQosOoeFn1YJn3-QgOmk3oaN82UieVdBSWLpv7PPnYGo7Gbq17VGI59LuynkKquw</a></p>
+<p>执行配置脚本</p>
+<p><a href=https://lh5.googleusercontent.com/atXFMs4uKGGjMDGskQtzWHybaYo0cesY863P4GBaGmFkZL05mc-78bORFzHMByiLK4OAZt0nH3qKl2mTGJQpuFcOHBGtEO0OUarq7dEONbx6fT7UOOjpKbXjus0L58rjv1lMPm5fweFxBcyPlg>https://lh5.googleusercontent.com/atXFMs4uKGGjMDGskQtzWHybaYo0cesY863P4GBaGmFkZL05mc-78bORFzHMByiLK4OAZt0nH3qKl2mTGJQpuFcOHBGtEO0OUarq7dEONbx6fT7UOOjpKbXjus0L58rjv1lMPm5fweFxBcyPlg</a></p>
+<h4 id=第10步-完成><strong>第10步 完成</strong></h4>
+<p><a href=https://lh6.googleusercontent.com/BmcHv9S58VTzEAi-O4L268ZfAHxkfhSUhmKILwafXk-0gHanE59lJWW2nexSeiAhutngz4NjfhI-sUHBHawHgKcOAmYi9ymGhosTVDuIEyiW0lpeaMnSbFiPeAlEjN4v1LrAP9eFHcjbbZmvrg>https://lh6.googleusercontent.com/BmcHv9S58VTzEAi-O4L268ZfAHxkfhSUhmKILwafXk-0gHanE59lJWW2nexSeiAhutngz4NjfhI-sUHBHawHgKcOAmYi9ymGhosTVDuIEyiW0lpeaMnSbFiPeAlEjN4v1LrAP9eFHcjbbZmvrg</a></p>
+<h2 id=用dbca创建数据库><strong>用DBCA创建数据库</strong></h2>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#a2f>cd</span> /u01/app/oracle/product/19c/db_1/bin
+./dbca
+</code></pre></div><h3 id=图形化创建数据库><strong>图形化创建数据库</strong></h3>
+<p><a href=https://lh6.googleusercontent.com/vNOw1tFl98uVBsygX9tZIH8PbUwUx-JZsQe3sFB6FnnTi5DgQIDPWrFrWHR7CE3uKhmKR1goH6ZB1yCbpZV0ATJmk-xjW3mLf3WegC-j54525ejJsjB7Ne8d7lTvRgijF3OThdCjaQe40mDH1g>https://lh6.googleusercontent.com/vNOw1tFl98uVBsygX9tZIH8PbUwUx-JZsQe3sFB6FnnTi5DgQIDPWrFrWHR7CE3uKhmKR1goH6ZB1yCbpZV0ATJmk-xjW3mLf3WegC-j54525ejJsjB7Ne8d7lTvRgijF3OThdCjaQe40mDH1g</a></p>
+<h4 id=第1步-选择数据库操作><strong>第1步 选择数据库操作</strong></h4>
+<p><a href=https://lh3.googleusercontent.com/ADsQr1mXfaXcXXrVyx0JozdIqLcsra8TvJcjR8NkCTqa3IxQe7DvCa-vd3Ykmqq_6vB67s-b7XLiHY8CqV36CXM5jff08YDL4UDJZE5RxccAfvlwbVKjbU_jo59i-wQAEJHrXMJvvzi9TRSieA>https://lh3.googleusercontent.com/ADsQr1mXfaXcXXrVyx0JozdIqLcsra8TvJcjR8NkCTqa3IxQe7DvCa-vd3Ykmqq_6vB67s-b7XLiHY8CqV36CXM5jff08YDL4UDJZE5RxccAfvlwbVKjbU_jo59i-wQAEJHrXMJvvzi9TRSieA</a></p>
+<p>选择 创建数据库</p>
+<h4 id=第2步-选择数据库创建模式><strong>第2步 选择数据库创建模式</strong></h4>
+<p><a href=https://lh5.googleusercontent.com/ywwXwo7i7oZQ04jWS23AoqmxLFN5CY20903HybkIrrR8Y0Nxd48dxBNnv7XVOigz3kyZQGbKHqSmc6Xt9NMH9c2nMg9cZkOKexuNpXT93tKkGtv2cK73hA30I4dkxR1Gg-HyGFJfzsr13Pd10Q>https://lh5.googleusercontent.com/ywwXwo7i7oZQ04jWS23AoqmxLFN5CY20903HybkIrrR8Y0Nxd48dxBNnv7XVOigz3kyZQGbKHqSmc6Xt9NMH9c2nMg9cZkOKexuNpXT93tKkGtv2cK73hA30I4dkxR1Gg-HyGFJfzsr13Pd10Q</a></p>
+<p>选择 高级配置</p>
+<h4 id=第3步-选择数据库部署类型><strong>第3步 选择数据库部署类型</strong></h4>
+<p><a href=https://lh5.googleusercontent.com/9wG6A0ZpxMO_ArwKacwEubEmXCeDi55IDgH8xediLIJEczFLf9zUspVDdtKlHdhM9rScTUDQwvQNRuAB5APK9GhyDViozJZ1WJMpdhhPa-1T8BHM0qSHKOL-P7lmDK7CR2xuq4iFxAYZGnBozQ>https://lh5.googleusercontent.com/9wG6A0ZpxMO_ArwKacwEubEmXCeDi55IDgH8xediLIJEczFLf9zUspVDdtKlHdhM9rScTUDQwvQNRuAB5APK9GhyDViozJZ1WJMpdhhPa-1T8BHM0qSHKOL-P7lmDK7CR2xuq4iFxAYZGnBozQ</a></p>
+<p>选择 一般用途或事务处理</p>
+<h4 id=第4步-指定数据库标识详细信息><strong>第4步 指定数据库标识详细信息</strong></h4>
+<p><a href=https://lh6.googleusercontent.com/Mvwo2dr-o9mugjICPvS6uBio2XSxKkW6p1EGYS0WEh8kVCfhM9yqDwtVpPIrlpxz9Nkwwoj6fSTBCbyebzBOsMVCjSJiYY6qfPyY5CWJxqNiW4BmuQjcsnxOyuaq5_06kDkJW64RopZjAFLQMQ>https://lh6.googleusercontent.com/Mvwo2dr-o9mugjICPvS6uBio2XSxKkW6p1EGYS0WEh8kVCfhM9yqDwtVpPIrlpxz9Nkwwoj6fSTBCbyebzBOsMVCjSJiYY6qfPyY5CWJxqNiW4BmuQjcsnxOyuaq5_06kDkJW64RopZjAFLQMQ</a></p>
+<p>填写 全局数据库名:odb</p>
+<p>PDB名称：pdb01</p>
+<h4 id=第5步-选择数据库存储选项><strong>第5步 选择数据库存储选项</strong></h4>
+<p><a href=https://lh3.googleusercontent.com/e6f0GHFa6HbS_7wOLyXtRgX-TajjBQsBKeYTu-VrnVB_OIfQJNigIzsmVJeEYM51ijfnJtRvecsmpgbxRVOBz6p5qwPdDPrr_mYJHknRvagrSRuNQ0o5GfZGI-JKWvWnZxcA-L4vF3OJ16WYrg>https://lh3.googleusercontent.com/e6f0GHFa6HbS_7wOLyXtRgX-TajjBQsBKeYTu-VrnVB_OIfQJNigIzsmVJeEYM51ijfnJtRvecsmpgbxRVOBz6p5qwPdDPrr_mYJHknRvagrSRuNQ0o5GfZGI-JKWvWnZxcA-L4vF3OJ16WYrg</a></p>
+<p>选择将以下项用于数据库存储属性</p>
+<h4 id=第6步-快速恢复选项><strong>第6步 快速恢复选项</strong></h4>
+<p><a href=https://lh6.googleusercontent.com/vHBVEcKchxoKJHdnm8zCT7qRqysU6sVPxezntDnpVupjEiq_db_fo-1GK4QqVw5UyuXvSoW0EgOhwFJm2ffFknFou7N3paNhzzsvKQoPR3t28oP5sSkq7tN_1MRP2EVSX807BJsQoOvcnkirQg>https://lh6.googleusercontent.com/vHBVEcKchxoKJHdnm8zCT7qRqysU6sVPxezntDnpVupjEiq_db_fo-1GK4QqVw5UyuXvSoW0EgOhwFJm2ffFknFou7N3paNhzzsvKQoPR3t28oP5sSkq7tN_1MRP2EVSX807BJsQoOvcnkirQg</a></p>
+<h4 id=第7步-指定网络配置详细信息><strong>第7步 指定网络配置详细信息</strong></h4>
+<p><a href=https://lh5.googleusercontent.com/lFw35c_q857Ugghw4gawVm1zFa2HkftQ0Gftp90Y6N5eEkTjiia9w7qm-pXrOTqEmid9wLvi2ST2tJ7WasEh6Qe6dNDKHpejbf5ViN05Crap5xQ9vGzQcOmKNLHTnQhzy2FzK8dG45X7dnZ5hQ>https://lh5.googleusercontent.com/lFw35c_q857Ugghw4gawVm1zFa2HkftQ0Gftp90Y6N5eEkTjiia9w7qm-pXrOTqEmid9wLvi2ST2tJ7WasEh6Qe6dNDKHpejbf5ViN05Crap5xQ9vGzQcOmKNLHTnQhzy2FzK8dG45X7dnZ5hQ</a></p>
+<h4 id=第8步-选择oracle-data-vault配置选项><strong>第8步 选择Oracle Data Vault配置选项</strong></h4>
+<p><a href=https://lh4.googleusercontent.com/DxA7NFb8rAYLbXsTYTWSuC85PEzf5hNX9p_Jkg2uGUKKFh2k0pnpfnGRpWXw8JWOB1otndknrR_0aK8Sgqawp6UoM89AzNcdw5mqtGrVFFTjoCjAiGHNHkXKMLLNO9ZNxXiYjn_rPfsklbyzNA>https://lh4.googleusercontent.com/DxA7NFb8rAYLbXsTYTWSuC85PEzf5hNX9p_Jkg2uGUKKFh2k0pnpfnGRpWXw8JWOB1otndknrR_0aK8Sgqawp6UoM89AzNcdw5mqtGrVFFTjoCjAiGHNHkXKMLLNO9ZNxXiYjn_rPfsklbyzNA</a></p>
+<h4 id=第9步-指定配置选项><strong>第9步 指定配置选项</strong></h4>
+<p><a href=https://lh6.googleusercontent.com/Aq4bqpsmXDGTmgPIc_jMbJXKRM6xF09f_mt_AUQKmVjvgAyLATh0NTPxN7B6kV1ff3hKZ0DAAZkkTJJFQmyaatobROWD-N1Fo_63YLSJNgEQJU_OW-5GfHS0h1oPIn1R0D25AYwi_uMf_-6QcA>https://lh6.googleusercontent.com/Aq4bqpsmXDGTmgPIc_jMbJXKRM6xF09f_mt_AUQKmVjvgAyLATh0NTPxN7B6kV1ff3hKZ0DAAZkkTJJFQmyaatobROWD-N1Fo_63YLSJNgEQJU_OW-5GfHS0h1oPIn1R0D25AYwi_uMf_-6QcA</a></p>
+<p>配置内存为VM总内存的80%（SGA、PGA自动分配）</p>
+<p><a href=https://lh3.googleusercontent.com/q6_H3E0ub7LbLV2c63bX5TobcCxLIhLPzXORnXaUxLtfPmmDBmXxpzf8-SECSNGadR3caDSTraJr-qBawHy-mpRukGrqW6xjLhroVo4_d4ihiwgk6Idjroo_30q69usUKHGdhRHuUb41CZMlOw>https://lh3.googleusercontent.com/q6_H3E0ub7LbLV2c63bX5TobcCxLIhLPzXORnXaUxLtfPmmDBmXxpzf8-SECSNGadR3caDSTraJr-qBawHy-mpRukGrqW6xjLhroVo4_d4ihiwgk6Idjroo_30q69usUKHGdhRHuUb41CZMlOw</a></p>
+<h4 id=第10步-指定管理选项><strong>第10步 指定管理选项</strong></h4>
+<p><a href=https://lh3.googleusercontent.com/Hk93RC8q9wJFA3RCKhBVSmN5aovdPfj7yyUErBn6MKgcJy1-i64UjTX27pVGC7mkvNiKv70mq9FRr0voJR22MRXcbFzq0BvAor2InPucrH20Hq-ACXUiypab0HkCwNxoOxaLIdSr_IBZIDy50g>https://lh3.googleusercontent.com/Hk93RC8q9wJFA3RCKhBVSmN5aovdPfj7yyUErBn6MKgcJy1-i64UjTX27pVGC7mkvNiKv70mq9FRr0voJR22MRXcbFzq0BvAor2InPucrH20Hq-ACXUiypab0HkCwNxoOxaLIdSr_IBZIDy50g</a></p>
+<h4 id=第11步-指定数控用户身份证明><strong>第11步 指定数控用户身份证明</strong></h4>
+<p><a href=https://lh4.googleusercontent.com/mCeoFQF1A9n4KPChBs4o86njde9oAxboNW-BUEmsnkey2shr18exAuXLR_8kjI5SrSbTus9nykMufeF1ZguXcIUaTY1ujRumLt91kNHiBA6bX2t89jatUMkmVjWfIOkq8rc0eUaAdZEoLIaxZA>https://lh4.googleusercontent.com/mCeoFQF1A9n4KPChBs4o86njde9oAxboNW-BUEmsnkey2shr18exAuXLR_8kjI5SrSbTus9nykMufeF1ZguXcIUaTY1ujRumLt91kNHiBA6bX2t89jatUMkmVjWfIOkq8rc0eUaAdZEoLIaxZA</a></p>
+<p>选择 所有账户使用同一管理口令： VMware1!</p>
+<h4 id=第12步-选择数据库创建选项><strong>第12步 选择数据库创建选项</strong></h4>
+<p><a href=https://lh5.googleusercontent.com/xb7X6-B6y1djC5trBnJSeX3Xb7v2ABarjWwRxH-oS51qpEau4ARCi5hJPR0bvXjdBBvbGDSiSuhjn7a9tIOY-hcYQx57sqgN5p2wFYAxpfIHOWbkHUxtm2CZeS47VfpBJzmxAo8m3jzg1AiU4A>https://lh5.googleusercontent.com/xb7X6-B6y1djC5trBnJSeX3Xb7v2ABarjWwRxH-oS51qpEau4ARCi5hJPR0bvXjdBBvbGDSiSuhjn7a9tIOY-hcYQx57sqgN5p2wFYAxpfIHOWbkHUxtm2CZeS47VfpBJzmxAo8m3jzg1AiU4A</a></p>
+<h4 id=第13步-概要><strong>第13步 概要</strong></h4>
+<p><a href=https://lh6.googleusercontent.com/yp5-dokaLYaPRlvVwa9Y8gv9T64iAztUI-TWUbgoDRfZ4f89R9Q8KT0QxOn9nz4WRRSRSdLpRfgu9AKFCLsLgbFXUFfMt6ihcF4LYfpBEBGi8FMqiyopeEPK0hxkQ7BOYMS30RPA2EaROp_n3A>https://lh6.googleusercontent.com/yp5-dokaLYaPRlvVwa9Y8gv9T64iAztUI-TWUbgoDRfZ4f89R9Q8KT0QxOn9nz4WRRSRSdLpRfgu9AKFCLsLgbFXUFfMt6ihcF4LYfpBEBGi8FMqiyopeEPK0hxkQ7BOYMS30RPA2EaROp_n3A</a></p>
+<h4 id=第14步-进度页><strong>第14步 进度页</strong></h4>
+<p><a href=https://lh6.googleusercontent.com/LlkKCXUuln4cN1SnLz5XzmZsDIKq5HKuuHGKW_VJoS-yptrN0rDOTif4BstLN39Q3qP5gS9LsA0JGEeICF89y7o8xm8lS6YipHt_SsblYGP7OqRLQ0O9AFg9N-ai2dPHULD_kSAAPo4Z5htqfg>https://lh6.googleusercontent.com/LlkKCXUuln4cN1SnLz5XzmZsDIKq5HKuuHGKW_VJoS-yptrN0rDOTif4BstLN39Q3qP5gS9LsA0JGEeICF89y7o8xm8lS6YipHt_SsblYGP7OqRLQ0O9AFg9N-ai2dPHULD_kSAAPo4Z5htqfg</a></p>
+<h4 id=第15步-完成><strong>第15步 完成</strong></h4>
+<p><a href=https://lh6.googleusercontent.com/uW8UMTwiM1SlorWaW0U8OvJagW2b1MfDq5MQKsKiN_NHvfAU_c3pYwpIJgxiVVD04Y1j8aEwUSkxIXhMDp9Dauu-RMofwOFLanH4awYa_xg2ykxdkIgOhkJkmqt0TdSpCsEpeKwRbkux0wj7zQ>https://lh6.googleusercontent.com/uW8UMTwiM1SlorWaW0U8OvJagW2b1MfDq5MQKsKiN_NHvfAU_c3pYwpIJgxiVVD04Y1j8aEwUSkxIXhMDp9Dauu-RMofwOFLanH4awYa_xg2ykxdkIgOhkJkmqt0TdSpCsEpeKwRbkux0wj7zQ</a></p>
+<ul>
+<li><strong>检查测试</strong></li>
+</ul>
+<h3 id=连接oracle数据库><strong>连接Oracle数据库</strong></h3>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>sqlplus / as sysdba
+</code></pre></div><h3 id=查看连接数据库名称><strong>查看连接数据库名称</strong></h3>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>SQL&gt; show con_name;
+</code></pre></div><h3 id=查看全局数据库名><strong>查看全局数据库名</strong></h3>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>SQL&gt;select name from v<span style=color:#b8860b>$database</span>;
+</code></pre></div><h3 id=查看pdbs><strong>查看PDBS</strong></h3>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>SQL&gt; show pdbs;
+</code></pre></div><h3 id=查看数据库sga设置><strong>查看数据库SGA设置</strong></h3>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>SQL&gt; show parameter sga;
+</code></pre></div><h3 id=查看数据库pga设置><strong>查看数据库PGA设置</strong></h3>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>SQL&gt; show parameter pga;
+</code></pre></div><h3 id=连接cdb><strong>连接CDB</strong></h3>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>SQL&gt; alter session <span style=color:#a2f>set</span> <span style=color:#b8860b>container</span><span style=color:#666>=</span>CDB<span style=color:#b8860b>$ROOT</span>;
+</code></pre></div>
+</div>
+<footer class=post-footer>
+<div id=wcomments></div>
+</footer>
+</article>
+</section>
+</div>
+</div>
+<div class=sidebar-toggle>
+<div class=sidebar-toggle-line-wrap>
+<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+</div>
+</div>
+<aside id=sidebar class=sidebar>
+<div class=sidebar-inner>
+<ul class="sidebar-nav motion-element">
+<li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>
+文章目录
+</li>
+<li class=sidebar-nav-overview data-target=site-overview>
+站点概览
+</li>
+</ul>
+<section class="site-overview sidebar-panel">
+<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
+<img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon>
+<p class=site-author-name itemprop=name>Etaon</p>
+<p class="site-description motion-element" itemprop=description>
+Kepp Going!
+</p>
+</div>
+<nav class="site-state motion-element">
+<div class="site-state-item site-state-posts">
+<a href=/post/>
+<span class=site-state-item-count>61</span>
+<span class=site-state-item-name>日志</span>
+</a>
+</div>
+<div class="site-state-item site-state-categories">
+<a href=/categories/>
+<span class=site-state-item-count>13</span>
+<span class=site-state-item-name>分类</span>
+</a>
+</div>
+<div class="site-state-item site-state-tags">
+<a href=/tags/>
+<span class=site-state-item-count>34</span>
+<span class=site-state-item-name>标签</span>
+</a>
+</div>
+</nav>
+<div class="links-of-author motion-element">
+<span class=links-of-author-item>
+<a href=https://github.com/etaon target=_blank title=GitHub>
+<i class="fa fa-fw fa-github"></i>
+GitHub
+</a>
+</span>
+<span class=links-of-author-item>
+<a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN>
+<i class="fa fa-fw fa-CSDN"></i>
+CSDN
+</a>
+</span>
+</div>
+<div class="links-of-blogroll motion-element links-of-blogroll-inline">
+<div class=links-of-blogroll-title>
+<i class="fa fa-fw fa-globe"></i>
+友情链接
+</div>
+<ul class=links-of-blogroll-list>
+<li class=links-of-blogroll-item>
+<a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a>
+</li>
+</ul>
+</div>
+<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
+<div class=tagcloud-of-blogroll-title>
+<i class="fa fa-fw fa-tags"></i>
+标签云
+</div>
+<ul class=tagcloud-of-blogroll-list>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/mysql>Mysql</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/aws>Aws</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/dql>Dql</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/hadoop>Hadoop</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/redis>Redis</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/cicd>Cicd</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/git>Git</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/istio>Istio</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/mongodb>Mongodb</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/azure>Azure</a>
+</li>
+</ul>
+</div>
+</section>
+<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+<div class=post-toc>
+<div class=post-toc-content><nav id=TableOfContents>
+<ul>
+<li><a href=#配置磁盘根据配置修改><strong>配置磁盘(根据配置修改)</strong></a></li>
+</ul>
+<ul>
+<li><a href=#grid-安装图形化安装><strong>GRID 安装(图形化安装)</strong></a>
+<ul>
+<li><a href=#解压安装介质root><strong>解压安装介质,root</strong></a></li>
+<li><a href=#以grid用户登陆><strong>以grid用户登陆</strong></a></li>
+<li><a href=#前面安装grid的作用就是可用asm使用磁盘>前面安装Grid的作用就是可用ASM使用磁盘</a></li>
+<li><a href=#解压安装介质oracle-login><strong>解压安装介质,oracle login</strong></a></li>
+<li><a href=#图形化安装oracle数据库><strong>图形化安装Oracle数据库</strong></a></li>
+</ul>
+</li>
+<li><a href=#用dbca创建数据库><strong>用DBCA创建数据库</strong></a>
+<ul>
+<li><a href=#图形化创建数据库><strong>图形化创建数据库</strong></a></li>
+<li><a href=#连接oracle数据库><strong>连接Oracle数据库</strong></a></li>
+<li><a href=#查看连接数据库名称><strong>查看连接数据库名称</strong></a></li>
+<li><a href=#查看全局数据库名><strong>查看全局数据库名</strong></a></li>
+<li><a href=#查看pdbs><strong>查看PDBS</strong></a></li>
+<li><a href=#查看数据库sga设置><strong>查看数据库SGA设置</strong></a></li>
+<li><a href=#查看数据库pga设置><strong>查看数据库PGA设置</strong></a></li>
+<li><a href=#连接cdb><strong>连接CDB</strong></a></li>
+</ul>
+</li>
+</ul>
+</nav></div>
+</div>
+</section>
+</div>
+</aside>
+</div>
+</main>
+<footer id=footer class=footer>
+<div class=footer-inner>
+<div class=copyright>
+<span class=copyright-year>
+&copy; 2010 - 2022
+</span>
+<span class=with-love><i class="fa fa-heart"></i></span>
+<span class=copyright-author>路无止境！</span>
+</div>
+<div class=powered-info>
+<span class=powered-by>
+Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.91.2</a>
+</span>
+<span class=separator-line>/</span>
+<span class=theme-info>
+Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
+</a>
+</span>
+</div>
+<div class=vistor-info>
+<script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<span class=site-uv>
+<i class="fa fa-user"></i>
+<span class=busuanzi-value id=busuanzi_value_site_uv></span>
+</span>
+<span class=separator-line>/</span>
+<span class=site-pv>
+<i class="fa fa-eye"></i>
+<span class=busuanzi-value id=busuanzi_value_site_pv></span>
+</span>
+</div>
+<div class=license-info>
+<span class=storage-info>
+Storage by
+<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a>
+</span>
+<span class=separator-line>/</span>
+<span class=license-num>
+<a href target=_blank></a>
+</span>
+</div>
+</div>
+</footer>
+<div class=back-to-top>
+<i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span>
+</div>
+</div>
+<script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
+<script type=text/javascript src=/js/search.js></script>
+<script type=text/javascript src=/js/affix.js></script>
+<script type=text/javascript src=/js/scrollspy.js></script>
+<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.main').css('padding-bottom'),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}}),$(document).on('affixed.bs.affix',function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var b=$('.header-inner').height()+10,c,d,a,e;$('#sidebar').css({'margin-top':b}).show(),c=parseInt($('#sidebar').css('margin-top')),d=parseInt($('.sidebar-inner').css('height')),a=c+d,e=$('.content-wrap').height(),e<a&&$('.content-wrap').css('min-height',a),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
+<script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
+<script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+'//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js',function(){new Waline({el:'#wcomments',visitor:!0,avatar:'wavatar',avatarCDN:'https://sdn.geekzu.org/avatar/',avatarForce:!1,wordLimit:'200',placeholder:' 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ',requiredFields:['nick','mail'],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$('#wcomments').html('抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。')})</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type=text/javascript src="//s7.addthis.com/js/300/addthis_widget.js#pubid=Your%20AddthisId"></script>
+<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
+</body>
+</html>

@@ -1,0 +1,606 @@
+<!doctype html><html lang=zh-cn dir=content/zh-cn>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
+<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
+<title> Git-团队协作 - 路无止境！ </title>
+<meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云">
+<meta name=author content="Etaon">
+<meta property="og:title" content="Git-团队协作">
+<meta property="og:site_name" content="路无止境！">
+<meta property="og:image" content="/img/author.jpg">
+<meta name=title content="Git-团队协作 - 路无止境！">
+<meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。">
+<link rel="shortcut icon" href=/img/favicon.ico>
+<link rel=apple-touch-icon href=/img/apple-touch-icon.png>
+<link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png>
+<link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css>
+<link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet>
+<link href=/css/main.css rel=stylesheet type=text/css>
+<link href=/css/syntax.css rel=stylesheet type=text/css>
+</head>
+<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
+<div class="container one-collumn sidebar-position-left page-home">
+<div class=headband></div>
+<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
+<div class=header-inner> <div class=site-brand-container>
+<div class=site-nav-toggle>
+<div class=toggle role=button style=opacity:1;top:0>
+<span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span>
+</div>
+</div>
+<div class=site-meta>
+<div class=multi-lang-switch>
+<i class="fa fa-fw fa-language" style=margin-right:5px></i>
+<a class=lang-link id=zh-cn href=#>中文</a>
+</div>
+<div class=custom-logo-site-title>
+<a href=/ class=brand rel=start>
+<span class=logo-line-before><i></i></span>
+<span class=site-title>路无止境！</span>
+<span class=logo-line-after><i></i></span>
+</a>
+</div>
+<p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p>
+</div>
+<div class=site-nav-right>
+<div class="toggle popup-trigger" style=opacity:1;top:0>
+<i class="fa fa-search fa-fw fa-lg"></i>
+</div>
+</div>
+</div>
+<nav class=site-nav>
+<ul id=menu class=menu>
+<li class=menu-item>
+<a href=/ rel=section>
+<i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页
+</a>
+</li>
+<li class=menu-item>
+<a href=/post rel=section>
+<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档
+</a>
+</li>
+<li class=menu-item>
+<a href=/about.html rel=section>
+<i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于我
+</a>
+</li>
+<li class=menu-item>
+<a href=/404.html rel=section>
+<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益404
+</a>
+</li>
+<li class="menu-item menu-item-search">
+<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> 搜索</a>
+</li>
+</ul>
+<div class=site-search>
+<div class="popup search-popup local-search-popup">
+<div class="local-search-header clearfix">
+<span class=search-icon><i class="fa fa-search"></i> </span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
+<div class=local-search-input-wrapper>
+<input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
+</div>
+</div>
+<div id=local-search-result></div>
+</div>
+</div>
+</nav>
+</div>
+</header>
+<main id=main class=main>
+<div class=main-inner>
+<div class=content-wrap>
+<div id=content class=content>
+<section id=posts class=posts-expand>
+<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
+<header class=post-header>
+<h1 class=post-title itemprop="name headline" style=font-weight:700>
+<a class=post-title-link href=https://www.etaon.link/2022/02/11/git-co.html itemprop=url>
+Git-团队协作
+</a>
+</h1>
+</header>
+<div class=post-body itemprop=articleBody>
+<h2 id=团队内协作>团队内协作</h2>
+<p><img src=Git%E5%9B%A2%E9%98%9F%E5%8D%8F%E4%BD%9C%20a378a21a456a4db7abf573968ff44339/Untitled.png alt=Untitled></p>
+<h3 id=准备工作>准备工作</h3>
+<p>使用Github，两个账号：
+etaon和etaoner</p>
+<p>本地：
+alma—>etaon;
+worker-03—>etaoner</p>
+<p>Github已经不使用用户名和密码方式：</p>
+<p>Support for password authentication was removed on August 13, 2021. Please use a personal access token instead.</p>
+<p>各自的ssh id_rsa.pub事先配置好，参考：</p>
+<p><a href=https://docs.github.com/articles/generating-an-ssh-key/>Connecting to GitHub with SSH - GitHub Docs</a></p>
+<h3 id=远程仓库操作>远程仓库操作</h3>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>git remote -v</td>
+<td>查看当前所有远程地址别名</td>
+</tr>
+<tr>
+<td>git remote add 别名 远程地址</td>
+<td>起别名</td>
+</tr>
+<tr>
+<td>git push 别名 分支</td>
+<td>推送本地分支上的内容到远程仓库</td>
+</tr>
+<tr>
+<td>git clone 远程地址</td>
+<td>将远程仓库的内容克隆到本地</td>
+</tr>
+<tr>
+<td>git pull 远程库地址别名 远程分支名</td>
+<td>将远程仓库对于分支最新内容拉下来后与当前本地分支直接合并</td>
+</tr>
+</tbody>
+</table>
+<p>Alma：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#666>[</span>root@Alma ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># mkdir git-demo</span>
+<span style=color:#666>[</span>root@Alma ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># cd git-demo/</span>
+<span style=color:#666>[</span>root@Alma git-demo<span style=color:#666>]</span><span style=color:#080;font-style:italic># git init</span>
+Initialized empty Git repository in /root/git-demo/.git/
+<span style=color:#666>[</span>root@Alma git-demo<span style=color:#666>]</span><span style=color:#080;font-style:italic># touch readme.md</span>
+
+<span style=color:#666>[</span>root@Alma git-demo<span style=color:#666>]</span><span style=color:#080;font-style:italic># echo &#39;1st to readme~~~&#39; &gt; readme.md</span>
+<span style=color:#666>[</span>root@Alma git-demo<span style=color:#666>]</span><span style=color:#080;font-style:italic># cat readme.md</span>
+1st to readme~~~
+<span style=color:#666>[</span>root@Alma git-demo<span style=color:#666>]</span><span style=color:#080;font-style:italic># git add  .</span>
+<span style=color:#666>[</span>root@Alma git-demo<span style=color:#666>]</span><span style=color:#080;font-style:italic># git commit readme.md -m &#39;The 1st&#39;</span>
+<span style=color:#666>[</span>master <span style=color:#666>(</span>root-commit<span style=color:#666>)</span> 10132b0<span style=color:#666>]</span> The 1st
+ <span style=color:#666>1</span> file changed, <span style=color:#666>1</span> insertion<span style=color:#666>(</span>+<span style=color:#666>)</span>
+ create mode <span style=color:#666>100644</span> readme.md
+<span style=color:#666>[</span>root@Alma git-demo<span style=color:#666>]</span><span style=color:#080;font-style:italic># git reflog</span>
+10132b0 <span style=color:#666>(</span>HEAD -&gt; master<span style=color:#666>)</span> HEAD@<span style=color:#666>{</span>0<span style=color:#666>}</span>: commit <span style=color:#666>(</span>initial<span style=color:#666>)</span>: The 1st
+<span style=color:#666>[</span>root@Alma git-demo<span style=color:#666>]</span><span style=color:#080;font-style:italic># echo &#39;2nd to readme~~~&#39; &gt;&gt; readme.md</span>
+<span style=color:#666>[</span>root@Alma git-demo<span style=color:#666>]</span><span style=color:#080;font-style:italic># cat readme.md</span>
+**1st to readme~~~
+2nd to readme~~~**
+<span style=color:#666>[</span>root@Alma git-demo<span style=color:#666>]</span><span style=color:#080;font-style:italic># git add  .</span>
+<span style=color:#666>[</span>root@Alma git-demo<span style=color:#666>]</span><span style=color:#080;font-style:italic># git commit readme.md -m &#39;The 2st&#39;</span>
+<span style=color:#666>[</span>master f38edd1<span style=color:#666>]</span> The 2st
+ <span style=color:#666>1</span> file changed, <span style=color:#666>1</span> insertion<span style=color:#666>(</span>+<span style=color:#666>)</span>
+<span style=color:#666>[</span>root@Alma git-demo<span style=color:#666>]</span><span style=color:#080;font-style:italic># git reflog</span>
+f38edd1 <span style=color:#666>(</span>HEAD -&gt; master<span style=color:#666>)</span> HEAD@<span style=color:#666>{</span>0<span style=color:#666>}</span>: commit: The 2st
+10132b0 HEAD@<span style=color:#666>{</span>1<span style=color:#666>}</span>: commit <span style=color:#666>(</span>initial<span style=color:#666>)</span>: The 1st **#现在readme.md的内容是粗体部分**
+</code></pre></div><p>在github中，用etaon账号建立仓库：git-demo</p>
+<p>push内容到github</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#666>[</span>root@Alma git-demo<span style=color:#666>]</span><span style=color:#080;font-style:italic># git branch -M main #创建分支（原有为master）</span>
+<span style=color:#666>[</span>root@Alma git-demo<span style=color:#666>]</span><span style=color:#080;font-style:italic># git checkout main #切换到main</span>
+Already on <span style=color:#b44>&#39;main&#39;</span>
+<span style=color:#666>[</span>root@Alma git-demo<span style=color:#666>]</span><span style=color:#080;font-style:italic># git remote add git-demo https://github.com/etaon/git-demo.git#添加远程仓库，ssh方式</span>
+<span style=color:#666>[</span>root@Alma git-demo<span style=color:#666>]</span><span style=color:#080;font-style:italic># git remote -v#查看远程库</span>
+git-demo        git@github.com:etaon/git-demo.git <span style=color:#666>(</span>fetch<span style=color:#666>)</span>
+git-demo        git@github.com:etaon/git-demo.git <span style=color:#666>(</span>push<span style=color:#666>)</span>
+<span style=color:#666>[</span>root@Alma git-demo<span style=color:#666>]</span><span style=color:#080;font-style:italic># git branch -v#查看分支</span>
+* main f38edd1 The 2st
+<span style=color:#666>[</span>root@Alma git-demo<span style=color:#666>]</span><span style=color:#080;font-style:italic># git push git-demo main#push到远程库</span>
+Enumerating objects: 6, <span style=color:#a2f;font-weight:700>done</span>.
+Counting objects: 100% <span style=color:#666>(</span>6/6<span style=color:#666>)</span>, <span style=color:#a2f;font-weight:700>done</span>.
+Compressing objects: 100% <span style=color:#666>(</span>2/2<span style=color:#666>)</span>, <span style=color:#a2f;font-weight:700>done</span>.
+Writing objects: 100% <span style=color:#666>(</span>6/6<span style=color:#666>)</span>, <span style=color:#666>442</span> bytes | 442.00 KiB/s, <span style=color:#a2f;font-weight:700>done</span>.
+Total <span style=color:#666>6</span> <span style=color:#666>(</span>delta 0<span style=color:#666>)</span>, reused <span style=color:#666>0</span> <span style=color:#666>(</span>delta 0<span style=color:#666>)</span>, pack-reused <span style=color:#666>0</span>
+To github.com:etaon/git-demo.git
+ * <span style=color:#666>[</span>new branch<span style=color:#666>]</span>      main -&gt; main
+</code></pre></div><p>在github使用etaon账户编辑readme.md</p>
+<p><img src=Git%E5%9B%A2%E9%98%9F%E5%8D%8F%E4%BD%9C%20a378a21a456a4db7abf573968ff44339/Untitled%201.png alt=Untitled></p>
+<p>Alma pull:</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#666>[</span>root@Alma git-demo<span style=color:#666>]</span><span style=color:#080;font-style:italic># git pull git-demo main</span>
+warning: Pulling without specifying how to reconcile divergent branches is
+discouraged. You can squelch this message by running one of the following
+commands sometime before your next pull:
+
+  git config pull.rebase <span style=color:#a2f>false</span>  <span style=color:#080;font-style:italic># merge (the default strategy)</span>
+  git config pull.rebase <span style=color:#a2f>true</span>   <span style=color:#080;font-style:italic># rebase</span>
+  git config pull.ff only       <span style=color:#080;font-style:italic># fast-forward only</span>
+
+You can replace <span style=color:#b44>&#34;git config&#34;</span> with <span style=color:#b44>&#34;git config --global&#34;</span> to <span style=color:#a2f>set</span> a default
+preference <span style=color:#a2f;font-weight:700>for</span> all repositories. You can also pass --rebase, --no-rebase,
+or --ff-only on the <span style=color:#a2f>command</span> line to override the configured default per
+invocation.
+
+remote: Enumerating objects: 5, <span style=color:#a2f;font-weight:700>done</span>.
+remote: Counting objects: 100% <span style=color:#666>(</span>5/5<span style=color:#666>)</span>, <span style=color:#a2f;font-weight:700>done</span>.
+remote: Total <span style=color:#666>3</span> <span style=color:#666>(</span>delta 0<span style=color:#666>)</span>, reused <span style=color:#666>0</span> <span style=color:#666>(</span>delta 0<span style=color:#666>)</span>, pack-reused <span style=color:#666>0</span>
+Unpacking objects: 100% <span style=color:#666>(</span>3/3<span style=color:#666>)</span>, <span style=color:#666>644</span> bytes | 20.00 KiB/s, <span style=color:#a2f;font-weight:700>done</span>.
+From github.com:etaon/git-demo
+ * branch            main       -&gt; FETCH_HEAD
+   f38edd1..99033ea  main       -&gt; git-demo/main
+Updating f38edd1..99033ea
+Fast-forward
+ readme.md | <span style=color:#666>3</span> +++
+ <span style=color:#666>1</span> file changed, <span style=color:#666>3</span> insertions<span style=color:#666>(</span>+<span style=color:#666>)</span>
+<span style=color:#666>[</span>root@Alma git-demo<span style=color:#666>]</span><span style=color:#080;font-style:italic># cat readme.md</span>
+1st to readme~~~
+
+2nd to readme~~~
+
+2022-02-10
+</code></pre></div><p>Worker-03:clone</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#666>[</span>root@worker-03 ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># git config --global user.name etaoner</span>
+<span style=color:#666>[</span>root@worker-03 ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># git config --global user.email etaoner@163.com</span>
+<span style=color:#666>[</span>root@worker-03 ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># git clone https://github.com/etaon/git-demo.git</span>
+Cloning into <span style=color:#b44>&#39;git-demo&#39;</span>...
+remote: Enumerating objects: 9, <span style=color:#a2f;font-weight:700>done</span>.
+remote: Counting objects: 100% <span style=color:#666>(</span>9/9<span style=color:#666>)</span>, <span style=color:#a2f;font-weight:700>done</span>.
+remote: Compressing objects: 100% <span style=color:#666>(</span>3/3<span style=color:#666>)</span>, <span style=color:#a2f;font-weight:700>done</span>.
+remote: Total <span style=color:#666>9</span> <span style=color:#666>(</span>delta 0<span style=color:#666>)</span>, reused <span style=color:#666>6</span> <span style=color:#666>(</span>delta 0<span style=color:#666>)</span>, pack-reused <span style=color:#666>0</span>
+Receiving objects: 100% <span style=color:#666>(</span>9/9<span style=color:#666>)</span>, <span style=color:#a2f;font-weight:700>done</span>.
+<span style=color:#666>[</span>root@worker-03 ~<span style=color:#666>]</span><span style=color:#080;font-style:italic># cd git-demo/</span>
+<span style=color:#666>[</span>root@worker-03 git-demo<span style=color:#666>]</span><span style=color:#080;font-style:italic># ls</span>
+readme.md
+<span style=color:#666>[</span>root@worker-03 git-demo<span style=color:#666>]</span><span style=color:#080;font-style:italic># cat readme.md</span>
+1st to readme~~~
+
+2nd to readme~~~
+
+2022-02-10
+<span style=color:#666>[</span>root@worker-03 git-demo<span style=color:#666>]</span><span style=color:#080;font-style:italic># git remote -v</span>
+**origin**  https://github.com/etaon/git-demo.git <span style=color:#666>(</span>fetch<span style=color:#666>)</span>
+**origin**  https://github.com/etaon/git-demo.git <span style=color:#666>(</span>push<span style=color:#666>)</span>
+</code></pre></div><p>clone 会做如下操作：</p>
+<p>1、拉取代码</p>
+<p>2、初始化本地仓库</p>
+<p>3、创建别名-默认为origin</p>
+<h3 id=邀请合作者>邀请合作者</h3>
+<p>etaon在github邀请合作者：etaoner</p>
+<p><img src=Git%E5%9B%A2%E9%98%9F%E5%8D%8F%E4%BD%9C%20a378a21a456a4db7abf573968ff44339/Untitled%202.png alt=Untitled></p>
+<p>仓库—>Settings—>Collaborators—>Manage access—>Add people</p>
+<p>复制Invite链接，发送给etaoner</p>
+<h3 id=合作者加入>合作者加入</h3>
+<p>合作者打开链接并选择同意</p>
+<p><img src=Git%E5%9B%A2%E9%98%9F%E5%8D%8F%E4%BD%9C%20a378a21a456a4db7abf573968ff44339/Untitled%203.png alt=Untitled></p>
+<p>此时，在Worker-03上的修改可以push，（使用token登录的etaoner的账号）</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#666>[</span>root@worker-03 git-demo<span style=color:#666>]</span><span style=color:#080;font-style:italic># git push git@github.com:etaon/git-demo.git</span>
+The authenticity of host <span style=color:#b44>&#39;github.com (20.205.243.166)&#39;</span> can<span style=color:#b44>&#39;t be established.
+</span><span style=color:#b44>ECDSA key fingerprint is SHA256:p2QAMXNIC1TJYWeIOttrVc98/R1BUFWu3/LiyKgUfQM.
+</span><span style=color:#b44>ECDSA key fingerprint is MD5:7b:99:81:1e:4c:91:a5:0d:5a:2e:2e:80:13:3f:24:ca.
+</span><span style=color:#b44>Are you sure you want to continue connecting (yes/no)? yes
+</span><span style=color:#b44>Warning: Permanently added &#39;</span>github.com,20.205.243.166<span>&#39;</span> <span style=color:#666>(</span>ECDSA<span style=color:#666>)</span> to the list of known hosts.
+Enumerating objects: 5, <span style=color:#a2f;font-weight:700>done</span>.
+Counting objects: 100% <span style=color:#666>(</span>5/5<span style=color:#666>)</span>, <span style=color:#a2f;font-weight:700>done</span>.
+Delta compression using up to <span style=color:#666>2</span> threads
+Compressing objects: 100% <span style=color:#666>(</span>2/2<span style=color:#666>)</span>, <span style=color:#a2f;font-weight:700>done</span>.
+Writing objects: 100% <span style=color:#666>(</span>3/3<span style=color:#666>)</span>, <span style=color:#666>281</span> bytes | 281.00 KiB/s, <span style=color:#a2f;font-weight:700>done</span>.
+Total <span style=color:#666>3</span> <span style=color:#666>(</span>delta 0<span style=color:#666>)</span>, reused <span style=color:#666>0</span> <span style=color:#666>(</span>delta 0<span style=color:#666>)</span>, pack-reused <span style=color:#666>0</span>
+To github.com:etaon/git-demo.git
+   99033ea..3897420  main -&gt; main
+</code></pre></div><p>从etaon和etaoner的账户都可以看到push情况</p>
+<p><img src=Git%E5%9B%A2%E9%98%9F%E5%8D%8F%E4%BD%9C%20a378a21a456a4db7abf573968ff44339/Untitled%204.png alt=Untitled></p>
+<p><img src=Git%E5%9B%A2%E9%98%9F%E5%8D%8F%E4%BD%9C%20a378a21a456a4db7abf573968ff44339/Untitled%205.png alt=Untitled></p>
+<p>注意：在etaoner的github账户中并没有仓库</p>
+<p>Alma 本地库通过pull更新</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#666>[</span>root@Alma git-demo<span style=color:#666>]</span><span style=color:#080;font-style:italic># git pull git-demo main</span>
+warning: Pulling without specifying how to reconcile divergent branches is
+discouraged. You can squelch this message by running one of the following
+commands sometime before your next pull:
+
+  git config pull.rebase <span style=color:#a2f>false</span>  <span style=color:#080;font-style:italic># merge (the default strategy)</span>
+  git config pull.rebase <span style=color:#a2f>true</span>   <span style=color:#080;font-style:italic># rebase</span>
+  git config pull.ff only       <span style=color:#080;font-style:italic># fast-forward only</span>
+
+You can replace <span style=color:#b44>&#34;git config&#34;</span> with <span style=color:#b44>&#34;git config --global&#34;</span> to <span style=color:#a2f>set</span> a default
+preference <span style=color:#a2f;font-weight:700>for</span> all repositories. You can also pass --rebase, --no-rebase,
+or --ff-only on the <span style=color:#a2f>command</span> line to override the configured default per
+invocation.
+
+remote: Enumerating objects: 5, <span style=color:#a2f;font-weight:700>done</span>.
+remote: Counting objects: 100% <span style=color:#666>(</span>5/5<span style=color:#666>)</span>, <span style=color:#a2f;font-weight:700>done</span>.
+remote: Compressing objects: 100% <span style=color:#666>(</span>2/2<span style=color:#666>)</span>, <span style=color:#a2f;font-weight:700>done</span>.
+remote: Total <span style=color:#666>3</span> <span style=color:#666>(</span>delta 0<span style=color:#666>)</span>, reused <span style=color:#666>3</span> <span style=color:#666>(</span>delta 0<span style=color:#666>)</span>, pack-reused <span style=color:#666>0</span>
+Unpacking objects: 100% <span style=color:#666>(</span>3/3<span style=color:#666>)</span>, <span style=color:#666>261</span> bytes | 261.00 KiB/s, <span style=color:#a2f;font-weight:700>done</span>.
+From github.com:etaon/git-demo
+ * branch            main       -&gt; FETCH_HEAD
+   99033ea..3897420  main       -&gt; git-demo/main
+Updating 99033ea..3897420
+Fast-forward
+ readme.md | <span style=color:#666>2</span> ++
+ <span style=color:#666>1</span> file changed, <span style=color:#666>2</span> insertions<span style=color:#666>(</span>+<span style=color:#666>)</span>
+<span style=color:#666>[</span>root@Alma git-demo<span style=color:#666>]</span><span style=color:#080;font-style:italic># cat readme.md</span>
+1st to readme~~~
+
+2nd to readme~~~
+
+2022-02-10
+
+change by etaoner
+</code></pre></div><h2 id=跨团队协作>跨团队协作</h2>
+<p>使用另外一个账号joinini来表示团队外成员</p>
+<p><img src=Git%E5%9B%A2%E9%98%9F%E5%8D%8F%E4%BD%9C%20a378a21a456a4db7abf573968ff44339/Untitled%206.png alt=Untitled></p>
+<h3 id=fork仓库>fork仓库</h3>
+<p><img src=Git%E5%9B%A2%E9%98%9F%E5%8D%8F%E4%BD%9C%20a378a21a456a4db7abf573968ff44339/Untitled%207.png alt=Untitled></p>
+<p>可以看到：</p>
+<p><img src=Git%E5%9B%A2%E9%98%9F%E5%8D%8F%E4%BD%9C%20a378a21a456a4db7abf573968ff44339/Untitled%208.png alt=Untitled></p>
+<p><a href=https://github.com/joinini>joinini</a> / <strong><a href=https://github.com/joinini/git-demo>git-demo</a> 名字</strong></p>
+<p>forked from <a href=https://github.com/etaon/git-demo>etaon/git-demo</a> 来源</p>
+<h3 id=joinini在线编辑>joinini在线编辑：</h3>
+<p><img src=Git%E5%9B%A2%E9%98%9F%E5%8D%8F%E4%BD%9C%20a378a21a456a4db7abf573968ff44339/Untitled%209.png alt=Untitled></p>
+<p>提交：</p>
+<p><img src=Git%E5%9B%A2%E9%98%9F%E5%8D%8F%E4%BD%9C%20a378a21a456a4db7abf573968ff44339/Untitled%2010.png alt=Untitled></p>
+<p>创建一个pull request</p>
+<p><img src=Git%E5%9B%A2%E9%98%9F%E5%8D%8F%E4%BD%9C%20a378a21a456a4db7abf573968ff44339/Untitled%2011.png alt=Untitled></p>
+<p>提交以后：</p>
+<p>在joinini账户中，发现转到etaon/git-demo</p>
+<p><img src=Git%E5%9B%A2%E9%98%9F%E5%8D%8F%E4%BD%9C%20a378a21a456a4db7abf573968ff44339/Untitled%2012.png alt=Untitled></p>
+<h3 id=etaon操作>etaon操作</h3>
+<p>而在etaon的账户中可以看到pull request</p>
+<p><img src=Git%E5%9B%A2%E9%98%9F%E5%8D%8F%E4%BD%9C%20a378a21a456a4db7abf573968ff44339/Untitled%2013.png alt=Untitled></p>
+<p>进入request还可以发起聊天</p>
+<p><img src=Git%E5%9B%A2%E9%98%9F%E5%8D%8F%E4%BD%9C%20a378a21a456a4db7abf573968ff44339/Untitled%2014.png alt=Untitled></p>
+<p><img src=Git%E5%9B%A2%E9%98%9F%E5%8D%8F%E4%BD%9C%20a378a21a456a4db7abf573968ff44339/Untitled%2015.png alt=Untitled></p>
+<p>joinini可以看到：</p>
+<p><img src=Git%E5%9B%A2%E9%98%9F%E5%8D%8F%E4%BD%9C%20a378a21a456a4db7abf573968ff44339/Untitled%2016.png alt=Untitled></p>
+<p>合并代码：</p>
+<p><img src=Git%E5%9B%A2%E9%98%9F%E5%8D%8F%E4%BD%9C%20a378a21a456a4db7abf573968ff44339/Untitled%2017.png alt=Untitled></p>
+<p>得到结果</p>
+<p><img src=Git%E5%9B%A2%E9%98%9F%E5%8D%8F%E4%BD%9C%20a378a21a456a4db7abf573968ff44339/Untitled%2018.png alt=Untitled></p>
+<h3 id=本地库更新>本地库更新</h3>
+<p>当然，etaon可以在alma上更新本地库</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#666>[</span>root@Alma git-demo<span style=color:#666>]</span><span style=color:#080;font-style:italic># git pull git-demo main</span>
+warning: Pulling without specifying how to reconcile divergent branches is
+discouraged. You can squelch this message by running one of the following
+commands sometime before your next pull:
+
+  git config pull.rebase <span style=color:#a2f>false</span>  <span style=color:#080;font-style:italic># merge (the default strategy)</span>
+  git config pull.rebase <span style=color:#a2f>true</span>   <span style=color:#080;font-style:italic># rebase</span>
+  git config pull.ff only       <span style=color:#080;font-style:italic># fast-forward only</span>
+
+You can replace <span style=color:#b44>&#34;git config&#34;</span> with <span style=color:#b44>&#34;git config --global&#34;</span> to <span style=color:#a2f>set</span> a default
+preference <span style=color:#a2f;font-weight:700>for</span> all repositories. You can also pass --rebase, --no-rebase,
+or --ff-only on the <span style=color:#a2f>command</span> line to override the configured default per
+invocation.
+
+remote: Enumerating objects: 6, <span style=color:#a2f;font-weight:700>done</span>.
+remote: Counting objects: 100% <span style=color:#666>(</span>6/6<span style=color:#666>)</span>, <span style=color:#a2f;font-weight:700>done</span>.
+remote: Compressing objects: 100% <span style=color:#666>(</span>3/3<span style=color:#666>)</span>, <span style=color:#a2f;font-weight:700>done</span>.
+Unpacking objects: 100% <span style=color:#666>(</span>4/4<span style=color:#666>)</span>, 1.28 KiB | 1.28 MiB/s, <span style=color:#a2f;font-weight:700>done</span>.
+remote: Total <span style=color:#666>4</span> <span style=color:#666>(</span>delta 0<span style=color:#666>)</span>, reused <span style=color:#666>0</span> <span style=color:#666>(</span>delta 0<span style=color:#666>)</span>, pack-reused <span style=color:#666>0</span>
+From github.com:etaon/git-demo
+ * branch            main       -&gt; FETCH_HEAD
+   3897420..f34aef4  main       -&gt; git-demo/main
+Updating 3897420..f34aef4
+Fast-forward
+ readme.md | <span style=color:#666>2</span> ++
+ <span style=color:#666>1</span> file changed, <span style=color:#666>2</span> insertions<span style=color:#666>(</span>+<span style=color:#666>)</span>
+
+<span style=color:#666>[</span>root@Alma git-demo<span style=color:#666>]</span><span style=color:#080;font-style:italic># cat readme.md</span>
+1st to readme~~~
+
+2nd to readme~~~
+
+2022-02-10
+
+change by etaoner
+
+change by joinini, your friend
+</code></pre></div>
+</div>
+<footer class=post-footer>
+<div id=wcomments></div>
+</footer>
+</article>
+</section>
+</div>
+</div>
+<div class=sidebar-toggle>
+<div class=sidebar-toggle-line-wrap>
+<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+</div>
+</div>
+<aside id=sidebar class=sidebar>
+<div class=sidebar-inner>
+<ul class="sidebar-nav motion-element">
+<li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>
+文章目录
+</li>
+<li class=sidebar-nav-overview data-target=site-overview>
+站点概览
+</li>
+</ul>
+<section class="site-overview sidebar-panel">
+<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
+<img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon>
+<p class=site-author-name itemprop=name>Etaon</p>
+<p class="site-description motion-element" itemprop=description>
+Kepp Going!
+</p>
+</div>
+<nav class="site-state motion-element">
+<div class="site-state-item site-state-posts">
+<a href=/post/>
+<span class=site-state-item-count>61</span>
+<span class=site-state-item-name>日志</span>
+</a>
+</div>
+<div class="site-state-item site-state-categories">
+<a href=/categories/>
+<span class=site-state-item-count>13</span>
+<span class=site-state-item-name>分类</span>
+</a>
+</div>
+<div class="site-state-item site-state-tags">
+<a href=/tags/>
+<span class=site-state-item-count>34</span>
+<span class=site-state-item-name>标签</span>
+</a>
+</div>
+</nav>
+<div class="links-of-author motion-element">
+<span class=links-of-author-item>
+<a href=https://github.com/etaon target=_blank title=GitHub>
+<i class="fa fa-fw fa-github"></i>
+GitHub
+</a>
+</span>
+<span class=links-of-author-item>
+<a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN>
+<i class="fa fa-fw fa-CSDN"></i>
+CSDN
+</a>
+</span>
+</div>
+<div class="links-of-blogroll motion-element links-of-blogroll-inline">
+<div class=links-of-blogroll-title>
+<i class="fa fa-fw fa-globe"></i>
+友情链接
+</div>
+<ul class=links-of-blogroll-list>
+<li class=links-of-blogroll-item>
+<a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a>
+</li>
+</ul>
+</div>
+<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
+<div class=tagcloud-of-blogroll-title>
+<i class="fa fa-fw fa-tags"></i>
+标签云
+</div>
+<ul class=tagcloud-of-blogroll-list>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/mysql>Mysql</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/aws>Aws</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/dql>Dql</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/hadoop>Hadoop</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/redis>Redis</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/cicd>Cicd</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/git>Git</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/istio>Istio</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/mongodb>Mongodb</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/azure>Azure</a>
+</li>
+</ul>
+</div>
+</section>
+<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+<div class=post-toc>
+<div class=post-toc-content><nav id=TableOfContents>
+<ul>
+<li><a href=#团队内协作>团队内协作</a>
+<ul>
+<li><a href=#准备工作>准备工作</a></li>
+<li><a href=#远程仓库操作>远程仓库操作</a></li>
+<li><a href=#邀请合作者>邀请合作者</a></li>
+<li><a href=#合作者加入>合作者加入</a></li>
+</ul>
+</li>
+<li><a href=#跨团队协作>跨团队协作</a>
+<ul>
+<li><a href=#fork仓库>fork仓库</a></li>
+<li><a href=#joinini在线编辑>joinini在线编辑：</a></li>
+<li><a href=#etaon操作>etaon操作</a></li>
+<li><a href=#本地库更新>本地库更新</a></li>
+</ul>
+</li>
+</ul>
+</nav></div>
+</div>
+</section>
+</div>
+</aside>
+</div>
+</main>
+<footer id=footer class=footer>
+<div class=footer-inner>
+<div class=copyright>
+<span class=copyright-year>
+&copy; 2010 - 2022
+</span>
+<span class=with-love><i class="fa fa-heart"></i></span>
+<span class=copyright-author>路无止境！</span>
+</div>
+<div class=powered-info>
+<span class=powered-by>
+Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.91.2</a>
+</span>
+<span class=separator-line>/</span>
+<span class=theme-info>
+Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
+</a>
+</span>
+</div>
+<div class=vistor-info>
+<script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<span class=site-uv>
+<i class="fa fa-user"></i>
+<span class=busuanzi-value id=busuanzi_value_site_uv></span>
+</span>
+<span class=separator-line>/</span>
+<span class=site-pv>
+<i class="fa fa-eye"></i>
+<span class=busuanzi-value id=busuanzi_value_site_pv></span>
+</span>
+</div>
+<div class=license-info>
+<span class=storage-info>
+Storage by
+<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a>
+</span>
+<span class=separator-line>/</span>
+<span class=license-num>
+<a href target=_blank></a>
+</span>
+</div>
+</div>
+</footer>
+<div class=back-to-top>
+<i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span>
+</div>
+</div>
+<script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
+<script type=text/javascript src=/js/search.js></script>
+<script type=text/javascript src=/js/affix.js></script>
+<script type=text/javascript src=/js/scrollspy.js></script>
+<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.main').css('padding-bottom'),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}}),$(document).on('affixed.bs.affix',function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var b=$('.header-inner').height()+10,c,d,a,e;$('#sidebar').css({'margin-top':b}).show(),c=parseInt($('#sidebar').css('margin-top')),d=parseInt($('.sidebar-inner').css('height')),a=c+d,e=$('.content-wrap').height(),e<a&&$('.content-wrap').css('min-height',a),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
+<script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
+<script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+'//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js',function(){new Waline({el:'#wcomments',visitor:!0,avatar:'wavatar',avatarCDN:'https://sdn.geekzu.org/avatar/',avatarForce:!1,wordLimit:'200',placeholder:' 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ',requiredFields:['nick','mail'],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$('#wcomments').html('抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。')})</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type=text/javascript src="//s7.addthis.com/js/300/addthis_widget.js#pubid=Your%20AddthisId"></script>
+<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
+</body>
+</html>

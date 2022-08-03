@@ -1,0 +1,835 @@
+<!doctype html><html lang=zh-cn dir=content/zh-cn>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
+<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
+<title> AWS-VPC - 路无止境！ </title>
+<meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云">
+<meta name=author content="Etaon">
+<meta property="og:title" content="AWS-VPC">
+<meta property="og:site_name" content="路无止境！">
+<meta property="og:image" content="/img/author.jpg">
+<meta name=title content="AWS-VPC - 路无止境！">
+<meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。">
+<link rel="shortcut icon" href=/img/favicon.ico>
+<link rel=apple-touch-icon href=/img/apple-touch-icon.png>
+<link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png>
+<link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css>
+<link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet>
+<link href=/css/main.css rel=stylesheet type=text/css>
+<link href=/css/syntax.css rel=stylesheet type=text/css>
+</head>
+<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
+<div class="container one-collumn sidebar-position-left page-home">
+<div class=headband></div>
+<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
+<div class=header-inner> <div class=site-brand-container>
+<div class=site-nav-toggle>
+<div class=toggle role=button style=opacity:1;top:0>
+<span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span>
+</div>
+</div>
+<div class=site-meta>
+<div class=multi-lang-switch>
+<i class="fa fa-fw fa-language" style=margin-right:5px></i>
+<a class=lang-link id=zh-cn href=#>中文</a>
+</div>
+<div class=custom-logo-site-title>
+<a href=/ class=brand rel=start>
+<span class=logo-line-before><i></i></span>
+<span class=site-title>路无止境！</span>
+<span class=logo-line-after><i></i></span>
+</a>
+</div>
+<p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p>
+</div>
+<div class=site-nav-right>
+<div class="toggle popup-trigger" style=opacity:1;top:0>
+<i class="fa fa-search fa-fw fa-lg"></i>
+</div>
+</div>
+</div>
+<nav class=site-nav>
+<ul id=menu class=menu>
+<li class=menu-item>
+<a href=/ rel=section>
+<i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页
+</a>
+</li>
+<li class=menu-item>
+<a href=/post rel=section>
+<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档
+</a>
+</li>
+<li class=menu-item>
+<a href=/about.html rel=section>
+<i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于我
+</a>
+</li>
+<li class=menu-item>
+<a href=/404.html rel=section>
+<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益404
+</a>
+</li>
+<li class="menu-item menu-item-search">
+<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> 搜索</a>
+</li>
+</ul>
+<div class=site-search>
+<div class="popup search-popup local-search-popup">
+<div class="local-search-header clearfix">
+<span class=search-icon><i class="fa fa-search"></i> </span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
+<div class=local-search-input-wrapper>
+<input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
+</div>
+</div>
+<div id=local-search-result></div>
+</div>
+</div>
+</nav>
+</div>
+</header>
+<main id=main class=main>
+<div class=main-inner>
+<div class=content-wrap>
+<div id=content class=content>
+<section id=posts class=posts-expand>
+<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
+<header class=post-header>
+<h1 class=post-title itemprop="name headline" style=font-weight:700>
+<a class=post-title-link href=https://www.etaon.link/2021/09/28/awsvpc.html itemprop=url>
+AWS-VPC
+</a>
+</h1>
+</header>
+<div class=post-body itemprop=articleBody>
+<p><a href=https://docs.aws.amazon.com/zh_cn/vpc/index.html>Amazon Virtual Private Cloud 文档</a>
+VPC允许我们在基础设施中提供一个逻辑上隔离的部分，在这里我们可以在我们定义的虚拟网络中启动AWS资源。我们完全控制：</p>
+<ul>
+<li>虚拟网络环境，包括选择IP地址范围、创建子网</li>
+<li>路由表的配置</li>
+<li>网络网关</li>
+</ul>
+<p>此外，我们可以在公司数据中心和VPC之间创建硬件VPN或专线直接连接，并在默认情况下利用AWS云作为公司数据中心的扩展</p>
+<h2 id=cidr专用与公用ipv4>CIDR，专用与公用IPv4</h2>
+<h3 id=cidr-ipv4无类域间路由>CIDR-IPv4（无类域间路由）</h3>
+<p>CIDR通常用于安全组规则或AWS网络。它们有助于定义IP地址范围</p>
+<ul>
+<li>192.168.100.0/32->一个IP</li>
+<li>0.0.0.0/0->所有IP</li>
+<li>我们还可以做一些类似192.168.0.0/26的事情，这意味着有64个IP（192.168.0.0-192.168.0.63）</li>
+</ul>
+<p>CIDR由两部分组成：</p>
+<ol>
+<li>基本IP（xx.xx.x.x）：它表示范围中包含的IP</li>
+<li>子网掩码（/32）：定义IP范围中可以变化的位数</li>
+</ol>
+<p>子网ask可以采取两种形式</p>
+<ul>
+<li>255.255.255.0</li>
+<li>/24</li>
+</ul>
+<p>例子：
+/24允许2^（32-24）=2^8=256个来自基本IP的IP</p>
+<h3 id=私有与公共ipv4>私有与公共IPv4</h3>
+<p>Internet分配号码管理局Internet Assigned Numbers Authority（IANA）建立了某些IPv4地址块，以供专用（LAN）和公用（Internet）地址使用</p>
+<p>专用/私有IP只能允许某些值</p>
+<ul>
+<li>10.0.0.0-10.255.255.255（10.0.0.0/8）&lt;-在大型网络中</li>
+<li>172.16.0.0-172.31.255.255（172.16.0.0/16）&lt;-AWS</li>
+<li>192.168.0.0-192.168.255.255（192.168.0.0/16）&lt;-家庭网络</li>
+</ul>
+<p>互联网上所有其余的IP都是公共IP</p>
+<h2 id=aws默认专有网络概述>AWS默认专有网络概述</h2>
+<ul>
+<li>所有新帐户都有一个默认VPC：172.31.0.0/16</li>
+<li>如果未指定子网，则会将新实例启动到默认VPC中</li>
+<li>默认VPC具有internet连接，并且所有实例都具有公共IP（以便我们可以使用该实例执行类似于yum update…）</li>
+<li>我们还获得了一个公共和私有DNS名称</li>
+</ul>
+<p>对于默认VPC</p>
+<ul>
+<li>用户友好，允许您立即部署实例。</li>
+<li>默认VPC中的所有子网都有到internet的路由。</li>
+<li>每个EC2实例都有一个公共和私有IP地址。</li>
+</ul>
+<h2 id=vpc概述>VPC概述</h2>
+<h3 id=vpc中的ipv4>VPC中的IPv4</h3>
+<ul>
+<li>一个区域中可以有多个VPC（每个区域最多5个，但这是一个软限制，可以申请提高配额）</li>
+<li>每个VPC的最大CIDR为5。对于每个CIDR
+○ 最小大小为/28:16个IP地址
+○ 最大大小为/16:65536个IP地址</li>
+<li>您的VPC CIDR不应与其他网络重叠</li>
+</ul>
+<h3 id=子网subnet概述>子网Subnet概述</h3>
+<p>AWS在每个子网中保留5个IP（IP范围中的前4个和最后1个）。这5个IP不可使用，无法分配给实例。
+例如，如果CIDR块为10.0.0.0/24，则保留的IP为：</p>
+<ul>
+<li>10.0.0.0：网络地址</li>
+<li>10.0.0.1：AWS为VPC路由器保留，用于网关</li>
+<li>10.0.0.2：由AWS保留，用于映射到AWS提供的DNS</li>
+<li>10.0.0.3：由AWS保留，以备将来使用</li>
+<li>10.0.0.255：网络广播地址。AWS不支持VPC中的广播</li>
+</ul>
+<p>如果您需要EC2实例的xx个IP，在执行CIDR块时，请记住-5（四舍五入）
+例如，如果您需要29个IP，请选择/26（64个IP）而不是/27（32个IP）</p>
+<h2 id=互联网网关igw>互联网网关IGW</h2>
+<ul>
+<li>Internet网关帮助我们的VPC实例连接到Internet</li>
+<li>它可以水平扩展，并且是HA和冗余的</li>
+<li>必须与VPC分开创建</li>
+<li>一个VPC网络只能连接到一个互联网网关，反之亦然（如“1对1关系”）</li>
+<li>Internet网关也是具有公共IPv4的实例的NAT</li>
+</ul>
+<p>IGW本身不允许访问internet，因此还必须编辑路由表</p>
+<h2 id=nat实例和nat网关>NAT实例和NAT网关</h2>
+<h3 id=nat实例过时但在sap考试中还有>NAT实例（过时但在SAP考试中还有）</h3>
+<p>NAT代表网络地址转换，它允许私有子网中的实例连接到internet</p>
+<ul>
+<li>尝试创建NAT实例时，请先禁用实例上的源/目标检查</li>
+<li>NAT实例必须位于公共子网中。</li>
+<li>必须将路由表配置为将流量从专用子网路由到NAT实例，才能使其工作。</li>
+<li>必须有弹性IP连接到它</li>
+<li>NAT实例可以支持的通信量取决于实例大小。如果您遇到瓶颈，请增加实例大小。</li>
+<li>您可以使用自动缩放组、不同AZ中的多个子网以及自动化故障切换的脚本来创建高可用性。</li>
+<li>它在安全组后面</li>
+</ul>
+<p>必须管理安全组和规则</p>
+<ul>
+<li>inbound
+○ 允许来自专用子网的HTTP/HTTPS通信
+○ 允许从家庭网络进行SSH（通过Internet网关提供访问）</li>
+<li>outbound
+○ 允许到internet的HTTP/HTTPS通信</li>
+</ul>
+<h3 id=nat-gateway>NAT Gateway</h3>
+<ul>
+<li>AWS管理的NAT实例，更高的带宽，更好的可用性，无需用户管理</li>
+<li>NAT网关在<strong>可用性区域AZ</strong>内是冗余的。每个可用区域AZ一个NAT网关。</li>
+<li>不与安全组关联。安全组关联实例instance</li>
+<li>NAT网关使用<strong>弹性IP</strong>在特定的AZ中创建</li>
+<li>无需禁用源/目标检查。</li>
+<li>为了获得高可用性，我们应该在每个可用性区域中创建一个NAT网关。</li>
+<li>从5 Gbps开始，当前扩展到45 Gbps。自动缩放</li>
+<li>需要Internet网关典型情况
+○ 私有子网将与NAT网关通信，NAT网关将与IGW通信，以便我们的私有实例可以与internet通信
+○ 私有子网需要配置路由表</li>
+</ul>
+<h4 id=nat网关的高可用性>NAT网关的高可用性</h4>
+<ul>
+<li>NAT网关在单个网络中具有弹性</li>
+<li>但是，为了容错，必须在多个AZ中创建多个NAT网关</li>
+<li>不需要跨AZ故障切换，因为如果AZ发生故障，则不需要NAT
+<img src="https://img-blog.csdnimg.cn/edc2cd27f91a4fb5a0916957715829a4.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述>
+<a href=https://docs.aws.amazon.com/zh_cn/vpc/latest/userguide/vpc-nat-comparison.html>Comparison of NAT Instance and NAT Gateway</a></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>NAT 网关</th>
+<th>NAT 实例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>可用性</td>
+<td>高度可用。每个可用区中的 NAT 网关都采用冗余实施。在每个可用区中创建一个 NAT 网关可确保架构不依赖于可用区。</td>
+<td>使用脚本管理实例之间的故障转移。</td>
+</tr>
+<tr>
+<td>带宽</td>
+<td>可以纵向扩展到 45 Gbps。</td>
+<td>取决于实例类型的带宽。</td>
+</tr>
+<tr>
+<td>维护</td>
+<td>由管理AWS 您不需要进行任何维护。</td>
+<td>由您管理，例如您需要对实例安装软件更新或操作系统补丁。</td>
+</tr>
+<tr>
+<td>性能</td>
+<td>软件经过优化以便处理 NAT 流量。</td>
+<td>配置来执行 NAT 的通用 AMI。</td>
+</tr>
+<tr>
+<td>费用</td>
+<td>费用取决于您使用的 NAT 网关的数量、使用时长以及您通过 NAT 网关发送的数据量。</td>
+<td>费用取决于您使用的 NAT 实例的数量、使用时长以及实例类型和大小。</td>
+</tr>
+<tr>
+<td>类型和大小</td>
+<td>整合提供；您不需要选择类型或范围。</td>
+<td>根据您的预测工作负载选择适当的实例类型和大小。</td>
+</tr>
+<tr>
+<td>公有 IP 地址</td>
+<td>创建时选择弹性 IP 地址，与公有 NAT 网关关联。</td>
+<td>为 NAT 实例使用弹性 IP 地址或公有 IP 地址。您随时可以通过将新的弹性 IP 地址与实例关联来更改公有 IP 地址。</td>
+</tr>
+<tr>
+<td>私有 IP 地址</td>
+<td>在您创建网关时自动从子网的 IP 地址范围中选择。</td>
+<td>在您启动实例时，从子网的 IP 地址范围内分配特定的私有 IP 地址。</td>
+</tr>
+<tr>
+<td>安全组</td>
+<td>您不能将安全组与 NAT 网关相关联。您可以将安全组与 NAT 网关后的资源关联，以控制入站和出站流量。</td>
+<td>与您的 NAT 实例和 NAT 实例之后的资源关联，以控制入站和出站流量。</td>
+</tr>
+<tr>
+<td>网络 ACL</td>
+<td>使用网络 ACL 控制进出您的 NAT 网关所在子网的流量。</td>
+<td>使用网络 ACL 控制进出您的 NAT 实例所在子网的流量。</td>
+</tr>
+</tbody>
+</table>
+<h2 id=dns-resolution-options>DNS Resolution Options</h2>
+<p>DNS解析选项:</p>
+<ul>
+<li><em>enableDnsSupport</em> 支持DNS解析设置
+○ 默认为True
+○ 帮助确定专有网络是否支持DNS解析
+○ 如果为True，则通过<em>169.254.169.253</em>查询AWS DNS服务器</li>
+<li><em>enableDnsHostname</em> DNS主机名设置
+○ 自定义VPC默认为False，默认VPC为True
+○ 除非<em>enablednsupport=True</em>，否则不会执行任何操作
+○ 如果为True，则将公共主机名分配给EC2实例（如果它具有公共主机名）
+如果在Route 53的专用区域中使用自定义DNS域名，则必须将这两个属性都设置为true</li>
+</ul>
+<h2 id=nacl--security-groups>NACL & Security Groups</h2>
+<p><img src="https://img-blog.csdnimg.cn/8cc2a79225c249efae1dea585bbb1dab.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p>
+<h3 id=inbound--outbound>Inbound / Outbound</h3>
+<ul>
+<li>安全组是有状态的，这意味着，即使出站规则在入站请求通过时拒绝所有内容，该请求也可以通过出站（规则检查）</li>
+<li>NACL是无状态的，这意味着入站和出站是分开计算的</li>
+</ul>
+<h3 id=网络acl>网络ACL</h3>
+<ul>
+<li>NACL就像一个防火墙，控制子网之间的流量</li>
+<li>默认情况下，NACL允许所有出站和入站内容</li>
+<li>每个子网一个NACL，新子网被分配默认NACL</li>
+</ul>
+<p>定义NACL规则</p>
+<ul>
+<li>规则有一个数字（1-32766），数字越小，优先级越高
+○ 例如，如果定义#100 ALLOW<ip>和#200 DENY<ip>，则将允许IP，因为100具有更高的优先级（#100&lt;#200）
+○ 100，200是规则数字，或者你可以说它是“重量”，只要你能记住它
+○ 最后一条规则是星号（*），在没有规则匹配的情况下拒绝请求
+○ AWS建议增量 为100 的规则</li>
+<li>新创建的NACL将default否认any</li>
+<li>NACL是在子网级别阻止特定IP的一种很好的方法</li>
+</ul>
+<p>这类似于VPC中所有（或任何）子网的安全组。我们可以添加允许/拒绝规则。默认VPC附带默认网络ACL，默认情况下，它允许所有出站和入站流量。
+创建自定义网络ACL时，默认情况下拒绝所有入站和出站流量，直到添加规则。VPC中的每个子网都必须与网络ACL相关联。如果未将子网与网络ACL显式关联，则该子网将自动与默认网络ACL关联。</p>
+<p><strong>注意：要阻止IP地址，我们需要使用ACL，而不是安全组。</strong></p>
+<ul>
+<li>网络ACL可以与N个子网关联，但1个子网只能与1个NACL关联。</li>
+<li>网络ACL包含按顺序计算的规则的编号列表，从编号最低的规则开始。</li>
+<li>网络ACL有单独的入站和出站规则，每个规则可以允许或拒绝流量。</li>
+<li>网络ACL是无状态的；对允许的入站流量的响应受出站流量规则的约束，反之亦然。</li>
+</ul>
+<h3 id=临时port>临时port</h3>
+<p>实际上，为了涵盖可能向VPC中面向公众的实例发起通信的不同类型的客户端，您可以打开临时端口1024-65535</p>
+<h2 id=配置vpc>配置VPC</h2>
+<ol>
+<li>转到专有网络服务>您的专有网络>创建专有网络</li>
+<li>填写IPv4 CIDR块和租约，然后单击创建。</li>
+</ol>
+<p>目前尚未创建任何子网和internet网关。已创建路由表、网络ACL和安全组。安全组不能跨越VPC。</p>
+<ol start=3>
+<li>转到子网->创建子网</li>
+<li>命名，选择我们的VPC、可用性区域和IPv4 CIDR块。最后，单击create。</li>
+</ol>
+<p>默认情况下，没有子网具有公共IP。为此，选择子网并单击操作，使其自动应用公共IP。Amazon始终为您的子网保留5个IP地址。</p>
+<ol start=5>
+<li>转到Internet网关->创建Internet网关</li>
+<li>命名它并单击create。</li>
+<li>选择它并通过操作将internet网关连接到VPC(只能将VPC连接到一个internet网关）</li>
+</ol>
+<p>目前，我们所有的专有网络都是公共的，因为我们的routes允许。让我们解决这个问题：</p>
+<ol start=8>
+<li>转到route表->选择我们的路线表并选择“route”</li>
+<li>编辑route</li>
+<li>用目标internet网关填充目标（任意IP）</li>
+<li>转到子网关联</li>
+<li>编辑子网关联以选择需要公开的子网。</li>
+</ol>
+<p>现在，我们无法通过ssh从公共子网访问私有EC2实例。</p>
+<ol start=13>
+<li>转到EC2>安全组->创建安全组</li>
+<li>选择我们的VPC，键入“All ICMP”（协议ICMP），并将源输入公共子网。</li>
+<li>选择我们的VPC，键入“SSH”并将源文件添加到私有子网。</li>
+<li>更改EC2实例的安全组。</li>
+</ol>
+<h2 id=vpc-peering>VPC Peering</h2>
+<ul>
+<li>允许您使用专用private IP地址通过直接网络路由将一个VPC连接到另一个VPC</li>
+<li>实例的通信就像它们在同一个PVC上一样</li>
+<li>不得有重叠的CIDR</li>
+<li>我们可以与其他AWS帐户以及同一帐户中的其他VPC对等VPC</li>
+<li>必须更新每个VPC子网中的路由表，以确保实例可以通信</li>
+</ul>
+<p>注意：VPC的连通性不可传递，如下图所示：
+<img src="https://img-blog.csdnimg.cn/3def6e466776421ab12c91b2781d245f.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_16,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述>
+<strong>Reference:</strong>
+<a href=https://docs.aws.amazon.com/vpc/latest/peering/invalid-peering-configurations.html#transitive-peering>https://docs.aws.amazon.com/vpc/latest/peering/invalid-peering-configurations.html#transitive-peering</a></p>
+<h2 id=vpc-endpoints>VPC Endpoints</h2>
+<p>There are two types: interface and gateway.
+Currently, gateway endpoints support S3 and DynamoDB</p>
+<ul>
+<li>
+<p>端点Endpoint允许使用专用网络而不是公用网络连接到AWS服务</p>
+</li>
+<li>
+<p>可以水平缩放并且是冗余的</p>
+</li>
+<li>
+<p>端点不再需要IGW、NAT网关等。。访问AWS服务</p>
+</li>
+<li>
+<p>接口Interface：提供一个ENI（专用IP地址）作为大多数AWS服务的入口点（必须连接安全组）</p>
+</li>
+<li>
+<p>网关Gateway：提供一个目标，必须在路由表中使用-<strong>S3和DynamoDB</strong></p>
+</li>
+<li>
+<p>排查问题：</p>
+<pre><code>  ○ 检查VPC中的DNS设置
+
+  ○ 检查路由表
+</code></pre>
+</li>
+</ul>
+<blockquote>
+<p>Enable Private DNS Name: To use private DNS names, ensure that the attributes &lsquo;Enable DNS hostnames&rsquo; and &lsquo;Enable DNS support&rsquo; are set to &lsquo;true&rsquo; for your VPC</p>
+</blockquote>
+<blockquote>
+<p>接口Interface端点是一个具有专用IP地址的弹性网络接口，该Interface用作连接到受支持服务的流量的入口点。</p>
+</blockquote>
+<p>VPC端点使用户能够私自将VPC连接到受支持的AWS服务和由PrivateLink提供支持的VPC端点服务，而无需internet网关、NAT设备、VPN连接或AWS直接连接。
+VPC中的实例不需要公共IP地址来与服务中的资源通信。您的专有网络和其他服务之间的流量可以没有AWS网络。
+端点Endpoints是虚拟设备。它们是水平扩展的、冗余的、高可用的VPC组件，允许VPC中的实例和服务之间进行通信，而不会对网络流量造成可用性风险或带宽限制。</p>
+<h2 id=bastion-hosts>Bastion Hosts</h2>
+<p><img src="https://img-blog.csdnimg.cn/a1dd4d4f368f4778a63bcb37f68cc627.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p>
+<ul>
+<li>使用一个堡垒主机SSH到我们的私有实例中</li>
+<li>堡垒位于公共子网中，然后连接到所有其他私有子网</li>
+<li>必须在堡垒主机加安全组</li>
+<li>堡垒用于安全地管理EC2实例（使用SSH或RDP）。</li>
+<li>不能将NAT网关用作堡垒主机。</li>
+</ul>
+<p><em>检查提示：确保bastion主机只有来自所需IP的端口22流量，而不是来自其他实例的安全组</em></p>
+<h2 id=site-to-site-vpn>Site-to-Site VPN</h2>
+<p><img src=https://img-blog.csdnimg.cn/49d10c6495b44bdcacc9cfeb4b048f0f.png alt=在这里插入图片描述></p>
+<h3 id=virtual-private-gateway>Virtual Private Gateway</h3>
+<ul>
+<li>
+<p>虚拟私有网关Virtual Private Gateway 是站点到站点 VPN 连接在 Amazon 一端的 VPN 集中器。</p>
+</li>
+<li>
+<p>您可以创建虚拟私有网关，并将其附加到要从中创建站点到站点 VPN 连接的 VPC。</p>
+</li>
+<li>
+<p>创建虚拟专用网关时，可以为网关的 Amazon 端指定专用自治系统编号 (ASN)。</p>
+<pre><code>  ○ 如果不指定 ASN，则会使用默认 ASN (64512) 创建虚拟专用网关
+  ○ 创建虚拟专用网关后，无法更改 ASN
+</code></pre>
+</li>
+</ul>
+<h3 id=customer-gateway>Customer Gateway</h3>
+<ul>
+<li>VPN连接客户端的软件应用程序或物理设备</li>
+<li>客户网关设备必须通过生成流量并启动 Internet 密钥交换 (IKE) 协商过程来为站点到站点 VPN 连接启动隧道</li>
+<li>用户提供的为Customer gateway device</li>
+<li>客户网关Customer Gateway 是您在 AWS 中创建的资源，它表示本地网络中的客户网关设备。</li>
+</ul>
+<h3 id=transit-gateway--vpn>Transit gateway & VPN</h3>
+<p><img src=https://img-blog.csdnimg.cn/71f988ece672471f87ab55ba0602d3b6.png alt=在这里插入图片描述></p>
+<ul>
+<li>A transit gateway is a transit hub that you can use to interconnect your virtual private clouds (VPC) and on-premises networks.</li>
+<li>可以将站点到站点 VPN 连接的目标网关从虚拟私有网关修改为中转网关。</li>
+<li>Transit gateway视作新一代Region边缘路由器</li>
+</ul>
+<h2 id=transit-gateway>Transit gateway</h2>
+<ul>
+<li>中转网关是网络中转中心，您可用它来互连 Virtual Private Cloud (VPC) 和本地网络。</li>
+<li>Region间的对等连接</li>
+<li>跨云和本地网络的单一管理门户</li>
+<li>SD-WAN兼容</li>
+</ul>
+<h3 id=关键概念>关键概念</h3>
+<ul>
+<li>
+<p>挂载Attachments — 您可以挂载以下各项：</p>
+<pre><code>  ○ 一个或多个 VPC
+
+  ○ Connect SD-WAN/第三方网络设备
+
+  ○ 一个 AWS Direct Connect 网关
+
+  ○ 与另一个中转网关的对等连接
+
+  ○ 与中转网关的 VPN 连接
+</code></pre>
+</li>
+<li>
+<p>中转网关最大传输单位 (MTU)</p>
+<pre><code>  ○ 对于 VPC、AWS Direct Connect、Transit Gateway Connect 和对等连接挂载之间的流量，中转网关支持的 MTU 为 8500 字节。
+
+  ○ VPN 连接上的流量可以具有的 MTU 为 1500 字节。
+</code></pre>
+</li>
+<li>
+<p>中转网关路由表</p>
+<pre><code>  ○ 中转网关具有默认的路由表，且可选具有其他路由表。
+  ○ 路由表包含动态路由和静态路由，它们根据数据包的目标 IP 地址决定下一个跃点。
+  ○ 这些路由的目标可以是任何中转网关挂载。
+  ○ 默认情况下，Transit Gateway 挂载与默认的中转网关路由表关联。
+</code></pre>
+</li>
+<li>
+<p>关联Associations</p>
+<pre><code>  ○ 每个挂载都正好与一个路由表关联。		
+  ○ 每个路由表可以与零到多个挂载关联。
+</code></pre>
+</li>
+<li>
+<p>路由传播（转发）</p>
+<pre><code>  ○ VPC、VPN 连接或 Direct Connect 网关可以动态地将路由传播到中转网关路由表。
+  ○ 默认情况下，使用 Connect 挂载，路由会传播到中转网关路由表。
+  ○ 使用 VPC 时，您必须创建静态路由以将流量发送到中转网关。
+  ○ 使用 VPN 连接或 Direct Connect 网关时，路由使用边界网关协议 (BGP) 从中转网关传播到本地路由器。
+  ○ 使用对等连接的连接时，您必须在中转网关路由表中创建静态路由以指向对等连接。
+</code></pre>
+</li>
+</ul>
+<h3 id=最佳实践>最佳实践：</h3>
+<ul>
+<li>
+<p>为每个中转网关 VPC 附件使用单独的子网。对于每个子网，可以配置以下内容：</p>
+<pre><code>  ○ 将与中转网关子网关联的入站和出站网络 ACL 保持打开状态。
+
+  ○ 根据流量，您可以将网络 ACL 应用于工作负载子网。
+</code></pre>
+</li>
+<li>
+<p>创建一个网络 ACL 并将其与关联到中转网关的所有子网相关联。确保网络 ACL 在入站和出站方向打开。</p>
+</li>
+<li>
+<p>将同一个 VPC 路由表与关联到中转网关的所有子网相关联，除非设计需要</p>
+</li>
+<li>
+<p>使用边界网关协议 (BGP) 站点到站点 VPN 连接。</p>
+</li>
+<li>
+<p>为 AWS Direct Connect 网关挂载和 BGP Site-to-Site VPN 挂载启用路由传播。</p>
+</li>
+<li>
+<p>不需要额外的中转网关即可实现高可用性，根据设计，中转网关具有高可用性。</p>
+</li>
+<li>
+<p>限制中转网关路由表的数量，除非设计需要多个中转网关路由表。</p>
+</li>
+<li>
+<p>对于多区域部署，我们建议您为每个中转网关使用唯一自治系统编号 (ASN)。为了实现冗余，请在灾难恢复区域中使用多个中转网关。</p>
+</li>
+</ul>
+<p>官网：https://docs.aws.amazon.com/zh_cn/vpc/latest/tgw/what-is-transit-gateway.html</p>
+<h3 id=示例>示例</h3>
+<h4 id=需求>需求</h4>
+<p>一家全球性企业，总部设在英国伦敦，在那里他们有一个数据中心和总部办公室。他们还在世界各地设有分支机构。最大的位于洛杉矶和首尔。大部分应用程序托管在eu-west-2地区（伦敦） 和ap-northeast-2（首尔），以及一些正在迁移过程中的旧应用程序，在伦敦数据中心托管。</p>
+<p>他们的分支机构需要 500 Mbps 的网络容量来接入 AWS 地区，以及连接其数据中心的 10 Mbps 网络容量。不得在分支机构之间进行路由。数据中心需要 5 Gbps 的网络容量来回 AWS 区域，以处理数据密集型工作负载迁移到 AWS。
+<img src="https://img-blog.csdnimg.cn/29120f12f44f4137a0316625a6d5bcc3.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p>
+<h4 id=设计>设计</h4>
+<p><img src="https://img-blog.csdnimg.cn/f980e3492eb041039d3e6594e844cf9d.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center" alt=在这里插入图片描述></p>
+<ul>
+<li>
+<p>本地数据中心与eu-west-2， AWS ap-northeast-2与eu-west-2 区域通过 10 Gbps AWS 直接连接专用连接的弹性对。</p>
+</li>
+<li>
+<p>创建两个传输虚拟接口（T-VIF），每个直接连接连接一个接口，并将这些连接关联到直接连接网关 （dxgw-eu-west-2).直接连接网关连接到 AWS 传输网关 （tgw-eu-west-2）。</p>
+</li>
+<li>
+<p>将所有挂载的地址段通过 BGP 路由协议向客户网关宣布，将其添加到允许的前缀列表中</p>
+</li>
+<li>
+<p>所有分支机构都使用加速站点到站点 VPN 连接到 AWS</p>
+<pre><code>  ○ 首尔分行连接到 VPN 连接配置在ap-northeast-2地区 （vpn-icn);
+  ○ 伦敦分行连接到 VPN 连接配置在eu-west-2地区 （vpn-lhr);
+  ○ 洛杉矶分公司连接到两个 VPN 连接配置在eu-west-2地区 （vpn-lax).
+  ○ 如需冗余，使用多VPN链路
+</code></pre>
+</li>
+</ul>
+<h4 id=view-of-aws-transit-gateway-and-inter-region-connectivity>View of AWS Transit Gateway and inter-Region connectivity</h4>
+<p><img src="https://img-blog.csdnimg.cn/b8dc0068b5df4f208a03180474916871.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p>
+<h2 id=aws-privatelink-vpc-endpoints-services>AWS PrivateLink (VPC Endpoints Services)</h2>
+<ul>
+<li>Most secure & scalable way o expose a service to 1000s of VPC (own or other accounts)</li>
+<li>Does not require VPC Peering, Internet Gateway, NAT, Route Tables
+- Requires a network load balancer (Service VPC) and ENI (Customer VPC)</li>
+</ul>
+<h2 id=egress-only-internet-gateway>Egress Only Internet Gateway</h2>
+<blockquote>
+<p>Egress means Outgoing</p>
+</blockquote>
+<ul>
+<li>Egress Only Internet Gateway is for IPv6 only</li>
+<li>Similar function as a NAT, but a NAT is for IPv4
+IPv6 is all public address
+- Egress Only Internet Gateway gives our IPv6 instances access to the internet, but they won’t be directly reachable by the internet
+- After creating an Egress only Internet Gateway, edit the route tables</li>
+</ul>
+</div>
+<footer class=post-footer>
+<div id=wcomments></div>
+</footer>
+</article>
+</section>
+</div>
+</div>
+<div class=sidebar-toggle>
+<div class=sidebar-toggle-line-wrap>
+<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+</div>
+</div>
+<aside id=sidebar class=sidebar>
+<div class=sidebar-inner>
+<ul class="sidebar-nav motion-element">
+<li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>
+文章目录
+</li>
+<li class=sidebar-nav-overview data-target=site-overview>
+站点概览
+</li>
+</ul>
+<section class="site-overview sidebar-panel">
+<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
+<img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon>
+<p class=site-author-name itemprop=name>Etaon</p>
+<p class="site-description motion-element" itemprop=description>
+Kepp Going!
+</p>
+</div>
+<nav class="site-state motion-element">
+<div class="site-state-item site-state-posts">
+<a href=/post/>
+<span class=site-state-item-count>61</span>
+<span class=site-state-item-name>日志</span>
+</a>
+</div>
+<div class="site-state-item site-state-categories">
+<a href=/categories/>
+<span class=site-state-item-count>13</span>
+<span class=site-state-item-name>分类</span>
+</a>
+</div>
+<div class="site-state-item site-state-tags">
+<a href=/tags/>
+<span class=site-state-item-count>34</span>
+<span class=site-state-item-name>标签</span>
+</a>
+</div>
+</nav>
+<div class="links-of-author motion-element">
+<span class=links-of-author-item>
+<a href=https://github.com/etaon target=_blank title=GitHub>
+<i class="fa fa-fw fa-github"></i>
+GitHub
+</a>
+</span>
+<span class=links-of-author-item>
+<a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN>
+<i class="fa fa-fw fa-CSDN"></i>
+CSDN
+</a>
+</span>
+</div>
+<div class="links-of-blogroll motion-element links-of-blogroll-inline">
+<div class=links-of-blogroll-title>
+<i class="fa fa-fw fa-globe"></i>
+友情链接
+</div>
+<ul class=links-of-blogroll-list>
+<li class=links-of-blogroll-item>
+<a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a>
+</li>
+</ul>
+</div>
+<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
+<div class=tagcloud-of-blogroll-title>
+<i class="fa fa-fw fa-tags"></i>
+标签云
+</div>
+<ul class=tagcloud-of-blogroll-list>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/mysql>Mysql</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/aws>Aws</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/dql>Dql</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/hadoop>Hadoop</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/redis>Redis</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/cicd>Cicd</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/git>Git</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/istio>Istio</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/mongodb>Mongodb</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/azure>Azure</a>
+</li>
+</ul>
+</div>
+</section>
+<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+<div class=post-toc>
+<div class=post-toc-content><nav id=TableOfContents>
+<ul>
+<li><a href=#cidr专用与公用ipv4>CIDR，专用与公用IPv4</a>
+<ul>
+<li><a href=#cidr-ipv4无类域间路由>CIDR-IPv4（无类域间路由）</a></li>
+<li><a href=#私有与公共ipv4>私有与公共IPv4</a></li>
+</ul>
+</li>
+<li><a href=#aws默认专有网络概述>AWS默认专有网络概述</a></li>
+<li><a href=#vpc概述>VPC概述</a>
+<ul>
+<li><a href=#vpc中的ipv4>VPC中的IPv4</a></li>
+<li><a href=#子网subnet概述>子网Subnet概述</a></li>
+</ul>
+</li>
+<li><a href=#互联网网关igw>互联网网关IGW</a></li>
+<li><a href=#nat实例和nat网关>NAT实例和NAT网关</a>
+<ul>
+<li><a href=#nat实例过时但在sap考试中还有>NAT实例（过时但在SAP考试中还有）</a></li>
+<li><a href=#nat-gateway>NAT Gateway</a></li>
+</ul>
+</li>
+<li><a href=#dns-resolution-options>DNS Resolution Options</a></li>
+<li><a href=#nacl--security-groups>NACL & Security Groups</a>
+<ul>
+<li><a href=#inbound--outbound>Inbound / Outbound</a></li>
+<li><a href=#网络acl>网络ACL</a></li>
+<li><a href=#临时port>临时port</a></li>
+</ul>
+</li>
+<li><a href=#配置vpc>配置VPC</a></li>
+<li><a href=#vpc-peering>VPC Peering</a></li>
+<li><a href=#vpc-endpoints>VPC Endpoints</a></li>
+<li><a href=#bastion-hosts>Bastion Hosts</a></li>
+<li><a href=#site-to-site-vpn>Site-to-Site VPN</a>
+<ul>
+<li><a href=#virtual-private-gateway>Virtual Private Gateway</a></li>
+<li><a href=#customer-gateway>Customer Gateway</a></li>
+<li><a href=#transit-gateway--vpn>Transit gateway & VPN</a></li>
+</ul>
+</li>
+<li><a href=#transit-gateway>Transit gateway</a>
+<ul>
+<li><a href=#关键概念>关键概念</a></li>
+<li><a href=#最佳实践>最佳实践：</a></li>
+<li><a href=#示例>示例</a></li>
+</ul>
+</li>
+<li><a href=#aws-privatelink-vpc-endpoints-services>AWS PrivateLink (VPC Endpoints Services)</a></li>
+<li><a href=#egress-only-internet-gateway>Egress Only Internet Gateway</a></li>
+</ul>
+</nav></div>
+</div>
+</section>
+</div>
+</aside>
+</div>
+</main>
+<footer id=footer class=footer>
+<div class=footer-inner>
+<div class=copyright>
+<span class=copyright-year>
+&copy; 2010 - 2022
+</span>
+<span class=with-love><i class="fa fa-heart"></i></span>
+<span class=copyright-author>路无止境！</span>
+</div>
+<div class=powered-info>
+<span class=powered-by>
+Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.91.2</a>
+</span>
+<span class=separator-line>/</span>
+<span class=theme-info>
+Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
+</a>
+</span>
+</div>
+<div class=vistor-info>
+<script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<span class=site-uv>
+<i class="fa fa-user"></i>
+<span class=busuanzi-value id=busuanzi_value_site_uv></span>
+</span>
+<span class=separator-line>/</span>
+<span class=site-pv>
+<i class="fa fa-eye"></i>
+<span class=busuanzi-value id=busuanzi_value_site_pv></span>
+</span>
+</div>
+<div class=license-info>
+<span class=storage-info>
+Storage by
+<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a>
+</span>
+<span class=separator-line>/</span>
+<span class=license-num>
+<a href target=_blank></a>
+</span>
+</div>
+</div>
+</footer>
+<div class=back-to-top>
+<i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span>
+</div>
+</div>
+<script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
+<script type=text/javascript src=/js/search.js></script>
+<script type=text/javascript src=/js/affix.js></script>
+<script type=text/javascript src=/js/scrollspy.js></script>
+<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.main').css('padding-bottom'),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}}),$(document).on('affixed.bs.affix',function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var b=$('.header-inner').height()+10,c,d,a,e;$('#sidebar').css({'margin-top':b}).show(),c=parseInt($('#sidebar').css('margin-top')),d=parseInt($('.sidebar-inner').css('height')),a=c+d,e=$('.content-wrap').height(),e<a&&$('.content-wrap').css('min-height',a),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
+<script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
+<script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+'//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js',function(){new Waline({el:'#wcomments',visitor:!0,avatar:'wavatar',avatarCDN:'https://sdn.geekzu.org/avatar/',avatarForce:!1,wordLimit:'200',placeholder:' 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ',requiredFields:['nick','mail'],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$('#wcomments').html('抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。')})</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type=text/javascript src="//s7.addthis.com/js/300/addthis_widget.js#pubid=Your%20AddthisId"></script>
+<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
+</body>
+</html>

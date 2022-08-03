@@ -1,0 +1,550 @@
+<!doctype html><html lang=zh-cn dir=content/zh-cn>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
+<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
+<title> Azure-创建个人静态网站 - 路无止境！ </title>
+<meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云">
+<meta name=author content="Etaon">
+<meta property="og:title" content="Azure-创建个人静态网站">
+<meta property="og:site_name" content="路无止境！">
+<meta property="og:image" content="/img/author.jpg">
+<meta name=title content="Azure-创建个人静态网站 - 路无止境！">
+<meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。">
+<link rel="shortcut icon" href=/img/favicon.ico>
+<link rel=apple-touch-icon href=/img/apple-touch-icon.png>
+<link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png>
+<link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css>
+<link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet>
+<link href=/css/main.css rel=stylesheet type=text/css>
+<link href=/css/syntax.css rel=stylesheet type=text/css>
+</head>
+<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
+<div class="container one-collumn sidebar-position-left page-home">
+<div class=headband></div>
+<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
+<div class=header-inner> <div class=site-brand-container>
+<div class=site-nav-toggle>
+<div class=toggle role=button style=opacity:1;top:0>
+<span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span>
+</div>
+</div>
+<div class=site-meta>
+<div class=multi-lang-switch>
+<i class="fa fa-fw fa-language" style=margin-right:5px></i>
+<a class=lang-link id=zh-cn href=#>中文</a>
+</div>
+<div class=custom-logo-site-title>
+<a href=/ class=brand rel=start>
+<span class=logo-line-before><i></i></span>
+<span class=site-title>路无止境！</span>
+<span class=logo-line-after><i></i></span>
+</a>
+</div>
+<p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p>
+</div>
+<div class=site-nav-right>
+<div class="toggle popup-trigger" style=opacity:1;top:0>
+<i class="fa fa-search fa-fw fa-lg"></i>
+</div>
+</div>
+</div>
+<nav class=site-nav>
+<ul id=menu class=menu>
+<li class=menu-item>
+<a href=/ rel=section>
+<i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页
+</a>
+</li>
+<li class=menu-item>
+<a href=/post rel=section>
+<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档
+</a>
+</li>
+<li class=menu-item>
+<a href=/about.html rel=section>
+<i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于我
+</a>
+</li>
+<li class=menu-item>
+<a href=/404.html rel=section>
+<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益404
+</a>
+</li>
+<li class="menu-item menu-item-search">
+<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> 搜索</a>
+</li>
+</ul>
+<div class=site-search>
+<div class="popup search-popup local-search-popup">
+<div class="local-search-header clearfix">
+<span class=search-icon><i class="fa fa-search"></i> </span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
+<div class=local-search-input-wrapper>
+<input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
+</div>
+</div>
+<div id=local-search-result></div>
+</div>
+</div>
+</nav>
+</div>
+</header>
+<main id=main class=main>
+<div class=main-inner>
+<div class=content-wrap>
+<div id=content class=content>
+<section id=posts class=posts-expand>
+<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
+<header class=post-header>
+<h1 class=post-title itemprop="name headline" style=font-weight:700>
+<a class=post-title-link href=https://www.etaon.link/2021/12/31/azure-staticweb.html itemprop=url>
+Azure-创建个人静态网站
+</a>
+</h1>
+</header>
+<div class=post-body itemprop=articleBody>
+<p>利用Azure资源，可以发布或托管创建个人静态网站</p>
+<h1 id=静态网站>静态网站</h1>
+<p>静态网站是指全部由HTML（标准通用标记语言的子集）代码格式页面组成的网站，所有的内容包含在网页文件中。网页上也可以出现各种视觉动态效果，如GIF动画、FLASH动画、滚动字幕等，而网站主要是静态化的页面和代码组成，一般文件名均以htm、html、shtml等为后缀。</p>
+<ul>
+<li>静态网页一经发布到服务器上，无论是否被访问，都是一个独立存在的文件；</li>
+<li>静态网页的内容相对稳定，不含特殊代码，因此容易被搜索引擎检索；html更加适合SEO搜索引擎优化。</li>
+<li>静态网站没有数据库的支持，在网站制作和维护方面工作量较大；</li>
+<li>由于不需通过数据库工作，所以静态网页的访问速度比较快；</li>
+</ul>
+<p>详见：<a href=https://baike.baidu.com/item/%E9%9D%99%E6%80%81%E7%BD%91%E7%AB%99>https://baike.baidu.com/item/静态网站</a></p>
+<h1 id=方法1利用blog存储托管静态网站>方法1：利用Blog存储托管静态网站</h1>
+<p>可以直接通过名为 $web 的存储容器提供静态内容（HTML、CSS、JavaScript 和图像文件）。 通过将内容托管在 Azure 存储中，可以使用无服务器体系结构，包括 Azure Functions 和其他平台即服务 (PaaS) 服务。
+参考Azure官方文档：<a href=https://docs.microsoft.com/zh-cn/azure/storage/blobs/storage-blob-static-website>Azure 存储中的静态网站托管</a></p>
+<h2 id=blog存储web内容>Blog存储web内容</h2>
+<ol>
+<li>在Blog中创建$web容器
+<img src="https://img-blog.csdnimg.cn/c33232e7f88c4fe781acebc35cf640a5.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></li>
+<li>对所有文件的公共（只读）访问权限
+<img src="https://img-blog.csdnimg.cn/969d5c4b6f6d4ef89fbf8fd79bd9cde9.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></li>
+<li>上传文件
+一般上传index.html和404.html文件。如果未指定错误文档，则会向用户返回默认 404 页面。
+<img src="https://img-blog.csdnimg.cn/5907c082e98546c9a27c0cf7246c57f3.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></li>
+</ol>
+<h2 id=启用静态网站>启用静态网站</h2>
+<p>在存储中的相应账户中找到静态网站并启动
+<img src="https://img-blog.csdnimg.cn/1636bad80ff24fbbbabaf2592aa3059b.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述>
+保存以后系统自动生成可以访问的Url
+<img src="https://img-blog.csdnimg.cn/43aa9bebe8a54e6f806e0100394de13b.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述>
+查看：<img src="https://img-blog.csdnimg.cn/72f884dd6d564edeba538e6a9cd7e1e2.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述>
+一个静态网站已经可以使用了。</p>
+<h2 id=自定义域映射到静态网站-url可选>自定义域映射到静态网站 URL（可选）</h2>
+<p>本步骤的前提是已经设置了DNS区域并托管了域名，借助Azure CDN与自定义域配合实现https自定义域的映射。
+如果只是http请求，请参考<a href="https://docs.microsoft.com/zh-cn/azure/storage/blobs/storage-custom-domain-name?tabs=azure-portal">将自定义域映射到 Azure Blob 存储终结点</a>：<strong>在启用仅限 HTTP 的情况下映射自定义域</strong></p>
+<p>对于我们使用的https：</p>
+<blockquote>
+<ol>
+<li>在 Web 终结点上启用 Azure CDN。</li>
+<li>将 Azure CDN 内容映射到自定义域。</li>
+<li>在 Azure CDN 自定义域上启用 HTTPS。</li>
+</ol>
+</blockquote>
+<p>首先，建立CDN终结点
+<img src="https://img-blog.csdnimg.cn/945e977b1612419ebaf1d645de23976b.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p>
+<p>成功以后
+<img src="https://img-blog.csdnimg.cn/5cf38444a9b046daab83913c6d585ffa.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p>
+<p>在DNS域中添加Cname记录,cname的别名就是终结点的名字<img src="https://img-blog.csdnimg.cn/8a6cf65eb38e487a85e18de03eb9c1fe.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p>
+<p>进入终结点配置，增加自定义域
+<img src="https://img-blog.csdnimg.cn/7e8184d01527415ea47cbba64613fb00.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p>
+<p>此时已经可以访问
+<img src="https://img-blog.csdnimg.cn/2f01d56c46d24e4faadac5511cab0904.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p>
+<p>但是还没有TLS证书，需要在自定义域开启https。
+开启https后，Azure CDN 完全负责料理TLS证书下发和续订等证书管理任务
+<img src="https://img-blog.csdnimg.cn/9fd92c8d34c942c9b43f8be2e2942f40.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p>
+<p>整个过程会持续几分钟到十几分钟
+<img src="https://img-blog.csdnimg.cn/1a4da0952e7b48b19574281b8d4ee5b5.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述>
+完成以后，https显示正常
+<img src="https://img-blog.csdnimg.cn/2156700a2b9649059492b028e269bc96.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p>
+<h1 id=方法2利用azure-static-web-app和github-actions托管个人网站>方法2：利用Azure Static Web app和Github Actions托管个人网站</h1>
+<p>本方法的web内容在github上，使用workflow的方式将每次更新的内容通知Azure static Web app更新，架构图如下
+<img src="https://img-blog.csdnimg.cn/6943acb3fc804911bb64c3dac9c1f5c9.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p>
+<h2 id=github配置>Github配置</h2>
+<ol>
+<li>Github上新建一个repository</li>
+</ol>
+<p><img src="https://img-blog.csdnimg.cn/20a1634e95294df5a7b5f01fa71f0ecb.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p>
+<p>要求设定为Public。</p>
+<ol start=2>
+<li>Azure 静态 Web 应用需要至少一个 HTML 文件来创建 Web 应用。 在此步骤中创建的存储库包括单个 index.html 文件。
+创建index.html作为测试web入口</li>
+</ol>
+<p><img src="https://img-blog.csdnimg.cn/ec23f2b05af04deeb7ae8a4c1f5cb4d5.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p>
+<p><img src="https://img-blog.csdnimg.cn/cd80a75ef73a4694b1e178980c8797c1.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p>
+<ol start=3>
+<li>在Setting找到Github Pages，将Source指向刚才我们设定index.html的位置并save
+<img src="https://img-blog.csdnimg.cn/bfbcc2cd841244e5b4a7b2631c9a5846.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></li>
+</ol>
+<h2 id=azure配置>Azure配置</h2>
+<ol>
+<li>创建Static Web App</li>
+</ol>
+<p>所有服务→Web→静态Web应用</p>
+<p><img src="https://img-blog.csdnimg.cn/45caa7a6984b4142aef5bb9bd8d0dc2b.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述>
+<img src="https://img-blog.csdnimg.cn/e5ba7548c8c845c098215bf19103c0f2.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p>
+<p>有关托管计划：</p>
+<p><img src="https://img-blog.csdnimg.cn/f86bda59f3ca4d86aae54b1bbe82f30b.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p>
+<p>连接到Github，选择建立好的repository</p>
+<p><img src="https://img-blog.csdnimg.cn/12287c63227a4044b27927a3f13a4c79.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述>
+如果使用生成静态页面工具，如Hugo等，可以在这一步选择<strong>生成预设</strong></p>
+<p>创建成功之后
+<img src="https://img-blog.csdnimg.cn/172318e47d64404086521809d5b18ba5.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>URL
+https://green-mud-029266500.azurestaticapps.net
+源
+main <span style=color:#666>(</span>GitHub<span style=color:#666>)</span>
+部署历史记录
+GitHub Actions 运行次数
+编辑工作流
+azure-static-web-apps-green-mud-029266500.yml
+</code></pre></div><p>Azure自动为Github生成工作流配置文件azure-static-web-apps-green-mud-029266500.yml并配置Secrets</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>name: Azure Static Web Apps CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: <span style=color:#666>[</span>opened, synchronize, reopened, closed<span style=color:#666>]</span>
+    branches:
+      - main
+
+jobs:
+  build_and_deploy_job:
+    <span style=color:#a2f;font-weight:700>if</span>: github.event_name <span style=color:#666>==</span> <span style=color:#b44>&#39;push&#39;</span> <span style=color:#666>||</span> <span style=color:#666>(</span>github.event_name <span style=color:#666>==</span> <span style=color:#b44>&#39;pull_request&#39;</span> <span style=color:#666>&amp;&amp;</span> github.event.action !<span style=color:#666>=</span> <span style=color:#b44>&#39;closed&#39;</span><span style=color:#666>)</span>
+    runs-on: ubuntu-latest
+    name: Build and Deploy Job
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: <span style=color:#a2f>true</span>
+      - name: Build And Deploy
+        id: builddeploy
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: <span style=color:#b68;font-weight:700>${</span>{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_GREEN_MUD_029266500 <span style=color:#b68;font-weight:700>}</span><span style=color:#666>}</span>
+          repo_token: <span style=color:#b68;font-weight:700>${</span>{ secrets.GITHUB_TOKEN <span style=color:#b68;font-weight:700>}</span><span style=color:#666>}</span> <span style=color:#080;font-style:italic># Used for Github integrations (i.e. PR comments)</span>
+          action: <span style=color:#b44>&#34;upload&#34;</span>
+          <span style=color:#080;font-style:italic>###### Repository/Build Configurations - These values can be configured to match your app requirements. ######</span>
+          <span style=color:#080;font-style:italic># For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig</span>
+          app_location: <span style=color:#b44>&#34;/&#34;</span> <span style=color:#080;font-style:italic># App source code path</span>
+          api_location: <span style=color:#b44>&#34;&#34;</span> <span style=color:#080;font-style:italic># Api source code path - optional</span>
+          output_location: <span style=color:#b44>&#34;public&#34;</span> <span style=color:#080;font-style:italic># Built app content directory - optional</span>
+          <span style=color:#080;font-style:italic>###### End of Repository/Build Configurations ######</span>
+
+  close_pull_request_job:
+    <span style=color:#a2f;font-weight:700>if</span>: github.event_name <span style=color:#666>==</span> <span style=color:#b44>&#39;pull_request&#39;</span> <span style=color:#666>&amp;&amp;</span> github.event.action <span style=color:#666>==</span> <span style=color:#b44>&#39;closed&#39;</span>
+    runs-on: ubuntu-latest
+    name: Close Pull Request Job
+    steps:
+      - name: Close Pull Request
+        id: closepullrequest
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: <span style=color:#b68;font-weight:700>${</span>{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_GREEN_MUD_029266500 <span style=color:#b68;font-weight:700>}</span><span style=color:#666>}</span>
+          action: <span style=color:#b44>&#34;close&#34;</span>
+</code></pre></div><p>Secrets可以在Github的Top repo Setting中找到</p>
+<p><img src=https://img-blog.csdnimg.cn/4e13a05bdf234757bf601e0ab1d05447.png alt=在这里插入图片描述></p>
+<h3 id=查看web-ui并修改>查看Web UI并修改</h3>
+<ol>
+<li>查看Web</li>
+</ol>
+<p><img src=https://img-blog.csdnimg.cn/57280363179b44f8814ff602715d24d0.png alt=在这里插入图片描述></p>
+<ol start=2>
+<li>对Index.html修改</li>
+</ol>
+<p><img src="https://img-blog.csdnimg.cn/6c2f8c09c23548b9a3146925714162b3.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p>
+<ol start=3>
+<li>Github自动将文件Update并通知Azure更新</li>
+</ol>
+<p><img src="https://img-blog.csdnimg.cn/5a4af231c00d4792acd847aecb55d3fa.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述>
+<img src="https://img-blog.csdnimg.cn/4763d76f78aa418696a7786b38cc9672.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p>
+<ol start=4>
+<li>再次查看web</li>
+</ol>
+<p><img src=https://img-blog.csdnimg.cn/307c997229dc44aaa4cbc04ee46bef1b.png alt=在这里插入图片描述></p>
+<h2 id=设置具有免费证书的自定义域可选>设置具有免费证书的自定义域（可选）</h2>
+<p>官方参考文档：<a href="https://docs.microsoft.com/zh-cn/azure/static-web-apps/custom-domain?wt.mc_id=azurestaticwebapps_inline_inproduct_general&tabs=azure-dns">在 Azure Static Web Apps 中设置具有免费证书的自定义域</a></p>
+<p>Azure 静态 Web 应用默认提供自动生成的域名，Azure Static Web Apps 自动为自动生成的域名以及你可以添加的任何自定义域提供免费的 SSL/TLS 证书。</p>
+<table>
+<thead>
+<tr>
+<th>方案</th>
+<th>示例</th>
+<th>域验证方法</th>
+<th>DNS 记录类型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>添加根/顶点域</td>
+<td>etaon.link</td>
+<td>TXT</td>
+<td>ALIAS</td>
+</tr>
+<tr>
+<td>添加子域</td>
+<td><a href=http://www.etaon.link>www.etaon.link</a></td>
+<td>CNAME</td>
+<td>CNAME</td>
+</tr>
+</tbody>
+</table>
+<ol>
+<li>
+<p>DNS区域添加www cname记录
+<img src="https://img-blog.csdnimg.cn/d425cce35d3b421caaa08eb539d42854.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p>
+</li>
+<li>
+<p>静态Web应用中输入子域
+在 Azure 门户中打开你的静态 Web 应用，在菜单中选择“自定义域”。
+选择“添加”，“域名”字段中输入子域：
+<a href=http://www.etaon.link>www.etaon.link</a></p>
+</li>
+<li>
+<p>Azure 使用 TXT 记录来验证你是否拥有某个域。创建用于配置根域的 ALIAS 记录之前，需要先验证你是否拥有该域。
+选择静态 Web 应用，在菜单中选择“自定义域”，选择“添加”主机的域名后，配置 TXT 记录，类似于下图：
+<img src="https://img-blog.csdnimg.cn/50000fc9e0d3422db2f7b6fc8fdd7f90.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述>
+选择“生成代码”按钮以生成唯一的代码。</p>
+</li>
+<li>
+<p>在DNS区域中选择域名，建立新的记录集：TXT记录
+<img src="https://img-blog.csdnimg.cn/b47a338a91844b7c80681c89194fa5bf.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p>
+</li>
+<li>
+<p>验证成功以后，会显示下图
+<img src=https://img-blog.csdnimg.cn/f3960f87815d47bcad92e1f6a345b9eb.png alt=在这里插入图片描述></p>
+</li>
+<li>
+<p>创建 ALIAS 记录
+ALIAS 记录将一个域映射到另一个域。 此记录专用于根域
+DNS区域记录：
+<img src="https://img-blog.csdnimg.cn/5a59e8883b4847439ccb81c534ac5783.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p>
+</li>
+<li>
+<p>设置默认域
+将自定义域指定为应用的默认域时，对其他域的请求会自动重定向到该默认域。 只能将一个自定义域设置为默认域。
+<img src="https://img-blog.csdnimg.cn/89cbf17ce8924e2c956dfdbd2a9dca5c.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述>
+完成以后，就可以访问https://etaon.link或https://www.etaon.link
+<img src="https://img-blog.csdnimg.cn/4059b43f738c466b8848ae707caea2a0.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p>
+</li>
+</ol>
+</div>
+<footer class=post-footer>
+<div id=wcomments></div>
+</footer>
+</article>
+</section>
+</div>
+</div>
+<div class=sidebar-toggle>
+<div class=sidebar-toggle-line-wrap>
+<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+</div>
+</div>
+<aside id=sidebar class=sidebar>
+<div class=sidebar-inner>
+<ul class="sidebar-nav motion-element">
+<li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>
+文章目录
+</li>
+<li class=sidebar-nav-overview data-target=site-overview>
+站点概览
+</li>
+</ul>
+<section class="site-overview sidebar-panel">
+<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
+<img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon>
+<p class=site-author-name itemprop=name>Etaon</p>
+<p class="site-description motion-element" itemprop=description>
+Kepp Going!
+</p>
+</div>
+<nav class="site-state motion-element">
+<div class="site-state-item site-state-posts">
+<a href=/post/>
+<span class=site-state-item-count>61</span>
+<span class=site-state-item-name>日志</span>
+</a>
+</div>
+<div class="site-state-item site-state-categories">
+<a href=/categories/>
+<span class=site-state-item-count>13</span>
+<span class=site-state-item-name>分类</span>
+</a>
+</div>
+<div class="site-state-item site-state-tags">
+<a href=/tags/>
+<span class=site-state-item-count>34</span>
+<span class=site-state-item-name>标签</span>
+</a>
+</div>
+</nav>
+<div class="links-of-author motion-element">
+<span class=links-of-author-item>
+<a href=https://github.com/etaon target=_blank title=GitHub>
+<i class="fa fa-fw fa-github"></i>
+GitHub
+</a>
+</span>
+<span class=links-of-author-item>
+<a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN>
+<i class="fa fa-fw fa-CSDN"></i>
+CSDN
+</a>
+</span>
+</div>
+<div class="links-of-blogroll motion-element links-of-blogroll-inline">
+<div class=links-of-blogroll-title>
+<i class="fa fa-fw fa-globe"></i>
+友情链接
+</div>
+<ul class=links-of-blogroll-list>
+<li class=links-of-blogroll-item>
+<a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a>
+</li>
+</ul>
+</div>
+<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
+<div class=tagcloud-of-blogroll-title>
+<i class="fa fa-fw fa-tags"></i>
+标签云
+</div>
+<ul class=tagcloud-of-blogroll-list>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/mysql>Mysql</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/aws>Aws</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/dql>Dql</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/hadoop>Hadoop</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/redis>Redis</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/cicd>Cicd</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/git>Git</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/istio>Istio</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/mongodb>Mongodb</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/azure>Azure</a>
+</li>
+</ul>
+</div>
+</section>
+<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+<div class=post-toc>
+<div class=post-toc-content><nav id=TableOfContents>
+<ul>
+<li><a href=#blog存储web内容>Blog存储web内容</a></li>
+<li><a href=#启用静态网站>启用静态网站</a></li>
+<li><a href=#自定义域映射到静态网站-url可选>自定义域映射到静态网站 URL（可选）</a></li>
+</ul>
+<ul>
+<li><a href=#github配置>Github配置</a></li>
+<li><a href=#azure配置>Azure配置</a>
+<ul>
+<li><a href=#查看web-ui并修改>查看Web UI并修改</a></li>
+</ul>
+</li>
+<li><a href=#设置具有免费证书的自定义域可选>设置具有免费证书的自定义域（可选）</a></li>
+</ul>
+</nav></div>
+</div>
+</section>
+</div>
+</aside>
+</div>
+</main>
+<footer id=footer class=footer>
+<div class=footer-inner>
+<div class=copyright>
+<span class=copyright-year>
+&copy; 2010 - 2022
+</span>
+<span class=with-love><i class="fa fa-heart"></i></span>
+<span class=copyright-author>路无止境！</span>
+</div>
+<div class=powered-info>
+<span class=powered-by>
+Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.91.2</a>
+</span>
+<span class=separator-line>/</span>
+<span class=theme-info>
+Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
+</a>
+</span>
+</div>
+<div class=vistor-info>
+<script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<span class=site-uv>
+<i class="fa fa-user"></i>
+<span class=busuanzi-value id=busuanzi_value_site_uv></span>
+</span>
+<span class=separator-line>/</span>
+<span class=site-pv>
+<i class="fa fa-eye"></i>
+<span class=busuanzi-value id=busuanzi_value_site_pv></span>
+</span>
+</div>
+<div class=license-info>
+<span class=storage-info>
+Storage by
+<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a>
+</span>
+<span class=separator-line>/</span>
+<span class=license-num>
+<a href target=_blank></a>
+</span>
+</div>
+</div>
+</footer>
+<div class=back-to-top>
+<i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span>
+</div>
+</div>
+<script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
+<script type=text/javascript src=/js/search.js></script>
+<script type=text/javascript src=/js/affix.js></script>
+<script type=text/javascript src=/js/scrollspy.js></script>
+<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.main').css('padding-bottom'),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}}),$(document).on('affixed.bs.affix',function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var b=$('.header-inner').height()+10,c,d,a,e;$('#sidebar').css({'margin-top':b}).show(),c=parseInt($('#sidebar').css('margin-top')),d=parseInt($('.sidebar-inner').css('height')),a=c+d,e=$('.content-wrap').height(),e<a&&$('.content-wrap').css('min-height',a),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
+<script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
+<script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+'//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js',function(){new Waline({el:'#wcomments',visitor:!0,avatar:'wavatar',avatarCDN:'https://sdn.geekzu.org/avatar/',avatarForce:!1,wordLimit:'200',placeholder:' 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ',requiredFields:['nick','mail'],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$('#wcomments').html('抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。')})</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type=text/javascript src="//s7.addthis.com/js/300/addthis_widget.js#pubid=Your%20AddthisId"></script>
+<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
+</body>
+</html>

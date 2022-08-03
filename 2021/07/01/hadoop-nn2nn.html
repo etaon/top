@@ -1,0 +1,1427 @@
+<!doctype html><html lang=zh-cn dir=content/zh-cn>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
+<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
+<title> HADOOP-NN & 2NN - 路无止境！ </title>
+<meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云">
+<meta name=author content="Etaon">
+<meta property="og:title" content="HADOOP-NN & 2NN">
+<meta property="og:site_name" content="路无止境！">
+<meta property="og:image" content="/img/author.jpg">
+<meta name=title content="HADOOP-NN & 2NN - 路无止境！">
+<meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。">
+<link rel="shortcut icon" href=/img/favicon.ico>
+<link rel=apple-touch-icon href=/img/apple-touch-icon.png>
+<link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png>
+<link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css>
+<link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet>
+<link href=/css/main.css rel=stylesheet type=text/css>
+<link href=/css/syntax.css rel=stylesheet type=text/css>
+</head>
+<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
+<div class="container one-collumn sidebar-position-left page-home">
+<div class=headband></div>
+<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
+<div class=header-inner> <div class=site-brand-container>
+<div class=site-nav-toggle>
+<div class=toggle role=button style=opacity:1;top:0>
+<span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span>
+</div>
+</div>
+<div class=site-meta>
+<div class=multi-lang-switch>
+<i class="fa fa-fw fa-language" style=margin-right:5px></i>
+<a class=lang-link id=zh-cn href=#>中文</a>
+</div>
+<div class=custom-logo-site-title>
+<a href=/ class=brand rel=start>
+<span class=logo-line-before><i></i></span>
+<span class=site-title>路无止境！</span>
+<span class=logo-line-after><i></i></span>
+</a>
+</div>
+<p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p>
+</div>
+<div class=site-nav-right>
+<div class="toggle popup-trigger" style=opacity:1;top:0>
+<i class="fa fa-search fa-fw fa-lg"></i>
+</div>
+</div>
+</div>
+<nav class=site-nav>
+<ul id=menu class=menu>
+<li class=menu-item>
+<a href=/ rel=section>
+<i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页
+</a>
+</li>
+<li class=menu-item>
+<a href=/post rel=section>
+<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档
+</a>
+</li>
+<li class=menu-item>
+<a href=/about.html rel=section>
+<i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于我
+</a>
+</li>
+<li class=menu-item>
+<a href=/404.html rel=section>
+<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益404
+</a>
+</li>
+<li class="menu-item menu-item-search">
+<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> 搜索</a>
+</li>
+</ul>
+<div class=site-search>
+<div class="popup search-popup local-search-popup">
+<div class="local-search-header clearfix">
+<span class=search-icon><i class="fa fa-search"></i> </span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
+<div class=local-search-input-wrapper>
+<input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
+</div>
+</div>
+<div id=local-search-result></div>
+</div>
+</div>
+</nav>
+</div>
+</header>
+<main id=main class=main>
+<div class=main-inner>
+<div class=content-wrap>
+<div id=content class=content>
+<section id=posts class=posts-expand>
+<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
+<header class=post-header>
+<h1 class=post-title itemprop="name headline" style=font-weight:700>
+<a class=post-title-link href=https://www.etaon.link/2021/07/01/hadoop-nn2nn.html itemprop=url>
+HADOOP-NN & 2NN
+</a>
+</h1>
+</header>
+<div class=post-body itemprop=articleBody>
+<h2 id=几个概念>几个概念</h2>
+<p>NameNode被格式化之后，将在/opt/module/hadoop-3.1.3/data/tmp/dfs/name/current目录中产生如下文件：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>fsimage_0000000000000000000
+fsimage_0000000000000000000.md5
+seen_txid
+VERSION
+</code></pre></div><p>在实验中h102看到的是：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>-rw-rw-r--. 1 zyi zyi      42 Jun 30 02:59 edits_0000000000000001543-0000000000000001544
+-rw-rw-r--. 1 zyi zyi      42 Jun 30 03:59 edits_0000000000000001545-0000000000000001546
+-rw-rw-r--. 1 zyi zyi 1048576 Jun 30 03:59 edits_inprogress_0000000000000001547
+-rw-rw-r--. 1 zyi zyi    1407 Jun 30 02:59 fsimage_0000000000000001544
+-rw-rw-r--. 1 zyi zyi      62 Jun 30 02:59 fsimage_0000000000000001544.md5
+-rw-rw-r--. 1 zyi zyi    1407 Jun 30 03:59 fsimage_0000000000000001546
+-rw-rw-r--. 1 zyi zyi      62 Jun 30 03:59 fsimage_0000000000000001546.md5
+-rw-rw-r--. 1 zyi zyi       5 Jun 30 03:59 seen_txid
+-rw-rw-r--. 1 zyi zyi     218 Jun 11 07:05 VERSION
+</code></pre></div><h3 id=fsimage文件>Fsimage文件</h3>
+<p>该文件是HDFS文件系统元数据的一个永久性的检查点，其中包含HDFS文件系统的所有目录和文件inode的序列化信息。</p>
+<h4 id=hdfs-oiv>hdfs oiv</h4>
+<p>我们查看hdfs oiv命令的帮助：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@h102 current]# hdfs oiv -h
+Usage: bin/hdfs oiv [OPTIONS] -i INPUTFILE -o OUTPUTFILE
+Offline Image Viewer
+View a Hadoop fsimage INPUTFILE using the specified PROCESSOR,
+saving the results in OUTPUTFILE.
+
+The oiv utility will attempt to parse correctly formed image files
+and will abort fail with mal-formed image files.
+
+The tool works offline and does not require a running cluster in
+order to process an image file.
+
+The following image processors are available:
+  * XML: This processor creates an XML document with all elements of
+    the fsimage enumerated, suitable for further analysis by XML
+    tools.
+  * ReverseXML: This processor takes an XML file and creates a
+    binary fsimage containing the same elements.
+  * FileDistribution: This processor analyzes the file size
+    distribution in the image.
+    -maxSize specifies the range [0, maxSize] of file sizes to be
+     analyzed (128GB by default).
+    -step defines the granularity of the distribution. (2MB by default)
+    -format formats the output result in a human-readable fashion
+     rather than a number of bytes. (false by default)
+  * Web: Run a viewer to expose read-only WebHDFS API.
+    -addr specifies the address to listen. (localhost:5978 by default)
+    It does not support secure mode nor HTTPS.
+  * Delimited (experimental): Generate a text file with all of the elements common
+    to both inodes and inodes-under-construction, separated by a
+    delimiter. The default delimiter is \t, though this may be
+    changed via the -delimiter argument.
+
+Required command line arguments:
+-i,--inputFile &lt;arg&gt;   FSImage or XML file to process.
+
+Optional command line arguments:
+-o,--outputFile &lt;arg&gt;  Name of output file. If the specified
+                       file exists, it will be overwritten.
+                       (output to stdout by default)
+                       If the input file was an XML file, we
+                       will also create an &lt;outputFile&gt;.md5 file.
+-p,--processor &lt;arg&gt;   Select which type of processor to apply
+                       against image file. (XML|FileDistribution|
+                       ReverseXML|Web|Delimited)
+                       The default is Web.
+-delimiter &lt;arg&gt;       Delimiting string to use with Delimited processor.
+-t,--temp &lt;arg&gt;        Use temporary dir to cache intermediate result to generate
+                       Delimited outputs. If not set, Delimited processor constructs
+                       the namespace in memory before outputting text.
+-h,--help              Display usage information and exit
+</code></pre></div><p>以上可以看到这条命令的作用
+<strong>Offline Image Viewer
+View a Hadoop fsimage INPUTFILE using the specified PROCESSOR,
+saving the results in OUTPUTFILE.</strong>
+最常用的语法：
+hdfs oiv -p 文件类型 -i 镜像文件 -o 转换后文件输出路径</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@h102 current]# hdfs oiv -p XML -i fsimage_0000000000000001586 -o /opt/software/fsimage-1.xml
+2021-07-01 00:32:35,781 INFO offlineImageViewer.FSImageHandler: Loading 3 strings
+</code></pre></div><p>查看fsimagfe-1.xml:</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-html data-lang=html><span style=color:#080>&lt;?xml version=&#34;1.0&#34;?&gt;</span>
+
+-&lt;<span style=color:green;font-weight:700>fsimage</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>version</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>layoutVersion</span>&gt;-64&lt;/<span style=color:green;font-weight:700>layoutVersion</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>onDiskVersion</span>&gt;1&lt;/<span style=color:green;font-weight:700>onDiskVersion</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>oivRevision</span>&gt;ba631c436b806728f8ec2f54ab1e289526c90579&lt;/<span style=color:green;font-weight:700>oivRevision</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>version</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>NameSection</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>namespaceId</span>&gt;632455869&lt;/<span style=color:green;font-weight:700>namespaceId</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>genstampV1</span>&gt;1000&lt;/<span style=color:green;font-weight:700>genstampV1</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>genstampV2</span>&gt;1045&lt;/<span style=color:green;font-weight:700>genstampV2</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>genstampV1Limit</span>&gt;0&lt;/<span style=color:green;font-weight:700>genstampV1Limit</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>lastAllocatedBlockId</span>&gt;1073741864&lt;/<span style=color:green;font-weight:700>lastAllocatedBlockId</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>txid</span>&gt;1586&lt;/<span style=color:green;font-weight:700>txid</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>NameSection</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>ErasureCodingSection</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>erasureCodingPolicy</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>policyId</span>&gt;1&lt;/<span style=color:green;font-weight:700>policyId</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>policyName</span>&gt;RS-6-3-1024k&lt;/<span style=color:green;font-weight:700>policyName</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>cellSize</span>&gt;1048576&lt;/<span style=color:green;font-weight:700>cellSize</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>policyState</span>&gt;DISABLED&lt;/<span style=color:green;font-weight:700>policyState</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>ecSchema</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>codecName</span>&gt;rs&lt;/<span style=color:green;font-weight:700>codecName</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>dataUnits</span>&gt;6&lt;/<span style=color:green;font-weight:700>dataUnits</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>parityUnits</span>&gt;3&lt;/<span style=color:green;font-weight:700>parityUnits</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>ecSchema</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>erasureCodingPolicy</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>erasureCodingPolicy</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>policyId</span>&gt;2&lt;/<span style=color:green;font-weight:700>policyId</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>policyName</span>&gt;RS-3-2-1024k&lt;/<span style=color:green;font-weight:700>policyName</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>cellSize</span>&gt;1048576&lt;/<span style=color:green;font-weight:700>cellSize</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>policyState</span>&gt;DISABLED&lt;/<span style=color:green;font-weight:700>policyState</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>ecSchema</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>codecName</span>&gt;rs&lt;/<span style=color:green;font-weight:700>codecName</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>dataUnits</span>&gt;3&lt;/<span style=color:green;font-weight:700>dataUnits</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>parityUnits</span>&gt;2&lt;/<span style=color:green;font-weight:700>parityUnits</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>ecSchema</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>erasureCodingPolicy</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>erasureCodingPolicy</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>policyId</span>&gt;3&lt;/<span style=color:green;font-weight:700>policyId</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>policyName</span>&gt;RS-LEGACY-6-3-1024k&lt;/<span style=color:green;font-weight:700>policyName</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>cellSize</span>&gt;1048576&lt;/<span style=color:green;font-weight:700>cellSize</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>policyState</span>&gt;DISABLED&lt;/<span style=color:green;font-weight:700>policyState</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>ecSchema</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>codecName</span>&gt;rs-legacy&lt;/<span style=color:green;font-weight:700>codecName</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>dataUnits</span>&gt;6&lt;/<span style=color:green;font-weight:700>dataUnits</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>parityUnits</span>&gt;3&lt;/<span style=color:green;font-weight:700>parityUnits</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>ecSchema</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>erasureCodingPolicy</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>erasureCodingPolicy</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>policyId</span>&gt;4&lt;/<span style=color:green;font-weight:700>policyId</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>policyName</span>&gt;XOR-2-1-1024k&lt;/<span style=color:green;font-weight:700>policyName</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>cellSize</span>&gt;1048576&lt;/<span style=color:green;font-weight:700>cellSize</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>policyState</span>&gt;DISABLED&lt;/<span style=color:green;font-weight:700>policyState</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>ecSchema</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>codecName</span>&gt;xor&lt;/<span style=color:green;font-weight:700>codecName</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>dataUnits</span>&gt;2&lt;/<span style=color:green;font-weight:700>dataUnits</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>parityUnits</span>&gt;1&lt;/<span style=color:green;font-weight:700>parityUnits</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>ecSchema</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>erasureCodingPolicy</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>erasureCodingPolicy</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>policyId</span>&gt;5&lt;/<span style=color:green;font-weight:700>policyId</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>policyName</span>&gt;RS-10-4-1024k&lt;/<span style=color:green;font-weight:700>policyName</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>cellSize</span>&gt;1048576&lt;/<span style=color:green;font-weight:700>cellSize</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>policyState</span>&gt;DISABLED&lt;/<span style=color:green;font-weight:700>policyState</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>ecSchema</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>codecName</span>&gt;rs&lt;/<span style=color:green;font-weight:700>codecName</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>dataUnits</span>&gt;10&lt;/<span style=color:green;font-weight:700>dataUnits</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>parityUnits</span>&gt;4&lt;/<span style=color:green;font-weight:700>parityUnits</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>ecSchema</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>erasureCodingPolicy</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>ErasureCodingSection</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>INodeSection</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>lastInodeId</span>&gt;16480&lt;/<span style=color:green;font-weight:700>lastInodeId</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>numInodes</span>&gt;16&lt;/<span style=color:green;font-weight:700>numInodes</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>inode</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>id</span>&gt;16385&lt;/<span style=color:green;font-weight:700>id</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>type</span>&gt;DIRECTORY&lt;/<span style=color:green;font-weight:700>type</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>name</span>/&gt;
+
+&lt;<span style=color:green;font-weight:700>mtime</span>&gt;1623409999622&lt;/<span style=color:green;font-weight:700>mtime</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>permission</span>&gt;zyi:supergroup:0755&lt;/<span style=color:green;font-weight:700>permission</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>nsquota</span>&gt;9223372036854775807&lt;/<span style=color:green;font-weight:700>nsquota</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>dsquota</span>&gt;-1&lt;/<span style=color:green;font-weight:700>dsquota</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>inode</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>inode</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>id</span>&gt;16386&lt;/<span style=color:green;font-weight:700>id</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>type</span>&gt;DIRECTORY&lt;/<span style=color:green;font-weight:700>type</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>name</span>&gt;input&lt;/<span style=color:green;font-weight:700>name</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>mtime</span>&gt;1622690609129&lt;/<span style=color:green;font-weight:700>mtime</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>permission</span>&gt;zyi:supergroup:0755&lt;/<span style=color:green;font-weight:700>permission</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>nsquota</span>&gt;-1&lt;/<span style=color:green;font-weight:700>nsquota</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>dsquota</span>&gt;-1&lt;/<span style=color:green;font-weight:700>dsquota</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>inode</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>inode</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>id</span>&gt;16387&lt;/<span style=color:green;font-weight:700>id</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>type</span>&gt;FILE&lt;/<span style=color:green;font-weight:700>type</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>name</span>&gt;word.txt&lt;/<span style=color:green;font-weight:700>name</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>replication</span>&gt;3&lt;/<span style=color:green;font-weight:700>replication</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>mtime</span>&gt;1622687321202&lt;/<span style=color:green;font-weight:700>mtime</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>atime</span>&gt;1622727500321&lt;/<span style=color:green;font-weight:700>atime</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>preferredBlockSize</span>&gt;134217728&lt;/<span style=color:green;font-weight:700>preferredBlockSize</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>permission</span>&gt;zyi:supergroup:0644&lt;/<span style=color:green;font-weight:700>permission</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>blocks</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>block</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>id</span>&gt;1073741825&lt;/<span style=color:green;font-weight:700>id</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>genstamp</span>&gt;1001&lt;/<span style=color:green;font-weight:700>genstamp</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>numBytes</span>&gt;1248&lt;/<span style=color:green;font-weight:700>numBytes</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>block</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>blocks</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>storagePolicyId</span>&gt;0&lt;/<span style=color:green;font-weight:700>storagePolicyId</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>inode</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>inode</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>id</span>&gt;16454&lt;/<span style=color:green;font-weight:700>id</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>type</span>&gt;DIRECTORY&lt;/<span style=color:green;font-weight:700>type</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>name</span>&gt;output&lt;/<span style=color:green;font-weight:700>name</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>mtime</span>&gt;1622706392626&lt;/<span style=color:green;font-weight:700>mtime</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>permission</span>&gt;zyi:supergroup:0755&lt;/<span style=color:green;font-weight:700>permission</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>nsquota</span>&gt;-1&lt;/<span style=color:green;font-weight:700>nsquota</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>dsquota</span>&gt;-1&lt;/<span style=color:green;font-weight:700>dsquota</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>inode</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>inode</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>id</span>&gt;16460&lt;/<span style=color:green;font-weight:700>id</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>type</span>&gt;FILE&lt;/<span style=color:green;font-weight:700>type</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>name</span>&gt;part-r-00000&lt;/<span style=color:green;font-weight:700>name</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>replication</span>&gt;3&lt;/<span style=color:green;font-weight:700>replication</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>mtime</span>&gt;1622706392348&lt;/<span style=color:green;font-weight:700>mtime</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>atime</span>&gt;1622706392055&lt;/<span style=color:green;font-weight:700>atime</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>preferredBlockSize</span>&gt;134217728&lt;/<span style=color:green;font-weight:700>preferredBlockSize</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>permission</span>&gt;zyi:supergroup:0644&lt;/<span style=color:green;font-weight:700>permission</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>blocks</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>block</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>id</span>&gt;1073741854&lt;/<span style=color:green;font-weight:700>id</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>genstamp</span>&gt;1030&lt;/<span style=color:green;font-weight:700>genstamp</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>numBytes</span>&gt;1013&lt;/<span style=color:green;font-weight:700>numBytes</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>block</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>blocks</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>storagePolicyId</span>&gt;0&lt;/<span style=color:green;font-weight:700>storagePolicyId</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>inode</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>inode</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>id</span>&gt;16462&lt;/<span style=color:green;font-weight:700>id</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>type</span>&gt;FILE&lt;/<span style=color:green;font-weight:700>type</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>name</span>&gt;_SUCCESS&lt;/<span style=color:green;font-weight:700>name</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>replication</span>&gt;3&lt;/<span style=color:green;font-weight:700>replication</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>mtime</span>&gt;1622706392636&lt;/<span style=color:green;font-weight:700>mtime</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>atime</span>&gt;1622706392626&lt;/<span style=color:green;font-weight:700>atime</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>preferredBlockSize</span>&gt;134217728&lt;/<span style=color:green;font-weight:700>preferredBlockSize</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>permission</span>&gt;zyi:supergroup:0644&lt;/<span style=color:green;font-weight:700>permission</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>storagePolicyId</span>&gt;0&lt;/<span style=color:green;font-weight:700>storagePolicyId</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>inode</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>inode</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>id</span>&gt;16469&lt;/<span style=color:green;font-weight:700>id</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>type</span>&gt;DIRECTORY&lt;/<span style=color:green;font-weight:700>type</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>name</span>&gt;tmp&lt;/<span style=color:green;font-weight:700>name</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>mtime</span>&gt;1623157585734&lt;/<span style=color:green;font-weight:700>mtime</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>permission</span>&gt;zyi:supergroup:0770&lt;/<span style=color:green;font-weight:700>permission</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>nsquota</span>&gt;-1&lt;/<span style=color:green;font-weight:700>nsquota</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>dsquota</span>&gt;-1&lt;/<span style=color:green;font-weight:700>dsquota</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>inode</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>inode</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>id</span>&gt;16470&lt;/<span style=color:green;font-weight:700>id</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>type</span>&gt;DIRECTORY&lt;/<span style=color:green;font-weight:700>type</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>name</span>&gt;hadoop-yarn&lt;/<span style=color:green;font-weight:700>name</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>mtime</span>&gt;1623157585735&lt;/<span style=color:green;font-weight:700>mtime</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>permission</span>&gt;zyi:supergroup:0770&lt;/<span style=color:green;font-weight:700>permission</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>nsquota</span>&gt;-1&lt;/<span style=color:green;font-weight:700>nsquota</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>dsquota</span>&gt;-1&lt;/<span style=color:green;font-weight:700>dsquota</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>inode</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>inode</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>id</span>&gt;16471&lt;/<span style=color:green;font-weight:700>id</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>type</span>&gt;DIRECTORY&lt;/<span style=color:green;font-weight:700>type</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>name</span>&gt;staging&lt;/<span style=color:green;font-weight:700>name</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>mtime</span>&gt;1623157585735&lt;/<span style=color:green;font-weight:700>mtime</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>permission</span>&gt;zyi:supergroup:0770&lt;/<span style=color:green;font-weight:700>permission</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>nsquota</span>&gt;-1&lt;/<span style=color:green;font-weight:700>nsquota</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>dsquota</span>&gt;-1&lt;/<span style=color:green;font-weight:700>dsquota</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>inode</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>inode</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>id</span>&gt;16472&lt;/<span style=color:green;font-weight:700>id</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>type</span>&gt;DIRECTORY&lt;/<span style=color:green;font-weight:700>type</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>name</span>&gt;history&lt;/<span style=color:green;font-weight:700>name</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>mtime</span>&gt;1623157585912&lt;/<span style=color:green;font-weight:700>mtime</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>permission</span>&gt;zyi:supergroup:0770&lt;/<span style=color:green;font-weight:700>permission</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>nsquota</span>&gt;-1&lt;/<span style=color:green;font-weight:700>nsquota</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>dsquota</span>&gt;-1&lt;/<span style=color:green;font-weight:700>dsquota</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>inode</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>inode</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>id</span>&gt;16473&lt;/<span style=color:green;font-weight:700>id</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>type</span>&gt;DIRECTORY&lt;/<span style=color:green;font-weight:700>type</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>name</span>&gt;done&lt;/<span style=color:green;font-weight:700>name</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>mtime</span>&gt;1623157585735&lt;/<span style=color:green;font-weight:700>mtime</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>permission</span>&gt;zyi:supergroup:0770&lt;/<span style=color:green;font-weight:700>permission</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>nsquota</span>&gt;-1&lt;/<span style=color:green;font-weight:700>nsquota</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>dsquota</span>&gt;-1&lt;/<span style=color:green;font-weight:700>dsquota</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>inode</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>inode</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>id</span>&gt;16474&lt;/<span style=color:green;font-weight:700>id</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>type</span>&gt;DIRECTORY&lt;/<span style=color:green;font-weight:700>type</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>name</span>&gt;done_intermediate&lt;/<span style=color:green;font-weight:700>name</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>mtime</span>&gt;1623157585912&lt;/<span style=color:green;font-weight:700>mtime</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>permission</span>&gt;zyi:supergroup:1777&lt;/<span style=color:green;font-weight:700>permission</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>nsquota</span>&gt;-1&lt;/<span style=color:green;font-weight:700>nsquota</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>dsquota</span>&gt;-1&lt;/<span style=color:green;font-weight:700>dsquota</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>inode</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>inode</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>id</span>&gt;16475&lt;/<span style=color:green;font-weight:700>id</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>type</span>&gt;DIRECTORY&lt;/<span style=color:green;font-weight:700>type</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>name</span>&gt;sanguo&lt;/<span style=color:green;font-weight:700>name</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>mtime</span>&gt;1623410691838&lt;/<span style=color:green;font-weight:700>mtime</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>permission</span>&gt;zyi:supergroup:0755&lt;/<span style=color:green;font-weight:700>permission</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>nsquota</span>&gt;-1&lt;/<span style=color:green;font-weight:700>nsquota</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>dsquota</span>&gt;-1&lt;/<span style=color:green;font-weight:700>dsquota</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>inode</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>inode</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>id</span>&gt;16477&lt;/<span style=color:green;font-weight:700>id</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>type</span>&gt;FILE&lt;/<span style=color:green;font-weight:700>type</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>name</span>&gt;weiguo.txt&lt;/<span style=color:green;font-weight:700>name</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>replication</span>&gt;3&lt;/<span style=color:green;font-weight:700>replication</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>mtime</span>&gt;1623410347504&lt;/<span style=color:green;font-weight:700>mtime</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>atime</span>&gt;1623410346845&lt;/<span style=color:green;font-weight:700>atime</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>preferredBlockSize</span>&gt;134217728&lt;/<span style=color:green;font-weight:700>preferredBlockSize</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>permission</span>&gt;zyi:supergroup:0644&lt;/<span style=color:green;font-weight:700>permission</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>blocks</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>block</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>id</span>&gt;1073741861&lt;/<span style=color:green;font-weight:700>id</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>genstamp</span>&gt;1037&lt;/<span style=color:green;font-weight:700>genstamp</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>numBytes</span>&gt;7&lt;/<span style=color:green;font-weight:700>numBytes</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>block</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>blocks</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>storagePolicyId</span>&gt;0&lt;/<span style=color:green;font-weight:700>storagePolicyId</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>inode</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>inode</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>id</span>&gt;16478&lt;/<span style=color:green;font-weight:700>id</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>type</span>&gt;FILE&lt;/<span style=color:green;font-weight:700>type</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>name</span>&gt;wuguo.txt&lt;/<span style=color:green;font-weight:700>name</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>replication</span>&gt;3&lt;/<span style=color:green;font-weight:700>replication</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>mtime</span>&gt;1623410414600&lt;/<span style=color:green;font-weight:700>mtime</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>atime</span>&gt;1623410414147&lt;/<span style=color:green;font-weight:700>atime</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>preferredBlockSize</span>&gt;134217728&lt;/<span style=color:green;font-weight:700>preferredBlockSize</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>permission</span>&gt;zyi:supergroup:0644&lt;/<span style=color:green;font-weight:700>permission</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>blocks</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>block</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>id</span>&gt;1073741862&lt;/<span style=color:green;font-weight:700>id</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>genstamp</span>&gt;1038&lt;/<span style=color:green;font-weight:700>genstamp</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>numBytes</span>&gt;6&lt;/<span style=color:green;font-weight:700>numBytes</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>block</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>blocks</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>storagePolicyId</span>&gt;0&lt;/<span style=color:green;font-weight:700>storagePolicyId</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>inode</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>inode</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>id</span>&gt;16480&lt;/<span style=color:green;font-weight:700>id</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>type</span>&gt;FILE&lt;/<span style=color:green;font-weight:700>type</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>name</span>&gt;shuguo.txt&lt;/<span style=color:green;font-weight:700>name</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>replication</span>&gt;3&lt;/<span style=color:green;font-weight:700>replication</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>mtime</span>&gt;1623411476257&lt;/<span style=color:green;font-weight:700>mtime</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>atime</span>&gt;1623410691378&lt;/<span style=color:green;font-weight:700>atime</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>preferredBlockSize</span>&gt;134217728&lt;/<span style=color:green;font-weight:700>preferredBlockSize</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>permission</span>&gt;zyi:supergroup:0644&lt;/<span style=color:green;font-weight:700>permission</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>blocks</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>block</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>id</span>&gt;1073741864&lt;/<span style=color:green;font-weight:700>id</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>genstamp</span>&gt;1045&lt;/<span style=color:green;font-weight:700>genstamp</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>numBytes</span>&gt;14&lt;/<span style=color:green;font-weight:700>numBytes</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>block</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>blocks</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>storagePolicyId</span>&gt;0&lt;/<span style=color:green;font-weight:700>storagePolicyId</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>inode</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>INodeSection</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>INodeReferenceSection</span>/&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>SnapshotSection</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>snapshotCounter</span>&gt;0&lt;/<span style=color:green;font-weight:700>snapshotCounter</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>numSnapshots</span>&gt;0&lt;/<span style=color:green;font-weight:700>numSnapshots</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>SnapshotSection</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>INodeDirectorySection</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>directory</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>parent</span>&gt;16385&lt;/<span style=color:green;font-weight:700>parent</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>child</span>&gt;16386&lt;/<span style=color:green;font-weight:700>child</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>child</span>&gt;16454&lt;/<span style=color:green;font-weight:700>child</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>child</span>&gt;16475&lt;/<span style=color:green;font-weight:700>child</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>child</span>&gt;16469&lt;/<span style=color:green;font-weight:700>child</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>directory</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>directory</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>parent</span>&gt;16386&lt;/<span style=color:green;font-weight:700>parent</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>child</span>&gt;16387&lt;/<span style=color:green;font-weight:700>child</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>directory</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>directory</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>parent</span>&gt;16454&lt;/<span style=color:green;font-weight:700>parent</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>child</span>&gt;16462&lt;/<span style=color:green;font-weight:700>child</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>child</span>&gt;16460&lt;/<span style=color:green;font-weight:700>child</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>directory</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>directory</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>parent</span>&gt;16469&lt;/<span style=color:green;font-weight:700>parent</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>child</span>&gt;16470&lt;/<span style=color:green;font-weight:700>child</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>directory</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>directory</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>parent</span>&gt;16470&lt;/<span style=color:green;font-weight:700>parent</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>child</span>&gt;16471&lt;/<span style=color:green;font-weight:700>child</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>directory</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>directory</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>parent</span>&gt;16471&lt;/<span style=color:green;font-weight:700>parent</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>child</span>&gt;16472&lt;/<span style=color:green;font-weight:700>child</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>directory</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>directory</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>parent</span>&gt;16472&lt;/<span style=color:green;font-weight:700>parent</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>child</span>&gt;16473&lt;/<span style=color:green;font-weight:700>child</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>child</span>&gt;16474&lt;/<span style=color:green;font-weight:700>child</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>directory</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>directory</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>parent</span>&gt;16475&lt;/<span style=color:green;font-weight:700>parent</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>child</span>&gt;16480&lt;/<span style=color:green;font-weight:700>child</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>child</span>&gt;16477&lt;/<span style=color:green;font-weight:700>child</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>child</span>&gt;16478&lt;/<span style=color:green;font-weight:700>child</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>directory</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>INodeDirectorySection</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>FileUnderConstructionSection</span>/&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>SecretManagerSection</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>currentId</span>&gt;0&lt;/<span style=color:green;font-weight:700>currentId</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>tokenSequenceNumber</span>&gt;0&lt;/<span style=color:green;font-weight:700>tokenSequenceNumber</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>numDelegationKeys</span>&gt;0&lt;/<span style=color:green;font-weight:700>numDelegationKeys</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>numTokens</span>&gt;0&lt;/<span style=color:green;font-weight:700>numTokens</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>SecretManagerSection</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>CacheManagerSection</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>nextDirectiveId</span>&gt;1&lt;/<span style=color:green;font-weight:700>nextDirectiveId</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>numDirectives</span>&gt;0&lt;/<span style=color:green;font-weight:700>numDirectives</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>numPools</span>&gt;0&lt;/<span style=color:green;font-weight:700>numPools</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>CacheManagerSection</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>fsimage</span>&gt;
+</code></pre></div><p>存储内容的名称在此表现：
+<img src="https://img-blog.csdnimg.cn/20210701154457815.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述>
+<img src="https://img-blog.csdnimg.cn/20210701154708941.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述>
+可以看到input和output的文件夹，文件word.txt是/input目录下的文件。
+input的ID：16386
+<img src=https://img-blog.csdnimg.cn/20210701155534775.png alt=在这里插入图片描述>
+文件中表示是一个父节点，下面有一个子节点16387
+<img src=https://img-blog.csdnimg.cn/20210701155659873.png alt=在这里插入图片描述>
+就是文件word.txt，层次很清楚的树形结构。</p>
+<p>注意：<strong>Fsimage 中没有记录块所对应 DataNode</strong></p>
+<h3 id=edits文件>Edits文件</h3>
+<p>它是存放HDFS文件系统的所有更新操作的路径，文件系统客户端执行的所有写操作首先会被记录到Edits文件中。</p>
+<h4 id=hdfs-oev>hdfs oev</h4>
+<p>查看hdfs oev命令的帮助：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@h102 current]# hdfs oev -h
+Usage: bin/hdfs oev [OPTIONS] -i INPUT_FILE -o OUTPUT_FILE
+Offline edits viewer
+**Parse a Hadoop edits log file INPUT_FILE and save results
+in OUTPUT_FILE.**
+Required command line arguments:
+-i,--inputFile &lt;arg&gt;   edits file to process, xml (case
+                       insensitive) extension means XML format,
+                       any other filename means binary format.
+                       XML/Binary format input file is not allowed
+                       to be processed by the same type processor.
+-o,--outputFile &lt;arg&gt;  Name of output file. If the specified
+                       file exists, it will be overwritten,
+                       format of the file is determined
+                       by -p option
+
+Optional command line arguments:
+-p,--processor &lt;arg&gt;   Select which type of processor to apply
+                       against image file, currently supported
+                       processors are: binary (native binary format
+                       that Hadoop uses), xml (default, XML
+                       format), stats (prints statistics about
+                       edits file)
+-h,--help              Display usage information and exit
+-f,--fix-txids         Renumber the transaction IDs in the input,
+                       so that there are no gaps or invalid
+                       transaction IDs.
+-r,--recover           When reading binary edit logs, use recovery
+                       mode.  This will give you the chance to skip
+                       corrupt parts of the edit log.
+-v,--verbose           More verbose output, prints the input and
+                       output filenames, for processors that write
+                       to a file, also output to screen. On large
+                       image files this will dramatically increase
+                       processing time (default is false).
+
+
+Generic options supported are:
+-conf &lt;configuration file&gt;        specify an application configuration file
+-D &lt;property=value&gt;               define a value for a given property
+-fs &lt;file:///|hdfs://namenode:port&gt; specify default filesystem URL to use, overrides &#39;fs.defaultFS&#39; property from configurations.
+-jt &lt;local|resourcemanager:port&gt;  specify a ResourceManager
+-files &lt;file1,...&gt;                specify a comma-separated list of files to be copied to the map reduce cluster
+-libjars &lt;jar1,...&gt;               specify a comma-separated list of jar files to be included in the classpath
+-archives &lt;archive1,...&gt;          specify a comma-separated list of archives to be unarchived on the compute machines
+
+The general command line syntax is:
+command [genericOptions] [commandOptions]
+</code></pre></div><p>查看前现在/目录下建立了一个目录：newone，并上传文件lic.txt</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@h102 current]# hdfs oev -p XML -i edits_inprogress_0000000000000001595 -o /opt/software/edits-1.xml
+[root@h102 current]# ll /opt/software/
+total 520616
+-rw-r--r--. 1 root root      2745 Jul  1 04:26 edits-1.xml
+-rw-r--r--. 1 root root      7237 Jul  1 00:35 fsimage-1.xml
+</code></pre></div><p>在浏览器上打开edits-1.xml</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-html data-lang=html><span style=color:#080>&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34; standalone=&#34;true&#34;?&gt;</span>
+
+-&lt;<span style=color:green;font-weight:700>EDITS</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>EDITS_VERSION</span>&gt;-64&lt;/<span style=color:green;font-weight:700>EDITS_VERSION</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>RECORD</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>OPCODE</span>&gt;OP_START_LOG_SEGMENT&lt;/<span style=color:green;font-weight:700>OPCODE</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>DATA</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>TXID</span>&gt;1595&lt;/<span style=color:green;font-weight:700>TXID</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>DATA</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>RECORD</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>RECORD</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>OPCODE</span>&gt;OP_MKDIR&lt;/<span style=color:green;font-weight:700>OPCODE</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>DATA</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>TXID</span>&gt;1596&lt;/<span style=color:green;font-weight:700>TXID</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>LENGTH</span>&gt;0&lt;/<span style=color:green;font-weight:700>LENGTH</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>INODEID</span>&gt;16481&lt;/<span style=color:green;font-weight:700>INODEID</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>PATH</span>&gt;/newone&lt;/<span style=color:green;font-weight:700>PATH</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>TIMESTAMP</span>&gt;1625127931249&lt;/<span style=color:green;font-weight:700>TIMESTAMP</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>PERMISSION_STATUS</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>USERNAME</span>&gt;zyi&lt;/<span style=color:green;font-weight:700>USERNAME</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>GROUPNAME</span>&gt;supergroup&lt;/<span style=color:green;font-weight:700>GROUPNAME</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>MODE</span>&gt;493&lt;/<span style=color:green;font-weight:700>MODE</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>PERMISSION_STATUS</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>DATA</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>RECORD</span>&gt;
+
+
++&lt;<span style=color:green;font-weight:700>RECORD</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>RECORD</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>OPCODE</span>&gt;OP_ALLOCATE_BLOCK_ID&lt;/<span style=color:green;font-weight:700>OPCODE</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>DATA</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>TXID</span>&gt;1598&lt;/<span style=color:green;font-weight:700>TXID</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>BLOCK_ID</span>&gt;1073741865&lt;/<span style=color:green;font-weight:700>BLOCK_ID</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>DATA</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>RECORD</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>RECORD</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>OPCODE</span>&gt;OP_SET_GENSTAMP_V2&lt;/<span style=color:green;font-weight:700>OPCODE</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>DATA</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>TXID</span>&gt;1599&lt;/<span style=color:green;font-weight:700>TXID</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>GENSTAMPV2</span>&gt;1046&lt;/<span style=color:green;font-weight:700>GENSTAMPV2</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>DATA</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>RECORD</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>RECORD</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>OPCODE</span>&gt;OP_ADD_BLOCK&lt;/<span style=color:green;font-weight:700>OPCODE</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>DATA</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>TXID</span>&gt;1600&lt;/<span style=color:green;font-weight:700>TXID</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>PATH</span>&gt;/newone/lic.txt&lt;/<span style=color:green;font-weight:700>PATH</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>BLOCK</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>BLOCK_ID</span>&gt;1073741865&lt;/<span style=color:green;font-weight:700>BLOCK_ID</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>NUM_BYTES</span>&gt;0&lt;/<span style=color:green;font-weight:700>NUM_BYTES</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>GENSTAMP</span>&gt;1046&lt;/<span style=color:green;font-weight:700>GENSTAMP</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>BLOCK</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>RPC_CLIENTID</span>/&gt;
+
+&lt;<span style=color:green;font-weight:700>RPC_CALLID</span>&gt;-2&lt;/<span style=color:green;font-weight:700>RPC_CALLID</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>DATA</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>RECORD</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>RECORD</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>OPCODE</span>&gt;OP_CLOSE&lt;/<span style=color:green;font-weight:700>OPCODE</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>DATA</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>TXID</span>&gt;1601&lt;/<span style=color:green;font-weight:700>TXID</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>LENGTH</span>&gt;0&lt;/<span style=color:green;font-weight:700>LENGTH</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>INODEID</span>&gt;0&lt;/<span style=color:green;font-weight:700>INODEID</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>PATH</span>&gt;/newone/lic.txt&lt;/<span style=color:green;font-weight:700>PATH</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>REPLICATION</span>&gt;3&lt;/<span style=color:green;font-weight:700>REPLICATION</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>MTIME</span>&gt;1625127944362&lt;/<span style=color:green;font-weight:700>MTIME</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>ATIME</span>&gt;1625127944012&lt;/<span style=color:green;font-weight:700>ATIME</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>BLOCKSIZE</span>&gt;134217728&lt;/<span style=color:green;font-weight:700>BLOCKSIZE</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>CLIENT_NAME</span>/&gt;
+
+&lt;<span style=color:green;font-weight:700>CLIENT_MACHINE</span>/&gt;
+
+&lt;<span style=color:green;font-weight:700>OVERWRITE</span>&gt;false&lt;/<span style=color:green;font-weight:700>OVERWRITE</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>BLOCK</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>BLOCK_ID</span>&gt;1073741865&lt;/<span style=color:green;font-weight:700>BLOCK_ID</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>NUM_BYTES</span>&gt;304&lt;/<span style=color:green;font-weight:700>NUM_BYTES</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>GENSTAMP</span>&gt;1046&lt;/<span style=color:green;font-weight:700>GENSTAMP</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>BLOCK</span>&gt;
+
+
+-&lt;<span style=color:green;font-weight:700>PERMISSION_STATUS</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>USERNAME</span>&gt;zyi&lt;/<span style=color:green;font-weight:700>USERNAME</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>GROUPNAME</span>&gt;supergroup&lt;/<span style=color:green;font-weight:700>GROUPNAME</span>&gt;
+
+&lt;<span style=color:green;font-weight:700>MODE</span>&gt;420&lt;/<span style=color:green;font-weight:700>MODE</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>PERMISSION_STATUS</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>DATA</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>RECORD</span>&gt;
+
+&lt;/<span style=color:green;font-weight:700>EDITS</span>&gt;
+</code></pre></div><p>里面记录了操作：建目录
+<img src="https://img-blog.csdnimg.cn/20210701163305358.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述>
+上传文件：
+<img src="https://img-blog.csdnimg.cn/20210701163412660.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p>
+<h3 id=seen_txid文件>seen_txid文件</h3>
+<p>该文件保存的是一个数字，就是最后一个edits_的数字，如我们在实验中的这个seen_txid</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@h102 current]# cat seen_txid
+1547
+</code></pre></div><h3 id=version>VERSION</h3>
+<p>该文件记录了集群信息，namenode和datanode需要保持一致。</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@h102 current]# cat VERSION
+#Fri Jun 11 07:05:22 EDT 2021
+namespaceID=632455869
+clusterID=CID-fd675fc9-998e-44d4-84f9-baa472f33d21
+cTime=1622624666933
+storageType=NAME_NODE
+blockpoolID=BP-1568640629-192.168.110.82-1622624666933
+layoutVersion=-64
+</code></pre></div><h2 id=hdfs文件修改>HDFS文件修改</h2>
+<h3 id=namenode的操作>NameNode的操作</h3>
+<p>磁盘中备份元数据的 FsImage,引入 Edits 文件（只进行追加操作，效率很高）。每当元数据有更新或者添加元数据时，修改内存中的元数据并追加到 Edits 中。只记录改变的操作。实际修改的数据在内存。
+每次NameNode启动的时候都会将Fsimage文件读入内存，加载Edits里面的更新操作，保证内存中的元数据信息是最新的、同步的，可以看成NameNode启动的时候就将Fsimage和Edits文件进行了合并。
+即：服务器启动，读FsImage+Edits；而服务器关机，合并FsImage+Edits</p>
+<h3 id=secondarynamenode的操作>SecondaryNamenode的操作</h3>
+<p>如果长时间添加数据到 Edits 中，会导致该文件数据过大，效率降低，而且一旦断电，恢复元数据需要的时间过长。因此，需要定期进行 FsImage 和 Edits 的合并，如果这个操作由NameNode节点完成，又会效率过低。因此，引入一个新的节点<strong>SecondaryNamenode</strong>，专门用于 FsImage 和 Edits 的合并。</p>
+<h3 id=nn与2nn协同>NN与2NN协同</h3>
+<p><img src="https://img-blog.csdnimg.cn/2021070112075687.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p>
+<h4 id=第一阶段namenode-启动>第一阶段：NameNode 启动</h4>
+<p>（1）第一次启动 NameNode 格式化后，创建 Fsimage 和 Edits 文件。如果不是第一次启动，直接加载编辑日志和镜像文件到内存。</p>
+<p>（2）客户端对元数据进行增删改的请求。</p>
+<p>（3）NameNode 记录操作日志，更新滚动日志。</p>
+<p>（4）NameNode 在内存中对元数据进行增删改。</p>
+<h4 id=第二阶段secondary-namenode-工作>第二阶段：Secondary NameNode 工作</h4>
+<p>（1）Secondary NameNode 询问 NameNode 是否需要 CheckPoint。直接带回 NameNode是否检查结果。</p>
+<p>（2）Secondary NameNode 请求执行 CheckPoint。</p>
+<p>（3）NameNode 滚动正在写的 Edits 日志。</p>
+<p>（4）将滚动前的编辑日志和镜像文件拷贝到 Secondary NameNode。</p>
+<p>（5）Secondary NameNode 加载编辑日志和镜像文件到内存，并合并。</p>
+<p>（6）生成新的镜像文件 fsimage.chkpoint。</p>
+<p>（7）拷贝 fsimage.chkpoint 到 NameNode。</p>
+<p>（8）NameNode 将 fsimage.chkpoint 重新命名成 fsimage。</p>
+<p>Check point时间一般一个小时，Edits条目一百万条。
+<img src="https://img-blog.csdnimg.cn/2021070116375133.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述>
+上图可以看到每一个小时合并一次，下次合并将大于1594的内容。</p>
+<p>在实验中可以查看NN和2NN的数据不同：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@h102 current]# pwd
+/opt/module/hadoop-3.1.3/data/dfs/name/current
+[root@h102 current]# ll
+total 11604
+-rw-rw-r--. 1 zyi zyi      42 Jun  2 05:12 edits_0000000000000000001-0000000000000000002
+-rw-rw-r--. 1 zyi zyi      42 Jun  2 06:12 edits_0000000000000000003-0000000000000000004
+......
+-rw-rw-r--. 1 zyi zyi      42 Jun 30 02:59 edits_0000000000000001543-0000000000000001544
+-rw-rw-r--. 1 zyi zyi      42 Jun 30 03:59 edits_0000000000000001545-0000000000000001546
+-rw-rw-r--. 1 zyi zyi 1048576 Jun 30 03:59 edits_inprogress_0000000000000001547
+-rw-rw-r--. 1 zyi zyi    1407 Jun 30 02:59 fsimage_0000000000000001544
+-rw-rw-r--. 1 zyi zyi      62 Jun 30 02:59 fsimage_0000000000000001544.md5
+-rw-rw-r--. 1 zyi zyi    1407 Jun 30 03:59 fsimage_0000000000000001546
+-rw-rw-r--. 1 zyi zyi      62 Jun 30 03:59 fsimage_0000000000000001546.md5
+-rw-rw-r--. 1 zyi zyi       5 Jun 30 03:59 seen_txid
+-rw-rw-r--. 1 zyi zyi     218 Jun 11 07:05 VERSION
+
+</code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@h104 current]# pwd
+/opt/module/hadoop-3.1.3/data/dfs/namesecondary/current
+[root@h104 current]# ll
+total 8052
+-rw-rw-r--. 1 zyi zyi      42 Jun  2 05:12 edits_0000000000000000001-0000000000000000002
+-rw-rw-r--. 1 zyi zyi      42 Jun  2 06:12 edits_0000000000000000003-0000000000000000004
+......
+-rw-rw-r--. 1 zyi zyi      42 Jun 25 04:52 edits_0000000000000001307-0000000000000001308
+-rw-rw-r--. 1 zyi zyi    1407 Jun 25 03:52 fsimage_0000000000000001306
+-rw-rw-r--. 1 zyi zyi      62 Jun 25 03:52 fsimage_0000000000000001306.md5
+-rw-rw-r--. 1 zyi zyi    1407 Jun 25 04:52 fsimage_0000000000000001308
+-rw-rw-r--. 1 zyi zyi      62 Jun 25 04:52 fsimage_0000000000000001308.md5
+-rw-rw-r--. 1 zyi zyi     218 Jun 25 04:52 VERSION
+</code></pre></div>
+</div>
+<footer class=post-footer>
+<div id=wcomments></div>
+</footer>
+</article>
+</section>
+</div>
+</div>
+<div class=sidebar-toggle>
+<div class=sidebar-toggle-line-wrap>
+<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+</div>
+</div>
+<aside id=sidebar class=sidebar>
+<div class=sidebar-inner>
+<ul class="sidebar-nav motion-element">
+<li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>
+文章目录
+</li>
+<li class=sidebar-nav-overview data-target=site-overview>
+站点概览
+</li>
+</ul>
+<section class="site-overview sidebar-panel">
+<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
+<img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon>
+<p class=site-author-name itemprop=name>Etaon</p>
+<p class="site-description motion-element" itemprop=description>
+Kepp Going!
+</p>
+</div>
+<nav class="site-state motion-element">
+<div class="site-state-item site-state-posts">
+<a href=/post/>
+<span class=site-state-item-count>61</span>
+<span class=site-state-item-name>日志</span>
+</a>
+</div>
+<div class="site-state-item site-state-categories">
+<a href=/categories/>
+<span class=site-state-item-count>13</span>
+<span class=site-state-item-name>分类</span>
+</a>
+</div>
+<div class="site-state-item site-state-tags">
+<a href=/tags/>
+<span class=site-state-item-count>34</span>
+<span class=site-state-item-name>标签</span>
+</a>
+</div>
+</nav>
+<div class="links-of-author motion-element">
+<span class=links-of-author-item>
+<a href=https://github.com/etaon target=_blank title=GitHub>
+<i class="fa fa-fw fa-github"></i>
+GitHub
+</a>
+</span>
+<span class=links-of-author-item>
+<a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN>
+<i class="fa fa-fw fa-CSDN"></i>
+CSDN
+</a>
+</span>
+</div>
+<div class="links-of-blogroll motion-element links-of-blogroll-inline">
+<div class=links-of-blogroll-title>
+<i class="fa fa-fw fa-globe"></i>
+友情链接
+</div>
+<ul class=links-of-blogroll-list>
+<li class=links-of-blogroll-item>
+<a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a>
+</li>
+</ul>
+</div>
+<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
+<div class=tagcloud-of-blogroll-title>
+<i class="fa fa-fw fa-tags"></i>
+标签云
+</div>
+<ul class=tagcloud-of-blogroll-list>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/mysql>Mysql</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/aws>Aws</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/dql>Dql</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/hadoop>Hadoop</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/redis>Redis</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/cicd>Cicd</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/git>Git</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/istio>Istio</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/mongodb>Mongodb</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/azure>Azure</a>
+</li>
+</ul>
+</div>
+</section>
+<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+<div class=post-toc>
+<div class=post-toc-content><nav id=TableOfContents>
+<ul>
+<li><a href=#几个概念>几个概念</a>
+<ul>
+<li><a href=#fsimage文件>Fsimage文件</a></li>
+<li><a href=#edits文件>Edits文件</a></li>
+<li><a href=#seen_txid文件>seen_txid文件</a></li>
+<li><a href=#version>VERSION</a></li>
+</ul>
+</li>
+<li><a href=#hdfs文件修改>HDFS文件修改</a>
+<ul>
+<li><a href=#namenode的操作>NameNode的操作</a></li>
+<li><a href=#secondarynamenode的操作>SecondaryNamenode的操作</a></li>
+<li><a href=#nn与2nn协同>NN与2NN协同</a></li>
+</ul>
+</li>
+</ul>
+</nav></div>
+</div>
+</section>
+</div>
+</aside>
+</div>
+</main>
+<footer id=footer class=footer>
+<div class=footer-inner>
+<div class=copyright>
+<span class=copyright-year>
+&copy; 2010 - 2022
+</span>
+<span class=with-love><i class="fa fa-heart"></i></span>
+<span class=copyright-author>路无止境！</span>
+</div>
+<div class=powered-info>
+<span class=powered-by>
+Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.91.2</a>
+</span>
+<span class=separator-line>/</span>
+<span class=theme-info>
+Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
+</a>
+</span>
+</div>
+<div class=vistor-info>
+<script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<span class=site-uv>
+<i class="fa fa-user"></i>
+<span class=busuanzi-value id=busuanzi_value_site_uv></span>
+</span>
+<span class=separator-line>/</span>
+<span class=site-pv>
+<i class="fa fa-eye"></i>
+<span class=busuanzi-value id=busuanzi_value_site_pv></span>
+</span>
+</div>
+<div class=license-info>
+<span class=storage-info>
+Storage by
+<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a>
+</span>
+<span class=separator-line>/</span>
+<span class=license-num>
+<a href target=_blank></a>
+</span>
+</div>
+</div>
+</footer>
+<div class=back-to-top>
+<i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span>
+</div>
+</div>
+<script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
+<script type=text/javascript src=/js/search.js></script>
+<script type=text/javascript src=/js/affix.js></script>
+<script type=text/javascript src=/js/scrollspy.js></script>
+<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.main').css('padding-bottom'),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}}),$(document).on('affixed.bs.affix',function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var b=$('.header-inner').height()+10,c,d,a,e;$('#sidebar').css({'margin-top':b}).show(),c=parseInt($('#sidebar').css('margin-top')),d=parseInt($('.sidebar-inner').css('height')),a=c+d,e=$('.content-wrap').height(),e<a&&$('.content-wrap').css('min-height',a),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
+<script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
+<script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+'//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js',function(){new Waline({el:'#wcomments',visitor:!0,avatar:'wavatar',avatarCDN:'https://sdn.geekzu.org/avatar/',avatarForce:!1,wordLimit:'200',placeholder:' 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ',requiredFields:['nick','mail'],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$('#wcomments').html('抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。')})</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type=text/javascript src="//s7.addthis.com/js/300/addthis_widget.js#pubid=Your%20AddthisId"></script>
+<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
+</body>
+</html>

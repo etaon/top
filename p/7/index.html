@@ -103,16 +103,16 @@
 <article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
 <header class=post-header>
 <h1 class=post-title itemprop="name headline">
-<a class=post-title-link href=https://www.etaon.link/2022/06/6/Install-Kubernetes-1.24.html itemprop=url>
-Install Kubernetes 1.24
+<a class=post-title-link href=https://www.etaon.link/2021/11/24/redis-cluster.html itemprop=url>
+Redis Cluster
 </a>
 </h1>
 <div class=post-meta>
 <span class=post-time>
 <i class="fa fa-calendar-o fa-fw"></i>
 <span class=post-meta-item-text>时间：</span>
-<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2022-06-06">
-2022-06-06
+<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2021-11-24">
+2021-11-24
 </time>
 </span>
 <span class=post-category>
@@ -120,8 +120,8 @@ Install Kubernetes 1.24
 <i class="fa fa-folder-o fa-fw"></i>
 <span class=post-meta-item-text>分类：</span>
 <span itemprop=about itemscope itemtype=https://schema.org/Thing>
-<a href=/categories/kubernetes itemprop=url rel=index style=text-decoration:underline>
-<span itemprop=name>kubernetes</span>
+<a href=/categories/redis itemprop=url rel=index style=text-decoration:underline>
+<span itemprop=name>redis</span>
 </a>
 &nbsp;
 </span>
@@ -130,21 +130,21 @@ Install Kubernetes 1.24
 |
 <i class="fa fa-file-word-o fa-fw"></i>
 <span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>8731 字</span>
+<span class=leancloud-world-count>1707 字</span>
 </span>
 <span>
 |
 <i class="fa fa-eye fa-fw"></i>
 <span class=post-meta-item-text>阅读：</span>
-<span class=leancloud-view-count>18分钟</span>
+<span class=leancloud-view-count>4分钟</span>
 </span>
 </div>
 </header>
 <div class=post-body itemprop=articleBody>
-Kubernetes容器运行时演进 早期的kubernetes runtime架构，远没这么复杂，kubelet创建容器，直接调用docker d
+概述 单机/单主的性能瓶颈 IOPS 约100k/s读，20-80k/s写 单机内存限制 Cluster 访问，负载均衡 内存，扩展 灾难恢复 集群存储空间设计 设计原理 Redis cluster 采用
 </div>
 <div class="post-more-link text-center">
-<a class=btn href=https://www.etaon.link/2022/06/6/Install-Kubernetes-1.24.html rel=contents>
+<a class=btn href=https://www.etaon.link/2021/11/24/redis-cluster.html rel=contents>
 阅读全文 &#187;
 </a>
 </div>
@@ -153,16 +153,16 @@ Kubernetes容器运行时演进 早期的kubernetes runtime架构，远没这么
 <article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
 <header class=post-header>
 <h1 class=post-title itemprop="name headline">
-<a class=post-title-link href=https://www.etaon.link/2022/06/06/sql-infra.html itemprop=url>
-SQL Server 体系结构
+<a class=post-title-link href=https://www.etaon.link/2021/11/21/redis-sentinel.html itemprop=url>
+Redis sentinel
 </a>
 </h1>
 <div class=post-meta>
 <span class=post-time>
 <i class="fa fa-calendar-o fa-fw"></i>
 <span class=post-meta-item-text>时间：</span>
-<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2022-06-06">
-2022-06-06
+<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2021-11-21">
+2021-11-21
 </time>
 </span>
 <span class=post-category>
@@ -170,8 +170,8 @@ SQL Server 体系结构
 <i class="fa fa-folder-o fa-fw"></i>
 <span class=post-meta-item-text>分类：</span>
 <span itemprop=about itemscope itemtype=https://schema.org/Thing>
-<a href=/categories/database itemprop=url rel=index style=text-decoration:underline>
-<span itemprop=name>Database</span>
+<a href=/categories/redis itemprop=url rel=index style=text-decoration:underline>
+<span itemprop=name>redis</span>
 </a>
 &nbsp;
 </span>
@@ -180,21 +180,21 @@ SQL Server 体系结构
 |
 <i class="fa fa-file-word-o fa-fw"></i>
 <span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>5070 字</span>
+<span class=leancloud-world-count>1423 字</span>
 </span>
 <span>
 |
 <i class="fa fa-eye fa-fw"></i>
 <span class=post-meta-item-text>阅读：</span>
-<span class=leancloud-view-count>11分钟</span>
+<span class=leancloud-view-count>3分钟</span>
 </span>
 </div>
 </header>
 <div class=post-body itemprop=articleBody>
-整体结构 Microsoft SQL Server 服务由一个实例（Instance）和多个数据库（Databases）组成， 实例包含了后台线程和占用的内存，数据库在存在于存储上
+概述 哨兵Sentinel：主从故障切换的具体实现 分布式 也是Redis服务器，不提供数据服务 一般为单数 三个阶段 监控：同步信息 通知：保持联通 故障
 </div>
 <div class="post-more-link text-center">
-<a class=btn href=https://www.etaon.link/2022/06/06/sql-infra.html rel=contents>
+<a class=btn href=https://www.etaon.link/2021/11/21/redis-sentinel.html rel=contents>
 阅读全文 &#187;
 </a>
 </div>
@@ -203,16 +203,16 @@ SQL Server 体系结构
 <article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
 <header class=post-header>
 <h1 class=post-title itemprop="name headline">
-<a class=post-title-link href=https://www.etaon.link/2022/06/05/oracle-basic.html itemprop=url>
-Oracle基本概念和结构
+<a class=post-title-link href=https://www.etaon.link/2021/11/19/redis-replication.html itemprop=url>
+Redis 主从复制
 </a>
 </h1>
 <div class=post-meta>
 <span class=post-time>
 <i class="fa fa-calendar-o fa-fw"></i>
 <span class=post-meta-item-text>时间：</span>
-<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2022-06-05">
-2022-06-05
+<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2021-11-19">
+2021-11-19
 </time>
 </span>
 <span class=post-category>
@@ -220,8 +220,8 @@ Oracle基本概念和结构
 <i class="fa fa-folder-o fa-fw"></i>
 <span class=post-meta-item-text>分类：</span>
 <span itemprop=about itemscope itemtype=https://schema.org/Thing>
-<a href=/categories/database itemprop=url rel=index style=text-decoration:underline>
-<span itemprop=name>Database</span>
+<a href=/categories/redis itemprop=url rel=index style=text-decoration:underline>
+<span itemprop=name>redis</span>
 </a>
 &nbsp;
 </span>
@@ -230,7 +230,57 @@ Oracle基本概念和结构
 |
 <i class="fa fa-file-word-o fa-fw"></i>
 <span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>2679 字</span>
+<span class=leancloud-world-count>1894 字</span>
+</span>
+<span>
+|
+<i class="fa fa-eye fa-fw"></i>
+<span class=post-meta-item-text>阅读：</span>
+<span class=leancloud-view-count>4分钟</span>
+</span>
+</div>
+</header>
+<div class=post-body itemprop=articleBody>
+概述 高可用集群基础 master复制数据到slave master：读写，写为主；多slave slave：读，写禁止，唯一master 可利用负载
+</div>
+<div class="post-more-link text-center">
+<a class=btn href=https://www.etaon.link/2021/11/19/redis-replication.html rel=contents>
+阅读全文 &#187;
+</a>
+</div>
+<footer class=post-footer><div class=post-eof></div></footer>
+</article>
+<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
+<header class=post-header>
+<h1 class=post-title itemprop="name headline">
+<a class=post-title-link href=https://www.etaon.link/2021/11/12/redis-dataPersistent.html itemprop=url>
+Redis data persistent
+</a>
+</h1>
+<div class=post-meta>
+<span class=post-time>
+<i class="fa fa-calendar-o fa-fw"></i>
+<span class=post-meta-item-text>时间：</span>
+<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2021-11-12">
+2021-11-12
+</time>
+</span>
+<span class=post-category>
+&nbsp; | &nbsp;
+<i class="fa fa-folder-o fa-fw"></i>
+<span class=post-meta-item-text>分类：</span>
+<span itemprop=about itemscope itemtype=https://schema.org/Thing>
+<a href=/categories/redis itemprop=url rel=index style=text-decoration:underline>
+<span itemprop=name>redis</span>
+</a>
+&nbsp;
+</span>
+</span>
+<span>
+|
+<i class="fa fa-file-word-o fa-fw"></i>
+<span class=post-meta-item-text>字数：</span>
+<span class=leancloud-world-count>2813 字</span>
 </span>
 <span>
 |
@@ -241,10 +291,10 @@ Oracle基本概念和结构
 </div>
 </header>
 <div class=post-body itemprop=articleBody>
-什么是关系型数据库？ 基于关系模型的数据库，即基于二维表（行、列）存储数据的库。 什么是数据库? 数据库是存储介质上的文件—>物理存储结构 什
+概念 利用永久性存储介质将数据进行保存，在特定的时间将保存的数据进行恢复的工作机制称为持久化。 两种方法： RDB和AOF： RDB-将当前数据状态
 </div>
 <div class="post-more-link text-center">
-<a class=btn href=https://www.etaon.link/2022/06/05/oracle-basic.html rel=contents>
+<a class=btn href=https://www.etaon.link/2021/11/12/redis-dataPersistent.html rel=contents>
 阅读全文 &#187;
 </a>
 </div>
@@ -253,16 +303,16 @@ Oracle基本概念和结构
 <article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
 <header class=post-header>
 <h1 class=post-title itemprop="name headline">
-<a class=post-title-link href=https://www.etaon.link/2022/05/26/oracle-install-19c.html itemprop=url>
-Oracle Install 19c@CentOS 7.6
+<a class=post-title-link href=https://www.etaon.link/2021/11/10/redis-install.html itemprop=url>
+Redis Install
 </a>
 </h1>
 <div class=post-meta>
 <span class=post-time>
 <i class="fa fa-calendar-o fa-fw"></i>
 <span class=post-meta-item-text>时间：</span>
-<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2022-05-26">
-2022-05-26
+<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2021-11-10">
+2021-11-10
 </time>
 </span>
 <span class=post-category>
@@ -270,8 +320,8 @@ Oracle Install 19c@CentOS 7.6
 <i class="fa fa-folder-o fa-fw"></i>
 <span class=post-meta-item-text>分类：</span>
 <span itemprop=about itemscope itemtype=https://schema.org/Thing>
-<a href=/categories/database itemprop=url rel=index style=text-decoration:underline>
-<span itemprop=name>Database</span>
+<a href=/categories/redis itemprop=url rel=index style=text-decoration:underline>
+<span itemprop=name>redis</span>
 </a>
 &nbsp;
 </span>
@@ -280,71 +330,21 @@ Oracle Install 19c@CentOS 7.6
 |
 <i class="fa fa-file-word-o fa-fw"></i>
 <span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>3833 字</span>
+<span class=leancloud-world-count>1920 字</span>
 </span>
 <span>
 |
 <i class="fa fa-eye fa-fw"></i>
 <span class=post-meta-item-text>阅读：</span>
-<span class=leancloud-view-count>8分钟</span>
+<span class=leancloud-view-count>4分钟</span>
 </span>
 </div>
 </header>
 <div class=post-body itemprop=articleBody>
-基础环境 CentOS 7 1908 ELF 5.0.2 CPU绑定，在NUMA结构中，尽量把vCPU放到最少的NUMA #virsh list查看哪些虚机和序号 [root@smtx-01 19:08:10 smartx]$virsh list Id Name State ---------------------------------------------------- 1 e9eafd7a-9b19-4dd3-bce4-60635252528c running 2 c4ea06f4-8084-4cdb-8010-a72e05402ce8 running #查
+下载安装 地址： https://redis.io/download 在该页面也给出了安装方法： Download, extract and compile Redis with: $ wget https://download.redis.io/releases/redis-6.2.6.tar.gz $ tar xzf redis-6.2.6.tar.gz $ cd redis-6.2.6 $ make The binaries that are now compiled are available in the src directory. Run Redis with: $ src/redis-server You can interact with Redis using the built-in client: $ src/redis-cli redis> set foo
 </div>
 <div class="post-more-link text-center">
-<a class=btn href=https://www.etaon.link/2022/05/26/oracle-install-19c.html rel=contents>
-阅读全文 &#187;
-</a>
-</div>
-<footer class=post-footer><div class=post-eof></div></footer>
-</article>
-<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
-<header class=post-header>
-<h1 class=post-title itemprop="name headline">
-<a class=post-title-link href=https://www.etaon.link/2022/02/21/k8s-nfs-csi.html itemprop=url>
-NFS-Volume for K8S
-</a>
-</h1>
-<div class=post-meta>
-<span class=post-time>
-<i class="fa fa-calendar-o fa-fw"></i>
-<span class=post-meta-item-text>时间：</span>
-<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2022-02-21">
-2022-02-21
-</time>
-</span>
-<span class=post-category>
-&nbsp; | &nbsp;
-<i class="fa fa-folder-o fa-fw"></i>
-<span class=post-meta-item-text>分类：</span>
-<span itemprop=about itemscope itemtype=https://schema.org/Thing>
-<a href=/categories/kubernetes itemprop=url rel=index style=text-decoration:underline>
-<span itemprop=name>kubernetes</span>
-</a>
-&nbsp;
-</span>
-</span>
-<span>
-|
-<i class="fa fa-file-word-o fa-fw"></i>
-<span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>3178 字</span>
-</span>
-<span>
-|
-<i class="fa fa-eye fa-fw"></i>
-<span class=post-meta-item-text>阅读：</span>
-<span class=leancloud-view-count>7分钟</span>
-</span>
-</div>
-</header>
-<div class=post-body itemprop=articleBody>
-环境 Alma：Linux Alma 8.5 CP/Worker：ubuntu 18.04 NFS安装 Alma： #安装 yum install -y nfs-utils #nfs主节点 echo "/nfs/data/ *(insecure,rw,sync,no_root_squash)" > /etc/exports mkdir -p /nfs/data systemctl enable rpcbind --now systemctl enable nfs-server
-</div>
-<div class="post-more-link text-center">
-<a class=btn href=https://www.etaon.link/2022/02/21/k8s-nfs-csi.html rel=contents>
+<a class=btn href=https://www.etaon.link/2021/11/10/redis-install.html rel=contents>
 阅读全文 &#187;
 </a>
 </div>
@@ -352,15 +352,17 @@ NFS-Volume for K8S
 </article>
 </section>
 <nav class=pagination>
-<span class="page-number current">1</span>
-<a class=page-number href=/p/2/>2</a>
+<a class="extend prev" rel=prev href=/p/6/><i class="fa fa-angle-left"></i></a>
 <a class=page-number href=/p/3/>3</a>
 <a class=page-number href=/p/4/>4</a>
 <a class=page-number href=/p/5/>5</a>
 <a class=page-number href=/p/6/>6</a>
-<a class=page-number href=/p/7/>7</a>
+<span class="page-number current">7</span>
 <a class=page-number href=/p/8/>8</a>
-<a class="extend next" rel=next href=/p/2/><i class="fa fa-angle-right"></i></a>
+<a class=page-number href=/p/9/>9</a>
+<a class=page-number href=/p/10/>10</a>
+<a class=page-number href=/p/11/>11</a>
+<a class="extend next" rel=next href=/p/8/><i class="fa fa-angle-right"></i></a>
 </nav>
 </div>
 </div>

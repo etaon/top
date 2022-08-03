@@ -1,0 +1,571 @@
+<!doctype html><html lang=zh-cn dir=content/zh-cn>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
+<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
+<title> Redis sentinel - 路无止境！ </title>
+<meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云">
+<meta name=author content="Etaon">
+<meta property="og:title" content="Redis sentinel">
+<meta property="og:site_name" content="路无止境！">
+<meta property="og:image" content="/img/author.jpg">
+<meta name=title content="Redis sentinel - 路无止境！">
+<meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。">
+<link rel="shortcut icon" href=/img/favicon.ico>
+<link rel=apple-touch-icon href=/img/apple-touch-icon.png>
+<link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png>
+<link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css>
+<link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet>
+<link href=/css/main.css rel=stylesheet type=text/css>
+<link href=/css/syntax.css rel=stylesheet type=text/css>
+</head>
+<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
+<div class="container one-collumn sidebar-position-left page-home">
+<div class=headband></div>
+<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
+<div class=header-inner> <div class=site-brand-container>
+<div class=site-nav-toggle>
+<div class=toggle role=button style=opacity:1;top:0>
+<span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span>
+</div>
+</div>
+<div class=site-meta>
+<div class=multi-lang-switch>
+<i class="fa fa-fw fa-language" style=margin-right:5px></i>
+<a class=lang-link id=zh-cn href=#>中文</a>
+</div>
+<div class=custom-logo-site-title>
+<a href=/ class=brand rel=start>
+<span class=logo-line-before><i></i></span>
+<span class=site-title>路无止境！</span>
+<span class=logo-line-after><i></i></span>
+</a>
+</div>
+<p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p>
+</div>
+<div class=site-nav-right>
+<div class="toggle popup-trigger" style=opacity:1;top:0>
+<i class="fa fa-search fa-fw fa-lg"></i>
+</div>
+</div>
+</div>
+<nav class=site-nav>
+<ul id=menu class=menu>
+<li class=menu-item>
+<a href=/ rel=section>
+<i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页
+</a>
+</li>
+<li class=menu-item>
+<a href=/post rel=section>
+<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档
+</a>
+</li>
+<li class=menu-item>
+<a href=/about.html rel=section>
+<i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于我
+</a>
+</li>
+<li class=menu-item>
+<a href=/404.html rel=section>
+<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益404
+</a>
+</li>
+<li class="menu-item menu-item-search">
+<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> 搜索</a>
+</li>
+</ul>
+<div class=site-search>
+<div class="popup search-popup local-search-popup">
+<div class="local-search-header clearfix">
+<span class=search-icon><i class="fa fa-search"></i> </span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
+<div class=local-search-input-wrapper>
+<input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
+</div>
+</div>
+<div id=local-search-result></div>
+</div>
+</div>
+</nav>
+</div>
+</header>
+<main id=main class=main>
+<div class=main-inner>
+<div class=content-wrap>
+<div id=content class=content>
+<section id=posts class=posts-expand>
+<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
+<header class=post-header>
+<h1 class=post-title itemprop="name headline" style=font-weight:700>
+<a class=post-title-link href=https://www.etaon.link/2021/11/21/redis-sentinel.html itemprop=url>
+Redis sentinel
+</a>
+</h1>
+</header>
+<div class=post-body itemprop=articleBody>
+<h2 id=概述>概述</h2>
+<ul>
+<li>哨兵Sentinel：主从故障切换的具体实现</li>
+<li>分布式</li>
+<li>也是Redis服务器，不提供数据服务</li>
+<li>一般为单数</li>
+</ul>
+<h2 id=三个阶段>三个阶段</h2>
+<ul>
+<li>监控：同步信息</li>
+<li>通知：保持联通</li>
+<li>故障转移</li>
+</ul>
+<blockquote>
+<ul>
+<li>发现问题</li>
+<li>竞选负责人</li>
+<li>优选新master</li>
+<li>新master上任，其他slave切换master，原master作为slave故障回复后连接</li>
+</ul>
+</blockquote>
+<h3 id=监控阶段>监控阶段</h3>
+<p>用于同步所有节点-Sentinels的状态信息，并获取master、slave的信息</p>
+<ul>
+<li>获取各个sentinel的状态（是否在线），新的sentinel上线会刷新所有sentinel的SentinelState:sentinels</li>
+<li>获取master的状态</li>
+</ul>
+<blockquote>
+<ul>
+<li>master属性</li>
+</ul>
+<blockquote>
+<ul>
+<li>runid</li>
+<li>role：master</li>
+</ul>
+</blockquote>
+<ul>
+<li>各slave的详细信息</li>
+</ul>
+</blockquote>
+<ul>
+<li>获取所有slave的状态（根据master中的slave信息）</li>
+</ul>
+<blockquote>
+<ul>
+<li>slave属性</li>
+</ul>
+<blockquote>
+<ul>
+<li>runid</li>
+<li>role：slave</li>
+<li>master_host、master_port</li>
+<li>offset
+……</li>
+</ul>
+</blockquote>
+</blockquote>
+<p><img src="https://img-blog.csdnimg.cn/7bccdac0b4204bd094c9ef450886bf8d.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p>
+<h3 id=通知阶段>通知阶段</h3>
+<ul>
+<li>sentinel监控master、slave状态</li>
+<li>sentinel之间同步</li>
+<li>publish/subscribe
+<img src="https://img-blog.csdnimg.cn/cd85b462f3404d47948ffc9bdc0afcc0.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></li>
+</ul>
+<h3 id=故障转移阶段>故障转移阶段</h3>
+<h4 id=1-监控master-down>1. 监控master down</h4>
+<ul>
+<li>单台发现master down，改变SentinelRedisInstance:master:flags :<strong>SRI_S_DOWN</strong>，称为主观下线</li>
+<li>其他sentinel继续发hello询问master状态，如果超过半数发现master down，改变SentinelRedisInstance:master:flags :<strong>SRI_O_DOWN</strong>，称为客观下线
+<img src="https://img-blog.csdnimg.cn/82a51eafbc50467ebf26dd3bb9cf2553.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></li>
+</ul>
+<h4 id=2选取sentinel执行者>2.选取sentinel执行者</h4>
+<ul>
+<li>投票</li>
+<li>每个sentinel广播发送ip、port、选举次数和runid</li>
+<li>接收者投票给最先收到的</li>
+<li>可以多轮，直到选出</li>
+</ul>
+<h4 id=3sentinel执行者挑选备选master>3.sentinel执行者挑选备选master</h4>
+<ul>
+<li>服务器列表中挑选备选master</li>
+</ul>
+<blockquote>
+<ul>
+<li>在线的</li>
+<li>响应慢的</li>
+<li>与原master断开时间久的</li>
+<li>优先原则</li>
+</ul>
+<blockquote>
+<ul>
+<li>优先级</li>
+<li>offset</li>
+<li>runid</li>
+</ul>
+</blockquote>
+</blockquote>
+<ul>
+<li>发送指令（ sentinel &ndash;>slave）</li>
+</ul>
+<blockquote>
+<ul>
+<li>向新的master发送slaveof no one</li>
+<li>向其他slave发送slaveof 新masterIP端口</li>
+</ul>
+</blockquote>
+<h2 id=lab>Lab</h2>
+<h3 id=环境设置>环境设置</h3>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>参数</th>
+<th>端口</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>master</td>
+<td>master:6380</td>
+<td>6380</td>
+</tr>
+<tr>
+<td>slave 1</td>
+<td>slave1:6379</td>
+<td>6379</td>
+</tr>
+<tr>
+<td>slave 2</td>
+<td>slave2:6379</td>
+<td>6381</td>
+</tr>
+<tr>
+<td>sentinel 1</td>
+<td>sentinel01:26379</td>
+<td>26379</td>
+</tr>
+<tr>
+<td>sentinel 2</td>
+<td>sentinel02:26380</td>
+<td>26380</td>
+</tr>
+<tr>
+<td>sentinel 3</td>
+<td>sentinel03:26381</td>
+<td>26381</td>
+</tr>
+</tbody>
+</table>
+<h3 id=配置conf>配置conf</h3>
+<h4 id=master>master</h4>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>port 6380
+daemonize no
+dir /root/redis-6.0.6/data
+</code></pre></div><h4 id=slave>slave</h4>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>daemonize no
+dir /root/redis-6.0.6/data
+#logfile &#34;6380.log&#34;
+`slaveof 127.0.0.1 6380`
+</code></pre></div><h4 id=sentinel>sentinel</h4>
+<ul>
+<li>配置的参考：解压文件sentinel.conf</li>
+<li>可以用cat sentinel.conf |grep -v &ldquo;#&rdquo; | grep -v &ldquo;^$&rdquo; > sentinel-26379.conf 弃掉无用信息</li>
+</ul>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>`port 26379`
+daemonize no
+pidfile &#34;/var/run/redis-sentinel.pid&#34;
+#logfile &#34;&#34;
+dir &#34;/root/redis-6.0.6/data&#34;
+sentinel down-after-milliseconds mymaster 30000
+sentinel failover-timeout mymaster 180000
+sentinel deny-scripts-reconfig yes
+`sentinel monitor mymaster 127.0.0.1 6380 2`#最后的2表示2个sentinel判断master down即可客观下线
+</code></pre></div><h3 id=启动redis>启动Redis</h3>
+<h4 id=master-1>master</h4>
+<p><img src="https://img-blog.csdnimg.cn/d45d99538c0544c682e07b2d7fa71a13.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p>
+<h4 id=slave-1>slave</h4>
+<p><img src="https://img-blog.csdnimg.cn/cd79ea69bc86428b918cd349a4d2be4b.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p>
+<h3 id=启动sentinel>启动sentinel</h3>
+<p><img src="https://img-blog.csdnimg.cn/95e8f9af9ca74ed98632f33b9f21c292.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p>
+<p>当sentinel启动完成，会更新conf的内容</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>port 26379
+daemonize no
+pidfile &#34;/var/run/redis-sentinel.pid&#34;
+logfile &#34;&#34;
+dir &#34;/tmp&#34;
+sentinel myid 522d51d7ebd6c58a881da63226e8bc1b16f0917e
+sentinel deny-scripts-reconfig yes
+sentinel monitor mymaster 127.0.0.1 6379 2
+sentinel config-epoch mymaster 1
+sentinel leader-epoch mymaster 1
+#Generated by CONFIG REWRITE
+protected-mode no
+user default on nopass ~* +@all
+`sentinel known-replica mymaster 127.0.0.1 6380`
+`sentinel known-replica mymaster 127.0.0.1 6381`
+`sentinel known-sentinel mymaster 127.0.0.1 26380 16218e9672c6712459abb8ca9c5b221d50efc713`
+`sentinel known-sentinel mymaster 127.0.0.1 26381 9a9f3d1ee0289eb65bd72f775b13b5ad3fcad7bd`
+</code></pre></div><p>如红色部分，配置增加了slave和其他sentinel的信息</p>
+<p>在sentinel 01上看到的系统info sentinel
+<img src=https://img-blog.csdnimg.cn/b9c8295d78d94884a4f31ba1cf75c057.png alt=在这里插入图片描述></p>
+<h3 id=master--down>master&ndash;>down</h3>
+<p><img src=https://img-blog.csdnimg.cn/4cbd422ad13a40c69ee06c12987cf8e7.png alt>
+从sentinel看到：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>32108:X 21 Nov 2021 05:52:45.808 # `+sdown` master mymaster 127.0.0.1 6380`#主观下线`
+32108:X 21 Nov 2021 05:52:45.893 # +new-epoch 1
+32108:X 21 Nov 2021 05:52:45.893 # +vote-for-leader 16218e9672c6712459abb8ca9c5b221d50efc713 1
+32108:X 21 Nov 2021 05:52:46.913 # `+odown` master mymaster 127.0.0.1 6380 #quorum 3/2 `#客观下线`
+32108:X 21 Nov 2021 05:52:46.913 # Next failover delay: I will not start a failover before Sun Nov 21 05:58:46 2021
+32108:X 21 Nov 2021 05:52:47.173 # +config-update-from sentinel 16218e9672c6712459abb8ca9c5b221d50efc713 127.0.0.1 26380 @ mymaster 127.0.0.1 6380
+32108:X 21 Nov 2021 05:52:47.173 # `+switch-master mymaster 127.0.0.1 6380 127.0.0.1 6379#6379被选为新的master`
+32108:X 21 Nov 2021 05:52:47.173 * +slave slave 127.0.0.1:6381 127.0.0.1 6381 @ mymaster 127.0.0.1 6379
+32108:X 21 Nov 2021 05:52:47.173 * +slave slave 127.0.0.1:6380 127.0.0.1 6380 @ mymaster 127.0.0.1 6379
+32108:X 21 Nov 2021 05:53:17.196 # +sdown slave 127.0.0.1:6380 127.0.0.1 6380 @ mymaster 127.0.0.1 6379
+</code></pre></div><p>状态改变完成：</p>
+<ul>
+<li>新的master-6379</li>
+<li>6380/6381为slave注册到6379</li>
+</ul>
+<h3 id=6380-down--running>6380 down&ndash;>running</h3>
+<p>sentinel将6380的状态改变
+<img src=https://img-blog.csdnimg.cn/3df1f986c3d343fa9a4e46f9c0e623bf.png alt>
+在6380 cli client上面看到：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>#Replication
+`role:slave`
+master_host:127.0.0.1
+master_port:6379
+master_link_status:up
+master_last_io_seconds_ago:0
+master_sync_in_progress:0
+slave_repl_offset:20931
+slave_priority:100
+slave_read_only:1
+connected_slaves:0
+master_replid:3317b9be56ad63dcff8a416e9c485b477b1bf176
+master_replid2:0000000000000000000000000000000000000000
+master_repl_offset:20931
+second_repl_offset:-1
+repl_backlog_active:1
+repl_backlog_size:1048576
+repl_backlog_first_byte_offset:18767
+repl_backlog_histlen:2165
+</code></pre></div><p>其变成了slave</p>
+</div>
+<footer class=post-footer>
+<div id=wcomments></div>
+</footer>
+</article>
+</section>
+</div>
+</div>
+<div class=sidebar-toggle>
+<div class=sidebar-toggle-line-wrap>
+<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+</div>
+</div>
+<aside id=sidebar class=sidebar>
+<div class=sidebar-inner>
+<ul class="sidebar-nav motion-element">
+<li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>
+文章目录
+</li>
+<li class=sidebar-nav-overview data-target=site-overview>
+站点概览
+</li>
+</ul>
+<section class="site-overview sidebar-panel">
+<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
+<img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon>
+<p class=site-author-name itemprop=name>Etaon</p>
+<p class="site-description motion-element" itemprop=description>
+Kepp Going!
+</p>
+</div>
+<nav class="site-state motion-element">
+<div class="site-state-item site-state-posts">
+<a href=/post/>
+<span class=site-state-item-count>61</span>
+<span class=site-state-item-name>日志</span>
+</a>
+</div>
+<div class="site-state-item site-state-categories">
+<a href=/categories/>
+<span class=site-state-item-count>13</span>
+<span class=site-state-item-name>分类</span>
+</a>
+</div>
+<div class="site-state-item site-state-tags">
+<a href=/tags/>
+<span class=site-state-item-count>34</span>
+<span class=site-state-item-name>标签</span>
+</a>
+</div>
+</nav>
+<div class="links-of-author motion-element">
+<span class=links-of-author-item>
+<a href=https://github.com/etaon target=_blank title=GitHub>
+<i class="fa fa-fw fa-github"></i>
+GitHub
+</a>
+</span>
+<span class=links-of-author-item>
+<a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN>
+<i class="fa fa-fw fa-CSDN"></i>
+CSDN
+</a>
+</span>
+</div>
+<div class="links-of-blogroll motion-element links-of-blogroll-inline">
+<div class=links-of-blogroll-title>
+<i class="fa fa-fw fa-globe"></i>
+友情链接
+</div>
+<ul class=links-of-blogroll-list>
+<li class=links-of-blogroll-item>
+<a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a>
+</li>
+</ul>
+</div>
+<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
+<div class=tagcloud-of-blogroll-title>
+<i class="fa fa-fw fa-tags"></i>
+标签云
+</div>
+<ul class=tagcloud-of-blogroll-list>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/mysql>Mysql</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/aws>Aws</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/dql>Dql</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/hadoop>Hadoop</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/redis>Redis</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/cicd>Cicd</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/git>Git</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/istio>Istio</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/mongodb>Mongodb</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/azure>Azure</a>
+</li>
+</ul>
+</div>
+</section>
+<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+<div class=post-toc>
+<div class=post-toc-content><nav id=TableOfContents>
+<ul>
+<li><a href=#概述>概述</a></li>
+<li><a href=#三个阶段>三个阶段</a>
+<ul>
+<li><a href=#监控阶段>监控阶段</a></li>
+<li><a href=#通知阶段>通知阶段</a></li>
+<li><a href=#故障转移阶段>故障转移阶段</a></li>
+</ul>
+</li>
+<li><a href=#lab>Lab</a>
+<ul>
+<li><a href=#环境设置>环境设置</a></li>
+<li><a href=#配置conf>配置conf</a></li>
+<li><a href=#启动redis>启动Redis</a></li>
+<li><a href=#启动sentinel>启动sentinel</a></li>
+<li><a href=#master--down>master&ndash;>down</a></li>
+<li><a href=#6380-down--running>6380 down&ndash;>running</a></li>
+</ul>
+</li>
+</ul>
+</nav></div>
+</div>
+</section>
+</div>
+</aside>
+</div>
+</main>
+<footer id=footer class=footer>
+<div class=footer-inner>
+<div class=copyright>
+<span class=copyright-year>
+&copy; 2010 - 2022
+</span>
+<span class=with-love><i class="fa fa-heart"></i></span>
+<span class=copyright-author>路无止境！</span>
+</div>
+<div class=powered-info>
+<span class=powered-by>
+Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.91.2</a>
+</span>
+<span class=separator-line>/</span>
+<span class=theme-info>
+Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
+</a>
+</span>
+</div>
+<div class=vistor-info>
+<script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<span class=site-uv>
+<i class="fa fa-user"></i>
+<span class=busuanzi-value id=busuanzi_value_site_uv></span>
+</span>
+<span class=separator-line>/</span>
+<span class=site-pv>
+<i class="fa fa-eye"></i>
+<span class=busuanzi-value id=busuanzi_value_site_pv></span>
+</span>
+</div>
+<div class=license-info>
+<span class=storage-info>
+Storage by
+<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a>
+</span>
+<span class=separator-line>/</span>
+<span class=license-num>
+<a href target=_blank></a>
+</span>
+</div>
+</div>
+</footer>
+<div class=back-to-top>
+<i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span>
+</div>
+</div>
+<script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
+<script type=text/javascript src=/js/search.js></script>
+<script type=text/javascript src=/js/affix.js></script>
+<script type=text/javascript src=/js/scrollspy.js></script>
+<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.main').css('padding-bottom'),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}}),$(document).on('affixed.bs.affix',function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var b=$('.header-inner').height()+10,c,d,a,e;$('#sidebar').css({'margin-top':b}).show(),c=parseInt($('#sidebar').css('margin-top')),d=parseInt($('.sidebar-inner').css('height')),a=c+d,e=$('.content-wrap').height(),e<a&&$('.content-wrap').css('min-height',a),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
+<script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
+<script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+'//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js',function(){new Waline({el:'#wcomments',visitor:!0,avatar:'wavatar',avatarCDN:'https://sdn.geekzu.org/avatar/',avatarForce:!1,wordLimit:'200',placeholder:' 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ',requiredFields:['nick','mail'],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$('#wcomments').html('抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。')})</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type=text/javascript src="//s7.addthis.com/js/300/addthis_widget.js#pubid=Your%20AddthisId"></script>
+<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
+</body>
+</html>

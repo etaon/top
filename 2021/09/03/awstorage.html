@@ -1,0 +1,1001 @@
+<!doctype html><html lang=zh-cn dir=content/zh-cn>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
+<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
+<title> AWS-Storage - 路无止境！ </title>
+<meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云">
+<meta name=author content="Etaon">
+<meta property="og:title" content="AWS-Storage">
+<meta property="og:site_name" content="路无止境！">
+<meta property="og:image" content="/img/author.jpg">
+<meta name=title content="AWS-Storage - 路无止境！">
+<meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。">
+<link rel="shortcut icon" href=/img/favicon.ico>
+<link rel=apple-touch-icon href=/img/apple-touch-icon.png>
+<link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png>
+<link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css>
+<link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet>
+<link href=/css/main.css rel=stylesheet type=text/css>
+<link href=/css/syntax.css rel=stylesheet type=text/css>
+</head>
+<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
+<div class="container one-collumn sidebar-position-left page-home">
+<div class=headband></div>
+<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
+<div class=header-inner> <div class=site-brand-container>
+<div class=site-nav-toggle>
+<div class=toggle role=button style=opacity:1;top:0>
+<span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span>
+</div>
+</div>
+<div class=site-meta>
+<div class=multi-lang-switch>
+<i class="fa fa-fw fa-language" style=margin-right:5px></i>
+<a class=lang-link id=zh-cn href=#>中文</a>
+</div>
+<div class=custom-logo-site-title>
+<a href=/ class=brand rel=start>
+<span class=logo-line-before><i></i></span>
+<span class=site-title>路无止境！</span>
+<span class=logo-line-after><i></i></span>
+</a>
+</div>
+<p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p>
+</div>
+<div class=site-nav-right>
+<div class="toggle popup-trigger" style=opacity:1;top:0>
+<i class="fa fa-search fa-fw fa-lg"></i>
+</div>
+</div>
+</div>
+<nav class=site-nav>
+<ul id=menu class=menu>
+<li class=menu-item>
+<a href=/ rel=section>
+<i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页
+</a>
+</li>
+<li class=menu-item>
+<a href=/post rel=section>
+<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档
+</a>
+</li>
+<li class=menu-item>
+<a href=/about.html rel=section>
+<i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于我
+</a>
+</li>
+<li class=menu-item>
+<a href=/404.html rel=section>
+<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益404
+</a>
+</li>
+<li class="menu-item menu-item-search">
+<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> 搜索</a>
+</li>
+</ul>
+<div class=site-search>
+<div class="popup search-popup local-search-popup">
+<div class="local-search-header clearfix">
+<span class=search-icon><i class="fa fa-search"></i> </span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
+<div class=local-search-input-wrapper>
+<input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
+</div>
+</div>
+<div id=local-search-result></div>
+</div>
+</div>
+</nav>
+</div>
+</header>
+<main id=main class=main>
+<div class=main-inner>
+<div class=content-wrap>
+<div id=content class=content>
+<section id=posts class=posts-expand>
+<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
+<header class=post-header>
+<h1 class=post-title itemprop="name headline" style=font-weight:700>
+<a class=post-title-link href=https://www.etaon.link/2021/09/03/awstorage.html itemprop=url>
+AWS-Storage
+</a>
+</h1>
+</header>
+<div class=post-body itemprop=articleBody>
+<h2 id=ebs>EBS</h2>
+<p>Elastic Block Store (EBS) provides <strong>persistent</strong> block storage volumes for usage with Amazon <strong>EC2</strong> instances in the AWS Cloud.</p>
+<ul>
+<li>EKS使用EC2，AWS提供EBS CSI驱动 for EKS</li>
+<li>每个Amazon EBS卷都会自动与其<strong>AZ</strong>一起复制，以保护您免受组件故障的影响，从而提供高可用性和耐用性。</li>
+</ul>
+<p>TIPs：</p>
+<blockquote>
+<p>EBS就像云中的虚拟硬盘驱动器</p>
+</blockquote>
+<ul>
+<li>它使用网络与实例通信，这意味着可能会有一点延迟</li>
+<li>它可以从EC2实例中分离出来，并快速连接到另一个实例，只要在同一个环境中</li>
+<li>它一次只能附加到单个实例</li>
+<li>对于EKS，其Access Mode为RWO</li>
+</ul>
+<h3 id=classes>Classes</h3>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+<th>Use Cases</th>
+<th>API Name</th>
+<th>Volume Size</th>
+<th>Max. IOPS / Volume</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>General Purpose (GP2 SSD)</td>
+<td>General purpose that balances price and performance - can be used as boot volumes</td>
+<td>Most work loads</td>
+<td>gp2</td>
+<td>1GB - 16TB</td>
+<td>16000</td>
+</tr>
+<tr>
+<td>Provisioned IOPS (SSD)</td>
+<td>Highest-performance SSD for mission-critical applications, IOPS (I/O Ops Per Sec) - can be used as boot volumes</td>
+<td>Databases</td>
+<td>io1</td>
+<td>4GB - 16TB</td>
+<td>64000</td>
+</tr>
+<tr>
+<td>Throughput Optimised Hard Disk Drive (ST1 HDD)</td>
+<td>Low cost HDD for freq. accessed, throughput-intensive workloads</td>
+<td>Big Data & Data warehouses</td>
+<td>st1</td>
+<td>500GB - 16TB</td>
+<td>500</td>
+</tr>
+<tr>
+<td>Cold HDD (SC1 HDD)</td>
+<td>Lowest cost HDD for less freq. accessed workloads</td>
+<td>File Servers</td>
+<td>sc1</td>
+<td>500GB - 16TB</td>
+<td>250</td>
+</tr>
+<tr>
+<td>EBS Magnetic Previous generation HDD</td>
+<td>Workloads where data is infreq. accessed</td>
+<td>Standard</td>
+<td></td>
+<td>1GB - 1TB</td>
+<td>40 - 200</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>EBS锁定在AZ中，这意味着如果us-east-1a中的EBS卷无法连接到us-east-1b。要跨卷移动卷，首先需要对其进行快照</p>
+</blockquote>
+<ul>
+<li>EBS卷的默认类型是SSD，但附带了其他的选项</li>
+</ul>
+<h3 id=不同ebs卷的详细信息>不同EBS卷的详细信息</h3>
+<h4 id=gp2gp3>gp2/gp3</h4>
+<p>GP2-General purpose是用于平衡价格和性能的<strong>通用卷</strong>，这种类型的卷可以用作引导卷：</p>
+<ul>
+<li>建议用于大多数工作负载</li>
+<li>系统启动卷</li>
+<li>虚拟桌面</li>
+<li>低延迟交互式应用程序</li>
+<li>开发和测试环境</li>
+</ul>
+<p>以下是GP2/3的一些统计数据</p>
+<ul>
+<li>1 GB-16 TB</li>
+<li>小型gp2卷可以将IOPS突发到3000</li>
+<li>最大IOPS为16000</li>
+<li>每GB 3个IOPS，意味着在5334GB时，我们达到了最大IOPS</li>
+<li>gp2吞吐量介于 128 MiB/s 和 250 MiB/s 之间，具体取决于卷大小。小于或等于 170 GiB 的卷提供最大 128 MiB/s 的吞吐量。如果有突增积分可用，大于 170 GiB 但小于 334 GiB 的卷将提供 250 的最大吞吐量。无论突增点数是多少，大于或等于 334 GiB 的卷均可提供 250 MiB/s。gp3吞吐量 1000-MiB/s</li>
+</ul>
+<h4 id=io12>io1/2</h4>
+<p>io1适用于需要持续IOPS性能或每卷超过16000 IOPS（gp2限制）的关键业务应用程序，也适用于大型数据库工作负载</p>
+<p>io1的统计数据</p>
+<ul>
+<li>4 GB-16 TB</li>
+<li>已设置IOPS（PIOPS）-最小值为100~最大值为64000</li>
+<li>配置的IOPS与请求的卷大小（GB）的最大比率为50:1</li>
+</ul>
+<p>io2 Block Express volumes</p>
+<ul>
+<li>up to 4,000 MB/s throughput,</li>
+<li>256,000 IOPS,</li>
+<li>64 TiB storage capacity</li>
+<li>1,000 IOPS/GB</li>
+</ul>
+<h4 id=sc1>sc1</h4>
+<ul>
+<li>面向吞吐量的存储，用于不经常访问的大量数据</li>
+<li>最低存储成本非常重要的场景</li>
+<li>不能是启动卷</li>
+</ul>
+<blockquote>
+<p>吞吐量是指在给定的时间内，有多少数据可以从一个位置传输到另一个位置。它用于测量硬盘和RAM的性能，以及Internet和网络连接。</p>
+</blockquote>
+<p>sc1的统计数据</p>
+<ul>
+<li>500 GB-16 TB</li>
+<li>最大IOPS为250</li>
+<li>最大吞吐量为250 MB/s-can突发</li>
+</ul>
+<h3 id=ebs卷类型摘要>EBS卷类型摘要</h3>
+<ul>
+<li>
+<p>gp2：通用卷（便宜）
+○ 3 IOPS/GB，最小为100 IOPS，可突发到3000 IOPS，最大为16000 IOPS</p>
+</li>
+<li>
+<p>io1：配置的IOPS（昂贵）
+○ 最低100 IOPS，最高64000 IOPS（Nitro）或32000（其他）</p>
+<blockquote>
+<p>Nitro 系统是 AWS 构建的硬件和软件组件的集合，可实现高性能、高可用性和高安全性。</p>
+</blockquote>
+</li>
+<li>
+<p>st1：吞吐量优化的硬盘驱动器
+○ 500 MB/s吞吐量</p>
+</li>
+<li>
+<p>sc1：冷硬盘，很少访问数据
+○ 250 MB/s吞吐量</p>
+</li>
+</ul>
+<h3 id=ebs快照>EBS快照</h3>
+<p>需要确保EC2实例的AZ与EBS卷的AZ相同，否则将导致巨大的延迟时间。</p>
+<blockquote>
+<p>EBS快照以增量方式备份到S3</p>
+</blockquote>
+<p>如果我们终止EC2实例会发生什么？</p>
+<ul>
+<li>自动删除EBS卷（根设备）</li>
+<li>其他卷（默认情况下）继续存在，并且卷的状态为可用</li>
+<li>我们可以创建EBS并选中“终止时删除”</li>
+</ul>
+<p>如何将数据从AZ1迁移到另一个不同的AZ（EC2/EBS）？</p>
+<ol>
+<li>操作->创建快照:找到根设备卷，根设备卷将具有snapshotID，“操作”->“创建快照”</li>
+<li>将快照转换为AMI:选择快照“操作”->“创建映像”，然后我们可以使用它并部署到另一个AZ</li>
+<li>使用AMI在另一个AZ中启动</li>
+</ol>
+<blockquote>
+<p>对于“虚拟化类型”，有“准虚拟”（PV）和硬件虚拟机（HVM）</p>
+</blockquote>
+<h4 id=tips>Tips</h4>
+<ul>
+<li>卷存在于EBS上，请将EBS视为虚拟硬盘</li>
+<li>快照位于S3上，可以将快照视为磁盘的照片</li>
+<li>快照是卷的时间点拷贝</li>
+<li>EBS快照是<strong>增量</strong>的，只有自上次快照以来更改的块才会移动到S3</li>
+<li>要为用作根设备的Amazon EBS卷创建快照，应在拍摄快照之前停止实例</li>
+<li>您可以从卷和快照创建AMI</li>
+<li>您可以动态更改EBS卷大小，包括更改大小和存储类型</li>
+<li>卷将始终与EC2实例位于同一个AZ，但您可以跨AZ或区域复制快照</li>
+<li>EBS备份将利用IO，因此在处理大量流量时不应启用它</li>
+<li>建议-分离EBS卷以执行备份，但不是必须的</li>
+<li>通过快照恢复的EBS卷需要预热（使用fio或dd命令读取整个卷）</li>
+<li>可以使用“Amazon Data Lifecycle Manager”自动化快照</li>
+</ul>
+<h3 id=ebs-encryption>EBS Encryption</h3>
+<ul>
+<li>创建加密的EBS卷时，会得到以下结果：
+○ 数据在卷内进行加密
+○ 在实例和卷之间移动的所有数据都是加密的
+○ 所有快照都是加密的
+○ 从快照创建的所有卷都是加密的</li>
+<li>加密和解密是透明处理的，这意味着您不需要做任何事情</li>
+<li>加密对延迟的影响最小</li>
+<li>EBS加密利用KMS（AES-256）的密钥</li>
+<li>如果未加密的EBS需要加密，复制未加密的快照允许加密
+○ Create an EBS snapshot of the volume
+○ Encrypt the EBS snapshot (using copy)
+○ Create a new EBS volume from the snapshot (the volume will also be encrypted)
+○ Now you can attach the encrypted volume to the original instance</li>
+</ul>
+<h3 id=ebs-vs-instance-store>EBS vs Instance Store</h3>
+<p>某些实例不附带根EBS卷。相反，它们附带了“实例存储”，即短暂存储。实例存储物理连接到计算机（EBS是一个网络驱动器）
+使用实例存储有优点和缺点</p>
+<ul>
+<li>赞成的意见
+○ 更好的I/O性能
+○ 适用于缓冲区/缓存/暂存数据/临时内容
+○ 数据在重新启动后仍然有效</li>
+<li>缺点
+○ 停止或终止时，实例存储将丢失（因为短暂的&lt;->临时的）
+○ 无法调整实例存储的大小
+○ 备份必须由用户操作</li>
+</ul>
+<blockquote>
+<p>本地EC2实例存储是连接到EC2所在的物理服务器的物理磁盘
+它的IOPS非常高，但无法增加其大小，如果硬件出现故障，数据将丢失</p>
+</blockquote>
+<h3 id=ebs-raid选项>EBS RAID选项</h3>
+<p>EBS在AZ中自动化复制，因此它已经是冗余存储。但是，如果要进一步提高IOPS或镜像EBS卷，则需要在RAID设置中并行装载卷(RAID是可能的，只要您的操作系统支持它）
+常规RAID选项：</p>
+<ul>
+<li>RAID 0</li>
+<li>RAID 1</li>
+<li>RAID 5-不建议用于EBS</li>
+<li>RAID 6-不建议用于EBS</li>
+</ul>
+<h4 id=raid-0-提高性能>RAID 0-提高性能</h4>
+<p><img src=https://img-blog.csdnimg.cn/4a58390ff2a441279728846391bba3f4.png alt=在这里插入图片描述></p>
+<ul>
+<li>合并2个或多个卷并获取总磁盘空间和I/O</li>
+<li>但一个磁盘出现故障，则所有数据都出现故障</li>
+<li>用例：
+○ 应用程序需要大量IOPS，不需要容错
+○ 已内置复制的数据库</li>
+<li>使用它，我们可以拥有一个IOPS非常大的磁盘
+○ 两个500G EBS io1卷（每个卷具有4000个已配置IOPS）将创建一个1000GB RAID 0阵列，可用带宽为8000 IOPS，吞吐量为1000 MB/s</li>
+</ul>
+<h4 id=raid-1-提高容错能力>RAID 1-提高容错能力</h4>
+<p>RAID 1是将一个卷镜像到另一个卷，这意味着如果一个磁盘出现故障，那么我们的逻辑卷仍在工作（因为存在镜像卷）
+用例：</p>
+<ul>
+<li>需要提高卷容错性的应用程序</li>
+<li>需要服务磁盘的应用程序
+○ 将创建两个500 GB EBS io1卷，每个卷具有4000个配置的IOPS 500 GB RAID 1阵列，可用带宽为4000 IOPS，吞吐量为500 MB/s</li>
+</ul>
+<h2 id=efs弹性文件系统>EFS（弹性文件系统）</h2>
+<p><img src="https://img-blog.csdnimg.cn/bef27d71b5ab46af952c9bd706d23d58.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p>
+<ul>
+<li>EFS是一个受管理的NFS（网络文件系统），可以安装在许多EC2上，EFS可以在多个环境Multi-AZ中使用EC2实例。</li>
+<li>EC2 实例可以跨可用区和区域访问您的文件系统</li>
+<li>EFS是一种高可用性、可扩展性和昂贵的服务</li>
+<li>EFS CSI为EKS、ECS、Fargate提供Access Mode=RWX的存储类</li>
+<li>吞吐量和 IOPS 可以随文件系统增长而扩展</li>
+<li>可以按需扩展至 PB 级</li>
+<li>可以支持超过 10 GB/秒的性能和高达 500000 次 IOPS</li>
+</ul>
+<blockquote>
+<p>Use cases:
+content management,
+web serving,
+data sharing,
+WordPress application</p>
+</blockquote>
+<h3 id=summary-ebs-or-efs----s3>Summary: EBS or EFS &mdash;&S3</h3>
+<table>
+<thead>
+<tr>
+<th>EBS</th>
+<th>EFS</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>can be attached to only one instance at a time</td>
+<td>can be mounted to hundreds of instances</td>
+</tr>
+<tr>
+<td>locked at the AZ level</td>
+<td>can share website media files</td>
+</tr>
+<tr>
+<td>migrating an EBS volume across AZ means first backing it up and re-create it using snapshot in another AZ</td>
+<td></td>
+</tr>
+<tr>
+<td>EBS backups use IO and you should avoid it while the application is handling a lot of traffic</td>
+<td></td>
+</tr>
+<tr>
+<td>Root EBS volumes of instances get terminated by default if the EC2 instance gets terminated (you can disable it)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Characteristics</th>
+<th>S3</th>
+<th>EFS</th>
+<th>EBS</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Performance</td>
+<td>Supports up to 3500 PUT/LIST/DELETE requests and 5500 GET requests per second Slower than EBS and EFS</td>
+<td>Baseline performance: 3GB/s Upto 7K IOPS Faster than S3 but slower than EBS</td>
+<td>250-500 IOPS per volume for HDD and 16-64K per volume for SSD Faster than S3 and EFS</td>
+</tr>
+<tr>
+<td>Storage and file size limit</td>
+<td>No limit on storage. The individual object can be up to 5TB.</td>
+<td>Max 16TB per volume Max 52TB for individual file</td>
+<td>Max storage 16 TB No file size limit.</td>
+</tr>
+<tr>
+<td>Accessibility</td>
+<td>Accessible via the internet using APIs. It is accessible from anywhere.</td>
+<td>Accessible from any region. It has up to 1000 concurrent EC2 instances. You can share files between different regions on multiple EFS instances.</td>
+<td>Accessible via single EC2 instance. Accessible in a particular region.</td>
+</tr>
+<tr>
+<td>Access Control</td>
+<td>IAM user-based authentication. Uses user policies and bucket policies. Public access via block public access</td>
+<td>IAM user-based authentication. Security groups.</td>
+<td>IAM user-based authentication. Security groups.</td>
+</tr>
+<tr>
+<td>Data backup and restoring</td>
+<td>Use versioning or cross-region replication</td>
+<td>EFS to EFS replication</td>
+<td>Automated backups and snapshots</td>
+</tr>
+<tr>
+<td>Cost Pay</td>
+<td>per use Free: 5GB 1st 50 TB/month at $0.023/GB Next 450 TB/month at $0.022/GB Over 500 TB/month at $0.021/GB</td>
+<td>Pay per use Standard storage: $0.30-$0.39 per GB per month (depends on region) Infrequent storage: $0.025-$0.03 per GB per month Provisioned throughput: $6 per MBps-month</td>
+<td>Pay for provisioned capacity Free: 30GB General-purpose: $0.045 per Gb per month Provisioned SSD: $0.125 per GB/month, $0.065 per IOPS/month</td>
+</tr>
+<tr>
+<td>Advantages</td>
+<td>Easily scalable and can access multiple instances of EC2. Best used for data archiving</td>
+<td>Faster than S3 with high IOPS and low latency Most scalable due to availability of multiple EC2 instances. Auto Scaling potential</td>
+<td>Faster than S3 with high IOPS and low latency Cheaper than EFS.</td>
+</tr>
+<tr>
+<td>Usage</td>
+<td>Use for static storage like for website, media, and entertainment. Best to use for running analytics over static data pool present in S3 with the provision of running complex queries to draw insights</td>
+<td>Best for large quantities of data. Large analytic workloads as in bigData analytics. Most suitable for a content management system. Must be used for lift and shift application support</td>
+<td>Database backups and low latency applications Use EBS for high-performance storage service on a single device. Transactional and NoSQL databases</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Use S3 for static purposes.
+EFS can be used for an application that is highly scalable and high-performance oriented.
+EBS is best suited where a single device requires high performance. The best example of EBS will be transactional databases.</p>
+</blockquote>
+<h2 id=snowball>Snowball</h2>
+<p>简而言之,Snowball是一种将大量数据移动到AWS云中的<strong>设备</strong>。它支持：</p>
+<ul>
+<li>从S3导入</li>
+<li>导出到S3</li>
+<li>Storage Gateway是一项服务，使您能够安全地将数据存储到AWS云，以实现可扩展且经济高效的存储</li>
+<li>Snow 系列由 AWS Snowcone、AWS Snowball 和 AWS Snowmobile 组成
+<img src="https://img-blog.csdnimg.cn/ceb7373d70c44f938af6b41465f42cf9.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></li>
+</ul>
+<p>Snowball Edge：Snowball Edge为设备添加了计算能力，它支持自定义EC2 AMI，因此可以将数据处理和分析移动到尽可能接近创建数据的位置</p>
+<h3 id=功能比较>功能比较</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>AWS Snowcone</th>
+<th>AWS Snowball Edge Storage Optimized</th>
+<th>AWS Snowball Edge Compute Optimized</th>
+<th>AWS Snowmobile</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>使用情景</td>
+<td>边缘计算、数据传输、边缘存储</td>
+<td>数据传输、边缘存储</td>
+<td>边缘计算、数据传输</td>
+<td>数据传输</td>
+</tr>
+<tr>
+<td>可用 HDD 存储</td>
+<td>8 TB</td>
+<td>80 TB</td>
+<td>42 TB</td>
+<td>100 PB</td>
+</tr>
+<tr>
+<td>可用 SSD 存储</td>
+<td>14 TB</td>
+<td>1 TB</td>
+<td>7.68 TB</td>
+<td>否</td>
+</tr>
+<tr>
+<td>可用 vCPU</td>
+<td>4 个 vCPU</td>
+<td>40 个 vCPU</td>
+<td>52 个 vCPU</td>
+<td>不适用</td>
+</tr>
+<tr>
+<td>可用内存</td>
+<td>4 GB</td>
+<td>80 GB</td>
+<td>208GB</td>
+<td>不适用</td>
+</tr>
+<tr>
+<td>GPU</td>
+<td>否</td>
+<td>否</td>
+<td>nVidia V100（可选）</td>
+<td>否</td>
+</tr>
+<tr>
+<td>板载计算选项</td>
+<td>AWS IoT Greengrass Amazon EC2 AMI</td>
+<td>AWS IoT Greengrass Amazon EC2 AMI</td>
+<td>AWS IoT Greengrass Amazon EC2 AMI</td>
+<td>不适用</td>
+</tr>
+<tr>
+<td>DataSync</td>
+<td>是</td>
+<td>否</td>
+<td>否</td>
+<td>否</td>
+</tr>
+<tr>
+<td>通过 NFS 传输</td>
+<td>是</td>
+<td>是</td>
+<td>是</td>
+<td>是</td>
+</tr>
+<tr>
+<td>通过 S3 API 传输</td>
+<td>否</td>
+<td>是</td>
+<td>是</td>
+<td>否</td>
+</tr>
+<tr>
+<td>网络接口</td>
+<td>2x 1/10 Gbit - RJ45</td>
+<td>2x 10 Gbit – RJ45 1x 25 Gbit – SFP+ 1x 100 Gbit – QSFP28</td>
+<td>2x 10 Gbit – RJ45 1x 25 Gbit – SFP+ 1x 100 Gbit – QSFP28</td>
+<td>6x 40 Gbit</td>
+</tr>
+<tr>
+<td>设备大小</td>
+<td>9 英寸长，6 英寸宽，3 英寸高(227 mm x 148.6 mm x 82.65 mm)</td>
+<td>28.3 英寸长，10.6 英寸宽，15.5 英寸高(548 mm x 320 mm x 501 mm)</td>
+<td>28.3 英寸长，10.6 英寸宽，15.5 英寸高(548 mm x 320 mm x 501 mm)</td>
+<td>不适用</td>
+</tr>
+<tr>
+<td>设备重量</td>
+<td>4.5 lb(2.1 kg)</td>
+<td>49.7 lb(22.3 kg)</td>
+<td>49.7 lb(22.3 kg)</td>
+<td>不适用</td>
+</tr>
+<tr>
+<td>加密</td>
+<td>有，256 位</td>
+<td>有，256 位</td>
+<td>有，256 位</td>
+<td>是，256 位</td>
+</tr>
+<tr>
+<td>便携性</td>
+<td>依靠电池运行</td>
+<td>否</td>
+<td>否</td>
+<td>否</td>
+</tr>
+<tr>
+<td>无线</td>
+<td>Wi-Fi</td>
+<td>否</td>
+<td>否</td>
+<td>否</td>
+</tr>
+<tr>
+<td>存储集群</td>
+<td>否</td>
+<td>是，5-10 个节点</td>
+<td>是，5-10 个节点</td>
+<td>不适用</td>
+</tr>
+<tr>
+<td>常规作业生命周期</td>
+<td>离线或在线数据传输:数天-数周 边缘计算：数周-数年</td>
+<td>离线数据传输:数天-数周</td>
+<td>边缘计算:数周-数年</td>
+<td>数据迁移：数月</td>
+</tr>
+</tbody>
+</table>
+<h2 id=storage-gateway>Storage Gateway</h2>
+<blockquote>
+<p>适合混合云存储
+基础设施的一部分在云上，另一部分在本地</p>
+</blockquote>
+<p>作为内部部署数据和云数据之间的桥梁，在S3中，典型的使用案例是灾难恢复、备份和恢复以及分层存储
+<img src="https://img-blog.csdnimg.cn/f5d018c78ba84a0c9c91c205f336f6a3.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述></p>
+<p>Types of Storage Gateway:</p>
+<pre><code>1. File Gateway
+2. Volume Gateway
+     Stored Volumes
+     Cached Volumes
+3. Tape Gateway Virtual Tape Library (VTL)
+4. FSx File Gateway
+</code></pre>
+<h3 id=文件网关file-gw>文件网关File GW</h3>
+<ul>
+<li>可以使用NFS和SMB协议访问配置的S3存储桶</li>
+<li>支持S3标准、S3 IA、S3一区IA</li>
+<li>使用IAM角色对每个文件网关进行bucket访问</li>
+<li>最近使用的数据缓存在文件网关中</li>
+<li>可以安装在许多服务器上
+<img src="https://img-blog.csdnimg.cn/7e99e9f72ae34c46aff1a0a78572a499.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBARXRhb24=,size_20,color_FFFFFF,t_70,g_se,x_16" alt=在这里插入图片描述>
+文件作为对象存储在S3存储桶中，通过网络文件系统（NFS）mounting point进行访问</li>
+</ul>
+<h3 id=卷网关-volume-gateway>卷网关 Volume Gateway</h3>
+<ul>
+<li>Volume Gateway为您的应用程序提供使用iSCSI数据块协议的磁盘卷，该协议由S3支持</li>
+<li>异步备份为时间点快照，快照作为<strong>Amazon EBS快照</strong>存储在云中</li>
+<li>快照是增量备份，只捕获更改的块，但压缩到最小的费用
+=>在云中存储虚拟硬盘驱动器</li>
+</ul>
+<p>总结一下存储卷和缓存卷之间的区别</p>
+<ul>
+<li>对于存储卷：
+○ 整个数据集存储在站点上
+○ 异步计划备份到S3</li>
+<li>对于缓存卷：
+○ 整个数据集存储在S3上
+○ 最常访问的数据在on-site缓存（对最近使用的数据进行低延迟访问）</li>
+</ul>
+<p><img src=https://img-blog.csdnimg.cn/242226907cdd4d8886a644d68e106745.png alt=在这里插入图片描述>
+存储卷将文件存储在S3上并提供本地缓存的copy，而缓存卷将文件存储在本地并将其作为备份推送到S3</p>
+<h3 id=磁带网关tape-gateway>磁带网关Tape Gateway</h3>
+<ul>
+<li>Physical tapes for the backup process, for example
+- Virtual Tape Library (VTL) backed by S3 and Glacier</li>
+<li>Back up data using existing tape-based processes (and iSCSI interface)
+- Works with leading backup software vendors
+<img src=https://img-blog.csdnimg.cn/0927d1b02ead48e2b163473d7f71a3ed.png alt=在这里插入图片描述>
+Exam Tip:</li>
+</ul>
+<p>if the question is asking <strong>&ldquo;On-premise data to the cloud&rdquo;</strong>, we want Storage Gateway</p>
+<ul>
+<li>File Access / NFS -> File Gateway, backed by S3</li>
+<li>Volumes / Block Storage / iSCSI -> Volume Gateway, backed by S3 with EBS Snapshots</li>
+<li>VTL Tape solution / Backup with iSCSI -> Tape Gateway, backed by S3 and Glacier</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文件网关（NFS）</td>
+<td>文件作为对象存储在S3存储桶中，通过NFS装载点进行访问。</td>
+</tr>
+<tr>
+<td>卷网关（iSCSI）</td>
+<td>通过iSCSI块协议使用虚拟目录。文件作为Amazon EBS快照存储在云中。两种类型：（1）存储卷和（2）缓存卷。</td>
+</tr>
+<tr>
+<td>类型网关（VTL）</td>
+<td>它提供了一个持久、经济高效的解决方案，用于在AWS云中归档您的数据（与卷网关的机制相同）。</td>
+</tr>
+</tbody>
+</table>
+<h3 id=fsx>FSx</h3>
+<p><strong>Amazon FSx for Windows</strong></p>
+<blockquote>
+<p>EFS是用于Linux系统的共享POSIX系统，不适用于Windows机器</p>
+</blockquote>
+<p>Amazon FSx for Windows是一个完全受管理的Windows文件系统共享驱动器</p>
+<ul>
+<li>支持SMB协议和Windows NTFS</li>
+<li>Microsoft Active Directory集成、ACL、用户配额</li>
+<li>它构建在SSD上，具有高IOPS、高吞吐量</li>
+<li>可以从您的内部on-premise基础设施访问</li>
+<li>可配置为多AZ（高可用性）</li>
+<li>数据每天备份到S3</li>
+</ul>
+<h4 id=fsx-for-lustre>FSx for Lustre</h4>
+<p>Amazon FSx for Lustre是一种用于大规模计算的并行分布式文件系统</p>
+<blockquote>
+<p>机器学习、高性能计算（HPC）、视频处理、金融建模、电子设计自动化</p>
+</blockquote>
+<p>与S3的无缝集成：</p>
+<ul>
+<li>可以将S3作为文件系统读取（通过FSx）</li>
+<li>可以将计算输出写回S3（通过FSx）
+它可以从本地服务器使用</li>
+</ul>
+<h2 id=storage-comparison>Storage Comparison</h2>
+<table>
+<thead>
+<tr>
+<th>Storage Type</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S3</td>
+<td>Object Storage</td>
+</tr>
+<tr>
+<td>Glacier</td>
+<td>Object Archival</td>
+</tr>
+<tr>
+<td>EFS</td>
+<td>Network File System for Linux instances</td>
+</tr>
+<tr>
+<td>FSx for Windows</td>
+<td>Network File System for Windows</td>
+</tr>
+<tr>
+<td>FSx for Lustre</td>
+<td>High-Performance Computing</td>
+</tr>
+<tr>
+<td>EBS volumes</td>
+<td>Network storage for one EC2 instance at a time</td>
+</tr>
+<tr>
+<td>Instance Storage</td>
+<td>Physical storage for your EC2 instance (high IOPS)</td>
+</tr>
+<tr>
+<td>Storage Gateway</td>
+<td>File Gateway; Volume Gateway (cache & stored); Tape Gateway</td>
+</tr>
+<tr>
+<td>Snowball / Snowmobile</td>
+<td>move a large amount of data to the cloud, physically</td>
+</tr>
+<tr>
+<td>Database</td>
+<td>specific workloads, usually with indexing and querying</td>
+</tr>
+</tbody>
+</table>
+</div>
+<footer class=post-footer>
+<div id=wcomments></div>
+</footer>
+</article>
+</section>
+</div>
+</div>
+<div class=sidebar-toggle>
+<div class=sidebar-toggle-line-wrap>
+<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+</div>
+</div>
+<aside id=sidebar class=sidebar>
+<div class=sidebar-inner>
+<ul class="sidebar-nav motion-element">
+<li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>
+文章目录
+</li>
+<li class=sidebar-nav-overview data-target=site-overview>
+站点概览
+</li>
+</ul>
+<section class="site-overview sidebar-panel">
+<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
+<img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon>
+<p class=site-author-name itemprop=name>Etaon</p>
+<p class="site-description motion-element" itemprop=description>
+Kepp Going!
+</p>
+</div>
+<nav class="site-state motion-element">
+<div class="site-state-item site-state-posts">
+<a href=/post/>
+<span class=site-state-item-count>61</span>
+<span class=site-state-item-name>日志</span>
+</a>
+</div>
+<div class="site-state-item site-state-categories">
+<a href=/categories/>
+<span class=site-state-item-count>13</span>
+<span class=site-state-item-name>分类</span>
+</a>
+</div>
+<div class="site-state-item site-state-tags">
+<a href=/tags/>
+<span class=site-state-item-count>34</span>
+<span class=site-state-item-name>标签</span>
+</a>
+</div>
+</nav>
+<div class="links-of-author motion-element">
+<span class=links-of-author-item>
+<a href=https://github.com/etaon target=_blank title=GitHub>
+<i class="fa fa-fw fa-github"></i>
+GitHub
+</a>
+</span>
+<span class=links-of-author-item>
+<a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN>
+<i class="fa fa-fw fa-CSDN"></i>
+CSDN
+</a>
+</span>
+</div>
+<div class="links-of-blogroll motion-element links-of-blogroll-inline">
+<div class=links-of-blogroll-title>
+<i class="fa fa-fw fa-globe"></i>
+友情链接
+</div>
+<ul class=links-of-blogroll-list>
+<li class=links-of-blogroll-item>
+<a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a>
+</li>
+</ul>
+</div>
+<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
+<div class=tagcloud-of-blogroll-title>
+<i class="fa fa-fw fa-tags"></i>
+标签云
+</div>
+<ul class=tagcloud-of-blogroll-list>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/mysql>Mysql</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/aws>Aws</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/dql>Dql</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/hadoop>Hadoop</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/redis>Redis</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/cicd>Cicd</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/git>Git</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/istio>Istio</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/mongodb>Mongodb</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/azure>Azure</a>
+</li>
+</ul>
+</div>
+</section>
+<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+<div class=post-toc>
+<div class=post-toc-content><nav id=TableOfContents>
+<ul>
+<li><a href=#ebs>EBS</a>
+<ul>
+<li><a href=#classes>Classes</a></li>
+<li><a href=#不同ebs卷的详细信息>不同EBS卷的详细信息</a></li>
+<li><a href=#ebs卷类型摘要>EBS卷类型摘要</a></li>
+<li><a href=#ebs快照>EBS快照</a></li>
+<li><a href=#ebs-encryption>EBS Encryption</a></li>
+<li><a href=#ebs-vs-instance-store>EBS vs Instance Store</a></li>
+<li><a href=#ebs-raid选项>EBS RAID选项</a></li>
+</ul>
+</li>
+<li><a href=#efs弹性文件系统>EFS（弹性文件系统）</a>
+<ul>
+<li><a href=#summary-ebs-or-efs----s3>Summary: EBS or EFS &mdash;&S3</a></li>
+</ul>
+</li>
+<li><a href=#snowball>Snowball</a>
+<ul>
+<li><a href=#功能比较>功能比较</a></li>
+</ul>
+</li>
+<li><a href=#storage-gateway>Storage Gateway</a>
+<ul>
+<li><a href=#文件网关file-gw>文件网关File GW</a></li>
+<li><a href=#卷网关-volume-gateway>卷网关 Volume Gateway</a></li>
+<li><a href=#磁带网关tape-gateway>磁带网关Tape Gateway</a></li>
+<li><a href=#fsx>FSx</a></li>
+</ul>
+</li>
+<li><a href=#storage-comparison>Storage Comparison</a></li>
+</ul>
+</nav></div>
+</div>
+</section>
+</div>
+</aside>
+</div>
+</main>
+<footer id=footer class=footer>
+<div class=footer-inner>
+<div class=copyright>
+<span class=copyright-year>
+&copy; 2010 - 2022
+</span>
+<span class=with-love><i class="fa fa-heart"></i></span>
+<span class=copyright-author>路无止境！</span>
+</div>
+<div class=powered-info>
+<span class=powered-by>
+Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.91.2</a>
+</span>
+<span class=separator-line>/</span>
+<span class=theme-info>
+Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
+</a>
+</span>
+</div>
+<div class=vistor-info>
+<script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<span class=site-uv>
+<i class="fa fa-user"></i>
+<span class=busuanzi-value id=busuanzi_value_site_uv></span>
+</span>
+<span class=separator-line>/</span>
+<span class=site-pv>
+<i class="fa fa-eye"></i>
+<span class=busuanzi-value id=busuanzi_value_site_pv></span>
+</span>
+</div>
+<div class=license-info>
+<span class=storage-info>
+Storage by
+<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a>
+</span>
+<span class=separator-line>/</span>
+<span class=license-num>
+<a href target=_blank></a>
+</span>
+</div>
+</div>
+</footer>
+<div class=back-to-top>
+<i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span>
+</div>
+</div>
+<script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
+<script type=text/javascript src=/js/search.js></script>
+<script type=text/javascript src=/js/affix.js></script>
+<script type=text/javascript src=/js/scrollspy.js></script>
+<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.main').css('padding-bottom'),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}}),$(document).on('affixed.bs.affix',function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var b=$('.header-inner').height()+10,c,d,a,e;$('#sidebar').css({'margin-top':b}).show(),c=parseInt($('#sidebar').css('margin-top')),d=parseInt($('.sidebar-inner').css('height')),a=c+d,e=$('.content-wrap').height(),e<a&&$('.content-wrap').css('min-height',a),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
+<script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
+<script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+'//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js',function(){new Waline({el:'#wcomments',visitor:!0,avatar:'wavatar',avatarCDN:'https://sdn.geekzu.org/avatar/',avatarForce:!1,wordLimit:'200',placeholder:' 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ',requiredFields:['nick','mail'],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$('#wcomments').html('抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。')})</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type=text/javascript src="//s7.addthis.com/js/300/addthis_widget.js#pubid=Your%20AddthisId"></script>
+<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
+</body>
+</html>

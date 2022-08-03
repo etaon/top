@@ -1,0 +1,662 @@
+<!doctype html><html lang=zh-cn dir=content/zh-cn>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
+<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
+<title> MongoDB-sharding install - 路无止境！ </title>
+<meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云">
+<meta name=author content="Etaon">
+<meta property="og:title" content="MongoDB-sharding install">
+<meta property="og:site_name" content="路无止境！">
+<meta property="og:image" content="/img/author.jpg">
+<meta name=title content="MongoDB-sharding install - 路无止境！">
+<meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。">
+<link rel="shortcut icon" href=/img/favicon.ico>
+<link rel=apple-touch-icon href=/img/apple-touch-icon.png>
+<link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png>
+<link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css>
+<link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet>
+<link href=/css/main.css rel=stylesheet type=text/css>
+<link href=/css/syntax.css rel=stylesheet type=text/css>
+</head>
+<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
+<div class="container one-collumn sidebar-position-left page-home">
+<div class=headband></div>
+<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
+<div class=header-inner> <div class=site-brand-container>
+<div class=site-nav-toggle>
+<div class=toggle role=button style=opacity:1;top:0>
+<span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span>
+</div>
+</div>
+<div class=site-meta>
+<div class=multi-lang-switch>
+<i class="fa fa-fw fa-language" style=margin-right:5px></i>
+<a class=lang-link id=zh-cn href=#>中文</a>
+</div>
+<div class=custom-logo-site-title>
+<a href=/ class=brand rel=start>
+<span class=logo-line-before><i></i></span>
+<span class=site-title>路无止境！</span>
+<span class=logo-line-after><i></i></span>
+</a>
+</div>
+<p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p>
+</div>
+<div class=site-nav-right>
+<div class="toggle popup-trigger" style=opacity:1;top:0>
+<i class="fa fa-search fa-fw fa-lg"></i>
+</div>
+</div>
+</div>
+<nav class=site-nav>
+<ul id=menu class=menu>
+<li class=menu-item>
+<a href=/ rel=section>
+<i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页
+</a>
+</li>
+<li class=menu-item>
+<a href=/post rel=section>
+<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档
+</a>
+</li>
+<li class=menu-item>
+<a href=/about.html rel=section>
+<i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于我
+</a>
+</li>
+<li class=menu-item>
+<a href=/404.html rel=section>
+<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益404
+</a>
+</li>
+<li class="menu-item menu-item-search">
+<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> 搜索</a>
+</li>
+</ul>
+<div class=site-search>
+<div class="popup search-popup local-search-popup">
+<div class="local-search-header clearfix">
+<span class=search-icon><i class="fa fa-search"></i> </span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
+<div class=local-search-input-wrapper>
+<input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
+</div>
+</div>
+<div id=local-search-result></div>
+</div>
+</div>
+</nav>
+</div>
+</header>
+<main id=main class=main>
+<div class=main-inner>
+<div class=content-wrap>
+<div id=content class=content>
+<section id=posts class=posts-expand>
+<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
+<header class=post-header>
+<h1 class=post-title itemprop="name headline" style=font-weight:700>
+<a class=post-title-link href=https://www.etaon.link/2022/01/31/mongodb-sharding.html itemprop=url>
+MongoDB-sharding install
+</a>
+</h1>
+</header>
+<div class=post-body itemprop=articleBody>
+<h2 id=分片集群-sharded-cluster>分片集群-Sharded Cluster</h2>
+<p><a href=https://www.practical-mongodb-aggregations.com/front-cover.html>Practical MongoDB Aggregations Book</a></p>
+<p>分片（sharding）是一种跨多台机器分布数据的方法， MongoDB使用分片来支持具有非常大的数据集和高吞吐量操作的部署。</p>
+<p>MongoDB分片群集包含以下组件：</p>
+<ul>
+<li>分片（存储）：每个分片包含分片数据的子集。 每个<strong>分片</strong>都可以部署为<strong>副本集</strong>。</li>
+<li>mongos（路由）：mongos充当<strong>查询路由器</strong>，在客户端应用程序和分片集群之间提供接口</li>
+<li>config servers（“调度”的配置）：配置服务器存储群集的<strong>元数据</strong>和配置设置。
+从MongoDB 3.4开始，<strong>必须</strong>将配置服务器部署为副本集（CSRS）。</li>
+<li>分片键：分片键可以是单个索引<a href=https://docs.mongodb.com/manual/reference/glossary/#std-term-field>字段</a>，也可以是<a href=https://docs.mongodb.com/manual/reference/glossary/#std-term-compound-index>复合索引</a>所涵盖的多个字段，该复合索引确定集合<a href=https://docs.mongodb.com/manual/reference/glossary/#std-term-document>文档</a>在集群<a href=https://docs.mongodb.com/manual/reference/glossary/#std-term-shard>分片</a>之间的分布。</li>
+<li>**对冲读取：**从版本4.4开始<code>[，mongos](https://docs.mongodb.com/manual/reference/program/mongos/#mongodb-binary-bin.mongos)</code>实例可以对冲使用非<a href=https://docs.mongodb.com/manual/core/read-preference/>读取首选项的读取</a>。使用对冲读取<code>[，mongos](https://docs.mongodb.com/manual/reference/program/mongos/#mongodb-binary-bin.mongos)</code>实例将读取操作路由到每个查询分片的两个副本集成员，并返回每个分片的第一个响应者的结果。</li>
+</ul>
+<p>分片集群中组件的交互：</p>
+<p><img src=%E5%88%86%E7%89%87%E9%9B%86%E7%BE%A4-Sharded%20Cluster%2025450e6680b6490384ec92ab2c1408a6/Untitled.png alt=Untitled></p>
+<p>而我看来，从数据和控制的角度，下面的拓扑更为恰当：</p>
+<p><img src=%E5%88%86%E7%89%87%E9%9B%86%E7%BE%A4-Sharded%20Cluster%2025450e6680b6490384ec92ab2c1408a6/Untitled%201.png alt=Untitled></p>
+<h2 id=lab>LAB</h2>
+<p>Sharding的配置参考可以查看官方文档：<a href=https://docs.mongodb.com/manual/tutorial/deploy-shard-cluster/>https://docs.mongodb.com/manual/tutorial/deploy-shard-cluster/</a></p>
+<h3 id=拓扑图>拓扑图</h3>
+<p><img src=%E5%88%86%E7%89%87%E9%9B%86%E7%BE%A4-Sharded%20Cluster%2025450e6680b6490384ec92ab2c1408a6/Untitled%202.png alt=Untitled></p>
+<h3 id=环境准备>环境准备</h3>
+<table>
+<thead>
+<tr>
+<th>所属副本集</th>
+<th>主机：Port</th>
+<th>存储文件夹</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>srs01</td>
+<td>db1：27017</td>
+<td>/mongodb/sharded_cluster/srs01_27017</td>
+</tr>
+<tr>
+<td>srs01</td>
+<td>db2：27017</td>
+<td>/mongodb/sharded_cluster/srs01_27017</td>
+</tr>
+<tr>
+<td>srs01</td>
+<td>db3：27017</td>
+<td>/mongodb/sharded_cluster/srs01_27017</td>
+</tr>
+<tr>
+<td>srs02</td>
+<td>db1：27018</td>
+<td>/mongodb/sharded_cluster/srs02_27018</td>
+</tr>
+<tr>
+<td>srs02</td>
+<td>db2：27018</td>
+<td>/mongodb/sharded_cluster/srs02_27018</td>
+</tr>
+<tr>
+<td>srs02</td>
+<td>db3：27018</td>
+<td>/mongodb/sharded_cluster/srs02_27018</td>
+</tr>
+<tr>
+<td>confrs</td>
+<td>db1：27019</td>
+<td>/mongodb/sharded_cluster/confrs_27019</td>
+</tr>
+<tr>
+<td>confrs</td>
+<td>db2：27019</td>
+<td>/mongodb/sharded_cluster/confrs_27019</td>
+</tr>
+<tr>
+<td>confrs</td>
+<td>db3：27019</td>
+<td>/mongodb/sharded_cluster/confrs_27019</td>
+</tr>
+</tbody>
+</table>
+<h3 id=1创建分片副本集>1.创建分片副本集</h3>
+<p>副本集的具体配置参看：<a href="https://blog.csdn.net/weixin_43394724/article/details/122709596?spm=1001.2014.3001.5502">Mongodb-ReplicaSet Install</a></p>
+<p>创建副本集srs01和srs02，如db1，同样的命令用于db2 和 db3</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[zyi@db1 ~]$ sudo mongod --port 27017 --dbpath /mongodb/sharded_cluster/srs01_27017/data/db --bind_ip 0.0.0.0 --shardsvr --replSet srs01  --logpath /mongodb/sharded_cluster/srs01_27017/log/srs01.log --fork
+about to fork child process, waiting until server is ready for connections.
+forked process: 27400
+child process started successfully, parent exiting
+
+</code></pre></div><p>和正常的副本集的区别在于使用参数：<em>&ndash;shardsvr</em> 设置了sharding. clusterRole: shardsvr，如果用conf文件：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>sharding:
+    clusterRole: shardsvr
+replication:
+    replSetName: &lt;replSetName&gt;
+net:
+    bindIp: localhost,&lt;ip address&gt;
+
+</code></pre></div><h3 id=2创建配置服务器副本集>2.创建配置服务器副本集</h3>
+<p>创建副本集confrs，如db1，同样的命令用于db2 和 db3</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[zyi@db1 ~]$ sudo mongod --port 27019 --dbpath /mongodb/sharded_cluster/confrs_27019/data/db --bind_ip 0.0.0.0 --configsvr --replSet confrs --logpath /mongodb/sharded_cluster/confrs_27019/log/confrs.log --fork
+about to fork child process, waiting until server is ready for connections.
+forked process: 27790
+child process started successfully, parent exiting
+
+</code></pre></div><p>和正常的副本集的区别在于使用参数：<em>&ndash;configsvr</em> 设置了sharding. clusterRole: configsvr，如果用conf文件：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>sharding:
+  clusterRole: configsvr
+replication:
+  replSetName: &lt;replica set name&gt;
+net:
+  bindIp: localhost,&lt;hostname(s)|ip address(es)&gt;
+
+</code></pre></div><h3 id=3创建mongos-router>3.创建Mongos Router</h3>
+<p>在另外一台服务器上面启动两个mongos服务，分别使用27018和27019端口。
+先启动一个：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[zyi@mongos ~]$ sudo /usr/local/bin/mongos --port 27018 --configdb config/db1:27019,db2:27019,db3:27019 --bind_ip 0.0.0.0 --fork --logpath /mongodb/mongos/mongos.log
+about to fork child process, waiting until server is ready for connections.
+forked process: 5588
+child process started successfully, parent exiting
+
+</code></pre></div><p>在启动的时候指定了配置副本集的位置：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>--configdb config/db1:27019,db2:27019,db3:27019
+
+</code></pre></div><p>也可以用conf文件的方式：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>sharding:
+  configDB: &lt;configReplSetName&gt;/cfg1.example.net:27019,cfg2.example.net:27019
+net:
+  bindIp: localhost,&lt;hostname(s)|ip address(es)&gt;
+
+</code></pre></div><p>再增加一台router</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[zyi@centos ~]$ sudo /usr/local/bin/mongos --port 27019 --configdb config/db1:27019,db2:27019,db3:27019 --bind_ip 0.0.0.0 --fork --logpath /mongodb/mongos/mongos.log
+about to fork child process, waiting until server is ready for connections.
+forked process: 7490
+child process started successfully, parent exiting
+
+</code></pre></div><p>此时查看sharding状态：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>mongos&gt; sh.status()
+--- Sharding Status ---
+  sharding version: {
+        &#34;_id&#34; : 1,
+        &#34;minCompatibleVersion&#34; : 5,
+        &#34;currentVersion&#34; : 6,
+        &#34;clusterId&#34; : ObjectId(&#34;61f7c76011fc11df29b8cf4b&#34;)
+  }
+  shards:
+        {  &#34;_id&#34; : &#34;srs01&#34;,  &#34;host&#34; : &#34;srs01/db1:27017,db2:27017,db3:27017&#34;,  &#34;state&#34; : 1,  &#34;topologyTime&#34; : Timestamp(1643628963, 2) }
+        {  &#34;_id&#34; : &#34;srs02&#34;,  &#34;host&#34; : &#34;srs02/db1:27018,db2:27018,db3:27018&#34;,  &#34;state&#34; : 1,  &#34;topologyTime&#34; : Timestamp(1643628995, 1) }
+  active mongoses:
+        &#34;5.0.5&#34; : 2
+  autosplit:
+        Currently enabled: yes
+  balancer:
+        Currently enabled: yes
+        Currently running: no
+        Failed balancer rounds in last 5 attempts: 0
+        Migration results for the last 24 hours:
+                512 : Success
+...
+
+</code></pre></div><p>可用的router已经变成了2</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>active mongoses:
+        &#34;5.0.5&#34; : 2
+
+</code></pre></div><h3 id=4访问分片>4.访问分片</h3>
+<p>和对单机mongodb的访问方式一致，对sharding的访问可以用mongo shell方式：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[zyi@centos ~]$ sudo /usr/local/bin/mongo --port 27018
+MongoDB shell version v5.0.5
+connecting to: mongodb://127.0.0.1:27018/?compressors=disabled&amp;gssapiServiceName=mongodb
+Implicit session: session { &#34;id&#34; : UUID(&#34;b5aec9bd-145f-4348-bff2-d07aed46f13a&#34;) }
+MongoDB server version: 5.0.5
+================
+Warning: the &#34;mongo&#34; shell has been superseded by &#34;mongosh&#34;,
+which delivers improved usability and compatibility.The &#34;mongo&#34; shell has been deprecated and will be removed in
+an upcoming release.
+For installation instructions, see
+&lt;https://docs.mongodb.com/mongodb-shell/install/&gt;
+================
+---
+The server generated these startup warnings when booting:
+        2022-01-31T11:32:54.563+00:00: Access control is not enabled for the database. Read and write access to data and configuration is unrestricted
+        2022-01-31T11:32:54.563+00:00: You are running this process as the root user, which is not recommended
+---
+mongos&gt;
+
+</code></pre></div><p>如使用图形化终端如compass，访问mongodb://ip of mongos:port即可</p>
+<h3 id=增加分片副本集>增加分片副本集</h3>
+<p>进入mongos后使用命令添加sharding副本集
+使用命令：<em>sh.addShard( &ldquo;<replsetname>/s1-mongo1.example.net:27018,<a href=http://s1-mongo2.example.net:27018/>s1-mongo2.example.net:27018</a>,<a href=http://s1-mongo3.example.net:27018/>s1-mongo3.example.net:27018</a>")</em></p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>mongos&gt; show dbs
+admin   0.000GB
+config  0.000GB
+mongos&gt; sh.addShard(&#39;srs01/db1:27017,db2:27017,db3:27017&#39;)
+{
+        &#34;shardAdded&#34; : &#34;srs01&#34;,
+        &#34;ok&#34; : 1,
+        &#34;$clusterTime&#34; : {
+                &#34;clusterTime&#34; : Timestamp(1643628964, 1),
+                &#34;signature&#34; : {
+                        &#34;hash&#34; : BinData(0,&#34;AAAAAAAAAAAAAAAAAAAAAAAAAAA=&#34;),
+                        &#34;keyId&#34; : NumberLong(0)
+                }
+        },
+        &#34;operationTime&#34; : Timestamp(1643628964, 1)
+}
+
+</code></pre></div><p>添加完成以后可以查看分片状态</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>mongos&gt; sh.status()
+--- Sharding Status ---
+  sharding version: {
+        &#34;_id&#34; : 1,
+        &#34;minCompatibleVersion&#34; : 5,
+        &#34;currentVersion&#34; : 6,
+        &#34;clusterId&#34; : ObjectId(&#34;61f7c76011fc11df29b8cf4b&#34;)
+  }
+  shards:
+        {  &#34;_id&#34; : &#34;srs01&#34;,  &#34;host&#34; : &#34;srs01/db1:27017,db2:27017,db3:27017&#34;,  &#34;state&#34; : 1,  &#34;topologyTime&#34; : Timestamp(1643628963, 2) }
+        {  &#34;_id&#34; : &#34;srs02&#34;,  &#34;host&#34; : &#34;srs02/db1:27018,db2:27018,db3:27018&#34;,  &#34;state&#34; : 1,  &#34;topologyTime&#34; : Timestamp(1643628995, 1) }
+  active mongoses:
+        &#34;5.0.5&#34; : 1
+  autosplit:
+        Currently enabled: yes
+  balancer:
+        Currently enabled: yes
+        Currently running: no
+        Failed balancer rounds in last 5 attempts: 0
+        Migration results for the last 24 hours:
+                No recent migrations
+  databases:
+        {  &#34;_id&#34; : &#34;config&#34;,  &#34;primary&#34; : &#34;config&#34;,  &#34;partitioned&#34; : true }
+
+</code></pre></div><p>已经加入了shards</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>shards:
+        {  &#34;_id&#34; : &#34;srs01&#34;,  &#34;host&#34; : &#34;srs01/db1:27017,db2:27017,db3:27017&#34;,  &#34;state&#34; : 1,  &#34;topologyTime&#34; : Timestamp(1643628963, 2) }
+        {  &#34;_id&#34; : &#34;srs02&#34;,  &#34;host&#34; : &#34;srs02/db1:27018,db2:27018,db3:27018&#34;,  &#34;state&#34; : 1,  &#34;topologyTime&#34; : Timestamp(1643628995, 1) }
+
+</code></pre></div><h3 id=分片的数据操作>分片的数据操作</h3>
+<p><strong>分片键</strong>
+分片键可以是单个索引字段，也可以是复合索引所涵盖的多个字段，复合索引确定集合文档在集群分片之间的分布。</p>
+<p>MongoDB将分片键值（或散列分片键值）的范围划分为分片键值（或散列分片键值）的非重叠范围。每个范围都与一个区块相关联，MongoDB尝试在集群中的分片之间均匀分布区块。</p>
+<p><strong>分片规则</strong>
+对集合进行分片时,你需要选择一个分片键（Shard Key） , shard key 是每条记录都必须包含的,且建立了
+索引的单个字段或复合字段,MongoDB按照片键将数据划分到不同的 数据块 中,并将 数据块均衡地分布到所有分片中.为了按照片键划分数据块,MongoDB使用 基于哈希的分片方式（随机平均分配）或者基于范围的分片方式（数值大小分配） 。</p>
+<ol>
+<li>哈希策略
+对于 基于哈希的分片 ,MongoDB计算一个字段的哈希值,并用这个哈希值来创建数据块.
+在使用基于哈希分片的系统中,拥有”相近”片键的文档 很可能不会 存储在同一个数据块中,因此数据的分离性更好一些。</li>
+<li>范围策略
+对 基于范围的分片 ,MongoDB按照片键的范围把数据分成不同部分。
+假设有一个数字的片键:想象一个从负无穷到正无穷的直线,每一个片键的值都在直线上画了一个点.MongoDB把这条直线划分为更短的不重叠的片段,并称之为 数据块 ,每个数据块包含了片键在一定范围内的数据。
+在使用片键做范围划分的系统中,拥有”相近”片键的文档很可能存储在同一个数据块中,因此也会存储在同一个分片中。</li>
+</ol>
+<p>我们测试使用哈希策略：
+需要使用分片的数据分布，需要先指定数据库和集合的分片键方法</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>mongos&gt; sh.enableSharding(&#39;etaondb&#39;)
+{
+        &#34;ok&#34; : 1,
+        &#34;$clusterTime&#34; : {
+                &#34;clusterTime&#34; : Timestamp(1643629251, 29),
+                &#34;signature&#34; : {
+                        &#34;hash&#34; : BinData(0,&#34;AAAAAAAAAAAAAAAAAAAAAAAAAAA=&#34;),
+                        &#34;keyId&#34; : NumberLong(0)
+                }
+        },
+        &#34;operationTime&#34; : Timestamp(1643629251, 28)
+}
+mongos&gt; sh.shardCollection(&#39;etaondb.comment&#39;,{&#39;nickname&#39;:&#39;hashed&#39;})
+{
+        &#34;collectionsharded&#34; : &#34;etaondb.comment&#34;,
+        &#34;ok&#34; : 1,
+        &#34;$clusterTime&#34; : {
+                &#34;clusterTime&#34; : Timestamp(1643629362, 42),
+                &#34;signature&#34; : {
+                        &#34;hash&#34; : BinData(0,&#34;AAAAAAAAAAAAAAAAAAAAAAAAAAA=&#34;),
+                        &#34;keyId&#34; : NumberLong(0)
+                }
+        },
+        &#34;operationTime&#34; : Timestamp(1643629362, 38)
+}
+
+</code></pre></div><p>此时查看分片状态</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>mongos&gt; sh.status()
+--- Sharding Status ---
+  sharding version: {
+        &#34;_id&#34; : 1,
+        &#34;minCompatibleVersion&#34; : 5,
+        &#34;currentVersion&#34; : 6,
+        &#34;clusterId&#34; : ObjectId(&#34;61f7c76011fc11df29b8cf4b&#34;)
+  }
+  shards:
+        {  &#34;_id&#34; : &#34;srs01&#34;,  &#34;host&#34; : &#34;srs01/db1:27017,db2:27017,db3:27017&#34;,  &#34;state&#34; : 1,  &#34;topologyTime&#34; : Timestamp(1643628963, 2) }
+        {  &#34;_id&#34; : &#34;srs02&#34;,  &#34;host&#34; : &#34;srs02/db1:27018,db2:27018,db3:27018&#34;,  &#34;state&#34; : 1,  &#34;topologyTime&#34; : Timestamp(1643628995, 1) }
+  active mongoses:
+        &#34;5.0.5&#34; : 2
+  autosplit:
+        Currently enabled: yes
+  balancer:
+        Currently enabled: yes
+        Currently running: no
+        Failed balancer rounds in last 5 attempts: 0
+        Migration results for the last 24 hours:
+                512 : Success
+  databases:
+        {  &#34;_id&#34; : &#34;config&#34;,  &#34;primary&#34; : &#34;config&#34;,  &#34;partitioned&#34; : true }
+                config.system.sessions
+                        shard key: { &#34;_id&#34; : 1 }
+                        unique: false
+                        balancing: true
+                        chunks:
+                                srs01   512
+                                srs02   512
+                        too many chunks to print, use verbose if you want to force print
+        {  &#34;_id&#34; : &#34;etaondb&#34;,  &#34;primary&#34; : &#34;srs02&#34;,  &#34;partitioned&#34; : true,  &#34;version&#34; : {  &#34;uuid&#34; : UUID(&#34;4bd8a393-94dd-442c-8b4d-8327dd5bb7b0&#34;),  &#34;timestamp&#34; : Timestamp(1643629251, 26),  &#34;lastMod&#34; : 1 } }
+                etaondb.comment
+                        shard key: { &#34;nickname&#34; : &#34;hashed&#34; }
+                        unique: false
+                        balancing: true
+                        chunks:
+                                srs01   2
+                                srs02   2
+                        { &#34;nickname&#34; : { &#34;$minKey&#34; : 1 } } --&gt;&gt; { &#34;nickname&#34; : NumberLong(&#34;-4611686018427387902&#34;) } on : srs01 Timestamp(1, 0)
+                        { &#34;nickname&#34; : NumberLong(&#34;-4611686018427387902&#34;) } --&gt;&gt; { &#34;nickname&#34; : NumberLong(0) } on : srs01 Timestamp(1, 1)
+                        { &#34;nickname&#34; : NumberLong(0) } --&gt;&gt; { &#34;nickname&#34; : NumberLong(&#34;4611686018427387902&#34;) } on : srs02 Timestamp(1, 2)
+                        { &#34;nickname&#34; : NumberLong(&#34;4611686018427387902&#34;) } --&gt;&gt; { &#34;nickname&#34; : { &#34;$maxKey&#34; : 1 } } on : srs02 Timestamp(1, 3)
+mongos&gt;
+
+</code></pre></div><p>在最后的部分，已经可以看到数据库etaondb的集合comment使用哈希策略。</p>
+<p><strong>增加数据</strong>
+使用*for(var i=1;i&lt;=1000;i++) {db.comment.insert({_id:i+"",nickname:&ldquo;BoBo&rdquo;+i})}*增加1000个数据</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>mongos&gt; for(var i=1;i&lt;=1000;i++) {db.comment.insert({_id:i+&#34;&#34;,nickname:&#34;BoBo&#34;+i})}
+WriteResult({ &#34;nInserted&#34; : 1 })
+mongos&gt; db.comment.count()
+1000
+
+</code></pre></div><p>在查看分片存储数据情况：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>srs01:PRIMARY&gt; use etaondb
+switched to db etaondb
+srs01:PRIMARY&gt; db.comment.count()
+507
+......
+srs02:PRIMARY&gt; use etaondb
+switched to db etaondb
+srs02:PRIMARY&gt; db.comment.count()
+493
+
+</code></pre></div><p>两个分片的数据数分别是507和493，基本上平衡分配。</p>
+</div>
+<footer class=post-footer>
+<div id=wcomments></div>
+</footer>
+</article>
+</section>
+</div>
+</div>
+<div class=sidebar-toggle>
+<div class=sidebar-toggle-line-wrap>
+<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+</div>
+</div>
+<aside id=sidebar class=sidebar>
+<div class=sidebar-inner>
+<ul class="sidebar-nav motion-element">
+<li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>
+文章目录
+</li>
+<li class=sidebar-nav-overview data-target=site-overview>
+站点概览
+</li>
+</ul>
+<section class="site-overview sidebar-panel">
+<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
+<img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon>
+<p class=site-author-name itemprop=name>Etaon</p>
+<p class="site-description motion-element" itemprop=description>
+Kepp Going!
+</p>
+</div>
+<nav class="site-state motion-element">
+<div class="site-state-item site-state-posts">
+<a href=/post/>
+<span class=site-state-item-count>61</span>
+<span class=site-state-item-name>日志</span>
+</a>
+</div>
+<div class="site-state-item site-state-categories">
+<a href=/categories/>
+<span class=site-state-item-count>13</span>
+<span class=site-state-item-name>分类</span>
+</a>
+</div>
+<div class="site-state-item site-state-tags">
+<a href=/tags/>
+<span class=site-state-item-count>34</span>
+<span class=site-state-item-name>标签</span>
+</a>
+</div>
+</nav>
+<div class="links-of-author motion-element">
+<span class=links-of-author-item>
+<a href=https://github.com/etaon target=_blank title=GitHub>
+<i class="fa fa-fw fa-github"></i>
+GitHub
+</a>
+</span>
+<span class=links-of-author-item>
+<a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN>
+<i class="fa fa-fw fa-CSDN"></i>
+CSDN
+</a>
+</span>
+</div>
+<div class="links-of-blogroll motion-element links-of-blogroll-inline">
+<div class=links-of-blogroll-title>
+<i class="fa fa-fw fa-globe"></i>
+友情链接
+</div>
+<ul class=links-of-blogroll-list>
+<li class=links-of-blogroll-item>
+<a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a>
+</li>
+</ul>
+</div>
+<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
+<div class=tagcloud-of-blogroll-title>
+<i class="fa fa-fw fa-tags"></i>
+标签云
+</div>
+<ul class=tagcloud-of-blogroll-list>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/mysql>Mysql</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/aws>Aws</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/dql>Dql</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/hadoop>Hadoop</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/redis>Redis</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/cicd>Cicd</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/git>Git</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/istio>Istio</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/mongodb>Mongodb</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/azure>Azure</a>
+</li>
+</ul>
+</div>
+</section>
+<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+<div class=post-toc>
+<div class=post-toc-content><nav id=TableOfContents>
+<ul>
+<li><a href=#分片集群-sharded-cluster>分片集群-Sharded Cluster</a></li>
+<li><a href=#lab>LAB</a>
+<ul>
+<li><a href=#拓扑图>拓扑图</a></li>
+<li><a href=#环境准备>环境准备</a></li>
+<li><a href=#1创建分片副本集>1.创建分片副本集</a></li>
+<li><a href=#2创建配置服务器副本集>2.创建配置服务器副本集</a></li>
+<li><a href=#3创建mongos-router>3.创建Mongos Router</a></li>
+<li><a href=#4访问分片>4.访问分片</a></li>
+<li><a href=#增加分片副本集>增加分片副本集</a></li>
+<li><a href=#分片的数据操作>分片的数据操作</a></li>
+</ul>
+</li>
+</ul>
+</nav></div>
+</div>
+</section>
+</div>
+</aside>
+</div>
+</main>
+<footer id=footer class=footer>
+<div class=footer-inner>
+<div class=copyright>
+<span class=copyright-year>
+&copy; 2010 - 2022
+</span>
+<span class=with-love><i class="fa fa-heart"></i></span>
+<span class=copyright-author>路无止境！</span>
+</div>
+<div class=powered-info>
+<span class=powered-by>
+Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.91.2</a>
+</span>
+<span class=separator-line>/</span>
+<span class=theme-info>
+Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
+</a>
+</span>
+</div>
+<div class=vistor-info>
+<script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<span class=site-uv>
+<i class="fa fa-user"></i>
+<span class=busuanzi-value id=busuanzi_value_site_uv></span>
+</span>
+<span class=separator-line>/</span>
+<span class=site-pv>
+<i class="fa fa-eye"></i>
+<span class=busuanzi-value id=busuanzi_value_site_pv></span>
+</span>
+</div>
+<div class=license-info>
+<span class=storage-info>
+Storage by
+<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a>
+</span>
+<span class=separator-line>/</span>
+<span class=license-num>
+<a href target=_blank></a>
+</span>
+</div>
+</div>
+</footer>
+<div class=back-to-top>
+<i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span>
+</div>
+</div>
+<script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
+<script type=text/javascript src=/js/search.js></script>
+<script type=text/javascript src=/js/affix.js></script>
+<script type=text/javascript src=/js/scrollspy.js></script>
+<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.main').css('padding-bottom'),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}}),$(document).on('affixed.bs.affix',function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var b=$('.header-inner').height()+10,c,d,a,e;$('#sidebar').css({'margin-top':b}).show(),c=parseInt($('#sidebar').css('margin-top')),d=parseInt($('.sidebar-inner').css('height')),a=c+d,e=$('.content-wrap').height(),e<a&&$('.content-wrap').css('min-height',a),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
+<script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
+<script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+'//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js',function(){new Waline({el:'#wcomments',visitor:!0,avatar:'wavatar',avatarCDN:'https://sdn.geekzu.org/avatar/',avatarForce:!1,wordLimit:'200',placeholder:' 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ',requiredFields:['nick','mail'],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$('#wcomments').html('抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。')})</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type=text/javascript src="//s7.addthis.com/js/300/addthis_widget.js#pubid=Your%20AddthisId"></script>
+<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
+</body>
+</html>
