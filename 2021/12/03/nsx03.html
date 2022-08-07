@@ -1,0 +1,219 @@
+<!doctype html><html lang=zh-cn dir=content/zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=content-security-policy content="upgrade-insecure-requests"><title>VMware虚拟网络-NSX功能路由交换 - 路无止境！</title><meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云"><meta name=author content="Etaon"><meta property="og:title" content="VMware虚拟网络-NSX功能路由交换"><meta property="og:site_name" content="路无止境！"><meta property="og:image" content="/img/author.jpg"><meta name=title content="VMware虚拟网络-NSX功能路由交换 - 路无止境！"><meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。"><link rel="shortcut icon" href=/img/favicon.ico><link rel=apple-touch-icon href=/img/apple-touch-icon.png><link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png><link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css><link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet><link href=/css/main.css rel=stylesheet type=text/css><link href=/css/syntax.css rel=stylesheet type=text/css></head><body itemscope itemtype=http://schema.org/WebPage lang=zh-hans><div class="container one-collumn sidebar-position-left page-home"><div class=headband></div><header id=header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle role=button style=opacity:1;top:0><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div></div><div class=site-meta><div class=multi-lang-switch><i class="fa fa-fw fa-language" style=margin-right:5px></i>
+<a class=lang-link id=zh-cn href=#>学习</a></div><div class=custom-logo-site-title><a href=/ class=brand rel=start><span class=logo-line-before><i></i></span>
+<span class=site-title>路无止境！</span>
+<span class=logo-line-after><i></i></span></a></div><p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p></div><div class=site-nav-right><div class="toggle popup-trigger" style=opacity:1;top:0><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class=site-nav><ul id=menu class=menu><li class=menu-item><a href=/ rel=section><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class=menu-item><a href=/post rel=section><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class=menu-item><a href=/about.html rel=section><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于我</a></li><li class=menu-item><a href=/404.html rel=section><i class="menu-item-icon fa fa-fw fa-heartbeat"></i><br>公益404</a></li><li class="menu-item menu-item-search"><a href=javascript:; class=popup-trigger><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class=site-search><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class=search-icon><i class="fa fa-search"></i></span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span><div class=local-search-input-wrapper><input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off></div></div><div id=local-search-result></div></div></div></nav></div></header><main id=main class=main><div class=main-inner><div class=content-wrap><div id=content class=content><section id=posts class=posts-expand><article class="post post-type-normal" itemscope itemtype=http://schema.org/Article><header class=post-header><h1 class=post-title itemprop="name headline" style=font-weight:700><a class=post-title-link href=https://www.etaon.top/2021/12/03/nsx03.html itemprop=url>VMware虚拟网络-NSX功能路由交换</a></h1></header><div class=post-body itemprop=articleBody><p>在上一篇中，我们把NSX-T和vCenter结合，并部署好了Edge Cluster。现在我们试着将虚拟化网络的网关下移，并使用T0连接到物理网络。
+做网络实验之前，我们通常会准备好网络拓扑、IP地址规划，路由规划等。</p><h2 id=拓扑图>拓扑图</h2><p><img src="https://img-blog.csdnimg.cn/20210517143118919.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70#pic_center" alt="https://img-blog.csdnimg.cn/20210517143118919.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70#pic_center"></p><p>我们搭建两层虚拟路由器结构，T0提供南北向路由，两台T1提供东西向路由和相应子网的接入。</p><h2 id=部署t0路由器>部署T0路由器</h2><h3 id=t0的外联>T0的外联</h3><p>在虚拟网络，是没有连接线缆的。为了给T0一个外联的地点，我们建立一个Segment</p><p><img src="https://img-blog.csdnimg.cn/20210517124654775.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt="https://img-blog.csdnimg.cn/20210517124654775.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70"></p><p>注意：</p><ul><li>选择transport Zone：tz-vlan，这样就和Edge的Vlan交换机结合起来了。</li><li>VLAN填选‘0’，表示可以允许所有VLAN</li></ul><h3 id=配置t0路由器>配置T0路由器</h3><p><img src="https://img-blog.csdnimg.cn/20210517131317869.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt="https://img-blog.csdnimg.cn/20210517131317869.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70"></p><p>HA-Mode要选择Active Standby，只有在这种模式下，T0才能提供有状态的服务。</p><p>配置出口port</p><p><img src="https://img-blog.csdnimg.cn/20210517133027442.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt="https://img-blog.csdnimg.cn/20210517133027442.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70"></p><h3 id=bgp设置>BGP设置</h3><p>配置BGP 邻居</p><p><img src="https://img-blog.csdnimg.cn/20210517135544977.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt="https://img-blog.csdnimg.cn/20210517135544977.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70"></p><p><img src="https://img-blog.csdnimg.cn/20210517140121935.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt="https://img-blog.csdnimg.cn/20210517140121935.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70"></p><p>配置路由转发，这里可能用到的是直连路由的转发、NAT和LB路由</p><p><img src="https://img-blog.csdnimg.cn/20210517140254825.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt="https://img-blog.csdnimg.cn/20210517140254825.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70"></p><p>在模拟的物理路由器上面看：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>vyos@vyos:~$ show ip bgp neighbors
+</span></span><span style=display:flex><span>BGP neighbor is 192.168.100.3, remote AS 65001, local AS 65002, external link
+</span></span><span style=display:flex><span>Hostname: nsxt-edge-02
+</span></span><span style=display:flex><span>  BGP version 4, remote router ID 192.168.100.3, local router ID 192.168.100.1
+</span></span><span style=display:flex><span>  BGP state = Established, up for 00:02:23
+</span></span><span style=display:flex><span>  Last read 00:00:20, Last write 00:00:23
+</span></span><span style=display:flex><span>  Hold time is 180, keepalive interval is 60 seconds
+</span></span></code></pre></div><p>BGP 邻居以及建立起来。</p><h2 id=部署t1路由器>部署T1路由器</h2><p><img src="https://img-blog.csdnimg.cn/20210517141218380.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt="https://img-blog.csdnimg.cn/20210517141218380.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70"></p><p>选择连接到T0路由器，并配置路由转发。</p><p><img src="https://img-blog.csdnimg.cn/20210517141353132.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt="https://img-blog.csdnimg.cn/20210517141353132.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70"></p><h2 id=配置分段segment>配置分段Segment</h2><p><img src="https://img-blog.csdnimg.cn/20210517143317236.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt="https://img-blog.csdnimg.cn/20210517143317236.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70"></p><p>选择要连接的路由器</p><p>在Transport Zone选择Overlay的TZ
+如果填写Subnet地址，这个是路由器的端口地址，也即是子网的网关。</p><p><img src="https://img-blog.csdnimg.cn/20210517143550983.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt="https://img-blog.csdnimg.cn/20210517143550983.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70"></p><p>配置好以后，可以在vCenter上面看到这些分段，注意图标和原有PortGroup不一样</p><p><img src="https://img-blog.csdnimg.cn/20210517143737600.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt="https://img-blog.csdnimg.cn/20210517143737600.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70"></p><h2 id=检查路由分发>检查路由分发</h2><p>在模拟的物理路由器上面看路由信息</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>vyos@vyos:~$ show ip ro
+</span></span><span style=display:flex><span>Codes: K - kernel route, C - connected, S - static, R - RIP,
+</span></span><span style=display:flex><span>       O - OSPF, I - IS-IS, B - BGP, E - EIGRP, N - NHRP,
+</span></span><span style=display:flex><span>       T - Table, v - VNC, V - VNC-Direct, A - Babel, D - SHARP,
+</span></span><span style=display:flex><span>       F - PBR, f - OpenFabric,
+</span></span><span style=display:flex><span>       &gt; - selected route, * - FIB route, q - queued route, r - rejected route
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>S&gt;* 0.0.0.0/0 [1/0] via 192.168.0.1, eth0, 6d01h39m
+</span></span><span style=display:flex><span>C&gt;* 10.10.20.0/24 is directly connected, eth1, 6d01h39m
+</span></span><span style=display:flex><span>C&gt;* 10.10.30.0/24 is directly connected, eth1, 6d01h39m
+</span></span><span style=display:flex><span>B&gt;* 172.10.1.0/24 [20/0] via 192.168.100.3, eth1, 00:02:53
+</span></span><span style=display:flex><span>B&gt;* 172.20.1.0/24 [20/0] via 192.168.100.3, eth1, 00:02:24
+</span></span><span style=display:flex><span>C&gt;* 192.168.0.0/24 is directly connected, eth0, 6d01h39m
+</span></span><span style=display:flex><span>C&gt;* 192.168.100.0/24 is directly connected, eth1, 6d01h39m
+</span></span><span style=display:flex><span>C&gt;* 192.168.110.0/24 is directly connected, eth1, 6d01h39m
+</span></span><span style=display:flex><span>C&gt;* 192.168.120.0/24 is directly connected, eth1.120, 6d01h39m
+</span></span><span style=display:flex><span>C&gt;* 192.168.130.0/24 is directly connected, eth1.130, 6d01h39m
+</span></span><span style=display:flex><span>C&gt;* 192.168.200.0/24 is directly connected, eth1, 6d01h39m
+</span></span><span style=display:flex><span>C&gt;* 192.168.210.0/24 is directly connected, eth1.210, 6d01h39m
+</span></span><span style=display:flex><span>C&gt;* 192.168.220.0/24 is directly connected, eth1.220, 6d01h39m
+</span></span></code></pre></div><p>可以看到通过BGP学习到的172.20.1.0/24和172.10.1.0/24两段地址。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>vyos@vyos:~$ ping 172.10.1.1
+</span></span><span style=display:flex><span>PING 172.10.1.1 (172.10.1.1) 56(84) bytes of data.
+</span></span><span style=display:flex><span>64 bytes from 172.10.1.1: icmp_seq=1 ttl=63 time=2.31 ms
+</span></span><span style=display:flex><span>64 bytes from 172.10.1.1: icmp_seq=2 ttl=63 time=1.21 ms
+</span></span><span style=display:flex><span>64 bytes from 172.10.1.1: icmp_seq=3 ttl=63 time=2.46 ms
+</span></span><span style=display:flex><span>64 bytes from 172.10.1.1: icmp_seq=4 ttl=63 time=3.14 ms
+</span></span></code></pre></div><h2 id=检查逻辑路由器的部署>检查逻辑路由器的部署</h2><p>在上一篇我们介绍了几种架构中逻辑路由器的部署情况，这个实验中，部署了两级路由器，且T1路由器并未启用服务，那么，按照前面的介绍，这应该是下面的架构：</p><p><img src="https://img-blog.csdnimg.cn/20210517153631515.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70#pic_center" alt="https://img-blog.csdnimg.cn/20210517153631515.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70#pic_center"></p><table><thead><tr><th>Routertire</th><th>Edge</th><th>H/V</th></tr></thead><tbody><tr><td>T0 SR</td><td>‣</td><td></td></tr><tr><td>T0 DR</td><td>‣</td><td>‣</td></tr><tr><td>T1 DR</td><td>‣</td><td>‣</td></tr></tbody></table><p>其中，在Edge上有T0 SR、T0 DR和T1 DR；在Esxi上有T0 DR和T1 DR。</p><h3 id=查看esxi>查看Esxi</h3><p>登录到Esxi后使用nsxcli命令查看：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[root@esx-01a:~] nsxcli
+</span></span><span style=display:flex><span>esx-01a.corp.tanzu&gt; get logical-routers
+</span></span><span style=display:flex><span>Mon May 17 2021 UTC 07:11:16.903
+</span></span><span style=display:flex><span>                                  Logical Routers Summary
+</span></span><span style=display:flex><span> ------------------------------------------------------------------------------------------
+</span></span><span style=display:flex><span>               VDR UUID                LIF num  Route num  Max Neighbors  Current Neighbors
+</span></span></code></pre></div><p>Esxi上面并没有逻辑路由器？</p><p>这是因为在Esxi初始化中，并不需要提供路由等服务。
+我们在Esx-01a上部署一个虚拟机：</p><p><img src="https://img-blog.csdnimg.cn/20210517154431866.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt="https://img-blog.csdnimg.cn/20210517154431866.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70"></p><p>再次查看Esx-01a的逻辑路由器</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>esx-01a.corp.tanzu&gt; get logical-routers
+</span></span><span style=display:flex><span>Mon May 17 2021 UTC 07:15:25.736
+</span></span><span style=display:flex><span>                                  Logical Routers Summary
+</span></span><span style=display:flex><span> ------------------------------------------------------------------------------------------
+</span></span><span style=display:flex><span>               VDR UUID                LIF num  Route num  Max Neighbors  Current Neighbors
+</span></span><span style=display:flex><span> 770bd784-6222-4c4e-8f8e-3d667f48ddf0     3         8          50000              17
+</span></span><span style=display:flex><span> 03fc3c16-d4b6-4921-9547-baf459ca9c28     2         3          50000              8
+</span></span><span style=display:flex><span> 6490db7f-9000-42dd-9c37-e210377b041f     2         3          50000              8
+</span></span></code></pre></div><p>现在有了三个逻辑路由器，但是他们是什么呢？
+我们可以分别查看这三台路由器的端口信息：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>esx-01a.corp.tanzu&gt; get logical-router 770bd784-6222-4c4e-8f8e-3d667f48ddf0 interfaces
+</span></span><span style=display:flex><span>Mon May 17 2021 UTC 07:22:37.846
+</span></span><span style=display:flex><span>                         Logical Router Interfaces
+</span></span><span style=display:flex><span>---------------------------------------------------------------------------
+</span></span><span style=display:flex><span>IPv6 DAD Status Legend:  [A: DAD_Sucess], [F: DAD_Duplicate], [T: DAD_Tentative], [U: DAD_Unavailable]
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>LIF UUID                 : 1af8a568-132b-4328-aaf9-1b404b7a7211
+</span></span><span style=display:flex><span>Mode                     : [b&#39;Routing-Backplane&#39;]
+</span></span><span style=display:flex><span>Overlay VNI              : 69635
+</span></span><span style=display:flex><span>IP/Mask                  : 169.254.0.1/24;  fe80::50:56ff:fe56:4452/128(U)
+</span></span><span style=display:flex><span>Mac                      : 02:50:56:56:44:52
+</span></span><span style=display:flex><span>Connected DVS            : DSwitch-tanzu
+</span></span><span style=display:flex><span>Control plane enable     : True
+</span></span><span style=display:flex><span>Replication Mode         : 0.0.0.1
+</span></span><span style=display:flex><span>Multicast Routing        : [b&#39;Enabled&#39;, b&#39;Oper Down&#39;]
+</span></span><span style=display:flex><span>State                    : [b&#39;Enabled&#39;]
+</span></span><span style=display:flex><span>Flags                    : 0x90308
+</span></span><span style=display:flex><span>DHCP relay               : Not enable
+</span></span><span style=display:flex><span>DAD-mode                 : [&#39;LOOSE&#39;]
+</span></span><span style=display:flex><span>RA-mode                  : [&#39;SLAAC_DNS_THROUGH_RA(M=0, O=0)&#39;]
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>LIF UUID                 : ca50b054-8f8e-43d0-9f5c-bd1a2d4724fc
+</span></span><span style=display:flex><span>Mode                     : [b&#39;Routing-LinkLif&#39;]
+</span></span><span style=display:flex><span>Overlay VNI              : 69634
+</span></span><span style=display:flex><span>IP/Mask                  : 100.64.160.0/31;  fe80::50:56ff:fe56:4452/128(U); fcce:6440:3ca7:5800::1/64(U)
+</span></span><span style=display:flex><span>Mac                      : 02:50:56:56:44:52
+</span></span><span style=display:flex><span>Connected DVS            : DSwitch-tanzu
+</span></span><span style=display:flex><span>Control plane enable     : True
+</span></span><span style=display:flex><span>Replication Mode         : 0.0.0.1
+</span></span><span style=display:flex><span>Multicast Routing        : [b&#39;Disabled&#39;, b&#39;Oper Down&#39;]
+</span></span><span style=display:flex><span>State                    : [b&#39;Enabled&#39;]
+</span></span><span style=display:flex><span>Flags                    : 0x8308
+</span></span><span style=display:flex><span>DHCP relay               : Not enable
+</span></span><span style=display:flex><span>DAD-mode                 : [&#39;LOOSE&#39;]
+</span></span><span style=display:flex><span>RA-mode                  : [&#39;SLAAC_DNS_THROUGH_RA(M=0, O=0)&#39;]
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>LIF UUID                 : a96c3411-ff55-4dc6-bea3-1859997f21c6
+</span></span><span style=display:flex><span>Mode                     : [b&#39;Routing-LinkLif&#39;]
+</span></span><span style=display:flex><span>Overlay VNI              : 69637
+</span></span><span style=display:flex><span>IP/Mask                  : 100.64.160.2/31;  fe80::50:56ff:fe56:4452/128(U); fcce:6440:3ca7:5801::1/64(U)
+</span></span><span style=display:flex><span>Mac                      : 02:50:56:56:44:52
+</span></span><span style=display:flex><span>Connected DVS            : DSwitch-tanzu
+</span></span><span style=display:flex><span>Control plane enable     : True
+</span></span><span style=display:flex><span>Replication Mode         : 0.0.0.1
+</span></span><span style=display:flex><span>Multicast Routing        : [b&#39;Disabled&#39;, b&#39;Oper Down&#39;]
+</span></span><span style=display:flex><span>State                    : [b&#39;Enabled&#39;]
+</span></span><span style=display:flex><span>Flags                    : 0x8308
+</span></span><span style=display:flex><span>DHCP relay               : Not enable
+</span></span><span style=display:flex><span>DAD-mode                 : [&#39;LOOSE&#39;]
+</span></span><span style=display:flex><span>RA-mode                  : [&#39;SLAAC_DNS_THROUGH_RA(M=0, O=0)&#39;]
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>esx-01a.corp.tanzu&gt; get logical-router  6490db7f-9000-42dd-9c37-e210377b041f interfaces
+</span></span><span style=display:flex><span>Mon May 17 2021 UTC 07:26:05.879
+</span></span><span style=display:flex><span>                         Logical Router Interfaces
+</span></span><span style=display:flex><span>---------------------------------------------------------------------------
+</span></span><span style=display:flex><span>IPv6 DAD Status Legend:  [A: DAD_Sucess], [F: DAD_Duplicate], [T: DAD_Tentative], [U: DAD_Unavailable]
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>LIF UUID                 : 226c7d70-02fe-4d47-98af-9225e2f972ec
+</span></span><span style=display:flex><span>Mode                     : [b&#39;Routing-LinkLif&#39;]
+</span></span><span style=display:flex><span>Overlay VNI              : 69637
+</span></span><span style=display:flex><span>IP/Mask                  : 100.64.160.3/31;  fe80::50:56ff:fe56:4455/128(U); fcce:6440:3ca7:5801::2/64(U)
+</span></span><span style=display:flex><span>Mac                      : 02:50:56:56:44:55
+</span></span><span style=display:flex><span>Connected DVS            : DSwitch-tanzu
+</span></span><span style=display:flex><span>Control plane enable     : True
+</span></span><span style=display:flex><span>Replication Mode         : 0.0.0.1
+</span></span><span style=display:flex><span>Multicast Routing        : [b&#39;Disabled&#39;, b&#39;Oper Down&#39;]
+</span></span><span style=display:flex><span>State                    : [b&#39;Enabled&#39;]
+</span></span><span style=display:flex><span>Flags                    : 0x8308
+</span></span><span style=display:flex><span>DHCP relay               : Not enable
+</span></span><span style=display:flex><span>DAD-mode                 : [&#39;LOOSE&#39;]
+</span></span><span style=display:flex><span>RA-mode                  : [&#39;SLAAC_DNS_THROUGH_RA(M=0, O=0)&#39;]
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>LIF UUID                 : 758b2000-aca5-4a00-a061-88f2e18a1291
+</span></span><span style=display:flex><span>Mode                     : [b&#39;Routing&#39;]
+</span></span><span style=display:flex><span>Overlay VNI              : 69636
+</span></span><span style=display:flex><span>IP/Mask                  : 172.20.1.1/24
+</span></span><span style=display:flex><span>Mac                      : 02:50:56:56:44:52
+</span></span><span style=display:flex><span>Connected DVS            : DSwitch-tanzu
+</span></span><span style=display:flex><span>Control plane enable     : True
+</span></span><span style=display:flex><span>Replication Mode         : 0.0.0.1
+</span></span><span style=display:flex><span>Multicast Routing        : [b&#39;Enabled&#39;, b&#39;Oper Down&#39;]
+</span></span><span style=display:flex><span>State                    : [b&#39;Enabled&#39;]
+</span></span><span style=display:flex><span>Flags                    : 0x80388
+</span></span><span style=display:flex><span>DHCP relay               : Not enable
+</span></span><span style=display:flex><span>DAD-mode                 : [&#39;LOOSE&#39;]
+</span></span><span style=display:flex><span>RA-mode                  : [&#39;UNKNOWN&#39;]
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>esx-01a.corp.tanzu&gt; get logical-router 03fc3c16-d4b6-4921-9547-baf459ca9c28 interfaces
+</span></span><span style=display:flex><span>Mon May 17 2021 UTC 07:27:52.391
+</span></span><span style=display:flex><span>                         Logical Router Interfaces
+</span></span><span style=display:flex><span>---------------------------------------------------------------------------
+</span></span><span style=display:flex><span>IPv6 DAD Status Legend:  [A: DAD_Sucess], [F: DAD_Duplicate], [T: DAD_Tentative], [U: DAD_Unavailable]
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>LIF UUID                 : 965f9bd2-0382-4256-bab3-1e8dd5ed30ce
+</span></span><span style=display:flex><span>Mode                     : [b&#39;Routing-LinkLif&#39;]
+</span></span><span style=display:flex><span>Overlay VNI              : 69634
+</span></span><span style=display:flex><span>IP/Mask                  : 100.64.160.1/31;  fe80::50:56ff:fe56:4455/128(U); fcce:6440:3ca7:5800::2/64(U)
+</span></span><span style=display:flex><span>Mac                      : 02:50:56:56:44:55
+</span></span><span style=display:flex><span>Connected DVS            : DSwitch-tanzu
+</span></span><span style=display:flex><span>Control plane enable     : True
+</span></span><span style=display:flex><span>Replication Mode         : 0.0.0.1
+</span></span><span style=display:flex><span>Multicast Routing        : [b&#39;Disabled&#39;, b&#39;Oper Down&#39;]
+</span></span><span style=display:flex><span>State                    : [b&#39;Enabled&#39;]
+</span></span><span style=display:flex><span>Flags                    : 0x8308
+</span></span><span style=display:flex><span>DHCP relay               : Not enable
+</span></span><span style=display:flex><span>DAD-mode                 : [&#39;LOOSE&#39;]
+</span></span><span style=display:flex><span>RA-mode                  : [&#39;SLAAC_DNS_THROUGH_RA(M=0, O=0)&#39;]
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>LIF UUID                 : 2253b442-e17e-43c7-8e2d-48b451a8ae8c
+</span></span><span style=display:flex><span>Mode                     : [b&#39;Routing&#39;]
+</span></span><span style=display:flex><span>Overlay VNI              : 69633
+</span></span><span style=display:flex><span>IP/Mask                  : 172.10.1.1/24
+</span></span><span style=display:flex><span>Mac                      : 02:50:56:56:44:52
+</span></span><span style=display:flex><span>Connected DVS            : DSwitch-tanzu
+</span></span><span style=display:flex><span>Control plane enable     : True
+</span></span><span style=display:flex><span>Replication Mode         : 0.0.0.1
+</span></span><span style=display:flex><span>Multicast Routing        : [b&#39;Enabled&#39;, b&#39;Oper Down&#39;]
+</span></span><span style=display:flex><span>State                    : [b&#39;Enabled&#39;]
+</span></span><span style=display:flex><span>Flags                    : 0x80388
+</span></span><span style=display:flex><span>DHCP relay               : Not enable
+</span></span><span style=display:flex><span>DAD-mode                 : [&#39;LOOSE&#39;]
+</span></span><span style=display:flex><span>RA-mode                  : [&#39;UNKNOWN&#39;]
+</span></span></code></pre></div><p>整理如下：</p><p><img src="https://img-blog.csdnimg.cn/20210517184802457.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70#pic_center" alt="https://img-blog.csdnimg.cn/20210517184802457.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70#pic_center"></p><p>判断的依据（上一篇）：</p><ul><li>默认情况下，SR 和 DR 之间的链路使用 169.254.0.0/28 子网。在部署 Tier-0 或 Tier-1 逻辑路由器时，将自动创建这些路由器内中转链路。</li><li>为 Tier-0 到 Tier-1 的连接分配的默认地址空间为 100.64.0.0/10。将在 100.64.0.0/10 地址空间中为每个 Tier-0 到 Tier-1 的对等连接提供一个 /31 子网。在创建 Tier-1 路由器并将其连接到 Tier-0 路由器时，将自动创建该链路。</li></ul><h3 id=查看edge>查看Edge</h3><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>nsxt-edge-02&gt; get logical-router
+</span></span><span style=display:flex><span>Mon May 17 2021 UTC 08:06:17.773
+</span></span><span style=display:flex><span>Logical Router
+</span></span><span style=display:flex><span>UUID                                   VRF    LR-ID  Name                              Type                        Ports   Neighbors
+</span></span><span style=display:flex><span>736a80e3-23f6-5a2d-81d6-bbefb2786666   0      0                                        TUNNEL                      3       2/5000
+</span></span><span style=display:flex><span>e223cfbb-7f3d-4083-8cc6-6ea5ff2fa9e1   1      2      SR-T0-01a                         SERVICE_ROUTER_TIER0        5       1/50000
+</span></span><span style=display:flex><span>770bd784-6222-4c4e-8f8e-3d667f48ddf0   3      1      DR-T0-01a                         DISTRIBUTED_ROUTER_TIER0    6       4/50000
+</span></span><span style=display:flex><span>03fc3c16-d4b6-4921-9547-baf459ca9c28   4      4      DR-T1-172.10.1                    DISTRIBUTED_ROUTER_TIER1    5       2/50000
+</span></span><span style=display:flex><span>6490db7f-9000-42dd-9c37-e210377b041f   5      5      DR-T1-172.10.2                    DISTRIBUTED_ROUTER_TIER1    5       2/50000
+</span></span></code></pre></div><p>可以清晰的看到在Edge上有T0 DR、T0
+SR和T1 DR</p><p><strong>结论：
+逻辑路由器的部署符合预期，即在Edge上有T0 SR、T0 DR和T1 DR；在Esxi上有T0 DR和T1 DR</strong></p><p>在这个实验中，我们部署了T0、T1两层路由器，并与物理路由器通过BGP交换路由。同时部署了网络分段，下沉网关到T1上。</p><p>下图反映了本架构的整体组件和流量情况：</p><p><img src="https://img-blog.csdnimg.cn/20210517164253807.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt="https://img-blog.csdnimg.cn/20210517164253807.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70"></p><p>以上</p></div><footer class=post-footer><div id=wcomments></div></footer></article></section></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id=sidebar class=sidebar><div class=sidebar-inner><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>文章目录</li><li class=sidebar-nav-overview data-target=site-overview>站点概览</li></ul><section class="site-overview sidebar-panel"><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon><p class=site-author-name itemprop=name>Etaon</p><p class="site-description motion-element" itemprop=description>Kepp Going!</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=/post/><span class=site-state-item-count>64</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>14</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>35</span>
+<span class=site-state-item-name>标签</span></a></div></nav><div class="links-of-author motion-element"><span class=links-of-author-item><a href=https://github.com/etaon target=_blank title=GitHub><i class="fa fa-fw fa-github"></i>
+GitHub</a></span>
+<span class=links-of-author-item><a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN><i class="fa fa-fw fa-CSDN"></i>
+CSDN</a></span></div><div class="links-of-blogroll motion-element links-of-blogroll-inline"><div class=links-of-blogroll-title><i class="fa fa-fw fa-globe"></i>
+友情链接</div><ul class=links-of-blogroll-list><li class=links-of-blogroll-item><a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a></li><li class=links-of-blogroll-item><a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a></li><li class=links-of-blogroll-item><a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a></li><li class=links-of-blogroll-item><a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a></li></ul></div><div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline"><div class=tagcloud-of-blogroll-title><i class="fa fa-fw fa-tags"></i>
+标签云</div><ul class=tagcloud-of-blogroll-list><li class=tagcloud-of-blogroll-item><a href=/tags/mysql>Mysql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/aws>Aws</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/dql>Dql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/hadoop>Hadoop</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/redis>Redis</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/cicd>Cicd</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/git>Git</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/istio>Istio</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/mongodb>Mongodb</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/azure>Azure</a></li></ul></div></section><section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active"><div class=post-toc><div class=post-toc-content><nav id=TableOfContents><ul><li><a href=#拓扑图>拓扑图</a></li><li><a href=#部署t0路由器>部署T0路由器</a><ul><li><a href=#t0的外联>T0的外联</a></li><li><a href=#配置t0路由器>配置T0路由器</a></li><li><a href=#bgp设置>BGP设置</a></li></ul></li><li><a href=#部署t1路由器>部署T1路由器</a></li><li><a href=#配置分段segment>配置分段Segment</a></li><li><a href=#检查路由分发>检查路由分发</a></li><li><a href=#检查逻辑路由器的部署>检查逻辑路由器的部署</a><ul><li><a href=#查看esxi>查看Esxi</a></li><li><a href=#查看edge>查看Edge</a></li></ul></li></ul></nav></div></div></section></div></aside></div></main><footer id=footer class=footer><div class=footer-inner><div class=copyright><span class=copyright-year>&copy; 2010 - 2022</span>
+<span class=with-love><i class="fa fa-heart"></i></span>
+<span class=copyright-author>路无止境！</span></div><div class=powered-info><span class=powered-by>Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.101.0</a></span>
+<span class=separator-line>/</span>
+<span class=theme-info>Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank>NexT</a></span></div><div class=vistor-info><script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<span class=site-uv><i class="fa fa-user"></i>
+<span class=busuanzi-value id=busuanzi_value_site_uv></span></span>
+<span class=separator-line>/</span>
+<span class=site-pv><i class="fa fa-eye"></i>
+<span class=busuanzi-value id=busuanzi_value_site_pv></span></span></div><div class=license-info><span class=storage-info>Storage by
+<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a></span>
+<span class=separator-line>/</span>
+<span class=license-num><a href target=_blank></a></span></div></div></footer><div class=back-to-top><i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span></div></div><script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
+<script type=text/javascript src=/js/search.js></script>
+<script type=text/javascript src=/js/affix.js></script>
+<script type=text/javascript src=/js/scrollspy.js></script>
+<script type=text/javascript>function detectIE(){var e=window.navigator.userAgent,t=e.indexOf("MSIE "),n=e.indexOf("Trident/"),s=e.indexOf("Edge/");return t>0||n>0||s>0?-1:1}function getCntViewHeight(){var t=$("#content").height(),e=$(window).height(),n=t>e?t-e:$(document).height()-e;return n}function getScrollbarWidth(){var e=$("<div />").addClass("scrollbar-measure").prependTo("body"),t=e[0],n=t.offsetWidth-t.clientWidth;return e.remove(),n}function registerBackTop(){var t=50,e=$(".back-to-top");$(window).on("scroll",function(){e.toggleClass("back-to-top-on",window.pageYOffset>t);var s=$(window).scrollTop(),o=getCntViewHeight(),i=s/o,n=Math.round(i*100),a=n>100?100:n;$("#scrollpercent>span").html(a)}),e.on("click",function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var e=".post-toc",s=$(e),t=".active-current";s.on("activate.bs.scrollspy",function(){var t=$(e+" .active").last();n(),t.addClass("active-current")}).on("clear.bs.scrollspy",n),$("body").scrollspy({target:e});function n(){$(e+" "+t).removeClass(t.substring(1))}}function initAffix(){var e=$(".header-inner").height(),t=parseInt($(".main").css("padding-bottom"),10),n=e+10;$(".sidebar-inner").affix({offset:{top:n,bottom:t}}),$(document).on("affixed.bs.affix",function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){$(window).on("resize",function(){e&&clearTimeout(e),e=setTimeout(function(){var e=document.body.clientHeight-100;updateTOCHeight(e)},0)}),updateTOCHeight(document.body.clientHeight-100);var e,t=getScrollbarWidth();$(".post-toc").css("width","calc(100% + "+t+"px)")}function updateTOCHeight(e){e=e||"auto",$(".post-toc").css("max-height",e)}$(function(){var e,t,n,s,o=$(".header-inner").height()+10;$("#sidebar").css({"margin-top":o}).show(),t=parseInt($("#sidebar").css("margin-top")),n=parseInt($(".sidebar-inner").css("height")),e=t+n,s=$(".content-wrap").height(),s<e&&$(".content-wrap").css("min-height",e),$(".site-nav-toggle").on("click",function(){var e=$(".site-nav"),o=$(".toggle"),t="site-nav-on",i="toggle-close",n=e.hasClass(t),a=n?"slideUp":"slideDown",s=n?"removeClass":"addClass";e.stop()[a]("normal",function(){e[s](t),o[s](i)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$(".sidebar-nav-toc").click(function(){$(this).addClass("sidebar-nav-active"),$(this).next().removeClass("sidebar-nav-active"),$("."+$(this).next().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)}),$(".sidebar-nav-overview").click(function(){$(this).addClass("sidebar-nav-active"),$(this).prev().removeClass("sidebar-nav-active"),$("."+$(this).prev().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)})})</script><script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$(".post-body").viewer()})</script><script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+"//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js",function(){new Waline({el:"#wcomments",visitor:!0,avatar:"wavatar",avatarCDN:"https://sdn.geekzu.org/avatar/",avatarForce:!1,wordLimit:"200",placeholder:" 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ",requiredFields:["nick","mail"],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$("#wcomments").html("抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。")})</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type=text/javascript src="//s7.addthis.com/js/300/addthis_widget.js#pubid=Your%20AddthisId"></script>
+<script>(function(){var t,e=document.createElement("script"),n=window.location.protocol.split(":")[0];n==="https"?e.src="https://zz.bdstatic.com/linksubmit/push.js":e.src="http://push.zhanzhang.baidu.com/push.js",t=document.getElementsByTagName("script")[0],t.parentNode.insertBefore(e,t)})()</script></body></html>
