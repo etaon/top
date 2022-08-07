@@ -1,0 +1,252 @@
+<!doctype html><html lang=zh-cn dir=content/zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=content-security-policy content="upgrade-insecure-requests"><title>Tanzu Kubernetes Cluster load balancer Service - 路无止境！</title><meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云"><meta name=author content="Etaon"><meta property="og:title" content="Tanzu Kubernetes Cluster load balancer Service"><meta property="og:site_name" content="路无止境！"><meta property="og:image" content="/img/author.jpg"><meta name=title content="Tanzu Kubernetes Cluster load balancer Service - 路无止境！"><meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。"><link rel="shortcut icon" href=/img/favicon.ico><link rel=apple-touch-icon href=/img/apple-touch-icon.png><link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png><link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css><link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet><link href=/css/main.css rel=stylesheet type=text/css><link href=/css/syntax.css rel=stylesheet type=text/css></head><body itemscope itemtype=http://schema.org/WebPage lang=zh-hans><div class="container one-collumn sidebar-position-left page-home"><div class=headband></div><header id=header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle role=button style=opacity:1;top:0><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div></div><div class=site-meta><div class=multi-lang-switch><i class="fa fa-fw fa-language" style=margin-right:5px></i>
+<a class=lang-link id=zh-cn href=#>学习</a></div><div class=custom-logo-site-title><a href=/ class=brand rel=start><span class=logo-line-before><i></i></span>
+<span class=site-title>路无止境！</span>
+<span class=logo-line-after><i></i></span></a></div><p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p></div><div class=site-nav-right><div class="toggle popup-trigger" style=opacity:1;top:0><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class=site-nav><ul id=menu class=menu><li class=menu-item><a href=/ rel=section><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class=menu-item><a href=/post rel=section><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class=menu-item><a href=/about.html rel=section><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于我</a></li><li class=menu-item><a href=/404.html rel=section><i class="menu-item-icon fa fa-fw fa-heartbeat"></i><br>公益404</a></li><li class="menu-item menu-item-search"><a href=javascript:; class=popup-trigger><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class=site-search><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class=search-icon><i class="fa fa-search"></i></span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span><div class=local-search-input-wrapper><input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off></div></div><div id=local-search-result></div></div></div></nav></div></header><main id=main class=main><div class=main-inner><div class=content-wrap><div id=content class=content><section id=posts class=posts-expand><article class="post post-type-normal" itemscope itemtype=http://schema.org/Article><header class=post-header><h1 class=post-title itemprop="name headline" style=font-weight:700><a class=post-title-link href=https://www.etaon.top/2021/12/22/nsx-tanzu02.html itemprop=url>Tanzu Kubernetes Cluster load balancer Service</a></h1></header><div class=post-body itemprop=articleBody><p>本文记录Tanzu Kubernetes Cluster 以Load balancer方式对外提供Service的细节。</p><h2 id=实验环境>实验环境</h2><p>沿用<a href=https://www.etaon.top/2021/12/17/nsx-tanzu.html>NSX-T 为vSphere with Tanzu提供网络支撑</a></p><table><thead><tr><th>项目</th><th>描述</th><th>备注</th></tr></thead><tbody><tr><td>vSphere</td><td>vSphere7.0u2a</td><td>17867351</td></tr><tr><td>vCenter</td><td>VCSA-.7.0.2</td><td>17920168</td></tr><tr><td>NSX-T Datacenter</td><td>3.1.2.1.0</td><td>17975795</td></tr><tr><td>Tanzu</td><td>1.3.1</td><td></td></tr></tbody></table><h2 id=ip地址分配>IP地址分配</h2><table><thead><tr><th>名称</th><th>说明</th><th>本实验使用</th><th>备注</th></tr></thead><tbody><tr><td>Pods</td><td>命名空间中工作负载的私有 IPv4 地址池，为pod/TKG VM提供地址</td><td>172.211.0.0/16</td><td></td></tr><tr><td>Services</td><td>服务 IPv4 地址池，用于通过 K8s ClusterIP 在<strong>命名空间内</strong>的服务</td><td>172.96.0.0/16</td><td></td></tr><tr><td>Ingress</td><td>公共 IPv4 地址池，通过 K8s 类型负载均衡器、Ingress 和 Cloudprovider 负载均衡器，为Tanzu Kubernetes 集群和 Supervisor 集群提供 Supervisor 集群之外的服务</td><td>172.80.0.0/16</td><td></td></tr><tr><td>Egress</td><td>公共 IPv4 地址池，用于 Supervisor 集群向外的 NAT 流量</td><td>172.60.0.0/16</td><td></td></tr><tr><td>TKG pods</td><td>TKG集群内的私有IP地址池，为pod提供地址</td><td>10.96.0.0/11</td><td>Antrea提供</td></tr><tr><td>TKG Services</td><td>TKG内部Service的Cluster IP地址</td><td>100.64.0.0/16</td><td>Antrea提供</td></tr></tbody></table><h2 id=tkg使用的实验用例yaml>TKG使用的实验用例yaml</h2><p>在TKG Cluster内部使用如下yaml建立deployment和service</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>Service<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>hello-kubernetes<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>type</span>:<span style=color:#bbb> </span>LoadBalancer<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>ports</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span>- <span style=color:green;font-weight:700>port</span>:<span style=color:#bbb> </span><span style=color:#666>80</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>targetPort</span>:<span style=color:#bbb> </span><span style=color:#666>8080</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>selector</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>hello-kubernetes<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#00f;font-weight:700>---</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>apps/v1<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>Deployment<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>hello-kubernetes<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>replicas</span>:<span style=color:#bbb> </span><span style=color:#666>4</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>selector</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>matchLabels</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>hello-kubernetes<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>template</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>labels</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb> </span>hello-kubernetes<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>imagePullSecrets</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>harbor-registry-secret<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>containers</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>hello-kubernetes<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>image</span>:<span style=color:#bbb> </span><span style=color:#666>172.80.88.4</span>/ns-dev/hello-kubernetes:1.5<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>ports</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span>- <span style=color:green;font-weight:700>containerPort</span>:<span style=color:#bbb> </span><span style=color:#666>8080</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:green;font-weight:700>env</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>        </span>- <span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>MESSAGE<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>          </span><span style=color:green;font-weight:700>value</span>:<span style=color:#bbb> </span>I just deployed a PodVM on the Tanzu Kubernetes Cluster!!<span style=color:#bbb>
+</span></span></span></code></pre></div><h2 id=结果记录>结果记录</h2><h3 id=pod及service创建情况>Pod及Service创建情况</h3><blockquote><p>[root@hop ~]# <strong>kubectl get pod -owide</strong>
+NAME READY STATUS RESTARTS AGE IP NODE NOMINATED NODE READINESS GATES
+hello-kubernetes-6cd455cc47-7w5jf 1/1 Running 0 39d <code>10.96.4.4</code> tkg-cluster-01-workers-vqv9h-dfb456585-lqz4s <none><none>hello-kubernetes-6cd455cc47-jw666 1/1 Running 0 39d <code>10.96.0.5</code> tkg-cluster-01-workers-vqv9h-dfb456585-mg2g7 <none><none>hello-kubernetes-6cd455cc47-q7w4b 1/1 Running 0 39d <code>10.96.0.4</code> tkg-cluster-01-workers-vqv9h-dfb456585-mg2g7 <none><none>hello-kubernetes-6cd455cc47-wm4lw 1/1 Running 0 37d <code>10.96.1.3</code> tkg-cluster-01-workers-vqv9h-dfb456585-8hmz8 <none><none>test-pd 1/1 Running 0 27d 10.96.0.6 tkg-cluster-01-workers-vqv9h-dfb456585-mg2g7 <none><none></p></blockquote><blockquote><p>[root@hop ~]# <strong>kubectl get svc</strong>
+NAME TYPE CLUSTER-IP EXTERNAL-IP PORT(S) AGE
+hello-kubernetes LoadBalancer <code>100.64.136.105</code> <code>172.80.88.7</code> <code>80:32762/TCP</code> 39d
+kubernetes ClusterIP 100.64.0.1 <none>443/TCP 64d
+supervisor ClusterIP None <none>6443/TCP 64d</p></blockquote><p>以上信息我们可以看到</p><ul><li>对外提供Service的地址是：172.80.88.7</li><li>内部Service的Cluster IP是：100.64.136.105</li><li>对外提供80端口，内部是32762端口</li></ul><h3 id=外部web>外部Web</h3><p>我们把四个Pod都刷到了！
+<img src="https://img-blog.csdnimg.cn/0904f056dc9e4cc2a69be5a3fdeb2e9a.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述>
+<img src="https://img-blog.csdnimg.cn/3b23cb1f189048be87215d0243a64554.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述>
+<img src="https://img-blog.csdnimg.cn/94210edb1af74277b82246985b838de7.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述>
+<img src="https://img-blog.csdnimg.cn/b3c816c3a15943a2ab55cb1d5cc6a50f.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p><h3 id=nsx-t上面观察lb>NSX-T上面观察LB</h3><p><img src="https://img-blog.csdnimg.cn/d7de9c0207424723ab2bacae212fcc7d.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述>
+<img src="https://img-blog.csdnimg.cn/2f7697d0ed024711ad2fe4a105835784.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述>
+以上信息表面：</p><ul><li>从NSX-T角度对外提供172.80.88.7：80的服务</li><li>NSX-T为LB建立一个Pool，该pool看到的是TKG VM，使用NodePort指定服务</li></ul><h3 id=服务如何指向pod>服务如何指向pod</h3><p>真正提供服务的是pod，该组pods的网络是由Antrea提供
+<img src="https://img-blog.csdnimg.cn/c0d2c5a8efc74d09aa526c00cd656558.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p><h4 id=查看ovs>查看OVS</h4><p>选择一个VM中的antrea-pod</p><blockquote><p>[root@hop ~]# <strong>kubectl exec -n kube-system -it antrea-agent-62ts6 -c antrea-ovs &ndash; ovs-ofctl show br-int</strong>
+OFPT_FEATURES_REPLY (xid=0x2): dpid:00006e2c7246ef4b
+n_tables:254, n_buffers:0
+capabilities: FLOW_STATS TABLE_STATS PORT_STATS QUEUE_STATS ARP_MATCH_IP
+actions: output enqueue set_vlan_vid set_vlan_pcp strip_vlan mod_dl_src mod_dl_dst mod_nw_src mod_nw_dst mod_nw_tos mod_tp_src mod_tp_dst
+<code>1(antrea-tun0)</code>: addr:1a:d6:b5:98:43:23
+config: 0
+state: 0
+speed: 0 Mbps now, 0 Mbps max
+<code>2(antrea-gw0)</code>: addr:ae:d8:c3:ae:8a:a9
+config: 0
+state: 0
+speed: 0 Mbps now, 0 Mbps max
+3(coredns&ndash;1de91c): addr:8e:35:ca:da:10:83
+config: 0
+state: 0
+current: 10GB-FD COPPER
+speed: 10000 Mbps now, 0 Mbps max
+4(vsphere&ndash;94f0df): addr:2e:8c:0c:e7:1c:fd
+config: 0
+state: 0
+current: 10GB-FD COPPER
+speed: 10000 Mbps now, 0 Mbps max
+<code>5(hello-ku-0f40e6)</code>: addr:ba:75:2e:fd:9f:70
+config: 0
+state: 0
+current: 10GB-FD COPPER
+speed: 10000 Mbps now, 0 Mbps max
+<code>6(hello-ku-102fde)</code>: addr:4a:4d:fe:f7:3f:0d
+config: 0
+state: 0
+current: 10GB-FD COPPER
+speed: 10000 Mbps now, 0 Mbps max
+7(test-pd-0ec60a): addr:b6:df:fe:3a:d6:62
+config: 0
+state: 0
+current: 10GB-FD COPPER
+speed: 10000 Mbps now, 0 Mbps max
+OFPT_GET_CONFIG_REPLY (xid=0x4): frags=normal miss_send_len=0</p></blockquote><p>以上信息可以清楚的看到OVS的端口发布情况：</p><ul><li>port1是trun0</li><li>port2是gw0</li><li>port5、6是示例pod的端口</li></ul><h4 id=查看iptables表>查看IPtables表</h4><p>Antrea是使用iptables（kube-proxy）来提供Service功能，所以我们在Node上查看IPtables，有关如何登陆TKG Node，请查看<a href=https://blog.csdn.net/weixin_43394724/article/details/119217208>How to SSH to the Tanzu Kubernetes Cluster Nodes</a></p><blockquote><p>vmware-system-user@tkg-cluster-01-workers-vqv9h-dfb456585-mg2g7 [ ~ ]$ <strong>sudo iptables -t nat -L -n</strong>
+Chain PREROUTING (policy ACCEPT)
+target prot opt source destination
+KUBE-SERVICES all &ndash; 0.0.0.0/0 0.0.0.0/0 /* kubernetes service portals */</p><p>Chain INPUT (policy ACCEPT)
+target prot opt source destination</p><p>Chain OUTPUT (policy ACCEPT)
+target prot opt source destination
+KUBE-SERVICES all &ndash; 0.0.0.0/0 0.0.0.0/0 /* kubernetes service portals */</p><p>Chain POSTROUTING (policy ACCEPT)
+target prot opt source destination
+KUBE-POSTROUTING all &ndash; 0.0.0.0/0 0.0.0.0/0 /* kubernetes postrouting rules <em>/
+ANTREA-POSTROUTING all &ndash; 0.0.0.0/0 0.0.0.0/0 /</em> Antrea: jump to Antrea postrouting rules <em>/
+Chain ANTREA-POSTROUTING (1 references)
+target prot opt source destination
+MASQUERADE all &ndash; 10.96.0.0/24 0.0.0.0/0 /</em> Antrea: masquerade pod to external packets <em>/ ! match-set ANTREA-POD-IP dst
+<code>Chain KUBE-FW-XM7DIBVJQPJ3TSDT (1 references) target prot opt source destination KUBE-MARK-MASQ all -- 0.0.0.0/0 0.0.0.0/0 /* default/hello-kubernetes loadbalancer IP */ KUBE-SVC-XM7DIBVJQPJ3TSDT all -- 0.0.0.0/0 0.0.0.0/0 /* default/hello-kubernetes loadbalancer IP */ KUBE-MARK-DROP all -- 0.0.0.0/0 0.0.0.0/0 /* default/hello-kubernetes loadbalancer IP */</code>
+Chain KUBE-KUBELET-CANARY (0 references)
+target prot opt source destination
+Chain KUBE-MARK-DROP (1 references)
+target prot opt source destination
+MARK all &ndash; 0.0.0.0/0 0.0.0.0/0 MARK or 0x8000
+Chain KUBE-MARK-MASQ (24 references)
+target prot opt source destination
+MARK all &ndash; 0.0.0.0/0 0.0.0.0/0 MARK or 0x4000
+<code>Chain KUBE-NODEPORTS (1 references) target prot opt source destination KUBE-MARK-MASQ tcp -- 0.0.0.0/0 0.0.0.0/0 /* default/hello-kubernetes */ tcp dpt:32762 KUBE-SVC-XM7DIBVJQPJ3TSDT tcp -- 0.0.0.0/0 0.0.0.0/0 /* default/hello-kubernetes */ tcp dpt:32762</code>
+Chain KUBE-POSTROUTING (1 references)
+target prot opt source destination
+RETURN all &ndash; 0.0.0.0/0 0.0.0.0/0 mark match ! 0x4000/0x4000
+MARK all &ndash; 0.0.0.0/0 0.0.0.0/0 MARK xor 0x4000
+MASQUERADE all &ndash; 0.0.0.0/0 0.0.0.0/0 /</em> kubernetes service traffic requiring SNAT <em>/ random-fully
+Chain KUBE-PROXY-CANARY (0 references)
+target prot opt source destination
+Chain KUBE-SEP-4AOHSCTDEETDC334 (1 references)
+target prot opt source destination
+KUBE-MARK-MASQ all &ndash; 10.96.4.3 0.0.0.0/0 /</em> kube-system/kube-dns:dns <em>/
+DNAT udp &ndash; 0.0.0.0/0 0.0.0.0/0 /</em> kube-system/kube-dns:dns <em>/ udp to:10.96.4.3:53
+Chain KUBE-SEP-7MGGW6LIQYM2AEZM (1 references)
+target prot opt source destination
+KUBE-MARK-MASQ all &ndash; 10.96.0.2 0.0.0.0/0 /</em> kube-system/kube-dns:dns <em>/
+DNAT udp &ndash; 0.0.0.0/0 0.0.0.0/0 /</em> kube-system/kube-dns:dns <em>/ udp to:10.96.0.2:53
+Chain KUBE-SEP-BAEMDSCADA7MFLF6 (1 references)
+target prot opt source destination
+KUBE-MARK-MASQ all &ndash; 172.211.0.71 0.0.0.0/0 /</em> default/kubernetes:https <em>/
+DNAT tcp &ndash; 0.0.0.0/0 0.0.0.0/0 /</em> default/kubernetes:https <em>/ tcp to:172.211.0.71:6443
+Chain KUBE-SEP-C5JUJ7G3IEKY63Q2 (1 references)
+target prot opt source destination
+KUBE-MARK-MASQ all &ndash; 10.96.4.3 0.0.0.0/0 /</em> kube-system/kube-dns:dns-tcp <em>/
+DNAT tcp &ndash; 0.0.0.0/0 0.0.0.0/0 /</em> kube-system/kube-dns:dns-tcp <em>/ tcp to:10.96.4.3:53
+<code>Chain KUBE-SEP-H4R2CT6HM6EFNIJJ (1 references) target prot opt source destination KUBE-MARK-MASQ all -- 10.96.0.5 0.0.0.0/0 /* default/hello-kubernetes */ DNAT tcp -- 0.0.0.0/0 0.0.0.0/0 /* default/hello-kubernetes */ tcp to:10.96.0.5:8080 Chain KUBE-SEP-HU5MDV4BUZFHSUJC (1 references) target prot opt source destination KUBE-MARK-MASQ all -- 10.96.0.4 0.0.0.0/0 /* default/hello-kubernetes */ DNAT tcp -- 0.0.0.0/0 0.0.0.0/0 /* default/hello-kubernetes */ tcp to:10.96.0.4:8080</code>
+Chain KUBE-SEP-KPJ3BBKAZPHMYFTG (1 references)
+target prot opt source destination
+KUBE-MARK-MASQ all &ndash; 10.96.0.2 0.0.0.0/0 /</em> kube-system/kube-dns:metrics <em>/
+DNAT tcp &ndash; 0.0.0.0/0 0.0.0.0/0 /</em> kube-system/kube-dns:metrics <em>/ tcp to:10.96.0.2:9153
+Chain KUBE-SEP-LIVJA523RKC6LSVI (1 references)
+target prot opt source destination
+KUBE-MARK-MASQ all &ndash; 10.96.5.4 0.0.0.0/0 /</em> vmware-system-csi/vsphere-csi-controller:syncer <em>/
+DNAT tcp &ndash; 0.0.0.0/0 0.0.0.0/0 /</em> vmware-system-csi/vsphere-csi-controller:syncer <em>/ tcp to:10.96.5.4:2113
+Chain KUBE-SEP-MH6Q7TDG4GD3GZT6 (1 references)
+target prot opt source destination
+KUBE-MARK-MASQ all &ndash; 172.211.0.67 0.0.0.0/0 /</em> kube-system/antrea <em>/
+DNAT tcp &ndash; 0.0.0.0/0 0.0.0.0/0 /</em> kube-system/antrea <em>/ tcp to:172.211.0.67:10349
+Chain KUBE-SEP-N55QOV3APYFANXKA (1 references)
+target prot opt source destination
+KUBE-MARK-MASQ all &ndash; 10.96.5.4 0.0.0.0/0 /</em> vmware-system-csi/vsphere-csi-controller:ctlr <em>/
+DNAT tcp &ndash; 0.0.0.0/0 0.0.0.0/0 /</em> vmware-system-csi/vsphere-csi-controller:ctlr <em>/ tcp to:10.96.5.4:2112
+Chain KUBE-SEP-N7SD7XOQOSKLNZUL (1 references)
+target prot opt source destination
+KUBE-MARK-MASQ all &ndash; 10.96.4.3 0.0.0.0/0 /</em> kube-system/kube-dns:metrics <em>/
+DNAT tcp &ndash; 0.0.0.0/0 0.0.0.0/0 /</em> kube-system/kube-dns:metrics <em>/ tcp to:10.96.4.3:9153
+Chain KUBE-SEP-NR26ZMIMIRVTQMOT (1 references)
+target prot opt source destination
+KUBE-MARK-MASQ all &ndash; 10.96.1.3 0.0.0.0/0 /</em> default/hello-kubernetes <em>/
+DNAT tcp &ndash; 0.0.0.0/0 0.0.0.0/0 /</em> default/hello-kubernetes <em>/ tcp to:10.96.1.3:8080
+Chain KUBE-SEP-TJMM3PWXZKCELOTO (1 references)
+target prot opt source destination
+KUBE-MARK-MASQ all &ndash; 10.96.0.2 0.0.0.0/0 /</em> kube-system/kube-dns:dns-tcp <em>/
+DNAT tcp &ndash; 0.0.0.0/0 0.0.0.0/0 /</em> kube-system/kube-dns:dns-tcp <em>/ tcp to:10.96.0.2:53
+Chain KUBE-SEP-WBYNSHOG7M44Q3HZ (1 references)
+target prot opt source destination
+KUBE-MARK-MASQ all &ndash; 10.96.4.4 0.0.0.0/0 /</em> default/hello-kubernetes <em>/
+DNAT tcp &ndash; 0.0.0.0/0 0.0.0.0/0 /</em> default/hello-kubernetes <em>/ tcp to:10.96.4.4:8080
+Chain KUBE-SERVICES (2 references)
+target prot opt source destination
+KUBE-MARK-MASQ tcp &ndash; !10.96.0.0/11 100.64.0.10 /</em> kube-system/kube-dns:dns-tcp cluster IP <em>/ tcp dpt:53
+KUBE-SVC-ERIFXISQEP7F7OF4 tcp &ndash; 0.0.0.0/0 100.64.0.10 /</em> kube-system/kube-dns:dns-tcp cluster IP <em>/ tcp dpt:53
+KUBE-MARK-MASQ tcp &ndash; !10.96.0.0/11 100.64.0.10 /</em> kube-system/kube-dns:metrics cluster IP <em>/ tcp dpt:9153
+KUBE-SVC-JD5MR3NA4I4DYORP tcp &ndash; 0.0.0.0/0 100.64.0.10 /</em> kube-system/kube-dns:metrics cluster IP <em>/ tcp dpt:9153
+KUBE-MARK-MASQ tcp &ndash; !10.96.0.0/11 100.71.165.12 /</em> vmware-system-csi/vsphere-csi-controller:ctlr cluster IP <em>/ tcp dpt:211
+KUBE-SVC-MRLSHM6RP645F575 tcp &ndash; 0.0.0.0/0 100.71.165.12 /</em> vmware-system-csi/vsphere-csi-controller:ctlr cluster IP <em>/
+KUBE-MARK-MASQ tcp &ndash; !10.96.0.0/11 100.71.165.12 /</em> vmware-system-csi/vsphere-csi-controller:syncer cluster IP <em>/ tcp dpt:2
+KUBE-SVC-AAQCXBCVUR2XJIMS tcp &ndash; 0.0.0.0/0 100.71.165.12 /</em> vmware-system-csi/vsphere-csi-controller:syncer cluster IP *
+<code>KUBE-MARK-MASQ tcp -- !10.96.0.0/11 100.64.136.105 /* default/hello-kubernetes cluster IP */ tcp dpt:80</code>
+<code>KUBE-SVC-XM7DIBVJQPJ3TSDT tcp -- 0.0.0.0/0 100.64.136.105 /* default/hello-kubernetes cluster IP */ tcp dpt:80 KUBE-FW-XM7DIBVJQPJ3TSDT tcp -- 0.0.0.0/0 172.80.88.7 /* default/hello-kubernetes loadbalancer IP */ tcp dpt:80</code>
+KUBE-MARK-MASQ tcp &ndash; !10.96.0.0/11 100.64.0.1 /* default/kubernetes:https cluster IP <em>/ tcp dpt:443
+KUBE-SVC-NPX46M4PTMTKRN6Y tcp &ndash; 0.0.0.0/0 100.64.0.1 /</em> default/kubernetes:https cluster IP <em>/ tcp dpt:443
+KUBE-MARK-MASQ tcp &ndash; !10.96.0.0/11 100.65.211.79 /</em> kube-system/antrea cluster IP <em>/ tcp dpt:443
+KUBE-SVC-QDWG4LJGNBTOT5ED tcp &ndash; 0.0.0.0/0 100.65.211.79 /</em> kube-system/antrea cluster IP <em>/ tcp dpt:443
+KUBE-MARK-MASQ udp &ndash; !10.96.0.0/11 100.64.0.10 /</em> kube-system/kube-dns:dns cluster IP <em>/ udp dpt:53
+KUBE-SVC-TCOU7JCQXEZGVUNU udp &ndash; 0.0.0.0/0 100.64.0.10 /</em> kube-system/kube-dns:dns cluster IP <em>/ udp dpt:53
+KUBE-NODEPORTS all &ndash; 0.0.0.0/0 0.0.0.0/0 /</em> kubernetes service nodeports; NOTE: this must be the last rule in this
+Chain KUBE-SVC-AAQCXBCVUR2XJIMS (1 references)
+target prot opt source destination
+KUBE-SEP-LIVJA523RKC6LSVI all &ndash; 0.0.0.0/0 0.0.0.0/0 /* vmware-system-csi/vsphere-csi-controller:syncer <em>/
+Chain KUBE-SVC-ERIFXISQEP7F7OF4 (1 references)
+target prot opt source destination
+KUBE-SEP-TJMM3PWXZKCELOTO all &ndash; 0.0.0.0/0 0.0.0.0/0 /</em> kube-system/kube-dns:dns-tcp <em>/ statistic mode random probab
+KUBE-SEP-C5JUJ7G3IEKY63Q2 all &ndash; 0.0.0.0/0 0.0.0.0/0 /</em> kube-system/kube-dns:dns-tcp <em>/
+Chain KUBE-SVC-JD5MR3NA4I4DYORP (1 references)
+target prot opt source destination
+KUBE-SEP-KPJ3BBKAZPHMYFTG all &ndash; 0.0.0.0/0 0.0.0.0/0 /</em> kube-system/kube-dns:metrics <em>/ statistic mode random probab
+KUBE-SEP-N7SD7XOQOSKLNZUL all &ndash; 0.0.0.0/0 0.0.0.0/0 /</em> kube-system/kube-dns:metrics <em>/
+Chain KUBE-SVC-MRLSHM6RP645F575 (1 references)
+target prot opt source destination
+KUBE-SEP-N55QOV3APYFANXKA all &ndash; 0.0.0.0/0 0.0.0.0/0 /</em> vmware-system-csi/vsphere-csi-controller:ctlr <em>/
+Chain KUBE-SVC-NPX46M4PTMTKRN6Y (1 references)
+target prot opt source destination
+KUBE-SEP-BAEMDSCADA7MFLF6 all &ndash; 0.0.0.0/0 0.0.0.0/0 /</em> default/kubernetes:https <em>/
+Chain KUBE-SVC-QDWG4LJGNBTOT5ED (1 references)
+target prot opt source destination
+KUBE-SEP-MH6Q7TDG4GD3GZT6 all &ndash; 0.0.0.0/0 0.0.0.0/0 /</em> kube-system/antrea <em>/
+Chain KUBE-SVC-TCOU7JCQXEZGVUNU (1 references)
+target prot opt source destination
+KUBE-SEP-7MGGW6LIQYM2AEZM all &ndash; 0.0.0.0/0 0.0.0.0/0 /</em> kube-system/kube-dns:dns <em>/ statistic mode random probabilit
+KUBE-SEP-4AOHSCTDEETDC334 all &ndash; 0.0.0.0/0 0.0.0.0/0 /</em> kube-system/kube-dns:dns */
+<code>Chain KUBE-SVC-XM7DIBVJQPJ3TSDT (3 references) target prot opt source destination KUBE-SEP-HU5MDV4BUZFHSUJC all -- 0.0.0.0/0 0.0.0.0/0 /* default/hello-kubernetes */ statistic mode random probabilit KUBE-SEP-H4R2CT6HM6EFNIJJ all -- 0.0.0.0/0 0.0.0.0/0 /* default/hello-kubernetes */ statistic mode random probabilit KUBE-SEP-NR26ZMIMIRVTQMOT all -- 0.0.0.0/0 0.0.0.0/0 /* default/hello-kubernetes */ statistic mode random probabilit KUBE-SEP-WBYNSHOG7M44Q3HZ all -- 0.0.0.0/0 0.0.0.0/0 /* default/hello-kubernetes */</code></p></blockquote><p>我们把上图标红的地方整理一下：</p><ul><li><strong>Chain KUBE-SVC-XM7DIBVJQPJ3TSDT (3 references)</strong> 该表项在每个VM的IPtables表中一致</li></ul><table><thead><tr><th>target</th><th>prot</th><th>opt</th><th>source</th><th>destination</th><th></th></tr></thead><tbody><tr><td><code>KUBE-SEP-HU5MDV4BUZFHSUJC</code></td><td>all</td><td>&ndash;</td><td>0.0.0.0/0</td><td>0.0.0.0/0</td><td>/* default/hello-kubernetes */ statistic mode random probabilit</td></tr><tr><td>KUBE-SEP-H4R2CT6HM6EFNIJJ</td><td>all</td><td>&ndash;</td><td>0.0.0.0/0</td><td>0.0.0.0/0</td><td>/* default/hello-kubernetes */ statistic mode random probabilit</td></tr><tr><td>KUBE-SEP-NR26ZMIMIRVTQMOT</td><td>all</td><td>&ndash;</td><td>0.0.0.0/0</td><td>0.0.0.0/0</td><td>/* default/hello-kubernetes */ statistic mode random probabilit</td></tr><tr><td>KUBE-SEP-WBYNSHOG7M44Q3HZ</td><td>all</td><td>&ndash;</td><td>0.0.0.0/0</td><td>0.0.0.0/0</td><td>/* default/hello-kubernetes */</td></tr></tbody></table><p>服务Chain ：KUBE-SVC-XM7DIBVJQPJ3TSDT包括了4个target
+分析第一个target：<code>Chain KUBE-SEP-HU5MDV4BUZFHSUJC</code> (1 references)</p><table><thead><tr><th>target</th><th>prot</th><th>opt</th><th>source</th><th>destination</th><th></th></tr></thead><tbody><tr><td>KUBE-MARK-MASQ</td><td>all</td><td>&ndash;</td><td>10.96.0.4</td><td>0.0.0.0/0</td><td>/* default/hello-kubernetes */</td></tr><tr><td>DNAT</td><td>tcp</td><td>&ndash;</td><td>0.0.0.0/0</td><td>0.0.0.0/0</td><td>/* default/hello-kubernetes */ tcp to:10.96.0.4:8080`</td></tr></tbody></table><p>这个target最终指向了提供服务的pod及其端口10.96.0.4:8080。
+同样的，我们可以找到10.96.0.5:8080，这两个都是本Node的pod</p><ul><li>Cluster IP</li></ul><table><thead><tr><th>target</th><th>prot</th><th>opt</th><th>source</th><th>destination</th><th></th></tr></thead><tbody><tr><td>KUBE-MARK-MASQ</td><td>tcp</td><td>&ndash;</td><td>!10.96.0.0/11</td><td>100.64.136.105</td><td>/* default/hello-kubernetes cluster IP */ tcp dpt:80`</td></tr><tr><td><code>KUBE-SVC-XM7DIBVJQPJ3TSDT</code></td><td>tcp</td><td>&ndash;</td><td>0.0.0.0/0</td><td>100.64.136.105</td><td>/* default/hello-kubernetes cluster IP */ tcp dpt:80</td></tr><tr><td><code>KUBE-FW-XM7DIBVJQPJ3TSDT</code></td><td>tcp</td><td>&ndash;</td><td>0.0.0.0/0</td><td>172.80.88.7</td><td>/* default/hello-kubernetes loadbalancer IP */ tcp dpt:80</td></tr></tbody></table><p>这个表清楚给出了Cluster IP和外部IP以及相应的target：KUBE-FW-XM7DIBVJQPJ3TSDT，并没有指定pod，说明所有pod会参与服务，事实上我们也在web前端刷到所有pod。</p><ul><li>NodePort</li></ul><p>Chain KUBE-NODEPORTS (1 references)</p><table><thead><tr><th>target</th><th>prot</th><th>opt</th><th>source</th><th>destination</th><th></th></tr></thead><tbody><tr><td>KUBE-MARK-MASQ</td><td>tcp</td><td>&ndash;</td><td>0.0.0.0/0</td><td>0.0.0.0/0</td><td>/* default/hello-kubernetes */ tcp dpt:32762</td></tr><tr><td><code>KUBE-SVC-XM7DIBVJQPJ3TSDT</code></td><td>tcp</td><td>&ndash;</td><td>0.0.0.0/0</td><td>0.0.0.0/0</td><td>/* default/hello-kubernetes */ tcp dpt:32762`</td></tr></tbody></table><p>该表给出NodePort和target的联系。
+我们再回头看</p><blockquote><p>[root@hop ~]# <strong>kubectl get svc</strong>
+NAME TYPE CLUSTER-IP EXTERNAL-IP PORT(S) AGE
+hello-kubernetes LoadBalancer <code>100.64.136.105</code> <code>172.80.88.7</code> <code>80:32762/TCP</code> 39d</p></blockquote><p>和IPtables表中的相关项有对应关系。
+<img src="https://img-blog.csdnimg.cn/48ee882d215340baa25e22d34f138b26.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzM5NDcyNA==,size_16,color_FFFFFF,t_70" alt=在这里插入图片描述></p><p>以上</p></div><footer class=post-footer><div id=wcomments></div></footer></article></section></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id=sidebar class=sidebar><div class=sidebar-inner><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>文章目录</li><li class=sidebar-nav-overview data-target=site-overview>站点概览</li></ul><section class="site-overview sidebar-panel"><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon><p class=site-author-name itemprop=name>Etaon</p><p class="site-description motion-element" itemprop=description>Kepp Going!</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=/post/><span class=site-state-item-count>68</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>14</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>38</span>
+<span class=site-state-item-name>标签</span></a></div></nav><div class="links-of-author motion-element"><span class=links-of-author-item><a href=https://github.com/etaon target=_blank title=GitHub><i class="fa fa-fw fa-github"></i>
+GitHub</a></span>
+<span class=links-of-author-item><a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN><i class="fa fa-fw fa-CSDN"></i>
+CSDN</a></span></div><div class="links-of-blogroll motion-element links-of-blogroll-inline"><div class=links-of-blogroll-title><i class="fa fa-fw fa-globe"></i>
+友情链接</div><ul class=links-of-blogroll-list><li class=links-of-blogroll-item><a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a></li><li class=links-of-blogroll-item><a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a></li><li class=links-of-blogroll-item><a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a></li><li class=links-of-blogroll-item><a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a></li></ul></div><div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline"><div class=tagcloud-of-blogroll-title><i class="fa fa-fw fa-tags"></i>
+标签云</div><ul class=tagcloud-of-blogroll-list><li class=tagcloud-of-blogroll-item><a href=/tags/mysql>Mysql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/aws>Aws</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/dql>Dql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/hadoop>Hadoop</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/redis>Redis</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/cicd>Cicd</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/git>Git</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/nsx-t>Nsx t</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/istio>Istio</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/mongodb>Mongodb</a></li></ul></div></section><section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active"><div class=post-toc><div class=post-toc-content><nav id=TableOfContents><ul><li><a href=#实验环境>实验环境</a></li><li><a href=#ip地址分配>IP地址分配</a></li><li><a href=#tkg使用的实验用例yaml>TKG使用的实验用例yaml</a></li><li><a href=#结果记录>结果记录</a><ul><li><a href=#pod及service创建情况>Pod及Service创建情况</a></li><li><a href=#外部web>外部Web</a></li><li><a href=#nsx-t上面观察lb>NSX-T上面观察LB</a></li><li><a href=#服务如何指向pod>服务如何指向pod</a></li></ul></li></ul></nav></div></div></section></div></aside></div></main><footer id=footer class=footer><div class=footer-inner><div class=copyright><span class=copyright-year>&copy; 2010 - 2022</span>
+<span class=with-love><i class="fa fa-heart"></i></span>
+<span class=copyright-author>路无止境！</span></div><div class=powered-info><span class=powered-by>Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.101.0</a></span>
+<span class=separator-line>/</span>
+<span class=theme-info>Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank>NexT</a></span></div><div class=vistor-info><script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<span class=site-uv><i class="fa fa-user"></i>
+<span class=busuanzi-value id=busuanzi_value_site_uv></span></span>
+<span class=separator-line>/</span>
+<span class=site-pv><i class="fa fa-eye"></i>
+<span class=busuanzi-value id=busuanzi_value_site_pv></span></span></div><div class=license-info><span class=storage-info>Storage by
+<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a></span>
+<span class=separator-line>/</span>
+<span class=license-num><a href target=_blank></a></span></div></div></footer><div class=back-to-top><i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span></div></div><script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
+<script type=text/javascript src=/js/search.js></script>
+<script type=text/javascript src=/js/affix.js></script>
+<script type=text/javascript src=/js/scrollspy.js></script>
+<script type=text/javascript>function detectIE(){var e=window.navigator.userAgent,t=e.indexOf("MSIE "),n=e.indexOf("Trident/"),s=e.indexOf("Edge/");return t>0||n>0||s>0?-1:1}function getCntViewHeight(){var t=$("#content").height(),e=$(window).height(),n=t>e?t-e:$(document).height()-e;return n}function getScrollbarWidth(){var e=$("<div />").addClass("scrollbar-measure").prependTo("body"),t=e[0],n=t.offsetWidth-t.clientWidth;return e.remove(),n}function registerBackTop(){var t=50,e=$(".back-to-top");$(window).on("scroll",function(){e.toggleClass("back-to-top-on",window.pageYOffset>t);var s=$(window).scrollTop(),o=getCntViewHeight(),i=s/o,n=Math.round(i*100),a=n>100?100:n;$("#scrollpercent>span").html(a)}),e.on("click",function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var e=".post-toc",s=$(e),t=".active-current";s.on("activate.bs.scrollspy",function(){var t=$(e+" .active").last();n(),t.addClass("active-current")}).on("clear.bs.scrollspy",n),$("body").scrollspy({target:e});function n(){$(e+" "+t).removeClass(t.substring(1))}}function initAffix(){var e=$(".header-inner").height(),t=parseInt($(".main").css("padding-bottom"),10),n=e+10;$(".sidebar-inner").affix({offset:{top:n,bottom:t}}),$(document).on("affixed.bs.affix",function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){$(window).on("resize",function(){e&&clearTimeout(e),e=setTimeout(function(){var e=document.body.clientHeight-100;updateTOCHeight(e)},0)}),updateTOCHeight(document.body.clientHeight-100);var e,t=getScrollbarWidth();$(".post-toc").css("width","calc(100% + "+t+"px)")}function updateTOCHeight(e){e=e||"auto",$(".post-toc").css("max-height",e)}$(function(){var e,t,n,s,o=$(".header-inner").height()+10;$("#sidebar").css({"margin-top":o}).show(),t=parseInt($("#sidebar").css("margin-top")),n=parseInt($(".sidebar-inner").css("height")),e=t+n,s=$(".content-wrap").height(),s<e&&$(".content-wrap").css("min-height",e),$(".site-nav-toggle").on("click",function(){var e=$(".site-nav"),o=$(".toggle"),t="site-nav-on",i="toggle-close",n=e.hasClass(t),a=n?"slideUp":"slideDown",s=n?"removeClass":"addClass";e.stop()[a]("normal",function(){e[s](t),o[s](i)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$(".sidebar-nav-toc").click(function(){$(this).addClass("sidebar-nav-active"),$(this).next().removeClass("sidebar-nav-active"),$("."+$(this).next().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)}),$(".sidebar-nav-overview").click(function(){$(this).addClass("sidebar-nav-active"),$(this).prev().removeClass("sidebar-nav-active"),$("."+$(this).prev().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)})})</script><script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$(".post-body").viewer()})</script><script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+"//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js",function(){new Waline({el:"#wcomments",visitor:!0,avatar:"wavatar",avatarCDN:"https://sdn.geekzu.org/avatar/",avatarForce:!1,wordLimit:"200",placeholder:" 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ",requiredFields:["nick","mail"],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$("#wcomments").html("抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。")})</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type=text/javascript src="//s7.addthis.com/js/300/addthis_widget.js#pubid=Your%20AddthisId"></script>
+<script>(function(){var t,e=document.createElement("script"),n=window.location.protocol.split(":")[0];n==="https"?e.src="https://zz.bdstatic.com/linksubmit/push.js":e.src="http://push.zhanzhang.baidu.com/push.js",t=document.getElementsByTagName("script")[0],t.parentNode.insertBefore(e,t)})()</script></body></html>
