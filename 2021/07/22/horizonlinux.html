@@ -1,0 +1,159 @@
+<!doctype html><html lang=zh-cn dir=content/zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=content-security-policy content="upgrade-insecure-requests"><title>VMware Horizon 8 设置 Linux 桌面 - 路无止境！</title><meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云"><meta name=author content="Etaon"><meta property="og:title" content="VMware Horizon 8 设置 Linux 桌面"><meta property="og:site_name" content="路无止境！"><meta property="og:image" content="/img/author.jpg"><meta name=title content="VMware Horizon 8 设置 Linux 桌面 - 路无止境！"><meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。"><link rel="shortcut icon" href=/img/favicon.ico><link rel=apple-touch-icon href=/img/apple-touch-icon.png><link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png><link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css><link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet><link href=/css/main.css rel=stylesheet type=text/css><link href=/css/syntax.css rel=stylesheet type=text/css></head><body itemscope itemtype=http://schema.org/WebPage lang=zh-hans><div class="container one-collumn sidebar-position-left page-home"><div class=headband></div><header id=header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle role=button style=opacity:1;top:0><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div></div><div class=site-meta><div class=multi-lang-switch><i class="fa fa-fw fa-language" style=margin-right:5px></i>
+<a class=lang-link id=zh-cn href=#>学习</a></div><div class=custom-logo-site-title><a href=/ class=brand rel=start><span class=logo-line-before><i></i></span>
+<span class=site-title>路无止境！</span>
+<span class=logo-line-after><i></i></span></a></div><p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p></div><div class=site-nav-right><div class="toggle popup-trigger" style=opacity:1;top:0><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class=site-nav><ul id=menu class=menu><li class=menu-item><a href=/ rel=section><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class=menu-item><a href=/post rel=section><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class=menu-item><a href=/about.html rel=section><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于我</a></li><li class=menu-item><a href=/404.html rel=section><i class="menu-item-icon fa fa-fw fa-heartbeat"></i><br>公益404</a></li><li class="menu-item menu-item-search"><a href=javascript:; class=popup-trigger><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class=site-search><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class=search-icon><i class="fa fa-search"></i></span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span><div class=local-search-input-wrapper><input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off></div></div><div id=local-search-result></div></div></div></nav></div></header><main id=main class=main><div class=main-inner><div class=content-wrap><div id=content class=content><section id=posts class=posts-expand><article class="post post-type-normal" itemscope itemtype=http://schema.org/Article><header class=post-header><h1 class=post-title itemprop="name headline" style=font-weight:700><a class=post-title-link href=https://www.etaon.top/2021/07/22/horizonlinux.html itemprop=url>VMware Horizon 8 设置 Linux 桌面</a></h1></header><div class=post-body itemprop=articleBody><h2 id=概述>概述</h2><p>在配置 Linux 桌面时，必须根据要在虚拟机上安装 2D 图形还是 3D 图形来按照不同的步骤序列进行操作。
+<a href=https://docs.vmware.com/cn/VMware-Horizon/2103/linux-desktops-setup/GUID-F06FF1A7-BDEF-4269-B2AB-C62819D4FCCD.html#GUID-F06FF1A7-BDEF-4269-B2AB-C62819D4FCCD>官方文档</a>给出了其步骤。</p><ul><li><p>对于 2D 图形，执行以下步骤：
+1.查看设置 Linux 桌面部署的系统要求。
+2.在 vSphere 中创建一个虚拟机并安装 Linux 操作系统。
+3.准备客户机操作系统以在 VMware Horizon 环境中将其部署为桌面。
+4.配置 Linux 客户机操作系统以使用 Active Directory 进行身份验证。此步骤是根据您的环境要求使用第三方软件执行的。
+5.在 Linux 虚拟机上安装 Horizon Agent。
+6.基于配置的 Linux 虚拟机创建桌面池。</p></li><li><p>3D 图形 - 配置步骤
+<strong>必须先在 Linux 虚拟机上完成 NVIDIA GRID vGPU 配置，然后再在计算机上安装 Horizon Agent，并在 Horizon Console 中部署桌面池。</strong>
+1.查看在 VMware Horizon 环境中设置 Linux 桌面部署的系统要求。
+2.在 vSphere 中创建一个虚拟机并安装 Linux 操作系统。
+3.准备客户机操作系统以在 VMware Horizon 环境中将其部署为桌面。
+4.配置 Linux 客户机操作系统以使用 Active Directory 进行身份验证。此步骤是根据您的环境要求使用第三方软件执行的。
+5.在 ESXi 主机和 Linux 虚拟机上配置 3D 功能。
+6.在 Linux 虚拟机上安装 Horizon Agent。
+7.基于配置的 Linux 虚拟机创建桌面池。</p></li></ul><p>本实验环境没有GPU卡，选择2D图形的方式。</p><h2 id=实验环境>实验环境</h2><h3 id=软件参数>软件参数</h3><table><thead><tr><th>项目</th><th>版本</th><th>备注</th></tr></thead><tbody><tr><td>Windows2016</td><td>9718765</td><td>Harizon Connection Server</td></tr><tr><td>CentOS 7.9</td><td>2009</td><td>桌面池模板</td></tr><tr><td>Horizon8 Connection Server</td><td>2012</td><td>8.1.0-17351278</td></tr><tr><td>Horizon8 Agent</td><td>2012</td><td>2012-8.1.0-17336770</td></tr><tr><td>vCenter</td><td>7.0u2</td><td></td></tr></tbody></table><h3 id=ip地址分配>IP地址分配</h3><table><thead><tr><th>项目</th><th>地址</th><th>备注</th></tr></thead><tbody><tr><td>vCenter</td><td>192.168.110.22</td><td>vcsa-01a.corp.tanzu</td></tr><tr><td>CS-Windows2016</td><td>172.100.0.101</td><td>cs8-01.corp.tanzu</td></tr><tr><td>AD</td><td>192.168.110.10</td><td>controlcenter.corp.tanzu</td></tr><tr><td>VDI client</td><td>172.100.0.201-253</td><td>相应网段已部署DHCP服务</td></tr></tbody></table><h2 id=实验步骤>实验步骤</h2><h3 id=linux-桌面部署的系统要求>Linux 桌面部署的系统要求</h3><p>参考官方文档：<a href=https://docs.vmware.com/cn/VMware-Horizon/2012/linux-desktops-setup/GUID-E268BDBF-1D89-492B-8563-88936FD6607A.html>Horizon Agent for Linux 的系统要求</a></p><h3 id=安装-linux-虚拟机>安装 Linux 虚拟机</h3><p>选择CentOS 7.9，安装过程（略）</p><h3 id=准备客户机操作系统>准备客户机操作系统</h3><ol><li>修改主机名，并在 /etc/hosts 文件中，将 Linux 计算机的主机名映射到 127.0.0.1；修改Selinux到disabled。</li><li>检查在 vSphere Client 中，禁用虚拟机上的“vApp 选项”设置。</li><li>确认已禁用 virbr0。</li></ol><blockquote><p>[root@centos79 ~]# <strong>virsh net-destroy default</strong>
+Network default destroyed
+[root@centos79 ~]# <strong>virsh net-undefine default</strong>
+Network default has been undefined
+[root@centos79 ~]# <strong>systemctl restart libvirtd</strong></p></blockquote><p>如果virsh命令不存在，需要安装libvirt</p><ol start=4><li>确保容器中的 Horizon Connection Server实例可以通过 DNS 解析。本实验为：controlcenter.corp.tanzu 192.168.110.10</li><li>将 Linux 计算机配置为默认情况下以图形模式运行。</li></ol><blockquote><p>[root@centos79 ~]# systemctl set-default graphical.target</p></blockquote><ol start=6><li>要准备虚拟机以将其用作场中的多会话主机，安装所需的软件包</li></ol><blockquote><p>[root@centos79 ~]# <strong>yum install <a href=http://mirror.centos.org/centos/7/os/x86_64/Packages/cpptest-1.1.1-9.el7.x86_64.rpm>http://mirror.centos.org/centos/7/os/x86_64/Packages/cpptest-1.1.1-9.el7.x86_64.rpm</a></strong>
+Loaded plugins: fastestmirror, langpacks
+cpptest-1.1.1-9.el7.x86_64.rpm | 47 kB 00:00:00
+Examining /var/tmp/yum-root-SsySDJ/cpptest-1.1.1-9.el7.x86_64.rpm: cpptest-1.1.1-9.el7.x86_64
+Marking /var/tmp/yum-root-SsySDJ/cpptest-1.1.1-9.el7.x86_64.rpm to be installed
+Resolving Dependencies
+&ndash;> Running transaction check
+&mdash;> Package cpptest.x86_64 0:1.1.1-9.el7 will be installed
+&ndash;> Finished Dependency Resolution
+&mldr;&mldr;
+Install 1 Package
+Total size: 117 k
+Installed size: 117 k
+Is this ok [y/d/N]: y
+Downloading packages:
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+Installing : cpptest-1.1.1-9.el7.x86_64 1/1
+Verifying : cpptest-1.1.1-9.el7.x86_64 1/1
+Installed:
+cpptest.x86_64 0:1.1.1-9.el7
+Complete!</p></blockquote><blockquote><p>[root@centos79 ~]# <strong>yum install <a href=https://rpmfind.net/linux/centos/7.9.2009/os/x86_64/Packages/uriparser-0.7.5-10.el7.x86_64.rpm>https://rpmfind.net/linux/centos/7.9.2009/os/x86_64/Packages/uriparser-0.7.5-10.el7.x86_64.rpm</a></strong>
+Loaded plugins: fastestmirror, langpacks
+uriparser-0.7.5-10.el7.x86_64.rpm | 108 kB 00:00:00
+Examining /var/tmp/yum-root-SsySDJ/uriparser-0.7.5-10.el7.x86_64.rpm: uriparser-0.7.5-10.el7.x86_64
+Marking /var/tmp/yum-root-SsySDJ/uriparser-0.7.5-10.el7.x86_64.rpm to be installed
+Resolving Dependencies
+&ndash;> Running transaction check
+&mdash;> Package uriparser.x86_64 0:0.7.5-10.el7 will be installed
+&ndash;> Finished Dependency Resolution
+&mldr;&mldr;
+Total size: 487 k
+Installed size: 487 k
+Is this ok [y/d/N]: y
+Downloading packages:
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+Installing : uriparser-0.7.5-10.el7.x86_64 1/1
+Verifying : uriparser-0.7.5-10.el7.x86_64 1/1
+Installed:
+uriparser.x86_64 0:0.7.5-10.el7
+Complete!</p></blockquote><p>注意：到https://rpmfind.net/linux/centos/找到匹配到版本</p><h3 id=linux-客户机使用-active-directory-进行身份验证>Linux 客户机使用 Active Directory 进行身份验证</h3><p>官方文档在<a href=https://docs.vmware.com/cn/VMware-Horizon/2012/linux-desktops-setup/GUID-EF562CF5-109E-44F5-BFF1-5924EE285839.html>为 Linux 桌面设置 Active Directory 集成和用户身份验证功能</a>。这里面给出了四种方式，我们选用设<a href=https://docs.vmware.com/cn/VMware-Horizon/2012/linux-desktops-setup/GUID-1E29173F-1E32-4663-92D6-788905F387E6.html>置针对 Microsoft Active Directory 的 SSSD LDAP 身份验证</a>方式。</p><ol><li>与AD时间同步</li></ol><blockquote><p>[root@centos79 ~]# ntpdate 192.168.110.10
+20 Jul 03:40:20 ntpdate[4430]: step time server 192.168.110.10 offset 219.292078 sec</p></blockquote><ol start=2><li>安装 sssd,realm等软件包</li></ol><blockquote><p>[root@centos-01a ~]# yum install sssd realmd oddjob oddjob-mkhomedir adcli samba-common samba-common-tools krb5-workstation openldap-clients policycoreutils-pythonyum install sssd realmd oddjob oddjob-mkhomedir adcli samba-common samba-common-tools krb5-workstation openldap-clients policycoreutils-python
+&mldr;&mldr;
+Total download size: 13 M
+Is this ok [y/d/N]: Exiting on user command
+Your transaction was saved, rerun it with:
+yum load-transaction /tmp/yum_save_tx.2021-07-21.10-31.6dRR7n.yumtx</p></blockquote><ol start=3><li>查找域控制服务器</li></ol><blockquote><p>[root@centos-01a ~]# realm discover controlcenter.corp.tanzu
+corp.tanzu
+type: kerberos
+realm-name: CORP.TANZU
+domain-name: corp.tanzu
+configured: no
+server-software: active-directory
+client-software: sssd
+required-package: oddjob
+required-package: oddjob-mkhomedir
+required-package: sssd
+required-package: adcli
+required-package: samba-common-tools</p></blockquote><p>4.加入AD域</p><blockquote><p>[root@centos-01a ~]# realm join &ndash;user=administrator controlcenter.corp.tanzu
+Password for administrator:</p></blockquote><ol start=5><li>使用AD域账号验证是否加入成功</li></ol><blockquote><p>[root@centos-01a ~]# id <a href=mailto:zyi@corp.tanzu>zyi@corp.tanzu</a>
+uid=1070411625(<a href=mailto:zyi@corp.tanzu>zyi@corp.tanzu</a>) gid=1070400513(domain <a href=mailto:users@corp.tanzu>users@corp.tanzu</a>) groups=1070400513(domain <a href=mailto:users@corp.tanzu>users@corp.tanzu</a>)</p></blockquote><ol start=6><li>在/etc/sssd/sssd.conf改变parameters：</li></ol><blockquote><p>#from:
+use_fully_qualified_names = True
+fallback_homedir = /home/%u@%d</p></blockquote><blockquote><p>#to:
+use_fully_qualified_names = False
+fallback_homedir = /home/%u</p></blockquote><p>Restart sssd 服务</p><blockquote><p>[root@centos-01a ~]# systemctl restart sssd
+[root@centos-01a ~]# systemctl daemon-reload</p></blockquote><p>可以直接查ID</p><blockquote><p>[root@centos-01a ~]# id zyi
+uid=1000(zyi) gid=1000(zyi) groups=1000(zyi),1070400513(domain users)</p></blockquote><ol start=7><li>Sudo rights for AD users</li></ol><blockquote><p>[root@centos-01a ~]# echo &ldquo;%sudoers ALL=(ALL) ALL&rdquo; &#187;/etc/sudoers.d/sudoers
+[root@centos-01a ~]# cat /etc/sudoers.d/sudoers
+%sudoers ALL=(ALL) ALL</p></blockquote><h3 id=在-linux-虚拟机上安装-horizon-agent>在 Linux 虚拟机上安装 Horizon Agent</h3><ol><li>从 VMware 下载站点 <a href=https://my.vmware.com/web/vmware/downloads>https://my.vmware.com/web/vmware/downloads</a> 下载 Horizon Agent for Linux 安装程序文件</li><li>解压缩所用 的Linux 分发包</li></ol><blockquote><p>[root@centos-01a ~]# <strong>tar -zxvf VMware-horizonagent-linux-x86_64-2012-8.1.0-17336770.tar.gz</strong>
+VMware-horizonagent-linux-x86_64-2012-8.1.0-17336770/
+VMware-horizonagent-linux-x86_64-2012-8.1.0-17336770/sso/
+VMware-horizonagent-linux-x86_64-2012-8.1.0-17336770/sso/sled11/
+VMware-horizonagent-linux-x86_64-2012-8.1.0-17336770/sso/sled11/greeter.tar.manifest
+VMware-horizonagent-linux-x86_64-2012-8.1.0-17336770/sso/sled11/gdm-vmwcred
+VMware-horizonagent-linux-x86_64-2012-8.1.0-17336770/sso/sled11/gdm.orig
+VMware-horizonagent-linux-x86_64-2012-8.1.0-17336770/sso/sled11/pam_vmw_cred_sled11.so
+VMware-horizonagent-linux-x86_64-2012-8.1.0-17336770/sso/sled11/greeter.tar.patterns
+&mldr;&mldr;</p></blockquote><ol start=3><li>安装依赖 libappindicator-gtk3</li></ol><blockquote><p>[root@centos-01a ~]# <strong>yum install -y libappindicator-gtk3</strong>
+Loaded plugins: fastestmirror, langpacks
+Loading mirror speeds from cached hostfile
+base: mirror.arizona.edu
+extras: repos-lax.psychz.net
+updates: mirrors.cat.pdx.edu
+Resolving Dependencies
+&ndash;> Running transaction check
+&mdash;> Package libappindicator-gtk3.x86_64 0:12.10.0-13.el7 will be installed
+&ndash;> Processing Dependency: libindicator3.so.7()(64bit) for package: libappindicator-gtk3-12.10.0-13.el7.x86_64
+&mldr;&mldr;</p></blockquote><p>4.进入解压文件夹，以超级用户身份运行 install_viewagent.sh 脚本</p><blockquote><p>[root@centos-01a VMware-horizonagent-linux-x86_64-2012-8.1.0-17336770]# <strong>./install_viewagent.sh -A yes</strong>
+The installation will install VMware Horizon Agent on your computer.
+Installation Start &mldr;
+If you have any questions or issues regarding Linux VDI, please start a discussion at <a href=https://communities.vmware.com/community/vmtn/horizon/vmware-horizon-for-linux>https://communities.vmware.com/community/vmtn/horizon/vmware-horizon-for-linux</a>, and we will respond to you as soon as possible.
+You must restart your system for the configuration changes made to the VMware Horizon Agent to take effect.
+Installation done</p></blockquote><ol start=5><li>修改/etc/vmware/viewagent-custom.conf 的参数（可选，自动桌面池这一步一定要做）</li></ol><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>OfflineJoinDomain=sssd
+</span></span></code></pre></div><p>完成以后关机，制作快照。</p><h3 id=生产桌面池>生产桌面池</h3><p>采用自动桌面池，过程略
+<img src=https://img-blog.csdnimg.cn/img_convert/5f1fb517a80f7dfb14af8f4a908e9ba8.png alt=请添加图片描述>
+授权给zyi用户</p><h3 id=horizon-client端测试>Horizon Client端测试</h3><p><img src=https://img-blog.csdnimg.cn/img_convert/4461a7aec2f2b8247b06c28fdafaf32d.png alt=请添加图片描述>
+<img src=https://img-blog.csdnimg.cn/img_convert/a1ec78b5b4954d3b6a50a65c71e97a35.png alt=请添加图片描述>
+<img src=https://img-blog.csdnimg.cn/img_convert/a11796c32e2bb319e05649d183b8720f.png alt=请添加图片描述>
+成功！</p></div><footer class=post-footer><div id=wcomments></div></footer></article></section></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id=sidebar class=sidebar><div class=sidebar-inner><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>文章目录</li><li class=sidebar-nav-overview data-target=site-overview>站点概览</li></ul><section class="site-overview sidebar-panel"><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon><p class=site-author-name itemprop=name>Etaon</p><p class="site-description motion-element" itemprop=description>Kepp Going!</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=/post/><span class=site-state-item-count>70</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>14</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>38</span>
+<span class=site-state-item-name>标签</span></a></div></nav><div class="links-of-author motion-element"><span class=links-of-author-item><a href=https://github.com/etaon target=_blank title=GitHub><i class="fa fa-fw fa-github"></i>
+GitHub</a></span>
+<span class=links-of-author-item><a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN><i class="fa fa-fw fa-CSDN"></i>
+CSDN</a></span></div><div class="links-of-blogroll motion-element links-of-blogroll-inline"><div class=links-of-blogroll-title><i class="fa fa-fw fa-globe"></i>
+友情链接</div><ul class=links-of-blogroll-list><li class=links-of-blogroll-item><a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a></li><li class=links-of-blogroll-item><a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a></li><li class=links-of-blogroll-item><a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a></li><li class=links-of-blogroll-item><a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a></li></ul></div><div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline"><div class=tagcloud-of-blogroll-title><i class="fa fa-fw fa-tags"></i>
+标签云</div><ul class=tagcloud-of-blogroll-list><li class=tagcloud-of-blogroll-item><a href=/tags/mysql>Mysql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/aws>Aws</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/dql>Dql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/hadoop>Hadoop</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/redis>Redis</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/cicd>Cicd</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/git>Git</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/nsx-t>Nsx t</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/istio>Istio</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/mongodb>Mongodb</a></li></ul></div></section><section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active"><div class=post-toc><div class=post-toc-content><nav id=TableOfContents><ul><li><a href=#概述>概述</a></li><li><a href=#实验环境>实验环境</a><ul><li><a href=#软件参数>软件参数</a></li><li><a href=#ip地址分配>IP地址分配</a></li></ul></li><li><a href=#实验步骤>实验步骤</a><ul><li><a href=#linux-桌面部署的系统要求>Linux 桌面部署的系统要求</a></li><li><a href=#安装-linux-虚拟机>安装 Linux 虚拟机</a></li><li><a href=#准备客户机操作系统>准备客户机操作系统</a></li><li><a href=#linux-客户机使用-active-directory-进行身份验证>Linux 客户机使用 Active Directory 进行身份验证</a></li><li><a href=#在-linux-虚拟机上安装-horizon-agent>在 Linux 虚拟机上安装 Horizon Agent</a></li><li><a href=#生产桌面池>生产桌面池</a></li><li><a href=#horizon-client端测试>Horizon Client端测试</a></li></ul></li></ul></nav></div></div></section></div></aside></div></main><footer id=footer class=footer><div class=footer-inner><div class=copyright><span class=copyright-year>&copy; 2010 - 2022</span>
+<span class=with-love><i class="fa fa-heart"></i></span>
+<span class=copyright-author>路无止境！</span></div><div class=powered-info><span class=powered-by>Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.101.0</a></span>
+<span class=separator-line>/</span>
+<span class=theme-info>Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank>NexT</a></span></div><div class=vistor-info><script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<span class=site-uv><i class="fa fa-user"></i>
+<span class=busuanzi-value id=busuanzi_value_site_uv></span></span>
+<span class=separator-line>/</span>
+<span class=site-pv><i class="fa fa-eye"></i>
+<span class=busuanzi-value id=busuanzi_value_site_pv></span></span></div><div class=license-info><span class=storage-info>Storage by
+<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a></span>
+<span class=separator-line>/</span>
+<span class=license-num><a href target=_blank></a></span></div></div></footer><div class=back-to-top><i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span></div></div><script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
+<script type=text/javascript src=/js/search.js></script>
+<script type=text/javascript src=/js/affix.js></script>
+<script type=text/javascript src=/js/scrollspy.js></script>
+<script type=text/javascript>function detectIE(){var e=window.navigator.userAgent,t=e.indexOf("MSIE "),n=e.indexOf("Trident/"),s=e.indexOf("Edge/");return t>0||n>0||s>0?-1:1}function getCntViewHeight(){var t=$("#content").height(),e=$(window).height(),n=t>e?t-e:$(document).height()-e;return n}function getScrollbarWidth(){var e=$("<div />").addClass("scrollbar-measure").prependTo("body"),t=e[0],n=t.offsetWidth-t.clientWidth;return e.remove(),n}function registerBackTop(){var t=50,e=$(".back-to-top");$(window).on("scroll",function(){e.toggleClass("back-to-top-on",window.pageYOffset>t);var s=$(window).scrollTop(),o=getCntViewHeight(),i=s/o,n=Math.round(i*100),a=n>100?100:n;$("#scrollpercent>span").html(a)}),e.on("click",function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var e=".post-toc",s=$(e),t=".active-current";s.on("activate.bs.scrollspy",function(){var t=$(e+" .active").last();n(),t.addClass("active-current")}).on("clear.bs.scrollspy",n),$("body").scrollspy({target:e});function n(){$(e+" "+t).removeClass(t.substring(1))}}function initAffix(){var e=$(".header-inner").height(),t=parseInt($(".main").css("padding-bottom"),10),n=e+10;$(".sidebar-inner").affix({offset:{top:n,bottom:t}}),$(document).on("affixed.bs.affix",function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){$(window).on("resize",function(){e&&clearTimeout(e),e=setTimeout(function(){var e=document.body.clientHeight-100;updateTOCHeight(e)},0)}),updateTOCHeight(document.body.clientHeight-100);var e,t=getScrollbarWidth();$(".post-toc").css("width","calc(100% + "+t+"px)")}function updateTOCHeight(e){e=e||"auto",$(".post-toc").css("max-height",e)}$(function(){var e,t,n,s,o=$(".header-inner").height()+10;$("#sidebar").css({"margin-top":o}).show(),t=parseInt($("#sidebar").css("margin-top")),n=parseInt($(".sidebar-inner").css("height")),e=t+n,s=$(".content-wrap").height(),s<e&&$(".content-wrap").css("min-height",e),$(".site-nav-toggle").on("click",function(){var e=$(".site-nav"),o=$(".toggle"),t="site-nav-on",i="toggle-close",n=e.hasClass(t),a=n?"slideUp":"slideDown",s=n?"removeClass":"addClass";e.stop()[a]("normal",function(){e[s](t),o[s](i)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$(".sidebar-nav-toc").click(function(){$(this).addClass("sidebar-nav-active"),$(this).next().removeClass("sidebar-nav-active"),$("."+$(this).next().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)}),$(".sidebar-nav-overview").click(function(){$(this).addClass("sidebar-nav-active"),$(this).prev().removeClass("sidebar-nav-active"),$("."+$(this).prev().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)})})</script><script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$(".post-body").viewer()})</script><script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+"//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js",function(){new Waline({el:"#wcomments",visitor:!0,avatar:"wavatar",avatarCDN:"https://sdn.geekzu.org/avatar/",avatarForce:!1,wordLimit:"200",placeholder:" 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ",requiredFields:["nick","mail"],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$("#wcomments").html("抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。")})</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type=text/javascript src="//s7.addthis.com/js/300/addthis_widget.js#pubid=Your%20AddthisId"></script>
+<script>(function(){var t,e=document.createElement("script"),n=window.location.protocol.split(":")[0];n==="https"?e.src="https://zz.bdstatic.com/linksubmit/push.js":e.src="http://push.zhanzhang.baidu.com/push.js",t=document.getElementsByTagName("script")[0],t.parentNode.insertBefore(e,t)})()</script></body></html>
