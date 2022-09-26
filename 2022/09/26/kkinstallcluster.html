@@ -1,0 +1,668 @@
+<!doctype html><html lang=zh-cn dir=content/zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=content-security-policy content="upgrade-insecure-requests"><title>kk install k8s cluster - 路无止境！</title><meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云"><meta name=author content="Etaon"><meta property="og:title" content="kk install k8s cluster"><meta property="og:site_name" content="路无止境！"><meta property="og:image" content="/img/author.jpg"><meta name=title content="kk install k8s cluster - 路无止境！"><meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。"><link rel="shortcut icon" href=/img/favicon.ico><link rel=apple-touch-icon href=/img/apple-touch-icon.png><link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png><link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css><link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet><link href=/css/main.css rel=stylesheet type=text/css><link href=/css/syntax.css rel=stylesheet type=text/css></head><body itemscope itemtype=http://schema.org/WebPage lang=zh-hans><div class="container one-collumn sidebar-position-left page-home"><div class=headband></div><header id=header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle role=button style=opacity:1;top:0><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div></div><div class=site-meta><div class=multi-lang-switch><i class="fa fa-fw fa-language" style=margin-right:5px></i>
+<a class=lang-link id=zh-cn href=#>学习</a></div><div class=custom-logo-site-title><a href=/ class=brand rel=start><span class=logo-line-before><i></i></span>
+<span class=site-title>路无止境！</span>
+<span class=logo-line-after><i></i></span></a></div><p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p></div><div class=site-nav-right><div class="toggle popup-trigger" style=opacity:1;top:0><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class=site-nav><ul id=menu class=menu><li class=menu-item><a href=/ rel=section><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class=menu-item><a href=/post rel=section><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class=menu-item><a href=/about.html rel=section><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于我</a></li><li class=menu-item><a href=/404.html rel=section><i class="menu-item-icon fa fa-fw fa-heartbeat"></i><br>公益404</a></li><li class="menu-item menu-item-search"><a href=javascript:; class=popup-trigger><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class=site-search><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class=search-icon><i class="fa fa-search"></i></span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span><div class=local-search-input-wrapper><input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off></div></div><div id=local-search-result></div></div></div></nav></div></header><main id=main class=main><div class=main-inner><div class=content-wrap><div id=content class=content><section id=posts class=posts-expand><article class="post post-type-normal" itemscope itemtype=http://schema.org/Article><header class=post-header><h1 class=post-title itemprop="name headline" style=font-weight:700><a class=post-title-link href=https://www.etaon.top/2022/09/26/kkinstallcluster.html itemprop=url>kk install k8s cluster</a></h1></header><div class=post-body itemprop=articleBody><h2 id=kk是什么>KK是什么？</h2><p>kk是<strong><strong>KubeKey的简称，也是其命令形式。</strong></strong>
+<a href=https://kubesphere.com.cn/docs/v3.3/installing-on-linux/introduction/kubekey/>KubeKey (kubesphere.com.cn)</a></p><p><a href=https://github.com/kubesphere/kubekey>KubeKey</a>（由 Go 语言开发）是一种全新的安装工具，替代了以前使用的基于 ansible 的安装程序。KubeKey 为您提供灵活的安装选择，您可以仅安装 Kubernetes，也可以同时安装 Kubernetes 和 KubeSphere。</p><p>KubeSphere 是 <a href=https://github.com/kubesphere>GitHub</a>上的一个开源项目，是成千上万名社区用户的聚集地。很多用户都在使用 KubeSphere 运行工作负载。对于在 Linux 上的安装，KubeSphere 既可以部署在云端，也可以部署在本地环境中，例如 AWS EC2、Azure VM 和裸机等。</p><p>KubeKey 的几种使用场景：</p><ul><li>仅安装 Kubernetes；</li><li>使用一个命令同时安装 Kubernetes 和 KubeSphere；</li><li>扩缩集群；</li><li>升级集群；</li><li>安装 Kubernetes 相关的插件（Chart 或 YAML）。</li></ul><p>我们利用其安装Kubernetes</p><h3 id=下载kubekey>下载KubeKey</h3><p>运行以下命令，以确保您从正确的区域下载 KubeKey。</p><p><code>export KKZONE=cn</code></p><p>运行以下命令来下载 KubeKey：</p><p><code>curl -sfL https://get-kk.kubesphere.io | VERSION=v2.2.2 sh -</code></p><p>KubeKey 的最新版本 (v2.2.2)，可以更改命令中的版本号来下载特定的版本</p><h3 id=kubekey-所有受支持的-kubernetes-版本>KubeKey 所有受支持的 Kubernetes 版本</h3><p>运行 <code>./kk version --show-supported-k8s</code>，查看能使用 KubeKey 安装的所有受支持的 Kubernetes 版本</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>root@cp4:~# ./kk version --show-supported-k8s
+</span></span><span style=display:flex><span>。。。
+</span></span><span style=display:flex><span>v1.21.2
+</span></span><span style=display:flex><span>v1.21.3
+</span></span><span style=display:flex><span>v1.21.4
+</span></span><span style=display:flex><span>v1.21.5
+</span></span><span style=display:flex><span>v1.21.6
+</span></span><span style=display:flex><span>v1.21.7
+</span></span><span style=display:flex><span>v1.21.8
+</span></span><span style=display:flex><span>v1.21.9
+</span></span><span style=display:flex><span>v1.21.10
+</span></span><span style=display:flex><span>v1.21.11
+</span></span><span style=display:flex><span>v1.21.12
+</span></span><span style=display:flex><span>v1.21.13
+</span></span><span style=display:flex><span>v1.22.0
+</span></span><span style=display:flex><span>v1.22.1
+</span></span><span style=display:flex><span>v1.22.2
+</span></span><span style=display:flex><span>v1.22.3
+</span></span><span style=display:flex><span>v1.22.4
+</span></span><span style=display:flex><span>v1.22.5
+</span></span><span style=display:flex><span>v1.22.6
+</span></span><span style=display:flex><span>v1.22.7
+</span></span><span style=display:flex><span>v1.22.8
+</span></span><span style=display:flex><span>v1.22.9
+</span></span><span style=display:flex><span>v1.22.10
+</span></span><span style=display:flex><span>v1.23.0
+</span></span><span style=display:flex><span>v1.23.1
+</span></span><span style=display:flex><span>v1.23.2
+</span></span><span style=display:flex><span>v1.23.3
+</span></span><span style=display:flex><span>v1.23.4
+</span></span><span style=display:flex><span>v1.23.5
+</span></span><span style=display:flex><span>v1.23.6
+</span></span><span style=display:flex><span>v1.23.7
+</span></span><span style=display:flex><span>v1.23.8
+</span></span><span style=display:flex><span>v1.24.0
+</span></span><span style=display:flex><span>v1.24.1
+</span></span></code></pre></div><p>可以看到，还不支持最新的1.25版本。</p><p>但是，若需使用 KubeKey 来安装 Kubernetes 和 KubeSphere 3.3.0，请参见下表以查看所有受支持的 Kubernetes 版本。</p><table><thead><tr><th>KubeSphere 版本</th><th>受支持的 Kubernetes 版本</th></tr></thead><tbody><tr><td>v3.3.0</td><td>v1.19.x、v1.20.x、v1.21.x、v1.22.x、v1.23.x（实验性支持）</td></tr></tbody></table><h3 id=准备linux-主机>准备<strong>Linux 主机</strong></h3><p><strong>系统要求</strong></p><table><thead><tr><th>系统</th><th>最低要求（每个节点）</th></tr></thead><tbody><tr><td>Ubuntu 16.04，18.04，20.04， 22.04</td><td>CPU：2 核，内存：4 G，硬盘：40 G</td></tr><tr><td>Debian Buster，Stretch</td><td>CPU：2 核，内存：4 G，硬盘：40 G</td></tr><tr><td>CentOS 7.x</td><td>CPU：2 核，内存：4 G，硬盘：40 G</td></tr><tr><td>Red Hat Enterprise Linux 7</td><td>CPU：2 核，内存：4 G，硬盘：40 G</td></tr><tr><td>SUSE Linux Enterprise Server 15 /openSUSE Leap 15.2</td><td>CPU：2 核，内存：4 G，硬盘：40 G</td></tr></tbody></table><p>备注</p><ul><li><code>/var/lib/docker</code> 路径主要用于存储容器数据，在使用和操作过程中数据量会逐渐增加。因此，在生产环境中，建议为 <code>/var/lib/docker</code> 单独挂载一个硬盘。</li><li>CPU 必须为 x86_64，暂时不支持 Arm 架构的 CPU</li></ul><h3 id=节点要求><strong>节点要求</strong></h3><ul><li>所有节点必须都能通过 <code>SSH</code> 访问。</li><li>所有节点时间同步。</li><li>所有节点都应使用 <code>sudo</code>/<code>curl</code>/<code>openssl</code>/<code>tar</code>。</li></ul><h3 id=容器运行时><strong>容器运行时</strong></h3><p>KubeKey 会默认安装最新版本的 Docker。或者，也可以在创建集群前手动安装 Docker 或其他容器运行时。</p><table><thead><tr><th>支持的容器运行时</th><th>版本</th></tr></thead><tbody><tr><td>Docker</td><td>19.3.8+</td></tr><tr><td>containerd</td><td>最新版</td></tr><tr><td>CRI-O（试验版，未经充分测试）</td><td>最新版</td></tr><tr><td>iSula（试验版，未经充分测试）</td><td>最新版</td></tr></tbody></table><h3 id=依赖项要求><strong>依赖项要求</strong></h3><p>KubeKey 可以一同安装 Kubernetes 和 KubeSphere。根据要安装的 Kubernetes 版本，需要安装的依赖项可能会不同。您可以参考下表，查看是否需要提前在节点上安装相关依赖项。</p><table><thead><tr><th>依赖项</th><th>Kubernetes 版本 ≥ 1.18</th><th>Kubernetes 版本 &lt; 1.18</th></tr></thead><tbody><tr><td>socat</td><td>必须</td><td>可选，但建议安装</td></tr><tr><td>conntrack</td><td>必须</td><td>可选，但建议安装</td></tr><tr><td>ebtables</td><td>可选，但建议安装</td><td>可选，但建议安装</td></tr><tr><td>ipset</td><td>可选，但建议安装</td><td>可选，但建议安装</td></tr></tbody></table><h3 id=网络和-dns-要求><strong>网络和 DNS 要求</strong></h3><ul><li>请确保 <code>/etc/resolv.conf</code> 中的 DNS 地址可用，否则，可能会导致集群中的 DNS 出现问题。</li><li>如果您的网络配置使用防火墙规则或安全组，请务必确保基础设施组件可以通过特定端口相互通信。建议您关闭防火墙。有关更多信息，请参见<a href=https://kubesphere.com.cn/docs/v3.3/installing-on-linux/introduction/port-firewall/>端口要求</a>。</li><li>支持的 CNI 插件：Calico 和 Flannel。</li></ul><h3 id=创建cluster配置文件并修改>创建Cluster配置文件并修改</h3><p><code>./kk create config -f config-sample.yaml</code></p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span>root@cp4:/home/zyi#./kk create config -f config-sample.yaml<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span>root@cp4:/home/zyi# vim config-sample.yaml <span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>apiVersion</span>:<span style=color:#bbb> </span>kubekey.kubesphere.io/v1alpha2<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>kind</span>:<span style=color:#bbb> </span>Cluster<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>metadata</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>name</span>:<span style=color:#bbb> </span>test-cluster<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:green;font-weight:700>spec</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>hosts</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span>- {<span style=color:green;font-weight:700>name: cp4, address: 172.16.10.10, internalAddress: 172.16.10.10, password</span>:<span style=color:#bbb> </span><span style=color:#b44>&#34;cisco123&#34;</span>}<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span>- {<span style=color:green;font-weight:700>name: worker41, address: 172.16.10.11, internalAddress: 172.16.10.11, password</span>:<span style=color:#bbb> </span><span style=color:#b44>&#34;cisco123&#34;</span>}<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>roleGroups</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>etcd</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span>- cp4<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>control-plane</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span>- cp4<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>worker</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span>- cp4<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span>- worker41<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>controlPlaneEndpoint</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:#080;font-style:italic>## Internal loadbalancer for apiservers </span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:#080;font-style:italic># internalLoadbalancer: haproxy</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>domain</span>:<span style=color:#bbb> </span>lb.kubesphere.local<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>address</span>:<span style=color:#bbb> </span><span style=color:#b44>&#34;&#34;</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>port</span>:<span style=color:#bbb> </span><span style=color:#666>6443</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>kubernetes</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>version</span>:<span style=color:#bbb> </span>v1.24.1<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>clusterName</span>:<span style=color:#bbb> </span>cluster24.smartx.lab<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>autoRenewCerts</span>:<span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>true</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>containerManager</span>:<span style=color:#bbb> </span>containerd<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>etcd</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>type</span>:<span style=color:#bbb> </span>kubekey<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>network</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>plugin</span>:<span style=color:#bbb> </span>calico<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>kubePodsCIDR</span>:<span style=color:#bbb> </span><span style=color:#666>10.244.64.0</span>/18<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>kubeServiceCIDR</span>:<span style=color:#bbb> </span><span style=color:#666>10.244.0.0</span>/18<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:#080;font-style:italic>## multus support. https://github.com/k8snetworkplumbingwg/multus-cni</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>multusCNI</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>      </span><span style=color:green;font-weight:700>enabled</span>:<span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>false</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>registry</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>privateRegistry</span>:<span style=color:#bbb> </span><span style=color:#b44>&#34;&#34;</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>namespaceOverride</span>:<span style=color:#bbb> </span><span style=color:#b44>&#34;&#34;</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>registryMirrors</span>:<span style=color:#bbb> </span>[]<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>insecureRegistries</span>:<span style=color:#bbb> </span>[]<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>addons</span>:<span style=color:#bbb> </span>[]<span style=color:#bbb>
+</span></span></span></code></pre></div><p>以上配置使用:</p><ul><li>两节点cp4/worker41;</li><li>Runtime-Containerd</li><li>Kubernetes 1.24.1</li><li>CNI-Calico</li></ul><h3 id=创建集群>创建集群</h3><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>
+</span></span><span style=display:flex><span>root@cp4:/home/zyi# ./kk create config -f config-sample.yaml 
+</span></span><span style=display:flex><span>config-sample.yaml already exists. Are you sure you want to overwrite this config file? <span style=color:#666>[</span>yes/no<span style=color:#666>]</span>: no
+</span></span><span style=display:flex><span>root@cp4:/home/zyi# ./kk create cluster -f config-sample.yaml 
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span> _   __      _          _   __           
+</span></span><span style=display:flex><span>| | / /     | |        | | / /           
+</span></span><span style=display:flex><span>| |/ / _   _| |__   ___| |/ /  ___ _   _ 
+</span></span><span style=display:flex><span>|    <span style=color:#b62;font-weight:700>\|</span> | | | <span style=color:#b44>&#39;_ \ / _ \    \ / _ \ | | |
+</span></span></span><span style=display:flex><span><span style=color:#b44>| |\  \ |_| | |_) |  __/ |\  \  __/ |_| |
+</span></span></span><span style=display:flex><span><span style=color:#b44>\_| \_/\__,_|_.__/ \___\_| \_/\___|\__, |
+</span></span></span><span style=display:flex><span><span style=color:#b44>                                    __/ |
+</span></span></span><span style=display:flex><span><span style=color:#b44>                                   |___/
+</span></span></span><span style=display:flex><span><span style=color:#b44>
+</span></span></span><span style=display:flex><span><span style=color:#b44>12:04:12 UTC [GreetingsModule] Greetings
+</span></span></span><span style=display:flex><span><span style=color:#b44>12:04:13 UTC message: [worker41]
+</span></span></span><span style=display:flex><span><span style=color:#b44>Greetings, KubeKey!
+</span></span></span><span style=display:flex><span><span style=color:#b44>12:04:13 UTC message: [cp4]
+</span></span></span><span style=display:flex><span><span style=color:#b44>Greetings, KubeKey!
+</span></span></span><span style=display:flex><span><span style=color:#b44>12:04:13 UTC success: [worker41]
+</span></span></span><span style=display:flex><span><span style=color:#b44>12:04:13 UTC success: [cp4]
+</span></span></span><span style=display:flex><span><span style=color:#b44>12:04:13 UTC [NodePreCheckModule] A pre-check on nodes
+</span></span></span><span style=display:flex><span><span style=color:#b44>12:04:13 UTC success: [cp4]
+</span></span></span><span style=display:flex><span><span style=color:#b44>12:04:13 UTC success: [worker41]
+</span></span></span><span style=display:flex><span><span style=color:#b44>12:04:13 UTC [ConfirmModule] Display confirmation form
+</span></span></span><span style=display:flex><span><span style=color:#b44>+----------+------+------+---------+----------+-------+-------+---------+-----------+--------+--------+------------+------------+-------------+------------------+--------------+
+</span></span></span><span style=display:flex><span><span style=color:#b44>| name     | sudo | curl | openssl | ebtables | socat | ipset | ipvsadm | conntrack | chrony | docker | containerd | nfs client | ceph client | glusterfs client | time         |
+</span></span></span><span style=display:flex><span><span style=color:#b44>+----------+------+------+---------+----------+-------+-------+---------+-----------+--------+--------+------------+------------+-------------+------------------+--------------+
+</span></span></span><span style=display:flex><span><span style=color:#b44>| cp4      | y    | y    | y       | y        | y     | y     |         | y         |        |        |            |            |             |                  | UTC 12:04:13 |
+</span></span></span><span style=display:flex><span><span style=color:#b44>| worker41 | y    | y    | y       | y        | y     | y     |         | y         |        |        |            |            |             |                  | UTC 12:04:13 |
+</span></span></span><span style=display:flex><span><span style=color:#b44>+----------+------+------+---------+----------+-------+-------+---------+-----------+--------+--------+------------+------------+-------------+------------------+--------------+
+</span></span></span><span style=display:flex><span><span style=color:#b44>
+</span></span></span><span style=display:flex><span><span style=color:#b44>This is a simple check of your environment.
+</span></span></span><span style=display:flex><span><span style=color:#b44>Before installation, ensure that your machines meet all requirements specified at
+</span></span></span><span style=display:flex><span><span style=color:#b44>https://github.com/kubesphere/kubekey#requirements-and-recommendations
+</span></span></span><span style=display:flex><span><span style=color:#b44>
+</span></span></span><span style=display:flex><span><span style=color:#b44>Continue this installation? [yes/no]: yes
+</span></span></span><span style=display:flex><span><span style=color:#b44>12:04:15 UTC success: [LocalHost]
+</span></span></span><span style=display:flex><span><span style=color:#b44>12:04:15 UTC [NodeBinariesModule] Download installation binaries
+</span></span></span><span style=display:flex><span><span style=color:#b44>12:04:15 UTC message: [localhost]
+</span></span></span><span style=display:flex><span><span style=color:#b44>downloading amd64 kubeadm v1.24.1 ...
+</span></span></span><span style=display:flex><span><span style=color:#b44>  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+</span></span></span><span style=display:flex><span><span style=color:#b44>                                 Dload  Upload   Total   Spent    Left  Speed
+</span></span></span><span style=display:flex><span><span style=color:#b44>100 42.3M  100 42.3M    0     0  16.1M      0  0:00:02  0:00:02 --:--:-- 16.0M
+</span></span></span><span style=display:flex><span><span style=color:#b44>12:04:18 UTC message: [localhost]
+</span></span></span><span style=display:flex><span><span style=color:#b44>downloading amd64 kubelet v1.24.1 ...
+</span></span></span><span style=display:flex><span><span style=color:#b44>  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+</span></span></span><span style=display:flex><span><span style=color:#b44>                                 Dload  Upload   Total   Spent    Left  Speed
+</span></span></span><span style=display:flex><span><span style=color:#b44>100  110M  100  110M    0     0  27.3M      0  0:00:04  0:00:04 --:--:-- 27.3M
+</span></span></span><span style=display:flex><span><span style=color:#b44>12:04:23 UTC message: [localhost]
+</span></span></span><span style=display:flex><span><span style=color:#b44>downloading amd64 kubectl v1.24.1 ...
+</span></span></span><span style=display:flex><span><span style=color:#b44>  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+</span></span></span><span style=display:flex><span><span style=color:#b44>                                 Dload  Upload   Total   Spent    Left  Speed
+</span></span></span><span style=display:flex><span><span style=color:#b44>100 43.5M  100 43.5M    0     0  17.0M      0  0:00:02  0:00:02 --:--:-- 17.0M
+</span></span></span><span style=display:flex><span><span style=color:#b44>12:04:26 UTC message: [localhost]
+</span></span></span><span style=display:flex><span><span style=color:#b44>downloading amd64 helm v3.6.3 ...
+</span></span></span><span style=display:flex><span><span style=color:#b44>  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+</span></span></span><span style=display:flex><span><span style=color:#b44>                                 Dload  Upload   Total   Spent    Left  Speed
+</span></span></span><span style=display:flex><span><span style=color:#b44>  3 13.0M    3  496k    0     0    752      0  5:03:40  0:11:14  4:52:26     0
+</span></span></span><span style=display:flex><span><span style=color:#b44>curl: (56) OpenSSL SSL_read: Connection timed out, errno 110
+</span></span></span><span style=display:flex><span><span style=color:#b44>12:15:41 UTC [WARN] Having a problem with accessing https://storage.googleapis.com? You can try again after setting environment &#39;</span><span style=color:#a2f>export</span> <span style=color:#b8860b>KKZONE</span><span style=color:#666>=</span>cn<span style=color:#b44>&#39;
+</span></span></span><span style=display:flex><span><span style=color:#b44>12:15:41 UTC message: [LocalHost]
+</span></span></span><span style=display:flex><span><span style=color:#b44>Failed to download helm binary: curl -L -o /home/zyi/kubekey/helm/v3.6.3/amd64/helm-v3.6.3-linux-amd64.tar.gz https://get.helm.sh/helm-v3.6.3-linux-amd64.tar.gz &amp;&amp; cd /home/zyi/kubekey/helm/v3.6.3/amd64 &amp;&amp; tar -zxf helm-v3.6.3-linux-amd64.tar.gz &amp;&amp; mv linux-amd64/helm . &amp;&amp; rm -rf *linux-amd64* error: exit status 56 
+</span></span></span><span style=display:flex><span><span style=color:#b44>12:15:41 UTC failed: [LocalHost]
+</span></span></span><span style=display:flex><span><span style=color:#b44>**error: Pipeline[CreateClusterPipeline] execute failed: Module[NodeBinariesModule] exec failed: 
+</span></span></span><span style=display:flex><span><span style=color:#b44>failed: [LocalHost] [DownloadBinaries] exec failed after 1 retires: Failed to download helm binary: curl -L -o /home/zyi/kubekey/helm/v3.6.3/amd64/helm-v3.6.3-linux-amd64.tar.gz https://get.helm.sh/helm-v3.6.3-linux-amd64.tar.gz &amp;&amp; cd /home/zyi/kubekey/helm/v3.6.3/amd64 &amp;&amp; tar -zxf helm-v3.6.3-linux-amd64.tar.gz &amp;&amp; mv linux-amd64/helm . &amp;&amp; rm -rf *linux-amd64* error: exit status 56** 
+</span></span></span><span style=display:flex><span><span style=color:#b44>root@cp4:/home/zyi# **export KKZONE=cn**
+</span></span></span><span style=display:flex><span><span style=color:#b44>root@cp4:/home/zyi# ./kk create cluster -f config-sample.yaml 
+</span></span></span><span style=display:flex><span><span style=color:#b44>
+</span></span></span><span style=display:flex><span><span style=color:#b44> _   __      _          _   __           
+</span></span></span><span style=display:flex><span><span style=color:#b44>| | / /     | |        | | / /           
+</span></span></span><span style=display:flex><span><span style=color:#b44>| |/ / _   _| |__   ___| |/ /  ___ _   _ 
+</span></span></span><span style=display:flex><span><span style=color:#b44>|    \| | | | &#39;</span>_ <span style=color:#b62;font-weight:700>\ </span>/ _ <span style=color:#b62;font-weight:700>\ </span>   <span style=color:#b62;font-weight:700>\ </span>/ _ <span style=color:#b62;font-weight:700>\ </span>| | |
+</span></span><span style=display:flex><span>| |<span style=color:#b62;font-weight:700>\ </span> <span style=color:#b62;font-weight:700>\ </span>|_| | |_<span style=color:#666>)</span> |  __/ |<span style=color:#b62;font-weight:700>\ </span> <span style=color:#b62;font-weight:700>\ </span> __/ |_| |
+</span></span><span style=display:flex><span><span style=color:#b62;font-weight:700>\_</span>| <span style=color:#b62;font-weight:700>\_</span>/<span style=color:#b62;font-weight:700>\_</span>_,_|_.__/ <span style=color:#b62;font-weight:700>\_</span>__<span style=color:#b62;font-weight:700>\_</span>| <span style=color:#b62;font-weight:700>\_</span>/<span style=color:#b62;font-weight:700>\_</span>__|<span style=color:#b62;font-weight:700>\_</span>_, |
+</span></span><span style=display:flex><span>                                    __/ |
+</span></span><span style=display:flex><span>                                   |___/
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>12:16:04 UTC <span style=color:#666>[</span>GreetingsModule<span style=color:#666>]</span> Greetings
+</span></span><span style=display:flex><span>12:16:05 UTC message: <span style=color:#666>[</span>worker41<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>Greetings, KubeKey!
+</span></span><span style=display:flex><span>12:16:05 UTC message: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>Greetings, KubeKey!
+</span></span><span style=display:flex><span>12:16:05 UTC success: <span style=color:#666>[</span>worker41<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:16:05 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:16:05 UTC <span style=color:#666>[</span>NodePreCheckModule<span style=color:#666>]</span> A pre-check on nodes
+</span></span><span style=display:flex><span>12:16:05 UTC success: <span style=color:#666>[</span>worker41<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:16:05 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:16:05 UTC <span style=color:#666>[</span>ConfirmModule<span style=color:#666>]</span> Display confirmation form
+</span></span><span style=display:flex><span>+----------+------+------+---------+----------+-------+-------+---------+-----------+--------+--------+------------+------------+-------------+------------------+--------------+
+</span></span><span style=display:flex><span>| name     | sudo | curl | openssl | ebtables | socat | ipset | ipvsadm | conntrack | chrony | docker | containerd | nfs client | ceph client | glusterfs client | <span style=color:#a2f>time</span>         |
+</span></span><span style=display:flex><span>+----------+------+------+---------+----------+-------+-------+---------+-----------+--------+--------+------------+------------+-------------+------------------+--------------+
+</span></span><span style=display:flex><span>| cp4      | y    | y    | y       | y        | y     | y     |         | y         |        |        |            |            |             |                  | UTC 12:16:05 |
+</span></span><span style=display:flex><span>| worker41 | y    | y    | y       | y        | y     | y     |         | y         |        |        |            |            |             |                  | UTC 12:16:05 |
+</span></span><span style=display:flex><span>+----------+------+------+---------+----------+-------+-------+---------+-----------+--------+--------+------------+------------+-------------+------------------+--------------+
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>This is a simple check of your environment.
+</span></span><span style=display:flex><span>Before installation, ensure that your machines meet all requirements specified at
+</span></span><span style=display:flex><span>https://github.com/kubesphere/kubekey#requirements-and-recommendations
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Continue this installation? <span style=color:#666>[</span>yes/no<span style=color:#666>]</span>: yes
+</span></span><span style=display:flex><span>12:16:08 UTC success: <span style=color:#666>[</span>LocalHost<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:16:08 UTC <span style=color:#666>[</span>NodeBinariesModule<span style=color:#666>]</span> Download installation binaries
+</span></span><span style=display:flex><span>12:16:08 UTC message: <span style=color:#666>[</span>localhost<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>downloading amd64 kubeadm v1.24.1 ...
+</span></span><span style=display:flex><span>12:16:08 UTC message: <span style=color:#666>[</span>localhost<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>kubeadm is existed
+</span></span><span style=display:flex><span>12:16:08 UTC message: <span style=color:#666>[</span>localhost<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>downloading amd64 kubelet v1.24.1 ...
+</span></span><span style=display:flex><span>12:16:09 UTC message: <span style=color:#666>[</span>localhost<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>kubelet is existed
+</span></span><span style=display:flex><span>12:16:09 UTC message: <span style=color:#666>[</span>localhost<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>downloading amd64 kubectl v1.24.1 ...
+</span></span><span style=display:flex><span>12:16:09 UTC message: <span style=color:#666>[</span>localhost<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>kubectl is existed
+</span></span><span style=display:flex><span>12:16:09 UTC message: <span style=color:#666>[</span>localhost<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>downloading amd64 helm v3.6.3 ...
+</span></span><span style=display:flex><span>  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+</span></span><span style=display:flex><span>                                 Dload  Upload   Total   Spent    Left  Speed
+</span></span><span style=display:flex><span><span style=color:#666>100</span> 43.0M  <span style=color:#666>100</span> 43.0M    <span style=color:#666>0</span>     <span style=color:#666>0</span>  1018k      <span style=color:#666>0</span>  0:00:43  0:00:43 --:--:-- 1024k
+</span></span><span style=display:flex><span>12:16:52 UTC message: <span style=color:#666>[</span>localhost<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>downloading amd64 kubecni v0.9.1 ...
+</span></span><span style=display:flex><span>  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+</span></span><span style=display:flex><span>                                 Dload  Upload   Total   Spent    Left  Speed
+</span></span><span style=display:flex><span><span style=color:#666>100</span> 37.9M  <span style=color:#666>100</span> 37.9M    <span style=color:#666>0</span>     <span style=color:#666>0</span>  1021k      <span style=color:#666>0</span>  0:00:38  0:00:38 --:--:-- 1063k
+</span></span><span style=display:flex><span>12:17:31 UTC message: <span style=color:#666>[</span>localhost<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>downloading amd64 crictl v1.24.0 ...
+</span></span><span style=display:flex><span>  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+</span></span><span style=display:flex><span>                                 Dload  Upload   Total   Spent    Left  Speed
+</span></span><span style=display:flex><span><span style=color:#666>100</span> 13.8M  <span style=color:#666>100</span> 13.8M    <span style=color:#666>0</span>     <span style=color:#666>0</span>  1019k      <span style=color:#666>0</span>  0:00:13  0:00:13 --:--:-- 1059k
+</span></span><span style=display:flex><span>12:17:45 UTC message: <span style=color:#666>[</span>localhost<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>downloading amd64 etcd v3.4.13 ...
+</span></span><span style=display:flex><span>  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+</span></span><span style=display:flex><span>                                 Dload  Upload   Total   Spent    Left  Speed
+</span></span><span style=display:flex><span><span style=color:#666>100</span> 16.5M  <span style=color:#666>100</span> 16.5M    <span style=color:#666>0</span>     <span style=color:#666>0</span>  1019k      <span style=color:#666>0</span>  0:00:16  0:00:16 --:--:-- 1051k
+</span></span><span style=display:flex><span>12:18:01 UTC message: <span style=color:#666>[</span>localhost<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>downloading amd64 containerd 1.6.4 ...
+</span></span><span style=display:flex><span>  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+</span></span><span style=display:flex><span>                                 Dload  Upload   Total   Spent    Left  Speed
+</span></span><span style=display:flex><span><span style=color:#666>100</span> 42.3M  <span style=color:#666>100</span> 42.3M    <span style=color:#666>0</span>     <span style=color:#666>0</span>  1019k      <span style=color:#666>0</span>  0:00:42  0:00:42 --:--:-- 1087k
+</span></span><span style=display:flex><span>12:18:44 UTC message: <span style=color:#666>[</span>localhost<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>downloading amd64 runc v1.1.1 ...
+</span></span><span style=display:flex><span>  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+</span></span><span style=display:flex><span>                                 Dload  Upload   Total   Spent    Left  Speed
+</span></span><span style=display:flex><span><span style=color:#666>100</span> 9194k  <span style=color:#666>100</span> 9194k    <span style=color:#666>0</span>     <span style=color:#666>0</span>  1009k      <span style=color:#666>0</span>  0:00:09  0:00:09 --:--:-- 1076k
+</span></span><span style=display:flex><span>12:18:53 UTC success: <span style=color:#666>[</span>LocalHost<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:18:53 UTC <span style=color:#666>[</span>ConfigureOSModule<span style=color:#666>]</span> Prepare to init OS
+</span></span><span style=display:flex><span>12:18:54 UTC success: <span style=color:#666>[</span>worker41<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:18:54 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:18:54 UTC <span style=color:#666>[</span>ConfigureOSModule<span style=color:#666>]</span> Generate init os script
+</span></span><span style=display:flex><span>12:18:54 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:18:54 UTC success: <span style=color:#666>[</span>worker41<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:18:54 UTC <span style=color:#666>[</span>ConfigureOSModule<span style=color:#666>]</span> Exec init os script
+</span></span><span style=display:flex><span>12:18:55 UTC stdout: <span style=color:#666>[</span>worker41<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>net.ipv4.ip_forward <span style=color:#666>=</span> <span style=color:#666>1</span>
+</span></span><span style=display:flex><span>net.bridge.bridge-nf-call-arptables <span style=color:#666>=</span> <span style=color:#666>1</span>
+</span></span><span style=display:flex><span>net.bridge.bridge-nf-call-ip6tables <span style=color:#666>=</span> <span style=color:#666>1</span>
+</span></span><span style=display:flex><span>net.bridge.bridge-nf-call-iptables <span style=color:#666>=</span> <span style=color:#666>1</span>
+</span></span><span style=display:flex><span>net.ipv4.ip_local_reserved_ports <span style=color:#666>=</span> 30000-32767
+</span></span><span style=display:flex><span>vm.max_map_count <span style=color:#666>=</span> <span style=color:#666>262144</span>
+</span></span><span style=display:flex><span>vm.swappiness <span style=color:#666>=</span> <span style=color:#666>1</span>
+</span></span><span style=display:flex><span>fs.inotify.max_user_instances <span style=color:#666>=</span> <span style=color:#666>524288</span>
+</span></span><span style=display:flex><span>kernel.pid_max <span style=color:#666>=</span> <span style=color:#666>65535</span>
+</span></span><span style=display:flex><span>12:18:55 UTC stdout: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>net.ipv4.ip_forward <span style=color:#666>=</span> <span style=color:#666>1</span>
+</span></span><span style=display:flex><span>net.bridge.bridge-nf-call-arptables <span style=color:#666>=</span> <span style=color:#666>1</span>
+</span></span><span style=display:flex><span>net.bridge.bridge-nf-call-ip6tables <span style=color:#666>=</span> <span style=color:#666>1</span>
+</span></span><span style=display:flex><span>net.bridge.bridge-nf-call-iptables <span style=color:#666>=</span> <span style=color:#666>1</span>
+</span></span><span style=display:flex><span>net.ipv4.ip_local_reserved_ports <span style=color:#666>=</span> 30000-32767
+</span></span><span style=display:flex><span>vm.max_map_count <span style=color:#666>=</span> <span style=color:#666>262144</span>
+</span></span><span style=display:flex><span>vm.swappiness <span style=color:#666>=</span> <span style=color:#666>1</span>
+</span></span><span style=display:flex><span>fs.inotify.max_user_instances <span style=color:#666>=</span> <span style=color:#666>524288</span>
+</span></span><span style=display:flex><span>kernel.pid_max <span style=color:#666>=</span> <span style=color:#666>65535</span>
+</span></span><span style=display:flex><span>12:18:55 UTC success: <span style=color:#666>[</span>worker41<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:18:55 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:18:55 UTC <span style=color:#666>[</span>ConfigureOSModule<span style=color:#666>]</span> configure the ntp server <span style=color:#a2f;font-weight:700>for</span> each node
+</span></span><span style=display:flex><span>12:18:55 UTC skipped: <span style=color:#666>[</span>worker41<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:18:55 UTC skipped: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:18:55 UTC <span style=color:#666>[</span>KubernetesStatusModule<span style=color:#666>]</span> Get kubernetes cluster status
+</span></span><span style=display:flex><span>12:18:55 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:18:55 UTC <span style=color:#666>[</span>InstallContainerModule<span style=color:#666>]</span> Sync containerd binaries
+</span></span><span style=display:flex><span>12:18:57 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:18:57 UTC success: <span style=color:#666>[</span>worker41<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:18:57 UTC <span style=color:#666>[</span>InstallContainerModule<span style=color:#666>]</span> Sync crictl binaries
+</span></span><span style=display:flex><span>12:18:58 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:18:58 UTC success: <span style=color:#666>[</span>worker41<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:18:58 UTC <span style=color:#666>[</span>InstallContainerModule<span style=color:#666>]</span> Generate containerd service
+</span></span><span style=display:flex><span>12:18:58 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:18:58 UTC success: <span style=color:#666>[</span>worker41<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:18:58 UTC <span style=color:#666>[</span>InstallContainerModule<span style=color:#666>]</span> Generate containerd config
+</span></span><span style=display:flex><span>12:18:58 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:18:58 UTC success: <span style=color:#666>[</span>worker41<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:18:58 UTC <span style=color:#666>[</span>InstallContainerModule<span style=color:#666>]</span> Generate crictl config
+</span></span><span style=display:flex><span>12:18:58 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:18:58 UTC success: <span style=color:#666>[</span>worker41<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:18:58 UTC <span style=color:#666>[</span>InstallContainerModule<span style=color:#666>]</span> Enable containerd
+</span></span><span style=display:flex><span>12:18:59 UTC success: <span style=color:#666>[</span>worker41<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:18:59 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:18:59 UTC <span style=color:#666>[</span>PullModule<span style=color:#666>]</span> Start to pull images on all nodes
+</span></span><span style=display:flex><span>12:18:59 UTC message: <span style=color:#666>[</span>worker41<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>downloading image: registry.cn-beijing.aliyuncs.com/kubesphereio/pause:3.7
+</span></span><span style=display:flex><span>12:18:59 UTC message: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>downloading image: registry.cn-beijing.aliyuncs.com/kubesphereio/pause:3.7
+</span></span><span style=display:flex><span>12:19:01 UTC message: <span style=color:#666>[</span>worker41<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>downloading image: registry.cn-beijing.aliyuncs.com/kubesphereio/kube-proxy:v1.24.1
+</span></span><span style=display:flex><span>12:19:01 UTC message: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>downloading image: registry.cn-beijing.aliyuncs.com/kubesphereio/kube-apiserver:v1.24.1
+</span></span><span style=display:flex><span>12:19:06 UTC message: <span style=color:#666>[</span>worker41<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>downloading image: registry.cn-beijing.aliyuncs.com/kubesphereio/coredns:1.8.6
+</span></span><span style=display:flex><span>12:19:06 UTC message: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>downloading image: registry.cn-beijing.aliyuncs.com/kubesphereio/kube-controller-manager:v1.24.1
+</span></span><span style=display:flex><span>12:19:08 UTC message: <span style=color:#666>[</span>worker41<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>downloading image: registry.cn-beijing.aliyuncs.com/kubesphereio/k8s-dns-node-cache:1.15.12
+</span></span><span style=display:flex><span>12:19:10 UTC message: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>downloading image: registry.cn-beijing.aliyuncs.com/kubesphereio/kube-scheduler:v1.24.1
+</span></span><span style=display:flex><span>12:19:12 UTC message: <span style=color:#666>[</span>worker41<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>downloading image: registry.cn-beijing.aliyuncs.com/kubesphereio/kube-controllers:v3.23.2
+</span></span><span style=display:flex><span>12:19:14 UTC message: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>downloading image: registry.cn-beijing.aliyuncs.com/kubesphereio/kube-proxy:v1.24.1
+</span></span><span style=display:flex><span>12:19:17 UTC message: <span style=color:#666>[</span>worker41<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>downloading image: registry.cn-beijing.aliyuncs.com/kubesphereio/cni:v3.23.2
+</span></span><span style=display:flex><span>12:19:19 UTC message: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>downloading image: registry.cn-beijing.aliyuncs.com/kubesphereio/coredns:1.8.6
+</span></span><span style=display:flex><span>12:19:22 UTC message: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>downloading image: registry.cn-beijing.aliyuncs.com/kubesphereio/k8s-dns-node-cache:1.15.12
+</span></span><span style=display:flex><span>12:19:26 UTC message: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>downloading image: registry.cn-beijing.aliyuncs.com/kubesphereio/kube-controllers:v3.23.2
+</span></span><span style=display:flex><span>12:19:27 UTC message: <span style=color:#666>[</span>worker41<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>downloading image: registry.cn-beijing.aliyuncs.com/kubesphereio/node:v3.23.2
+</span></span><span style=display:flex><span>12:19:31 UTC message: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>downloading image: registry.cn-beijing.aliyuncs.com/kubesphereio/cni:v3.23.2
+</span></span><span style=display:flex><span>12:19:36 UTC message: <span style=color:#666>[</span>worker41<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>downloading image: registry.cn-beijing.aliyuncs.com/kubesphereio/pod2daemon-flexvol:v3.23.2
+</span></span><span style=display:flex><span>12:19:40 UTC message: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>downloading image: registry.cn-beijing.aliyuncs.com/kubesphereio/node:v3.23.2
+</span></span><span style=display:flex><span>12:19:50 UTC message: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>downloading image: registry.cn-beijing.aliyuncs.com/kubesphereio/pod2daemon-flexvol:v3.23.2
+</span></span><span style=display:flex><span>12:19:52 UTC success: <span style=color:#666>[</span>worker41<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:19:52 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:19:52 UTC <span style=color:#666>[</span>ETCDPreCheckModule<span style=color:#666>]</span> Get etcd status
+</span></span><span style=display:flex><span>12:19:52 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:19:52 UTC <span style=color:#666>[</span>CertsModule<span style=color:#666>]</span> Fetch etcd certs
+</span></span><span style=display:flex><span>12:19:52 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:19:52 UTC <span style=color:#666>[</span>CertsModule<span style=color:#666>]</span> Generate etcd Certs
+</span></span><span style=display:flex><span><span style=color:#666>[</span>certs<span style=color:#666>]</span> Generating <span style=color:#b44>&#34;ca&#34;</span> certificate and key
+</span></span><span style=display:flex><span><span style=color:#666>[</span>certs<span style=color:#666>]</span> admin-cp4 serving cert is signed <span style=color:#a2f;font-weight:700>for</span> DNS names <span style=color:#666>[</span>cp4 etcd etcd.kube-system etcd.kube-system.svc etcd.kube-system.svc.cluster.local lb.kubesphere.local localhost worker41<span style=color:#666>]</span> and IPs <span style=color:#666>[</span>127.0.0.1 ::1 172.16.10.10 172.16.10.11<span style=color:#666>]</span>
+</span></span><span style=display:flex><span><span style=color:#666>[</span>certs<span style=color:#666>]</span> member-cp4 serving cert is signed <span style=color:#a2f;font-weight:700>for</span> DNS names <span style=color:#666>[</span>cp4 etcd etcd.kube-system etcd.kube-system.svc etcd.kube-system.svc.cluster.local lb.kubesphere.local localhost worker41<span style=color:#666>]</span> and IPs <span style=color:#666>[</span>127.0.0.1 ::1 172.16.10.10 172.16.10.11<span style=color:#666>]</span>
+</span></span><span style=display:flex><span><span style=color:#666>[</span>certs<span style=color:#666>]</span> node-cp4 serving cert is signed <span style=color:#a2f;font-weight:700>for</span> DNS names <span style=color:#666>[</span>cp4 etcd etcd.kube-system etcd.kube-system.svc etcd.kube-system.svc.cluster.local lb.kubesphere.local localhost worker41<span style=color:#666>]</span> and IPs <span style=color:#666>[</span>127.0.0.1 ::1 172.16.10.10 172.16.10.11<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:19:53 UTC success: <span style=color:#666>[</span>LocalHost<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:19:53 UTC <span style=color:#666>[</span>CertsModule<span style=color:#666>]</span> Synchronize certs file
+</span></span><span style=display:flex><span>12:19:53 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:19:53 UTC <span style=color:#666>[</span>CertsModule<span style=color:#666>]</span> Synchronize certs file to master
+</span></span><span style=display:flex><span>12:19:53 UTC skipped: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:19:53 UTC <span style=color:#666>[</span>InstallETCDBinaryModule<span style=color:#666>]</span> Install etcd using binary
+</span></span><span style=display:flex><span>12:19:54 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:19:54 UTC <span style=color:#666>[</span>InstallETCDBinaryModule<span style=color:#666>]</span> Generate etcd service
+</span></span><span style=display:flex><span>12:19:54 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:19:54 UTC <span style=color:#666>[</span>InstallETCDBinaryModule<span style=color:#666>]</span> Generate access address
+</span></span><span style=display:flex><span>12:19:54 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:19:54 UTC <span style=color:#666>[</span>ETCDConfigureModule<span style=color:#666>]</span> Health check on exist etcd
+</span></span><span style=display:flex><span>12:19:54 UTC skipped: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:19:54 UTC <span style=color:#666>[</span>ETCDConfigureModule<span style=color:#666>]</span> Generate etcd.env config on new etcd
+</span></span><span style=display:flex><span>12:19:54 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:19:54 UTC <span style=color:#666>[</span>ETCDConfigureModule<span style=color:#666>]</span> Refresh etcd.env config on all etcd
+</span></span><span style=display:flex><span>12:19:54 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:19:54 UTC <span style=color:#666>[</span>ETCDConfigureModule<span style=color:#666>]</span> Restart etcd
+</span></span><span style=display:flex><span>12:19:57 UTC stdout: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>Created symlink /etc/systemd/system/multi-user.target.wants/etcd.service → /etc/systemd/system/etcd.service.
+</span></span><span style=display:flex><span>12:19:57 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:19:57 UTC <span style=color:#666>[</span>ETCDConfigureModule<span style=color:#666>]</span> Health check on all etcd
+</span></span><span style=display:flex><span>12:19:57 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:19:57 UTC <span style=color:#666>[</span>ETCDConfigureModule<span style=color:#666>]</span> Refresh etcd.env config to exist mode on all etcd
+</span></span><span style=display:flex><span>12:19:57 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:19:57 UTC <span style=color:#666>[</span>ETCDConfigureModule<span style=color:#666>]</span> Health check on all etcd
+</span></span><span style=display:flex><span>12:19:57 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:19:57 UTC <span style=color:#666>[</span>ETCDBackupModule<span style=color:#666>]</span> Backup etcd data regularly
+</span></span><span style=display:flex><span>12:19:57 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:19:57 UTC <span style=color:#666>[</span>ETCDBackupModule<span style=color:#666>]</span> Generate backup ETCD service
+</span></span><span style=display:flex><span>12:19:57 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:19:57 UTC <span style=color:#666>[</span>ETCDBackupModule<span style=color:#666>]</span> Generate backup ETCD timer
+</span></span><span style=display:flex><span>12:19:57 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:19:57 UTC <span style=color:#666>[</span>ETCDBackupModule<span style=color:#666>]</span> Enable backup etcd service
+</span></span><span style=display:flex><span>12:19:58 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:19:58 UTC <span style=color:#666>[</span>InstallKubeBinariesModule<span style=color:#666>]</span> Synchronize kubernetes binaries
+</span></span><span style=display:flex><span>12:20:08 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:20:08 UTC success: <span style=color:#666>[</span>worker41<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:20:08 UTC <span style=color:#666>[</span>InstallKubeBinariesModule<span style=color:#666>]</span> Synchronize kubelet
+</span></span><span style=display:flex><span>12:20:08 UTC success: <span style=color:#666>[</span>worker41<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:20:08 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:20:08 UTC <span style=color:#666>[</span>InstallKubeBinariesModule<span style=color:#666>]</span> Generate kubelet service
+</span></span><span style=display:flex><span>12:20:08 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:20:08 UTC success: <span style=color:#666>[</span>worker41<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:20:08 UTC <span style=color:#666>[</span>InstallKubeBinariesModule<span style=color:#666>]</span> Enable kubelet service
+</span></span><span style=display:flex><span>12:20:09 UTC success: <span style=color:#666>[</span>worker41<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:20:09 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:20:09 UTC <span style=color:#666>[</span>InstallKubeBinariesModule<span style=color:#666>]</span> Generate kubelet env
+</span></span><span style=display:flex><span>12:20:09 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:20:09 UTC success: <span style=color:#666>[</span>worker41<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:20:09 UTC <span style=color:#666>[</span>InitKubernetesModule<span style=color:#666>]</span> Generate kubeadm config
+</span></span><span style=display:flex><span>12:20:09 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:20:09 UTC <span style=color:#666>[</span>InitKubernetesModule<span style=color:#666>]</span> Init cluster using kubeadm
+</span></span><span style=display:flex><span>12:20:25 UTC stdout: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>W0924 12:20:09.513341    <span style=color:#666>3665</span> common.go:83<span style=color:#666>]</span> your configuration file uses a deprecated API spec: <span style=color:#b44>&#34;kubeadm.k8s.io/v1beta2&#34;</span>. Please use <span style=color:#b44>&#39;kubeadm config migrate --old-config old.yaml --new-config new.yaml&#39;</span>, which will write the new, similar spec using a newer API version.
+</span></span><span style=display:flex><span>W0924 12:20:09.514588    <span style=color:#666>3665</span> common.go:83<span style=color:#666>]</span> your configuration file uses a deprecated API spec: <span style=color:#b44>&#34;kubeadm.k8s.io/v1beta2&#34;</span>. Please use <span style=color:#b44>&#39;kubeadm config migrate --old-config old.yaml --new-config new.yaml&#39;</span>, which will write the new, similar spec using a newer API version.
+</span></span><span style=display:flex><span>W0924 12:20:09.522371    <span style=color:#666>3665</span> utils.go:69<span style=color:#666>]</span> The recommended value <span style=color:#a2f;font-weight:700>for</span> <span style=color:#b44>&#34;clusterDNS&#34;</span> in <span style=color:#b44>&#34;KubeletConfiguration&#34;</span> is: <span style=color:#666>[</span>10.244.0.10<span style=color:#666>]</span>; the provided value is: <span style=color:#666>[</span>169.254.25.10<span style=color:#666>]</span>
+</span></span><span style=display:flex><span><span style=color:#666>[</span>init<span style=color:#666>]</span> Using Kubernetes version: v1.24.1
+</span></span><span style=display:flex><span><span style=color:#666>[</span>preflight<span style=color:#666>]</span> Running pre-flight checks
+</span></span><span style=display:flex><span><span style=color:#666>[</span>preflight<span style=color:#666>]</span> Pulling images required <span style=color:#a2f;font-weight:700>for</span> setting up a Kubernetes cluster
+</span></span><span style=display:flex><span><span style=color:#666>[</span>preflight<span style=color:#666>]</span> This might take a minute or two, depending on the speed of your internet connection
+</span></span><span style=display:flex><span><span style=color:#666>[</span>preflight<span style=color:#666>]</span> You can also perform this action in beforehand using <span style=color:#b44>&#39;kubeadm config images pull&#39;</span>
+</span></span><span style=display:flex><span><span style=color:#666>[</span>certs<span style=color:#666>]</span> Using certificateDir folder <span style=color:#b44>&#34;/etc/kubernetes/pki&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#666>[</span>certs<span style=color:#666>]</span> Generating <span style=color:#b44>&#34;ca&#34;</span> certificate and key
+</span></span><span style=display:flex><span><span style=color:#666>[</span>certs<span style=color:#666>]</span> Generating <span style=color:#b44>&#34;apiserver&#34;</span> certificate and key
+</span></span><span style=display:flex><span><span style=color:#666>[</span>certs<span style=color:#666>]</span> apiserver serving cert is signed <span style=color:#a2f;font-weight:700>for</span> DNS names <span style=color:#666>[</span>cp4 cp4.cluster.local kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.cluster.local lb.kubesphere.local localhost worker41 worker41.cluster.local<span style=color:#666>]</span> and IPs <span style=color:#666>[</span>10.244.0.1 172.16.10.10 127.0.0.1 172.16.10.11<span style=color:#666>]</span>
+</span></span><span style=display:flex><span><span style=color:#666>[</span>certs<span style=color:#666>]</span> Generating <span style=color:#b44>&#34;apiserver-kubelet-client&#34;</span> certificate and key
+</span></span><span style=display:flex><span><span style=color:#666>[</span>certs<span style=color:#666>]</span> Generating <span style=color:#b44>&#34;front-proxy-ca&#34;</span> certificate and key
+</span></span><span style=display:flex><span><span style=color:#666>[</span>certs<span style=color:#666>]</span> Generating <span style=color:#b44>&#34;front-proxy-client&#34;</span> certificate and key
+</span></span><span style=display:flex><span><span style=color:#666>[</span>certs<span style=color:#666>]</span> External etcd mode: Skipping etcd/ca certificate authority generation
+</span></span><span style=display:flex><span><span style=color:#666>[</span>certs<span style=color:#666>]</span> External etcd mode: Skipping etcd/server certificate generation
+</span></span><span style=display:flex><span><span style=color:#666>[</span>certs<span style=color:#666>]</span> External etcd mode: Skipping etcd/peer certificate generation
+</span></span><span style=display:flex><span><span style=color:#666>[</span>certs<span style=color:#666>]</span> External etcd mode: Skipping etcd/healthcheck-client certificate generation
+</span></span><span style=display:flex><span><span style=color:#666>[</span>certs<span style=color:#666>]</span> External etcd mode: Skipping apiserver-etcd-client certificate generation
+</span></span><span style=display:flex><span><span style=color:#666>[</span>certs<span style=color:#666>]</span> Generating <span style=color:#b44>&#34;sa&#34;</span> key and public key
+</span></span><span style=display:flex><span><span style=color:#666>[</span>kubeconfig<span style=color:#666>]</span> Using kubeconfig folder <span style=color:#b44>&#34;/etc/kubernetes&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#666>[</span>kubeconfig<span style=color:#666>]</span> Writing <span style=color:#b44>&#34;admin.conf&#34;</span> kubeconfig file
+</span></span><span style=display:flex><span><span style=color:#666>[</span>kubeconfig<span style=color:#666>]</span> Writing <span style=color:#b44>&#34;kubelet.conf&#34;</span> kubeconfig file
+</span></span><span style=display:flex><span><span style=color:#666>[</span>kubeconfig<span style=color:#666>]</span> Writing <span style=color:#b44>&#34;controller-manager.conf&#34;</span> kubeconfig file
+</span></span><span style=display:flex><span><span style=color:#666>[</span>kubeconfig<span style=color:#666>]</span> Writing <span style=color:#b44>&#34;scheduler.conf&#34;</span> kubeconfig file
+</span></span><span style=display:flex><span><span style=color:#666>[</span>kubelet-start<span style=color:#666>]</span> Writing kubelet environment file with flags to file <span style=color:#b44>&#34;/var/lib/kubelet/kubeadm-flags.env&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#666>[</span>kubelet-start<span style=color:#666>]</span> Writing kubelet configuration to file <span style=color:#b44>&#34;/var/lib/kubelet/config.yaml&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#666>[</span>kubelet-start<span style=color:#666>]</span> Starting the kubelet
+</span></span><span style=display:flex><span><span style=color:#666>[</span>control-plane<span style=color:#666>]</span> Using manifest folder <span style=color:#b44>&#34;/etc/kubernetes/manifests&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#666>[</span>control-plane<span style=color:#666>]</span> Creating static Pod manifest <span style=color:#a2f;font-weight:700>for</span> <span style=color:#b44>&#34;kube-apiserver&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#666>[</span>control-plane<span style=color:#666>]</span> Creating static Pod manifest <span style=color:#a2f;font-weight:700>for</span> <span style=color:#b44>&#34;kube-controller-manager&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#666>[</span>control-plane<span style=color:#666>]</span> Creating static Pod manifest <span style=color:#a2f;font-weight:700>for</span> <span style=color:#b44>&#34;kube-scheduler&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#666>[</span>wait-control-plane<span style=color:#666>]</span> Waiting <span style=color:#a2f;font-weight:700>for</span> the kubelet to boot up the control plane as static Pods from directory <span style=color:#b44>&#34;/etc/kubernetes/manifests&#34;</span>. This can take up to 4m0s
+</span></span><span style=display:flex><span><span style=color:#666>[</span>apiclient<span style=color:#666>]</span> All control plane components are healthy after 9.003533 seconds
+</span></span><span style=display:flex><span><span style=color:#666>[</span>upload-config<span style=color:#666>]</span> Storing the configuration used in ConfigMap <span style=color:#b44>&#34;kubeadm-config&#34;</span> in the <span style=color:#b44>&#34;kube-system&#34;</span> Namespace
+</span></span><span style=display:flex><span><span style=color:#666>[</span>kubelet<span style=color:#666>]</span> Creating a ConfigMap <span style=color:#b44>&#34;kubelet-config&#34;</span> in namespace kube-system with the configuration <span style=color:#a2f;font-weight:700>for</span> the kubelets in the cluster
+</span></span><span style=display:flex><span><span style=color:#666>[</span>upload-certs<span style=color:#666>]</span> Skipping phase. Please see --upload-certs
+</span></span><span style=display:flex><span><span style=color:#666>[</span>mark-control-plane<span style=color:#666>]</span> Marking the node cp4 as control-plane by adding the labels: <span style=color:#666>[</span>node-role.kubernetes.io/control-plane node.kubernetes.io/exclude-from-external-load-balancers<span style=color:#666>]</span>
+</span></span><span style=display:flex><span><span style=color:#666>[</span>mark-control-plane<span style=color:#666>]</span> Marking the node cp4 as control-plane by adding the taints <span style=color:#666>[</span>node-role.kubernetes.io/master:NoSchedule node-role.kubernetes.io/control-plane:NoSchedule<span style=color:#666>]</span>
+</span></span><span style=display:flex><span><span style=color:#666>[</span>bootstrap-token<span style=color:#666>]</span> Using token: g9viw6.oma7nbn14lballdw
+</span></span><span style=display:flex><span><span style=color:#666>[</span>bootstrap-token<span style=color:#666>]</span> Configuring bootstrap tokens, cluster-info ConfigMap, RBAC Roles
+</span></span><span style=display:flex><span><span style=color:#666>[</span>bootstrap-token<span style=color:#666>]</span> Configured RBAC rules to allow Node Bootstrap tokens to get nodes
+</span></span><span style=display:flex><span><span style=color:#666>[</span>bootstrap-token<span style=color:#666>]</span> Configured RBAC rules to allow Node Bootstrap tokens to post CSRs in order <span style=color:#a2f;font-weight:700>for</span> nodes to get long term certificate credentials
+</span></span><span style=display:flex><span><span style=color:#666>[</span>bootstrap-token<span style=color:#666>]</span> Configured RBAC rules to allow the csrapprover controller automatically approve CSRs from a Node Bootstrap Token
+</span></span><span style=display:flex><span><span style=color:#666>[</span>bootstrap-token<span style=color:#666>]</span> Configured RBAC rules to allow certificate rotation <span style=color:#a2f;font-weight:700>for</span> all node client certificates in the cluster
+</span></span><span style=display:flex><span><span style=color:#666>[</span>bootstrap-token<span style=color:#666>]</span> Creating the <span style=color:#b44>&#34;cluster-info&#34;</span> ConfigMap in the <span style=color:#b44>&#34;kube-public&#34;</span> namespace
+</span></span><span style=display:flex><span><span style=color:#666>[</span>kubelet-finalize<span style=color:#666>]</span> Updating <span style=color:#b44>&#34;/etc/kubernetes/kubelet.conf&#34;</span> to point to a rotatable kubelet client certificate and key
+</span></span><span style=display:flex><span><span style=color:#666>[</span>addons<span style=color:#666>]</span> Applied essential addon: CoreDNS
+</span></span><span style=display:flex><span><span style=color:#666>[</span>addons<span style=color:#666>]</span> Applied essential addon: kube-proxy
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Your Kubernetes control-plane has initialized successfully!
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>To start using your cluster, you need to run the following as a regular user:
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  mkdir -p <span style=color:#b8860b>$HOME</span>/.kube
+</span></span><span style=display:flex><span>  sudo cp -i /etc/kubernetes/admin.conf <span style=color:#b8860b>$HOME</span>/.kube/config
+</span></span><span style=display:flex><span>  sudo chown <span style=color:#a2f;font-weight:700>$(</span>id -u<span style=color:#a2f;font-weight:700>)</span>:<span style=color:#a2f;font-weight:700>$(</span>id -g<span style=color:#a2f;font-weight:700>)</span> <span style=color:#b8860b>$HOME</span>/.kube/config
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Alternatively, <span style=color:#a2f;font-weight:700>if</span> you are the root user, you can run:
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#a2f>export</span> <span style=color:#b8860b>KUBECONFIG</span><span style=color:#666>=</span>/etc/kubernetes/admin.conf
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>You should now deploy a pod network to the cluster.
+</span></span><span style=display:flex><span>Run <span style=color:#b44>&#34;kubectl apply -f [podnetwork].yaml&#34;</span> with one of the options listed at:
+</span></span><span style=display:flex><span>  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>You can now join any number of control-plane nodes by copying certificate authorities
+</span></span><span style=display:flex><span>and service account keys on each node and <span style=color:#a2f;font-weight:700>then</span> running the following as root:
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  kubeadm join lb.kubesphere.local:6443 --token g9viw6.oma7nbn14lballdw <span style=color:#b62;font-weight:700>\
+</span></span></span><span style=display:flex><span><span style=color:#b62;font-weight:700></span>        --discovery-token-ca-cert-hash sha256:0d4051bdc07855ce501dd71fc95ce23dbd102a0de4e36bbefb098811069eae8e <span style=color:#b62;font-weight:700>\
+</span></span></span><span style=display:flex><span><span style=color:#b62;font-weight:700></span>        --control-plane 
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Then you can join any number of worker nodes by running the following on each as root:
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>kubeadm join lb.kubesphere.local:6443 --token g9viw6.oma7nbn14lballdw <span style=color:#b62;font-weight:700>\
+</span></span></span><span style=display:flex><span><span style=color:#b62;font-weight:700></span>        --discovery-token-ca-cert-hash sha256:0d4051bdc07855ce501dd71fc95ce23dbd102a0de4e36bbefb098811069eae8e
+</span></span><span style=display:flex><span>12:20:25 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:20:25 UTC <span style=color:#666>[</span>InitKubernetesModule<span style=color:#666>]</span> Copy admin.conf to ~/.kube/config
+</span></span><span style=display:flex><span>12:20:25 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:20:25 UTC <span style=color:#666>[</span>InitKubernetesModule<span style=color:#666>]</span> Remove master taint
+</span></span><span style=display:flex><span>12:20:26 UTC stdout: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>node/cp4 untainted
+</span></span><span style=display:flex><span>12:20:26 UTC stdout: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>node/cp4 untainted
+</span></span><span style=display:flex><span>12:20:26 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:20:26 UTC <span style=color:#666>[</span>InitKubernetesModule<span style=color:#666>]</span> Add worker label
+</span></span><span style=display:flex><span>12:20:26 UTC stdout: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>node/cp4 labeled
+</span></span><span style=display:flex><span>12:20:26 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:20:26 UTC <span style=color:#666>[</span>ClusterDNSModule<span style=color:#666>]</span> Generate coredns service
+</span></span><span style=display:flex><span>12:20:26 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:20:26 UTC <span style=color:#666>[</span>ClusterDNSModule<span style=color:#666>]</span> Override coredns service
+</span></span><span style=display:flex><span>12:20:26 UTC stdout: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>service <span style=color:#b44>&#34;kube-dns&#34;</span> deleted
+</span></span><span style=display:flex><span>12:20:27 UTC stdout: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>service/coredns created
+</span></span><span style=display:flex><span>Warning: resource clusterroles/system:coredns is missing the kubectl.kubernetes.io/last-applied-configuration annotation which is required by kubectl apply. kubectl apply should only be used on resources created declaratively by either kubectl create --save-config or kubectl apply. The missing annotation will be patched automatically.
+</span></span><span style=display:flex><span>clusterrole.rbac.authorization.k8s.io/system:coredns configured
+</span></span><span style=display:flex><span>12:20:27 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:20:27 UTC <span style=color:#666>[</span>ClusterDNSModule<span style=color:#666>]</span> Generate nodelocaldns
+</span></span><span style=display:flex><span>12:20:27 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:20:27 UTC <span style=color:#666>[</span>ClusterDNSModule<span style=color:#666>]</span> Deploy nodelocaldns
+</span></span><span style=display:flex><span>12:20:27 UTC stdout: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>serviceaccount/nodelocaldns created
+</span></span><span style=display:flex><span>daemonset.apps/nodelocaldns created
+</span></span><span style=display:flex><span>12:20:27 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:20:27 UTC <span style=color:#666>[</span>ClusterDNSModule<span style=color:#666>]</span> Generate nodelocaldns configmap
+</span></span><span style=display:flex><span>12:20:28 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:20:28 UTC <span style=color:#666>[</span>ClusterDNSModule<span style=color:#666>]</span> Apply nodelocaldns configmap
+</span></span><span style=display:flex><span>12:20:28 UTC stdout: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>configmap/nodelocaldns created
+</span></span><span style=display:flex><span>12:20:28 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:20:28 UTC <span style=color:#666>[</span>KubernetesStatusModule<span style=color:#666>]</span> Get kubernetes cluster status
+</span></span><span style=display:flex><span>12:20:28 UTC stdout: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>v1.24.1
+</span></span><span style=display:flex><span>12:20:28 UTC stdout: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>cp4   v1.24.1   <span style=color:#666>[</span>map<span style=color:#666>[</span>address:172.16.10.10 type:InternalIP<span style=color:#666>]</span> map<span style=color:#666>[</span>address:cp4 type:Hostname<span style=color:#666>]]</span>
+</span></span><span style=display:flex><span>12:20:30 UTC stdout: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>I0924 12:20:29.685946    <span style=color:#666>4408</span> version.go:255<span style=color:#666>]</span> remote version is much newer: v1.25.2; falling back to: stable-1.24
+</span></span><span style=display:flex><span><span style=color:#666>[</span>upload-certs<span style=color:#666>]</span> Storing the certificates in Secret <span style=color:#b44>&#34;kubeadm-certs&#34;</span> in the <span style=color:#b44>&#34;kube-system&#34;</span> Namespace
+</span></span><span style=display:flex><span><span style=color:#666>[</span>upload-certs<span style=color:#666>]</span> Using certificate key:
+</span></span><span style=display:flex><span>dddbbd2547ed4f8f0cdc0a22040ad37c08c24855c8d9b3f67ca1e9dc7ed73268
+</span></span><span style=display:flex><span>12:20:30 UTC stdout: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>secret/kubeadm-certs patched
+</span></span><span style=display:flex><span>12:20:30 UTC stdout: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>secret/kubeadm-certs patched
+</span></span><span style=display:flex><span>12:20:30 UTC stdout: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>secret/kubeadm-certs patched
+</span></span><span style=display:flex><span>12:20:30 UTC stdout: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>3xqg2r.ql189s90j5k3x8bq
+</span></span><span style=display:flex><span>12:20:30 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:20:30 UTC <span style=color:#666>[</span>JoinNodesModule<span style=color:#666>]</span> Generate kubeadm config
+</span></span><span style=display:flex><span>12:20:31 UTC skipped: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:20:31 UTC success: <span style=color:#666>[</span>worker41<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:20:31 UTC <span style=color:#666>[</span>JoinNodesModule<span style=color:#666>]</span> Join control-plane node
+</span></span><span style=display:flex><span>12:20:31 UTC skipped: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:20:31 UTC <span style=color:#666>[</span>JoinNodesModule<span style=color:#666>]</span> Join worker node
+</span></span><span style=display:flex><span>12:20:57 UTC stdout: <span style=color:#666>[</span>worker41<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>W0924 12:20:31.100227    <span style=color:#666>2830</span> common.go:83<span style=color:#666>]</span> your configuration file uses a deprecated API spec: <span style=color:#b44>&#34;kubeadm.k8s.io/v1beta2&#34;</span>. Please use <span style=color:#b44>&#39;kubeadm config migrate --old-config old.yaml --new-config new.yaml&#39;</span>, which will write the new, similar spec using a newer API version.
+</span></span><span style=display:flex><span><span style=color:#666>[</span>preflight<span style=color:#666>]</span> Running pre-flight checks
+</span></span><span style=display:flex><span><span style=color:#666>[</span>preflight<span style=color:#666>]</span> Reading configuration from the cluster...
+</span></span><span style=display:flex><span><span style=color:#666>[</span>preflight<span style=color:#666>]</span> FYI: You can look at this config file with <span style=color:#b44>&#39;kubectl -n kube-system get cm kubeadm-config -o yaml&#39;</span>
+</span></span><span style=display:flex><span>W0924 12:20:43.588320    <span style=color:#666>2830</span> utils.go:69<span style=color:#666>]</span> The recommended value <span style=color:#a2f;font-weight:700>for</span> <span style=color:#b44>&#34;clusterDNS&#34;</span> in <span style=color:#b44>&#34;KubeletConfiguration&#34;</span> is: <span style=color:#666>[</span>10.244.0.10<span style=color:#666>]</span>; the provided value is: <span style=color:#666>[</span>169.254.25.10<span style=color:#666>]</span>
+</span></span><span style=display:flex><span><span style=color:#666>[</span>kubelet-start<span style=color:#666>]</span> Writing kubelet configuration to file <span style=color:#b44>&#34;/var/lib/kubelet/config.yaml&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#666>[</span>kubelet-start<span style=color:#666>]</span> Writing kubelet environment file with flags to file <span style=color:#b44>&#34;/var/lib/kubelet/kubeadm-flags.env&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#666>[</span>kubelet-start<span style=color:#666>]</span> Starting the kubelet
+</span></span><span style=display:flex><span><span style=color:#666>[</span>kubelet-start<span style=color:#666>]</span> Waiting <span style=color:#a2f;font-weight:700>for</span> the kubelet to perform the TLS Bootstrap...
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>This node has joined the cluster:
+</span></span><span style=display:flex><span>* Certificate signing request was sent to apiserver and a response was received.
+</span></span><span style=display:flex><span>* The Kubelet was informed of the new secure connection details.
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Run <span style=color:#b44>&#39;kubectl get nodes&#39;</span> on the control-plane to see this node join the cluster.
+</span></span><span style=display:flex><span>12:20:57 UTC skipped: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:20:57 UTC success: <span style=color:#666>[</span>worker41<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:20:57 UTC <span style=color:#666>[</span>JoinNodesModule<span style=color:#666>]</span> Copy admin.conf to ~/.kube/config
+</span></span><span style=display:flex><span>12:20:57 UTC skipped: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:20:57 UTC <span style=color:#666>[</span>JoinNodesModule<span style=color:#666>]</span> Remove master taint
+</span></span><span style=display:flex><span>12:20:57 UTC skipped: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:20:57 UTC <span style=color:#666>[</span>JoinNodesModule<span style=color:#666>]</span> Add worker label to master
+</span></span><span style=display:flex><span>12:20:57 UTC skipped: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:20:57 UTC <span style=color:#666>[</span>JoinNodesModule<span style=color:#666>]</span> Synchronize kube config to worker
+</span></span><span style=display:flex><span>12:20:57 UTC skipped: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:20:57 UTC success: <span style=color:#666>[</span>worker41<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:20:57 UTC <span style=color:#666>[</span>JoinNodesModule<span style=color:#666>]</span> Add worker label to worker
+</span></span><span style=display:flex><span>12:20:57 UTC stdout: <span style=color:#666>[</span>worker41<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>node/worker41 labeled
+</span></span><span style=display:flex><span>12:20:57 UTC skipped: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:20:57 UTC success: <span style=color:#666>[</span>worker41<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:20:57 UTC <span style=color:#666>[</span>DeployNetworkPluginModule<span style=color:#666>]</span> Generate calico
+</span></span><span style=display:flex><span>12:20:57 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:20:57 UTC <span style=color:#666>[</span>DeployNetworkPluginModule<span style=color:#666>]</span> Deploy calico
+</span></span><span style=display:flex><span>12:20:58 UTC stdout: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>configmap/calico-config created
+</span></span><span style=display:flex><span>customresourcedefinition.apiextensions.k8s.io/bgpconfigurations.crd.projectcalico.org created
+</span></span><span style=display:flex><span>customresourcedefinition.apiextensions.k8s.io/bgppeers.crd.projectcalico.org created
+</span></span><span style=display:flex><span>customresourcedefinition.apiextensions.k8s.io/blockaffinities.crd.projectcalico.org created
+</span></span><span style=display:flex><span>customresourcedefinition.apiextensions.k8s.io/caliconodestatuses.crd.projectcalico.org created
+</span></span><span style=display:flex><span>customresourcedefinition.apiextensions.k8s.io/clusterinformations.crd.projectcalico.org created
+</span></span><span style=display:flex><span>customresourcedefinition.apiextensions.k8s.io/felixconfigurations.crd.projectcalico.org created
+</span></span><span style=display:flex><span>customresourcedefinition.apiextensions.k8s.io/globalnetworkpolicies.crd.projectcalico.org created
+</span></span><span style=display:flex><span>customresourcedefinition.apiextensions.k8s.io/globalnetworksets.crd.projectcalico.org created
+</span></span><span style=display:flex><span>customresourcedefinition.apiextensions.k8s.io/hostendpoints.crd.projectcalico.org created
+</span></span><span style=display:flex><span>customresourcedefinition.apiextensions.k8s.io/ipamblocks.crd.projectcalico.org created
+</span></span><span style=display:flex><span>customresourcedefinition.apiextensions.k8s.io/ipamconfigs.crd.projectcalico.org created
+</span></span><span style=display:flex><span>customresourcedefinition.apiextensions.k8s.io/ipamhandles.crd.projectcalico.org created
+</span></span><span style=display:flex><span>customresourcedefinition.apiextensions.k8s.io/ippools.crd.projectcalico.org created
+</span></span><span style=display:flex><span>customresourcedefinition.apiextensions.k8s.io/ipreservations.crd.projectcalico.org created
+</span></span><span style=display:flex><span>customresourcedefinition.apiextensions.k8s.io/kubecontrollersconfigurations.crd.projectcalico.org created
+</span></span><span style=display:flex><span>customresourcedefinition.apiextensions.k8s.io/networkpolicies.crd.projectcalico.org created
+</span></span><span style=display:flex><span>customresourcedefinition.apiextensions.k8s.io/networksets.crd.projectcalico.org created
+</span></span><span style=display:flex><span>clusterrole.rbac.authorization.k8s.io/calico-kube-controllers created
+</span></span><span style=display:flex><span>clusterrolebinding.rbac.authorization.k8s.io/calico-kube-controllers created
+</span></span><span style=display:flex><span>clusterrole.rbac.authorization.k8s.io/calico-node created
+</span></span><span style=display:flex><span>clusterrolebinding.rbac.authorization.k8s.io/calico-node created
+</span></span><span style=display:flex><span>daemonset.apps/calico-node created
+</span></span><span style=display:flex><span>serviceaccount/calico-node created
+</span></span><span style=display:flex><span>deployment.apps/calico-kube-controllers created
+</span></span><span style=display:flex><span>serviceaccount/calico-kube-controllers created
+</span></span><span style=display:flex><span>poddisruptionbudget.policy/calico-kube-controllers created
+</span></span><span style=display:flex><span>12:20:58 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:20:58 UTC <span style=color:#666>[</span>ConfigureKubernetesModule<span style=color:#666>]</span> Configure kubernetes
+</span></span><span style=display:flex><span>12:20:58 UTC success: <span style=color:#666>[</span>worker41<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:20:58 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:20:58 UTC <span style=color:#666>[</span>ChownModule<span style=color:#666>]</span> Chown user <span style=color:#b8860b>$HOME</span>/.kube dir
+</span></span><span style=display:flex><span>12:20:58 UTC success: <span style=color:#666>[</span>worker41<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:20:58 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:20:58 UTC <span style=color:#666>[</span>AutoRenewCertsModule<span style=color:#666>]</span> Generate k8s certs renew script
+</span></span><span style=display:flex><span>12:20:58 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:20:58 UTC <span style=color:#666>[</span>AutoRenewCertsModule<span style=color:#666>]</span> Generate k8s certs renew service
+</span></span><span style=display:flex><span>12:20:58 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:20:58 UTC <span style=color:#666>[</span>AutoRenewCertsModule<span style=color:#666>]</span> Generate k8s certs renew timer
+</span></span><span style=display:flex><span>12:20:58 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:20:58 UTC <span style=color:#666>[</span>AutoRenewCertsModule<span style=color:#666>]</span> Enable k8s certs renew service
+</span></span><span style=display:flex><span>12:20:59 UTC success: <span style=color:#666>[</span>cp4<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:20:59 UTC <span style=color:#666>[</span>SaveKubeConfigModule<span style=color:#666>]</span> Save kube config as a configmap
+</span></span><span style=display:flex><span>12:20:59 UTC success: <span style=color:#666>[</span>LocalHost<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:20:59 UTC <span style=color:#666>[</span>AddonsModule<span style=color:#666>]</span> Install addons
+</span></span><span style=display:flex><span>12:20:59 UTC success: <span style=color:#666>[</span>LocalHost<span style=color:#666>]</span>
+</span></span><span style=display:flex><span>12:20:59 UTC Pipeline<span style=color:#666>[</span>CreateClusterPipeline<span style=color:#666>]</span> execute successfully
+</span></span><span style=display:flex><span>Installation is complete.
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Please check the result using the command:
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        kubectl get pod -A
+</span></span></code></pre></div><h3 id=检查集群创建情况>检查集群创建情况</h3><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>root@cp4:/home/zyi# kubectl get node
+</span></span><span style=display:flex><span>NAME       STATUS     ROLES                  AGE   VERSION
+</span></span><span style=display:flex><span>cp4        NotReady   control-plane,worker   44s   v1.24.1
+</span></span><span style=display:flex><span>worker41   NotReady   worker                 8s    v1.24.1
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>root@cp4:/home/zyi# kubectl get po -A
+</span></span><span style=display:flex><span>NAMESPACE     NAME                                      READY   STATUS    RESTARTS   AGE
+</span></span><span style=display:flex><span>kube-system   calico-kube-controllers-f9f9bbcc9-b2xxx   1/1     Running   <span style=color:#666>0</span>          22s
+</span></span><span style=display:flex><span>kube-system   calico-node-mcbpn                         1/1     Running   <span style=color:#666>0</span>          22s
+</span></span><span style=display:flex><span>kube-system   calico-node-zbm8p                         1/1     Running   <span style=color:#666>0</span>          22s
+</span></span><span style=display:flex><span>kube-system   coredns-f657fccfd-6tnvr                   1/1     Running   <span style=color:#666>0</span>          43s
+</span></span><span style=display:flex><span>kube-system   coredns-f657fccfd-rqwsm                   1/1     Running   <span style=color:#666>0</span>          43s
+</span></span><span style=display:flex><span>kube-system   kube-apiserver-cp4                        1/1     Running   <span style=color:#666>0</span>          58s
+</span></span><span style=display:flex><span>kube-system   kube-controller-manager-cp4               1/1     Running   <span style=color:#666>0</span>          57s
+</span></span><span style=display:flex><span>kube-system   kube-proxy-2q4p9                          1/1     Running   <span style=color:#666>0</span>          23s
+</span></span><span style=display:flex><span>kube-system   kube-proxy-ml5sx                          1/1     Running   <span style=color:#666>0</span>          43s
+</span></span><span style=display:flex><span>kube-system   kube-scheduler-cp4                        1/1     Running   <span style=color:#666>0</span>          56s
+</span></span><span style=display:flex><span>kube-system   nodelocaldns-4srdw                        1/1     Running   <span style=color:#666>0</span>          23s
+</span></span><span style=display:flex><span>kube-system   nodelocaldns-fd9gx                        1/1     Running   <span style=color:#666>0</span>          43s
+</span></span></code></pre></div></div><footer class=post-footer><div id=wcomments></div></footer></article></section></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id=sidebar class=sidebar><div class=sidebar-inner><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>文章目录</li><li class=sidebar-nav-overview data-target=site-overview>站点概览</li></ul><section class="site-overview sidebar-panel"><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon><p class=site-author-name itemprop=name>Etaon</p><p class="site-description motion-element" itemprop=description>Kepp Going!</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=/post/><span class=site-state-item-count>69</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>14</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>38</span>
+<span class=site-state-item-name>标签</span></a></div></nav><div class="links-of-author motion-element"><span class=links-of-author-item><a href=https://github.com/etaon target=_blank title=GitHub><i class="fa fa-fw fa-github"></i>
+GitHub</a></span>
+<span class=links-of-author-item><a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN><i class="fa fa-fw fa-CSDN"></i>
+CSDN</a></span></div><div class="links-of-blogroll motion-element links-of-blogroll-inline"><div class=links-of-blogroll-title><i class="fa fa-fw fa-globe"></i>
+友情链接</div><ul class=links-of-blogroll-list><li class=links-of-blogroll-item><a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a></li><li class=links-of-blogroll-item><a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a></li><li class=links-of-blogroll-item><a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a></li><li class=links-of-blogroll-item><a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a></li></ul></div><div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline"><div class=tagcloud-of-blogroll-title><i class="fa fa-fw fa-tags"></i>
+标签云</div><ul class=tagcloud-of-blogroll-list><li class=tagcloud-of-blogroll-item><a href=/tags/mysql>Mysql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/aws>Aws</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/dql>Dql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/hadoop>Hadoop</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/redis>Redis</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/cicd>Cicd</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/git>Git</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/nsx-t>Nsx t</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/istio>Istio</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/mongodb>Mongodb</a></li></ul></div></section><section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active"><div class=post-toc><div class=post-toc-content><nav id=TableOfContents><ul><li><a href=#kk是什么>KK是什么？</a><ul><li><a href=#下载kubekey>下载KubeKey</a></li><li><a href=#kubekey-所有受支持的-kubernetes-版本>KubeKey 所有受支持的 Kubernetes 版本</a></li><li><a href=#准备linux-主机>准备<strong>Linux 主机</strong></a></li><li><a href=#节点要求><strong>节点要求</strong></a></li><li><a href=#容器运行时><strong>容器运行时</strong></a></li><li><a href=#依赖项要求><strong>依赖项要求</strong></a></li><li><a href=#网络和-dns-要求><strong>网络和 DNS 要求</strong></a></li><li><a href=#创建cluster配置文件并修改>创建Cluster配置文件并修改</a></li><li><a href=#创建集群>创建集群</a></li><li><a href=#检查集群创建情况>检查集群创建情况</a></li></ul></li></ul></nav></div></div></section></div></aside></div></main><footer id=footer class=footer><div class=footer-inner><div class=copyright><span class=copyright-year>&copy; 2010 - 2022</span>
+<span class=with-love><i class="fa fa-heart"></i></span>
+<span class=copyright-author>路无止境！</span></div><div class=powered-info><span class=powered-by>Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.101.0</a></span>
+<span class=separator-line>/</span>
+<span class=theme-info>Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank>NexT</a></span></div><div class=vistor-info><script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<span class=site-uv><i class="fa fa-user"></i>
+<span class=busuanzi-value id=busuanzi_value_site_uv></span></span>
+<span class=separator-line>/</span>
+<span class=site-pv><i class="fa fa-eye"></i>
+<span class=busuanzi-value id=busuanzi_value_site_pv></span></span></div><div class=license-info><span class=storage-info>Storage by
+<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a></span>
+<span class=separator-line>/</span>
+<span class=license-num><a href target=_blank></a></span></div></div></footer><div class=back-to-top><i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span></div></div><script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
+<script type=text/javascript src=/js/search.js></script>
+<script type=text/javascript src=/js/affix.js></script>
+<script type=text/javascript src=/js/scrollspy.js></script>
+<script type=text/javascript>function detectIE(){var e=window.navigator.userAgent,t=e.indexOf("MSIE "),n=e.indexOf("Trident/"),s=e.indexOf("Edge/");return t>0||n>0||s>0?-1:1}function getCntViewHeight(){var t=$("#content").height(),e=$(window).height(),n=t>e?t-e:$(document).height()-e;return n}function getScrollbarWidth(){var e=$("<div />").addClass("scrollbar-measure").prependTo("body"),t=e[0],n=t.offsetWidth-t.clientWidth;return e.remove(),n}function registerBackTop(){var t=50,e=$(".back-to-top");$(window).on("scroll",function(){e.toggleClass("back-to-top-on",window.pageYOffset>t);var s=$(window).scrollTop(),o=getCntViewHeight(),i=s/o,n=Math.round(i*100),a=n>100?100:n;$("#scrollpercent>span").html(a)}),e.on("click",function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var e=".post-toc",s=$(e),t=".active-current";s.on("activate.bs.scrollspy",function(){var t=$(e+" .active").last();n(),t.addClass("active-current")}).on("clear.bs.scrollspy",n),$("body").scrollspy({target:e});function n(){$(e+" "+t).removeClass(t.substring(1))}}function initAffix(){var e=$(".header-inner").height(),t=parseInt($(".main").css("padding-bottom"),10),n=e+10;$(".sidebar-inner").affix({offset:{top:n,bottom:t}}),$(document).on("affixed.bs.affix",function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){$(window).on("resize",function(){e&&clearTimeout(e),e=setTimeout(function(){var e=document.body.clientHeight-100;updateTOCHeight(e)},0)}),updateTOCHeight(document.body.clientHeight-100);var e,t=getScrollbarWidth();$(".post-toc").css("width","calc(100% + "+t+"px)")}function updateTOCHeight(e){e=e||"auto",$(".post-toc").css("max-height",e)}$(function(){var e,t,n,s,o=$(".header-inner").height()+10;$("#sidebar").css({"margin-top":o}).show(),t=parseInt($("#sidebar").css("margin-top")),n=parseInt($(".sidebar-inner").css("height")),e=t+n,s=$(".content-wrap").height(),s<e&&$(".content-wrap").css("min-height",e),$(".site-nav-toggle").on("click",function(){var e=$(".site-nav"),o=$(".toggle"),t="site-nav-on",i="toggle-close",n=e.hasClass(t),a=n?"slideUp":"slideDown",s=n?"removeClass":"addClass";e.stop()[a]("normal",function(){e[s](t),o[s](i)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$(".sidebar-nav-toc").click(function(){$(this).addClass("sidebar-nav-active"),$(this).next().removeClass("sidebar-nav-active"),$("."+$(this).next().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)}),$(".sidebar-nav-overview").click(function(){$(this).addClass("sidebar-nav-active"),$(this).prev().removeClass("sidebar-nav-active"),$("."+$(this).prev().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)})})</script><script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$(".post-body").viewer()})</script><script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+"//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js",function(){new Waline({el:"#wcomments",visitor:!0,avatar:"wavatar",avatarCDN:"https://sdn.geekzu.org/avatar/",avatarForce:!1,wordLimit:"200",placeholder:" 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ",requiredFields:["nick","mail"],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$("#wcomments").html("抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。")})</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type=text/javascript src="//s7.addthis.com/js/300/addthis_widget.js#pubid=Your%20AddthisId"></script>
+<script>(function(){var t,e=document.createElement("script"),n=window.location.protocol.split(":")[0];n==="https"?e.src="https://zz.bdstatic.com/linksubmit/push.js":e.src="http://push.zhanzhang.baidu.com/push.js",t=document.getElementsByTagName("script")[0],t.parentNode.insertBefore(e,t)})()</script></body></html>
