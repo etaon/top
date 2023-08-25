@@ -1,0 +1,959 @@
+<!doctype html><html lang=zh-cn dir=content/zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=content-security-policy content="upgrade-insecure-requests"><title>- 路无止境！</title><meta name=keywords content="博客,架构师,思考,读书,笔记,技术,分享,云"><meta name=author content="Etaon"><meta property="og:title" content><meta property="og:site_name" content="路无止境！"><meta property="og:image" content="/img/author.jpg"><meta name=title content=" - 路无止境！"><meta name=description content="欢迎来到ETAON空间站，个人主要专注于Infra系统架构，私有/公有云产品，售前及微服务解决方案。"><link rel="shortcut icon" href=/img/favicon.ico><link rel=apple-touch-icon href=/img/apple-touch-icon.png><link rel=apple-touch-icon-precomposed href=/img/apple-touch-icon.png><link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css><link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet><link href=/css/main.css rel=stylesheet type=text/css><link href=/css/syntax.css rel=stylesheet type=text/css></head><body itemscope itemtype=http://schema.org/WebPage lang=zh-hans><div class="container one-collumn sidebar-position-left page-home"><div class=headband></div><header id=header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle role=button style=opacity:1;top:0><span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span></div></div><div class=site-meta><div class=multi-lang-switch><i class="fa fa-fw fa-language" style=margin-right:5px></i>
+<a class=lang-link id=zh-cn href=#>学习</a></div><div class=custom-logo-site-title><a href=/ class=brand rel=start><span class=logo-line-before><i></i></span>
+<span class=site-title>路无止境！</span>
+<span class=logo-line-after><i></i></span></a></div><p class=site-subtitle>没有伞的孩子要学会努力奔跑!</p></div><div class=site-nav-right><div class="toggle popup-trigger" style=opacity:1;top:0><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class=site-nav><ul id=menu class=menu><li class=menu-item><a href=/ rel=section><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class=menu-item><a href=/post rel=section><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class=menu-item><a href=/about.html rel=section><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于我</a></li><li class=menu-item><a href=/404.html rel=section><i class="menu-item-icon fa fa-fw fa-heartbeat"></i><br>公益404</a></li><li class="menu-item menu-item-search"><a href=javascript:; class=popup-trigger><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class=site-search><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class=search-icon><i class="fa fa-search"></i></span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span><div class=local-search-input-wrapper><input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off></div></div><div id=local-search-result></div></div></div></nav></div></header><main id=main class=main><div class=main-inner><div class=content-wrap><div id=content class=content><section id=posts class=posts-expand><article class="post post-type-normal" itemscope itemtype=http://schema.org/Article><header class=post-header><h1 class=post-title itemprop="name headline"><a class=post-title-link href=https://www.etaon.top/post/k8s-cluster-with-multi-masters-on-azure-vm-b4da55cf853449c0b7e45a35e2d2c732/ itemprop=url></a></h1><div class=post-meta><span class=post-time><i class="fa fa-calendar-o fa-fw"></i>
+<span class=post-meta-item-text>时间：</span>
+<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="0001-01-01">0001-01-01</time></span>
+<span>|
+<i class="fa fa-file-word-o fa-fw"></i>
+<span class=post-meta-item-text>字数：</span>
+<span class=leancloud-world-count>2538 字</span></span>
+<span>|
+<i class="fa fa-eye fa-fw"></i>
+<span class=post-meta-item-text>阅读：</span>
+<span class=leancloud-view-count>6分钟</span></span>
+<span id=/post/k8s-cluster-with-multi-masters-on-azure-vm-b4da55cf853449c0b7e45a35e2d2c732/ class=leancloud_visitors data-flag-title>|
+<i class="fa fa-binoculars fa-fw"></i>
+<span class=post-meta-item-text>阅读次数：</span>
+<span class=leancloud-visitors-count></span></span></div></header><div class=post-body itemprop=articleBody><h1 id=k8s-cluster-with-multi-masters-on-azure-vm>K8S cluster with multi-masters on Azure VM</h1><hr><p>title: &ldquo;K8S cluster with multi-masters on Azure VM&rdquo;
+url: 2023/08/11/K8SclusterwithmultimastersonAzureVM.html
+date: &ldquo;2023-08-11&rdquo;
+tags:</p><ul><li>Kubernetes
+categories:</li><li>Azure</li><li>Kubekey
+toc: true
+math: true
+type: about</li></ul><hr><h2 id=拓扑参考>拓扑参考：</h2><p><img src=K8S%20cluster%20with%20multi-masters%20on%20Azure%20VM%20b4da55cf853449c0b7e45a35e2d2c732/Untitled.png alt=Untitled></p><p><a href=https://www.kubesphere.io/zh/docs/v3.3/installing-on-linux/public-cloud/install-kubesphere-on-azure-vms/>在 Azure VM 实例上部署 KubeSphere</a></p><ul><li><p>基础模板
+需要修改 IP 地址和 VM Image的可以在模板中修改。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:#b44>&#34;$schema&#34;</span><span>:</span> <span style=color:#b44>&#34;https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#b44>&#34;contentVersion&#34;</span><span>:</span> <span style=color:#b44>&#34;1.0.0.0&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#b44>&#34;parameters&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>        <span style=color:#b44>&#34;vmNamePrefix&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;defaultValue&#34;</span><span>:</span> <span style=color:#b44>&#34;master-&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;type&#34;</span><span>:</span> <span style=color:#b44>&#34;String&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;metadata&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;description&#34;</span><span>:</span> <span style=color:#b44>&#34;The name of your VM master node.&#34;</span>
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        <span style=color:#b44>&#34;vmssName&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;defaultValue&#34;</span><span>:</span> <span style=color:#b44>&#34;node&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;type&#34;</span><span>:</span> <span style=color:#b44>&#34;String&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;metadata&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;description&#34;</span><span>:</span> <span style=color:#b44>&#34;The name of your VMSS cluster.&#34;</span>
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        <span style=color:#b44>&#34;location&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;defaultValue&#34;</span><span>:</span> <span style=color:#b44>&#34;[resourceGroup().location]&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;type&#34;</span><span>:</span> <span style=color:#b44>&#34;String&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;metadata&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;description&#34;</span><span>:</span> <span style=color:#b44>&#34;Location for all resources.&#34;</span>
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        <span style=color:#b44>&#34;adminUsername&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;type&#34;</span><span>:</span> <span style=color:#b44>&#34;String&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;metadata&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;description&#34;</span><span>:</span> <span style=color:#b44>&#34;Username for the Virtual Machine.&#34;</span>
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        <span style=color:#b44>&#34;adminKey&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;type&#34;</span><span>:</span> <span style=color:#b44>&#34;SecureString&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;metadata&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;description&#34;</span><span>:</span> <span style=color:#b44>&#34;SSH Key for the Virtual Machine.&#34;</span>
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        <span style=color:#b44>&#34;defaultMasterCount&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;defaultValue&#34;</span><span>:</span> 3,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;type&#34;</span><span>:</span> <span style=color:#b44>&#34;Int&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;metadata&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;description&#34;</span><span>:</span> <span style=color:#b44>&#34;The default instances count of master&#34;</span>
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        <span style=color:#b44>&#34;defaultNodeCount&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;defaultValue&#34;</span><span>:</span> 3,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;type&#34;</span><span>:</span> <span style=color:#b44>&#34;Int&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;metadata&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;description&#34;</span><span>:</span> <span style=color:#b44>&#34;The initial node size of your VMSS cluster.&#34;</span>
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        <span style=color:#b44>&#34;minNodeCount&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;defaultValue&#34;</span><span>:</span> 1,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;type&#34;</span><span>:</span> <span style=color:#b44>&#34;Int&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;metadata&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;description&#34;</span><span>:</span> <span style=color:#b44>&#34;The min node size of your VMSS cluster.&#34;</span>
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        <span style=color:#b44>&#34;maxNodeCount&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;defaultValue&#34;</span><span>:</span> 20,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;type&#34;</span><span>:</span> <span style=color:#b44>&#34;Int&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;metadata&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;description&#34;</span><span>:</span> <span style=color:#b44>&#34;The max node size of your VMSS cluster.&#34;</span>
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        <span style=color:#b44>&#34;dnsLabelPrefix&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;defaultValue&#34;</span><span>:</span> <span style=color:#b44>&#34;[toLower(concat(&#39;k8s-cluster-&#39;, uniqueString(resourceGroup().id)))]&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;type&#34;</span><span>:</span> <span style=color:#b44>&#34;String&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;metadata&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;description&#34;</span><span>:</span> <span style=color:#b44>&#34;Unique DNS Name for the Public IP used to access the Virtual Machine.&#34;</span>
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        <span style=color:#b44>&#34;vmSize&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;defaultValue&#34;</span><span>:</span> <span style=color:#b44>&#34;Standard_DS2_v2&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;type&#34;</span><span>:</span> <span style=color:#b44>&#34;String&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;metadata&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;description&#34;</span><span>:</span> <span style=color:#b44>&#34;The size of the VM&#34;</span>
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        <span style=color:#b44>&#34;virtualNetworkName&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;defaultValue&#34;</span><span>:</span> <span style=color:#b44>&#34;vNetwork&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;type&#34;</span><span>:</span> <span style=color:#b44>&#34;String&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;metadata&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;description&#34;</span><span>:</span> <span style=color:#b44>&#34;Name of the Virtual Network&#34;</span>
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        <span style=color:#b44>&#34;subnetName&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;defaultValue&#34;</span><span>:</span> <span style=color:#b44>&#34;Subnet&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;type&#34;</span><span>:</span> <span style=color:#b44>&#34;String&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;metadata&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;description&#34;</span><span>:</span> <span style=color:#b44>&#34;Name of the subnet in the virtual network&#34;</span>
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        <span style=color:#b44>&#34;vmssSubnetName&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;defaultValue&#34;</span><span>:</span> <span style=color:#b44>&#34;nodeSubnet&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;type&#34;</span><span>:</span> <span style=color:#b44>&#34;String&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;metadata&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;description&#34;</span><span>:</span> <span style=color:#b44>&#34;Name of the VMSS subnet in the virtual network&#34;</span>
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        <span style=color:#b44>&#34;publicLBName&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;defaultValue&#34;</span><span>:</span> <span style=color:#b44>&#34;publicLB&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;type&#34;</span><span>:</span> <span style=color:#b44>&#34;String&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;metadata&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;description&#34;</span><span>:</span> <span style=color:#b44>&#34;Internal Load Balancer name&#34;</span>
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    },
+</span></span><span style=display:flex><span>    <span style=color:#b44>&#34;variables&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>        <span style=color:#b44>&#34;publicIPAddressName&#34;</span><span>:</span> <span style=color:#b44>&#34;[concat(parameters(&#39;publicLBName&#39;), &#39;IP&#39; )]&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#b44>&#34;availabilitySetName&#34;</span><span>:</span> <span style=color:#b44>&#34;masterAvSet&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#b44>&#34;networkInterfaceName&#34;</span><span>:</span> <span style=color:#b44>&#34;[concat(parameters(&#39;vmNamePrefix&#39;),&#39;Interface&#39;)]&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#b44>&#34;networkSecurityGroupName&#34;</span><span>:</span> <span style=color:#b44>&#34;[concat(parameters(&#39;virtualNetworkName&#39;),&#39;nsg-default&#39;)]&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#b44>&#34;subnetRef&#34;</span><span>:</span> <span style=color:#b44>&#34;[resourceId(&#39;Microsoft.Network/virtualNetworks/subnets&#39;, parameters(&#39;virtualNetworkName&#39;), parameters(&#39;subnetName&#39;))]&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#b44>&#34;vmssSubnetRef&#34;</span><span>:</span> <span style=color:#b44>&#34;[resourceId(&#39;Microsoft.Network/virtualNetworks/subnets&#39;, parameters(&#39;virtualNetworkName&#39;), parameters(&#39;vmssSubnetName&#39;))]&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#b44>&#34;osDiskType&#34;</span><span>:</span> <span style=color:#b44>&#34;Standard_LRS&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#b44>&#34;publicLBID&#34;</span><span>:</span> <span style=color:#b44>&#34;[resourceId(&#39;Microsoft.Network/loadBalancers&#39;,parameters(&#39;publicLBName&#39;))]&#34;</span>
+</span></span><span style=display:flex><span>    },
+</span></span><span style=display:flex><span>    <span style=color:#b44>&#34;resources&#34;</span><span>:</span> [
+</span></span><span style=display:flex><span>        {
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;type&#34;</span><span>:</span> <span style=color:#b44>&#34;Microsoft.Network/networkSecurityGroups&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;apiVersion&#34;</span><span>:</span> <span style=color:#b44>&#34;2015-06-15&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;name&#34;</span><span>:</span> <span style=color:#b44>&#34;[variables(&#39;networkSecurityGroupName&#39;)]&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;location&#34;</span><span>:</span> <span style=color:#b44>&#34;[parameters(&#39;location&#39;)]&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;properties&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;securityRules&#34;</span><span>:</span> [
+</span></span><span style=display:flex><span>                    {
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;name&#34;</span><span>:</span> <span style=color:#b44>&#34;Port_SSH&#34;</span>,
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;properties&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;description&#34;</span><span>:</span> <span style=color:#b44>&#34;SSH&#34;</span>,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;protocol&#34;</span><span>:</span> <span style=color:#b44>&#34;*&#34;</span>,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;sourcePortRange&#34;</span><span>:</span> <span style=color:#b44>&#34;*&#34;</span>,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;destinationPortRange&#34;</span><span>:</span> <span style=color:#b44>&#34;22&#34;</span>,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;sourceAddressPrefix&#34;</span><span>:</span> <span style=color:#b44>&#34;*&#34;</span>,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;destinationAddressPrefix&#34;</span><span>:</span> <span style=color:#b44>&#34;*&#34;</span>,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;access&#34;</span><span>:</span> <span style=color:#b44>&#34;Allow&#34;</span>,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;priority&#34;</span><span>:</span> 100,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;direction&#34;</span><span>:</span> <span style=color:#b44>&#34;Inbound&#34;</span>,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;sourcePortRanges&#34;</span><span>:</span> [],
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;destinationPortRanges&#34;</span><span>:</span> [],
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;sourceAddressPrefixes&#34;</span><span>:</span> [],
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;destinationAddressPrefixes&#34;</span><span>:</span> []
+</span></span><span style=display:flex><span>                        }
+</span></span><span style=display:flex><span>                    },
+</span></span><span style=display:flex><span>                    {
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;name&#34;</span><span>:</span> <span style=color:#b44>&#34;Port_API_Server&#34;</span>,
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;properties&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;description&#34;</span><span>:</span> <span style=color:#b44>&#34;k8s API Server&#34;</span>,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;protocol&#34;</span><span>:</span> <span style=color:#b44>&#34;TCP&#34;</span>,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;sourcePortRange&#34;</span><span>:</span> <span style=color:#b44>&#34;*&#34;</span>,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;destinationPortRange&#34;</span><span>:</span> <span style=color:#b44>&#34;6443&#34;</span>,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;sourceAddressPrefix&#34;</span><span>:</span> <span style=color:#b44>&#34;*&#34;</span>,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;destinationAddressPrefix&#34;</span><span>:</span> <span style=color:#b44>&#34;*&#34;</span>,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;access&#34;</span><span>:</span> <span style=color:#b44>&#34;Allow&#34;</span>,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;priority&#34;</span><span>:</span> 140,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;direction&#34;</span><span>:</span> <span style=color:#b44>&#34;Inbound&#34;</span>,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;sourcePortRanges&#34;</span><span>:</span> [],
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;destinationPortRanges&#34;</span><span>:</span> [],
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;sourceAddressPrefixes&#34;</span><span>:</span> [],
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;destinationAddressPrefixes&#34;</span><span>:</span> []
+</span></span><span style=display:flex><span>                        }
+</span></span><span style=display:flex><span>                    },
+</span></span><span style=display:flex><span>                    {
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;name&#34;</span><span>:</span> <span style=color:#b44>&#34;Port_Http&#34;</span>,
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;properties&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;description&#34;</span><span>:</span> <span style=color:#b44>&#34;Web&#34;</span>,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;protocol&#34;</span><span>:</span> <span style=color:#b44>&#34;TCP&#34;</span>,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;sourcePortRange&#34;</span><span>:</span> <span style=color:#b44>&#34;*&#34;</span>,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;destinationPortRange&#34;</span><span>:</span> <span style=color:#b44>&#34;80&#34;</span>,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;sourceAddressPrefix&#34;</span><span>:</span> <span style=color:#b44>&#34;*&#34;</span>,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;destinationAddressPrefix&#34;</span><span>:</span> <span style=color:#b44>&#34;*&#34;</span>,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;access&#34;</span><span>:</span> <span style=color:#b44>&#34;Allow&#34;</span>,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;priority&#34;</span><span>:</span> 120,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;direction&#34;</span><span>:</span> <span style=color:#b44>&#34;Inbound&#34;</span>,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;sourcePortRanges&#34;</span><span>:</span> [],
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;destinationPortRanges&#34;</span><span>:</span> [],
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;sourceAddressPrefixes&#34;</span><span>:</span> [],
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;destinationAddressPrefixes&#34;</span><span>:</span> []
+</span></span><span style=display:flex><span>                        }
+</span></span><span style=display:flex><span>                    },
+</span></span><span style=display:flex><span>                    {
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;name&#34;</span><span>:</span> <span style=color:#b44>&#34;Port_Https&#34;</span>,
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;properties&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;protocol&#34;</span><span>:</span> <span style=color:#b44>&#34;TCP&#34;</span>,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;sourcePortRange&#34;</span><span>:</span> <span style=color:#b44>&#34;*&#34;</span>,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;destinationPortRange&#34;</span><span>:</span> <span style=color:#b44>&#34;443&#34;</span>,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;sourceAddressPrefix&#34;</span><span>:</span> <span style=color:#b44>&#34;*&#34;</span>,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;destinationAddressPrefix&#34;</span><span>:</span> <span style=color:#b44>&#34;*&#34;</span>,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;access&#34;</span><span>:</span> <span style=color:#b44>&#34;Allow&#34;</span>,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;priority&#34;</span><span>:</span> 130,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;direction&#34;</span><span>:</span> <span style=color:#b44>&#34;Inbound&#34;</span>,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;sourcePortRanges&#34;</span><span>:</span> [],
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;destinationPortRanges&#34;</span><span>:</span> [],
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;sourceAddressPrefixes&#34;</span><span>:</span> [],
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;destinationAddressPrefixes&#34;</span><span>:</span> []
+</span></span><span style=display:flex><span>                        }
+</span></span><span style=display:flex><span>                    }
+</span></span><span style=display:flex><span>                ]
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        {
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;type&#34;</span><span>:</span> <span style=color:#b44>&#34;Microsoft.Network/virtualNetworks&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;apiVersion&#34;</span><span>:</span> <span style=color:#b44>&#34;2019-11-01&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;name&#34;</span><span>:</span> <span style=color:#b44>&#34;[parameters(&#39;virtualNetworkName&#39;)]&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;location&#34;</span><span>:</span> <span style=color:#b44>&#34;[parameters(&#39;location&#39;)]&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;dependsOn&#34;</span><span>:</span> [
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;[resourceId(&#39;Microsoft.Network/networkSecurityGroups/&#39;, variables(&#39;networkSecurityGroupName&#39;))]&#34;</span>
+</span></span><span style=display:flex><span>            ],
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;properties&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;addressSpace&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                    <span style=color:#b44>&#34;addressPrefixes&#34;</span><span>:</span> [
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;10.211.0.0/16&#34;</span>
+</span></span><span style=display:flex><span>                    ]
+</span></span><span style=display:flex><span>                },
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;subnets&#34;</span><span>:</span> [
+</span></span><span style=display:flex><span>                    {
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;name&#34;</span><span>:</span> <span style=color:#b44>&#34;[parameters(&#39;vmssSubnetName&#39;)]&#34;</span>,
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;properties&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;networkSecurityGroup&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                                <span style=color:#b44>&#34;id&#34;</span><span>:</span> <span style=color:#b44>&#34;[resourceId(&#39;Microsoft.Network/networkSecurityGroups&#39;, variables(&#39;networkSecurityGroupName&#39;))]&#34;</span>
+</span></span><span style=display:flex><span>                            },
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;addressPrefix&#34;</span><span>:</span> <span style=color:#b44>&#34;10.211.0.0/24&#34;</span>
+</span></span><span style=display:flex><span>                        }
+</span></span><span style=display:flex><span>                    },
+</span></span><span style=display:flex><span>                    {
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;name&#34;</span><span>:</span> <span style=color:#b44>&#34;[parameters(&#39;subnetName&#39;)]&#34;</span>,
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;properties&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;networkSecurityGroup&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                                <span style=color:#b44>&#34;id&#34;</span><span>:</span> <span style=color:#b44>&#34;[resourceId(&#39;Microsoft.Network/networkSecurityGroups&#39;, variables(&#39;networkSecurityGroupName&#39;))]&#34;</span>
+</span></span><span style=display:flex><span>                            },
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;addressPrefix&#34;</span><span>:</span> <span style=color:#b44>&#34;10.211.1.0/24&#34;</span>
+</span></span><span style=display:flex><span>                        }
+</span></span><span style=display:flex><span>                    }
+</span></span><span style=display:flex><span>                ]
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        {
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;type&#34;</span><span>:</span> <span style=color:#b44>&#34;Microsoft.Network/networkInterfaces&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;apiVersion&#34;</span><span>:</span> <span style=color:#b44>&#34;2019-11-01&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;name&#34;</span><span>:</span> <span style=color:#b44>&#34;[concat(variables(&#39;networkInterfaceName&#39;), copyindex())]&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;location&#34;</span><span>:</span> <span style=color:#b44>&#34;[parameters(&#39;location&#39;)]&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;dependsOn&#34;</span><span>:</span> [
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;[resourceId(&#39;Microsoft.Network/virtualNetworks/&#39;, parameters(&#39;virtualNetworkName&#39;))]&#34;</span>,
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;[resourceId(&#39;Microsoft.Network/loadBalancers/&#39;, parameters(&#39;publicLBName&#39;))]&#34;</span>
+</span></span><span style=display:flex><span>            ],
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;properties&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;ipConfigurations&#34;</span><span>:</span> [
+</span></span><span style=display:flex><span>                    {
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;name&#34;</span><span>:</span> <span style=color:#b44>&#34;ipconfig1&#34;</span>,
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;properties&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;subnet&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                                <span style=color:#b44>&#34;id&#34;</span><span>:</span> <span style=color:#b44>&#34;[variables(&#39;subnetRef&#39;)]&#34;</span>
+</span></span><span style=display:flex><span>                            },
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;loadBalancerBackendAddressPools&#34;</span><span>:</span> [
+</span></span><span style=display:flex><span>                                {
+</span></span><span style=display:flex><span>                                    <span style=color:#b44>&#34;id&#34;</span><span>:</span> <span style=color:#b44>&#34;[concat(variables(&#39;publicLBID&#39;), &#39;/backendAddressPools/BackendPoolMaster&#39;)]&#34;</span>
+</span></span><span style=display:flex><span>                                }
+</span></span><span style=display:flex><span>                            ],
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;loadBalancerInboundNatRules&#34;</span><span>:</span> [
+</span></span><span style=display:flex><span>                                {
+</span></span><span style=display:flex><span>                                    <span style=color:#b44>&#34;id&#34;</span><span>:</span> <span style=color:#b44>&#34;[concat(variables(&#39;publicLBID&#39;), &#39;/inboundNatRules/lbNAT-master&#39;,copyindex())]&#34;</span>
+</span></span><span style=display:flex><span>                                }
+</span></span><span style=display:flex><span>                            ],
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;privateIPAllocationMethod&#34;</span><span>:</span> <span style=color:#b44>&#34;Dynamic&#34;</span>
+</span></span><span style=display:flex><span>                        }
+</span></span><span style=display:flex><span>                    }
+</span></span><span style=display:flex><span>                ]
+</span></span><span style=display:flex><span>            },
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;copy&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;name&#34;</span><span>:</span> <span style=color:#b44>&#34;nicLoop&#34;</span>,
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;count&#34;</span><span>:</span> <span style=color:#b44>&#34;[parameters(&#39;defaultMasterCount&#39;)]&#34;</span>
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        {
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;type&#34;</span><span>:</span> <span style=color:#b44>&#34;Microsoft.Network/publicIPAddresses&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;apiVersion&#34;</span><span>:</span> <span style=color:#b44>&#34;2019-09-01&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;name&#34;</span><span>:</span> <span style=color:#b44>&#34;[variables(&#39;publicIPAddressName&#39;)]&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;location&#34;</span><span>:</span> <span style=color:#b44>&#34;[parameters(&#39;location&#39;)]&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;sku&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;name&#34;</span><span>:</span> <span style=color:#b44>&#34;Standard&#34;</span>
+</span></span><span style=display:flex><span>            },
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;properties&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;publicIPAllocationMethod&#34;</span><span>:</span> <span style=color:#b44>&#34;Static&#34;</span>,
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;publicIPAddressVersion&#34;</span><span>:</span> <span style=color:#b44>&#34;IPv4&#34;</span>,
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;dnsSettings&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                    <span style=color:#b44>&#34;domainNameLabel&#34;</span><span>:</span> <span style=color:#b44>&#34;[parameters(&#39;dnsLabelPrefix&#39;)]&#34;</span>
+</span></span><span style=display:flex><span>                },
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;idleTimeoutInMinutes&#34;</span><span>:</span> 10
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        {
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;type&#34;</span><span>:</span> <span style=color:#b44>&#34;Microsoft.Network/loadBalancers&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;apiVersion&#34;</span><span>:</span> <span style=color:#b44>&#34;2018-06-01&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;name&#34;</span><span>:</span> <span style=color:#b44>&#34;[parameters(&#39;publicLBName&#39;)]&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;location&#34;</span><span>:</span> <span style=color:#b44>&#34;[parameters(&#39;location&#39;)]&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;dependsOn&#34;</span><span>:</span> [
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;[concat(&#39;Microsoft.Network/publicIPAddresses/&#39;, variables(&#39;publicIPAddressName&#39;))]&#34;</span>
+</span></span><span style=display:flex><span>            ],
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;sku&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;name&#34;</span><span>:</span> <span style=color:#b44>&#34;Standard&#34;</span>
+</span></span><span style=display:flex><span>            },
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;properties&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;frontendIPConfigurations&#34;</span><span>:</span> [
+</span></span><span style=display:flex><span>                    {
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;name&#34;</span><span>:</span> <span style=color:#b44>&#34;LoadBalancerFrontEnd&#34;</span>,
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;properties&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;publicIPAddress&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                                <span style=color:#b44>&#34;id&#34;</span><span>:</span> <span style=color:#b44>&#34;[resourceId(&#39;Microsoft.Network/publicIPAddresses&#39;,variables(&#39;publicIPAddressName&#39;))]&#34;</span>
+</span></span><span style=display:flex><span>                            }
+</span></span><span style=display:flex><span>                        }
+</span></span><span style=display:flex><span>                    }
+</span></span><span style=display:flex><span>                ],
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;backendAddressPools&#34;</span><span>:</span> [
+</span></span><span style=display:flex><span>                    {
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;name&#34;</span><span>:</span> <span style=color:#b44>&#34;BackendPoolNode&#34;</span>
+</span></span><span style=display:flex><span>                    },
+</span></span><span style=display:flex><span>                    {
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;name&#34;</span><span>:</span> <span style=color:#b44>&#34;BackendPoolMaster&#34;</span>
+</span></span><span style=display:flex><span>                    }
+</span></span><span style=display:flex><span>                ],
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;loadBalancingRules&#34;</span><span>:</span> [
+</span></span><span style=display:flex><span>                    {
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;name&#34;</span><span>:</span> <span style=color:#b44>&#34;HttpLBRule&#34;</span>,
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;properties&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;frontendIPConfiguration&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                                <span style=color:#b44>&#34;id&#34;</span><span>:</span> <span style=color:#b44>&#34;[concat(variables(&#39;publicLBID&#39;),&#39;/frontendIPConfigurations/LoadBalancerFrontEnd&#39;)]&#34;</span>
+</span></span><span style=display:flex><span>                            },
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;backendAddressPool&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                                <span style=color:#b44>&#34;id&#34;</span><span>:</span> <span style=color:#b44>&#34;[concat(variables(&#39;publicLBID&#39;),&#39;/backendAddressPools/BackendPoolNode&#39;)]&#34;</span>
+</span></span><span style=display:flex><span>                            },
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;protocol&#34;</span><span>:</span> <span style=color:#b44>&#34;Tcp&#34;</span>,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;frontendPort&#34;</span><span>:</span> 80,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;backendPort&#34;</span><span>:</span> 80,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;enableFloatingIP&#34;</span><span>:</span> false,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;disableOutboundSnat&#34;</span><span>:</span> false,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;idleTimeoutInMinutes&#34;</span><span>:</span> 5,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;probe&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                                <span style=color:#b44>&#34;id&#34;</span><span>:</span> <span style=color:#b44>&#34;[concat(variables(&#39;publicLBID&#39;),&#39;/probes/tcpProbe&#39;)]&#34;</span>
+</span></span><span style=display:flex><span>                            }
+</span></span><span style=display:flex><span>                        }
+</span></span><span style=display:flex><span>                    },
+</span></span><span style=display:flex><span>                    {
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;name&#34;</span><span>:</span> <span style=color:#b44>&#34;APILBRule&#34;</span>,
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;properties&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;frontendIPConfiguration&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                                <span style=color:#b44>&#34;id&#34;</span><span>:</span> <span style=color:#b44>&#34;[concat(variables(&#39;publicLBID&#39;),&#39;/frontendIPConfigurations/LoadBalancerFrontEnd&#39;)]&#34;</span>
+</span></span><span style=display:flex><span>                            },
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;backendAddressPool&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                                <span style=color:#b44>&#34;id&#34;</span><span>:</span> <span style=color:#b44>&#34;[concat(variables(&#39;publicLBID&#39;),&#39;/backendAddressPools/BackendPoolMaster&#39;)]&#34;</span>
+</span></span><span style=display:flex><span>                            },
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;protocol&#34;</span><span>:</span> <span style=color:#b44>&#34;Tcp&#34;</span>,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;frontendPort&#34;</span><span>:</span> 6443,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;backendPort&#34;</span><span>:</span> 6443,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;enableFloatingIP&#34;</span><span>:</span> false,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;disableOutboundSnat&#34;</span><span>:</span> false,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;idleTimeoutInMinutes&#34;</span><span>:</span> 5,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;probe&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                                <span style=color:#b44>&#34;id&#34;</span><span>:</span> <span style=color:#b44>&#34;[concat(variables(&#39;publicLBID&#39;),&#39;/probes/apitcpProbe&#39;)]&#34;</span>
+</span></span><span style=display:flex><span>                            }
+</span></span><span style=display:flex><span>                        }
+</span></span><span style=display:flex><span>                    }
+</span></span><span style=display:flex><span>                ],
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;probes&#34;</span><span>:</span> [
+</span></span><span style=display:flex><span>                    {
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;name&#34;</span><span>:</span> <span style=color:#b44>&#34;tcpProbe&#34;</span>,
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;properties&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;protocol&#34;</span><span>:</span> <span style=color:#b44>&#34;Tcp&#34;</span>,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;port&#34;</span><span>:</span> 80,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;intervalInSeconds&#34;</span><span>:</span> 5,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;numberOfProbes&#34;</span><span>:</span> 2
+</span></span><span style=display:flex><span>                        }
+</span></span><span style=display:flex><span>                    },
+</span></span><span style=display:flex><span>                    {
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;name&#34;</span><span>:</span> <span style=color:#b44>&#34;apitcpProbe&#34;</span>,
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;properties&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;protocol&#34;</span><span>:</span> <span style=color:#b44>&#34;Tcp&#34;</span>,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;port&#34;</span><span>:</span> 6443,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;intervalInSeconds&#34;</span><span>:</span> 5,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;numberOfProbes&#34;</span><span>:</span> 2
+</span></span><span style=display:flex><span>                        }
+</span></span><span style=display:flex><span>                    }
+</span></span><span style=display:flex><span>                ],
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;inboundNatRules&#34;</span><span>:</span> [
+</span></span><span style=display:flex><span>                    {
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;name&#34;</span><span>:</span> <span style=color:#b44>&#34;lbNAT-master0&#34;</span>,
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;properties&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;frontendIPConfiguration&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                                <span style=color:#b44>&#34;id&#34;</span><span>:</span> <span style=color:#b44>&#34;[concat(variables(&#39;publicLBID&#39;),&#39;/frontendIPConfigurations/LoadBalancerFrontEnd&#39;)]&#34;</span>
+</span></span><span style=display:flex><span>                            },
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;protocol&#34;</span><span>:</span> <span style=color:#b44>&#34;Tcp&#34;</span>,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;frontendPort&#34;</span><span>:</span> <span style=color:#b44>&#34;50200&#34;</span>,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;backendPort&#34;</span><span>:</span> <span style=color:#b44>&#34;22&#34;</span>
+</span></span><span style=display:flex><span>                        }
+</span></span><span style=display:flex><span>                    },
+</span></span><span style=display:flex><span>                    {
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;name&#34;</span><span>:</span> <span style=color:#b44>&#34;lbNAT-master1&#34;</span>,
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;properties&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;frontendIPConfiguration&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                                <span style=color:#b44>&#34;id&#34;</span><span>:</span> <span style=color:#b44>&#34;[concat(variables(&#39;publicLBID&#39;),&#39;/frontendIPConfigurations/LoadBalancerFrontEnd&#39;)]&#34;</span>
+</span></span><span style=display:flex><span>                            },
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;protocol&#34;</span><span>:</span> <span style=color:#b44>&#34;Tcp&#34;</span>,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;frontendPort&#34;</span><span>:</span> <span style=color:#b44>&#34;50201&#34;</span>,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;backendPort&#34;</span><span>:</span> <span style=color:#b44>&#34;22&#34;</span>
+</span></span><span style=display:flex><span>                        }
+</span></span><span style=display:flex><span>                    },
+</span></span><span style=display:flex><span>                    {
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;name&#34;</span><span>:</span> <span style=color:#b44>&#34;lbNAT-master2&#34;</span>,
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;properties&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;frontendIPConfiguration&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                                <span style=color:#b44>&#34;id&#34;</span><span>:</span> <span style=color:#b44>&#34;[concat(variables(&#39;publicLBID&#39;),&#39;/frontendIPConfigurations/LoadBalancerFrontEnd&#39;)]&#34;</span>
+</span></span><span style=display:flex><span>                            },
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;protocol&#34;</span><span>:</span> <span style=color:#b44>&#34;Tcp&#34;</span>,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;frontendPort&#34;</span><span>:</span> <span style=color:#b44>&#34;50202&#34;</span>,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;backendPort&#34;</span><span>:</span> <span style=color:#b44>&#34;22&#34;</span>
+</span></span><span style=display:flex><span>                        }
+</span></span><span style=display:flex><span>                    }
+</span></span><span style=display:flex><span>                ],
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;inboundNatPools&#34;</span><span>:</span> [
+</span></span><span style=display:flex><span>                    {
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;name&#34;</span><span>:</span> <span style=color:#b44>&#34;lbNAT-node&#34;</span>,
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;properties&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;frontendIPConfiguration&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                                <span style=color:#b44>&#34;id&#34;</span><span>:</span> <span style=color:#b44>&#34;[concat(variables(&#39;publicLBID&#39;),&#39;/frontendIPConfigurations/LoadBalancerFrontEnd&#39;)]&#34;</span>
+</span></span><span style=display:flex><span>                            },
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;protocol&#34;</span><span>:</span> <span style=color:#b44>&#34;Tcp&#34;</span>,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;frontendPortRangeStart&#34;</span><span>:</span> 50100,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;frontendPortRangeEnd&#34;</span><span>:</span> 50199,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;backendPort&#34;</span><span>:</span> 22
+</span></span><span style=display:flex><span>                        }
+</span></span><span style=display:flex><span>                    }
+</span></span><span style=display:flex><span>                ]
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        {
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;type&#34;</span><span>:</span> <span style=color:#b44>&#34;Microsoft.Compute/availabilitySets&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;apiVersion&#34;</span><span>:</span> <span style=color:#b44>&#34;2016-04-30-preview&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;name&#34;</span><span>:</span> <span style=color:#b44>&#34;[variables(&#39;availabilitySetName&#39;)]&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;location&#34;</span><span>:</span> <span style=color:#b44>&#34;[parameters(&#39;location&#39;)]&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;properties&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;platformFaultDomainCount&#34;</span><span>:</span> 2,
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;platformUpdateDomainCount&#34;</span><span>:</span> 2,
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;managed&#34;</span><span>:</span> true
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        {
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;type&#34;</span><span>:</span> <span style=color:#b44>&#34;Microsoft.Compute/virtualMachines&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;apiVersion&#34;</span><span>:</span> <span style=color:#b44>&#34;2019-07-01&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;name&#34;</span><span>:</span> <span style=color:#b44>&#34;[concat(parameters(&#39;vmNamePrefix&#39;), copyindex())]&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;location&#34;</span><span>:</span> <span style=color:#b44>&#34;[parameters(&#39;location&#39;)]&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;dependsOn&#34;</span><span>:</span> [
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;[concat(&#39;Microsoft.Network/networkInterfaces/&#39;, variables(&#39;networkInterfaceName&#39;), copyindex())]&#34;</span>,
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;[concat(&#39;Microsoft.Compute/availabilitySets/&#39;, variables(&#39;availabilitySetName&#39;))]&#34;</span>,
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;[concat(&#39;Microsoft.Compute/virtualMachineScaleSets/&#39;, parameters(&#39;vmssName&#39;))]&#34;</span>
+</span></span><span style=display:flex><span>            ],
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;properties&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;availabilitySet&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                    <span style=color:#b44>&#34;id&#34;</span><span>:</span> <span style=color:#b44>&#34;[resourceId(&#39;Microsoft.Compute/availabilitySets&#39;,variables(&#39;availabilitySetName&#39;))]&#34;</span>
+</span></span><span style=display:flex><span>                },
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;hardwareProfile&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                    <span style=color:#b44>&#34;vmSize&#34;</span><span>:</span> <span style=color:#b44>&#34;[parameters(&#39;vmSize&#39;)]&#34;</span>
+</span></span><span style=display:flex><span>                },
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;storageProfile&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                    <span style=color:#b44>&#34;osDisk&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;createOption&#34;</span><span>:</span> <span style=color:#b44>&#34;FromImage&#34;</span>,
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;managedDisk&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;storageAccountType&#34;</span><span>:</span> <span style=color:#b44>&#34;[variables(&#39;osDiskType&#39;)]&#34;</span>
+</span></span><span style=display:flex><span>                        }
+</span></span><span style=display:flex><span>                    },
+</span></span><span style=display:flex><span>                    <span style=color:#b44>&#34;imageReference&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;publisher&#34;</span><span>:</span> <span style=color:#b44>&#34;Canonical&#34;</span>,
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;offer&#34;</span><span>:</span> <span style=color:#b44>&#34;0001-com-ubuntu-server-focal&#34;</span>,
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;sku&#34;</span><span>:</span> <span style=color:#b44>&#34;20_04-lts-gen2&#34;</span>,
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;version&#34;</span><span>:</span> <span style=color:#b44>&#34;latest&#34;</span>
+</span></span><span style=display:flex><span>                    }
+</span></span><span style=display:flex><span>                },
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;networkProfile&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                    <span style=color:#b44>&#34;networkInterfaces&#34;</span><span>:</span> [
+</span></span><span style=display:flex><span>                        {
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;id&#34;</span><span>:</span> <span style=color:#b44>&#34;[resourceId(&#39;Microsoft.Network/networkInterfaces&#39;,concat(variables(&#39;networkInterfaceName&#39;),copyindex()))]&#34;</span>
+</span></span><span style=display:flex><span>                        }
+</span></span><span style=display:flex><span>                    ]
+</span></span><span style=display:flex><span>                },
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;osProfile&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                    <span style=color:#b44>&#34;computerName&#34;</span><span>:</span> <span style=color:#b44>&#34;[concat(parameters(&#39;vmNamePrefix&#39;), copyindex())]&#34;</span>,
+</span></span><span style=display:flex><span>                    <span style=color:#b44>&#34;adminUsername&#34;</span><span>:</span> <span style=color:#b44>&#34;[parameters(&#39;adminUsername&#39;)]&#34;</span>,
+</span></span><span style=display:flex><span>                    <span style=color:#b44>&#34;adminPassword&#34;</span><span>:</span> <span style=color:#b44>&#34;[parameters(&#39;adminKey&#39;)]&#34;</span>,
+</span></span><span style=display:flex><span>                    <span style=color:#b44>&#34;linuxConfiguration&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;disablePasswordAuthentication&#34;</span><span>:</span> true,
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;ssh&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;publicKeys&#34;</span><span>:</span> [
+</span></span><span style=display:flex><span>                                {
+</span></span><span style=display:flex><span>                                    <span style=color:#b44>&#34;path&#34;</span><span>:</span> <span style=color:#b44>&#34;[concat(&#39;/home/&#39;, parameters(&#39;adminUsername&#39;), &#39;/.ssh/authorized_keys&#39;)]&#34;</span>,
+</span></span><span style=display:flex><span>                                    <span style=color:#b44>&#34;keyData&#34;</span><span>:</span> <span style=color:#b44>&#34;[parameters(&#39;adminKey&#39;)]&#34;</span>
+</span></span><span style=display:flex><span>                                }
+</span></span><span style=display:flex><span>                            ]
+</span></span><span style=display:flex><span>                        }
+</span></span><span style=display:flex><span>                    }
+</span></span><span style=display:flex><span>                }
+</span></span><span style=display:flex><span>            },
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;copy&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;name&#34;</span><span>:</span> <span style=color:#b44>&#34;virtualMachineLoop&#34;</span>,
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;count&#34;</span><span>:</span> <span style=color:#b44>&#34;[parameters(&#39;defaultMasterCount&#39;)]&#34;</span>
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        {
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;type&#34;</span><span>:</span> <span style=color:#b44>&#34;Microsoft.Compute/virtualMachineScaleSets&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;apiVersion&#34;</span><span>:</span> <span style=color:#b44>&#34;2019-07-01&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;name&#34;</span><span>:</span> <span style=color:#b44>&#34;[parameters(&#39;vmssName&#39;)]&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;location&#34;</span><span>:</span> <span style=color:#b44>&#34;[parameters(&#39;location&#39;)]&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;dependsOn&#34;</span><span>:</span> [
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;[concat(&#39;Microsoft.Network/virtualNetworks/&#39;, parameters(&#39;virtualNetworkName&#39;))]&#34;</span>,
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;[concat(&#39;Microsoft.Network/loadBalancers/&#39;, parameters(&#39;publicLBName&#39;))]&#34;</span>
+</span></span><span style=display:flex><span>            ],
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;tags&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;cluster-autoscaler-enabled&#34;</span><span>:</span> <span style=color:#b44>&#34;true&#34;</span>,
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;cluster-autoscaler-name&#34;</span><span>:</span> <span style=color:#b44>&#34;[resourceGroup().name]&#34;</span>,
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;min&#34;</span><span>:</span> <span style=color:#b44>&#34;[parameters(&#39;minNodeCount&#39;)]&#34;</span>,
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;max&#34;</span><span>:</span> <span style=color:#b44>&#34;[parameters(&#39;maxNodeCount&#39;)]&#34;</span>,
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;poolName&#34;</span><span>:</span> <span style=color:#b44>&#34;[parameters(&#39;vmssName&#39;)]&#34;</span>
+</span></span><span style=display:flex><span>            },
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;sku&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;name&#34;</span><span>:</span> <span style=color:#b44>&#34;[parameters(&#39;vmSize&#39;)]&#34;</span>,
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;tier&#34;</span><span>:</span> <span style=color:#b44>&#34;Standard&#34;</span>,
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;capacity&#34;</span><span>:</span> <span style=color:#b44>&#34;[parameters(&#39;defaultNodeCount&#39;)]&#34;</span>
+</span></span><span style=display:flex><span>            },
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;properties&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;overprovision&#34;</span><span>:</span> false,
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;upgradePolicy&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                    <span style=color:#b44>&#34;mode&#34;</span><span>:</span> <span style=color:#b44>&#34;Manual&#34;</span>
+</span></span><span style=display:flex><span>                },
+</span></span><span style=display:flex><span>                <span style=color:#b44>&#34;virtualMachineProfile&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                    <span style=color:#b44>&#34;storageProfile&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;osDisk&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;createOption&#34;</span><span>:</span> <span style=color:#b44>&#34;FromImage&#34;</span>,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;caching&#34;</span><span>:</span> <span style=color:#b44>&#34;ReadWrite&#34;</span>
+</span></span><span style=display:flex><span>                        },
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;imageReference&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;publisher&#34;</span><span>:</span> <span style=color:#b44>&#34;Canonical&#34;</span>,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;offer&#34;</span><span>:</span> <span style=color:#b44>&#34;0001-com-ubuntu-server-focal&#34;</span>,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;sku&#34;</span><span>:</span> <span style=color:#b44>&#34;20_04-lts-gen2&#34;</span>,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;version&#34;</span><span>:</span> <span style=color:#b44>&#34;latest&#34;</span>
+</span></span><span style=display:flex><span>                        }
+</span></span><span style=display:flex><span>                    },
+</span></span><span style=display:flex><span>                    <span style=color:#b44>&#34;osProfile&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;computerNamePrefix&#34;</span><span>:</span> <span style=color:#b44>&#34;[parameters(&#39;vmssName&#39;)]&#34;</span>,
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;adminUsername&#34;</span><span>:</span> <span style=color:#b44>&#34;[parameters(&#39;adminUsername&#39;)]&#34;</span>,
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;adminPassword&#34;</span><span>:</span> <span style=color:#b44>&#34;[parameters(&#39;adminKey&#39;)]&#34;</span>,
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;linuxConfiguration&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;disablePasswordAuthentication&#34;</span><span>:</span> true,
+</span></span><span style=display:flex><span>                            <span style=color:#b44>&#34;ssh&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                                <span style=color:#b44>&#34;publicKeys&#34;</span><span>:</span> [
+</span></span><span style=display:flex><span>                                    {
+</span></span><span style=display:flex><span>                                        <span style=color:#b44>&#34;path&#34;</span><span>:</span> <span style=color:#b44>&#34;[concat(&#39;/home/&#39;, parameters(&#39;adminUsername&#39;), &#39;/.ssh/authorized_keys&#39;)]&#34;</span>,
+</span></span><span style=display:flex><span>                                        <span style=color:#b44>&#34;keyData&#34;</span><span>:</span> <span style=color:#b44>&#34;[parameters(&#39;adminKey&#39;)]&#34;</span>
+</span></span><span style=display:flex><span>                                    }
+</span></span><span style=display:flex><span>                                ]
+</span></span><span style=display:flex><span>                            }
+</span></span><span style=display:flex><span>                        }
+</span></span><span style=display:flex><span>                    },
+</span></span><span style=display:flex><span>                    <span style=color:#b44>&#34;networkProfile&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                        <span style=color:#b44>&#34;networkInterfaceConfigurations&#34;</span><span>:</span> [
+</span></span><span style=display:flex><span>                            {
+</span></span><span style=display:flex><span>                                <span style=color:#b44>&#34;name&#34;</span><span>:</span> <span style=color:#b44>&#34;[concat(parameters(&#39;vmssName&#39;),&#39;nic&#39;)]&#34;</span>,
+</span></span><span style=display:flex><span>                                <span style=color:#b44>&#34;properties&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                                    <span style=color:#b44>&#34;primary&#34;</span><span>:</span> true,
+</span></span><span style=display:flex><span>                                    <span style=color:#b44>&#34;ipConfigurations&#34;</span><span>:</span> [
+</span></span><span style=display:flex><span>                                        {
+</span></span><span style=display:flex><span>                                            <span style=color:#b44>&#34;name&#34;</span><span>:</span> <span style=color:#b44>&#34;[concat(&#39;ipconfigVmss&#39;, parameters(&#39;vmssName&#39;))]&#34;</span>,
+</span></span><span style=display:flex><span>                                            <span style=color:#b44>&#34;properties&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                                                <span style=color:#b44>&#34;subnet&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>                                                    <span style=color:#b44>&#34;id&#34;</span><span>:</span> <span style=color:#b44>&#34;[variables(&#39;vmssSubnetRef&#39;)]&#34;</span>
+</span></span><span style=display:flex><span>                                                },
+</span></span><span style=display:flex><span>                                                <span style=color:#b44>&#34;loadBalancerBackendAddressPools&#34;</span><span>:</span> [
+</span></span><span style=display:flex><span>                                                    {
+</span></span><span style=display:flex><span>                                                        <span style=color:#b44>&#34;id&#34;</span><span>:</span> <span style=color:#b44>&#34;[concat(variables(&#39;publicLBID&#39;), &#39;/backendAddressPools/BackendPoolNode&#39;)]&#34;</span>
+</span></span><span style=display:flex><span>                                                    }
+</span></span><span style=display:flex><span>                                                ],
+</span></span><span style=display:flex><span>                                                <span style=color:#b44>&#34;loadBalancerInboundNatPools&#34;</span><span>:</span> [
+</span></span><span style=display:flex><span>                                                    {
+</span></span><span style=display:flex><span>                                                        <span style=color:#b44>&#34;id&#34;</span><span>:</span> <span style=color:#b44>&#34;[concat(variables(&#39;publicLBID&#39;), &#39;/inboundNatPools/lbNAT-node&#39;)]&#34;</span>
+</span></span><span style=display:flex><span>                                                    }
+</span></span><span style=display:flex><span>                                                ]
+</span></span><span style=display:flex><span>                                            }
+</span></span><span style=display:flex><span>                                        }
+</span></span><span style=display:flex><span>                                    ]
+</span></span><span style=display:flex><span>                                }
+</span></span><span style=display:flex><span>                            }
+</span></span><span style=display:flex><span>                        ]
+</span></span><span style=display:flex><span>                    }
+</span></span><span style=display:flex><span>                }
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    ],
+</span></span><span style=display:flex><span>    <span style=color:#b44>&#34;outputs&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>        <span style=color:#b44>&#34;adminUsername&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;type&#34;</span><span>:</span> <span style=color:#b44>&#34;String&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;value&#34;</span><span>:</span> <span style=color:#b44>&#34;[parameters(&#39;adminUsername&#39;)]&#34;</span>
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        <span style=color:#b44>&#34;hostname&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;type&#34;</span><span>:</span> <span style=color:#b44>&#34;String&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;value&#34;</span><span>:</span> <span style=color:#b44>&#34;[reference(variables(&#39;publicIPAddressName&#39;)).dnsSettings.fqdn]&#34;</span>
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        <span style=color:#b44>&#34;sshCommand&#34;</span><span>:</span> {
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;type&#34;</span><span>:</span> <span style=color:#b44>&#34;String&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;value&#34;</span><span>:</span> <span style=color:#b44>&#34;[concat(&#39;ssh &#39;, parameters(&#39;adminUsername&#39;), &#39;@&#39;, reference(variables(&#39;publicIPAddressName&#39;)).dnsSettings.fqdn)]&#34;</span>
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><ul><li><p>可以修改 master 和 node 的名字前缀、部署区域、数量和 VM 类型</p><p><img src=K8S%20cluster%20with%20multi-masters%20on%20Azure%20VM%20b4da55cf853449c0b7e45a35e2d2c732/Untitled%201.png alt=Untitled></p><ul><li>ssh 22 对外由 LB 配置 NAT 端口实现，如配置文件中 50200 → master-0<ul><li>已经包含的规则转换（不含 30880）<table><thead><tr><th>服务</th><th>协议</th><th>规则</th><th>后端端口</th><th>前端端口</th><th>节点池</th></tr></thead><tbody><tr><td>ssh</td><td>TCP</td><td>入站 NAT</td><td>22</td><td>50200, 50201, 50202, 50100~50199</td><td>主节点, 普通节点</td></tr><tr><td>api 服务器</td><td>TCP</td><td>负载均衡</td><td>6443</td><td>6443</td><td>主节点</td></tr><tr><td>ks 控制台</td><td>TCP</td><td>负载均衡</td><td>30880</td><td>30880</td><td>主节点</td></tr><tr><td>http</td><td>TCP</td><td>负载均衡</td><td>80</td><td>80</td><td>普通节点</td></tr><tr><td>https</td><td>TCP</td><td>负载均衡</td><td>443</td><td>443</td><td>普通节点</td></tr></tbody></table></li></ul></li><li>node 使用 VMSS</li></ul></li></ul></li><li><p>部署 K8S cluster
+最简单的方式还是用 kk 完成，注意在 kubernetes 1.24 以后，psp 弃用，在 kk 中还有 psp 权限管理，安装的时候会报错。建议使用 1.23.10，也是 kk 现在默认的版本。</p><ul><li><p>证书传输 → Master-0</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell><span style=display:flex><span>scp  -i zyi.pem -P 50200 zyi.pem zyi<span style=color:#b8860b>@20</span>.247.0.170<span>:</span>/home/zyi/.ssh/
+</span></span></code></pre></div></li><li><p>每一台安装 socat 等必须的软件</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell><span style=display:flex><span>ssh -i zyi.pem -p50200 zyi<span style=color:#b8860b>@20</span>.247.0.170 <span style=color:#b44>&#39;sudo apt install socat conntrack&#39;</span>
+</span></span></code></pre></div></li><li><p>登录到 Mater-0</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell><span style=display:flex><span>ssh -i zyi.pem -p50200 zyi<span style=color:#b8860b>@20</span>.247.0.170
+</span></span></code></pre></div></li><li><p>下载 kk 并赋予可执行权限</p></li></ul><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell><span style=display:flex><span><span style=color:#a2f>curl </span>-sfL https<span>:</span>//<span style=color:#a2f>get-kk</span>.kubesphere.io | VERSION=v3.0.10 sh -
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>chmod +x kk
+</span></span></code></pre></div><ul><li><p>创建配置文件模板</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell><span style=display:flex><span>./kk create config --with-kubesphere v3.3.2 --with-kubernetes v1.22.12
+</span></span></code></pre></div><ul><li><p>KubeSphere 3.3 对应 Kubernetes 版本推荐：v1.20.x、v1.21.x、* v1.22.x、* v1.23.x 和 * v1.24.x。带星号的版本可能出现边缘节点部分功能不可用的情况。因此，如需使用边缘节点，推荐安装 v1.21.x。如果未指定 Kubernetes 版本，KubeKey 将默认安装 Kubernetes v1.23.10。有关支持的 Kubernetes 版本请参阅<a href=https://www.kubesphere.io/zh/docs/v3.3/installing-on-linux/introduction/kubekey/#support-matrix>支持矩阵</a>。</p></li><li><p>如果在此步骤中的命令中未添加标志 <code>-with-kubesphere</code>，则不会部署 KubeSphere，除非您使用配置文件中的 <code>addons</code> 字段进行安装，或稍后使用 <code>./kk create cluster</code> 时再次添加此标志。</p></li><li><p>如果在未指定 KubeSphere 版本的情况下添加标志 &ndash;with kubesphere`，将安装 KubeSphere 的最新版本。</p></li><li><p>修改的内容用红色标注</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell><span style=display:flex><span>apiVersion<span>:</span> kubekey.kubesphere.io/v1alpha2
+</span></span><span style=display:flex><span>kind<span>:</span> Cluster
+</span></span><span style=display:flex><span>metadata<span>:</span>
+</span></span><span style=display:flex><span>  name<span>:</span> kubeCluster
+</span></span><span style=display:flex><span>spec<span>:</span>
+</span></span><span style=display:flex><span>  hosts<span>:</span>
+</span></span><span style=display:flex><span>  - {name<span>:</span> master-0, address<span>:</span> 20.210.0.156, port<span>:</span> 50200, internalAddress<span>:</span> 10.211.1.5, user<span>:</span> zyi, privateKeyPath<span>:</span> <span style=color:#b44>&#34;~/.ssh/zyi.pem&#34;</span>}
+</span></span><span style=display:flex><span>  - {name<span>:</span> master-1, address<span>:</span> 20.210.0.156, port<span>:</span> 50201, internalAddress<span>:</span> 10.211.1.6, user<span>:</span> zyi, privateKeyPath<span>:</span> <span style=color:#b44>&#34;~/.ssh/zyi.pem&#34;</span>}
+</span></span><span style=display:flex><span>  - {name<span>:</span> master-2, address<span>:</span> 20.210.0.156, port<span>:</span> 50202, internalAddress<span>:</span> 10.211.1.4, user<span>:</span> zyi, privateKeyPath<span>:</span> <span style=color:#b44>&#34;~/.ssh/zyi.pem&#34;</span>}
+</span></span><span style=display:flex><span>  - {name<span>:</span> node000000, address<span>:</span> 20.210.0.156, port<span>:</span> 50100, internalAddress<span>:</span> 10.211.0.4, user<span>:</span> zyi, privateKeyPath<span>:</span> <span style=color:#b44>&#34;~/.ssh/zyi.pem&#34;</span>}
+</span></span><span style=display:flex><span>  - {name<span>:</span> node000001, address<span>:</span> 20.210.0.156, port<span>:</span> 50101, internalAddress<span>:</span> 10.211.0.5, user<span>:</span> zyi, privateKeyPath<span>:</span> <span style=color:#b44>&#34;~/.ssh/zyi.pem&#34;</span>}
+</span></span><span style=display:flex><span>  - {name<span>:</span> node000002, address<span>:</span> 20.210.0.156, port<span>:</span> 50102, internalAddress<span>:</span> 10.211.0.6, user<span>:</span> zyi, privateKeyPath<span>:</span> <span style=color:#b44>&#34;~/.ssh/zyi.pem&#34;</span>}
+</span></span><span style=display:flex><span>  roleGroups<span>:</span>
+</span></span><span style=display:flex><span>    etcd<span>:</span>
+</span></span><span style=display:flex><span>    - master-0
+</span></span><span style=display:flex><span>    - master-1
+</span></span><span style=display:flex><span>    - master-2
+</span></span><span style=display:flex><span>    <span style=color:#a2f>control-plane</span><span>:</span>
+</span></span><span style=display:flex><span>    - master-0
+</span></span><span style=display:flex><span>    - master-1
+</span></span><span style=display:flex><span>    - master-2
+</span></span><span style=display:flex><span>    worker<span>:</span>
+</span></span><span style=display:flex><span>    - node000000
+</span></span><span style=display:flex><span>    - node000001
+</span></span><span style=display:flex><span>    - node000002
+</span></span><span style=display:flex><span>  controlPlaneEndpoint<span>:</span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>## Internal loadbalancer for apiservers</span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic># internalLoadbalancer: haproxy</span>
+</span></span><span style=display:flex><span>    domain<span>:</span> lb.etaon.lab
+</span></span><span style=display:flex><span>    address<span>:</span> <span style=color:#b44>&#34;20.210.0.156&#34;</span>
+</span></span><span style=display:flex><span>    port<span>:</span> 6443
+</span></span><span style=display:flex><span>  kubernetes<span>:</span>
+</span></span><span style=display:flex><span>    version<span>:</span> v1.23.10
+</span></span><span style=display:flex><span>    clusterName<span>:</span> cluster.local
+</span></span><span style=display:flex><span>    autoRenewCerts<span>:</span> true
+</span></span><span style=display:flex><span>    containerManager<span>:</span> docker
+</span></span><span style=display:flex><span>  etcd<span>:</span>
+</span></span><span style=display:flex><span>    type<span>:</span> kubekey
+</span></span><span style=display:flex><span>  network<span>:</span>
+</span></span><span style=display:flex><span>    plugin<span>:</span> flannel
+</span></span><span style=display:flex><span>    kubePodsCIDR<span>:</span> 10.233.64.0/18
+</span></span><span style=display:flex><span>    kubeServiceCIDR<span>:</span> 10.233.0.0/18
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>## multus support. https://github.com/k8snetworkplumbingwg/multus-cni</span>
+</span></span><span style=display:flex><span>    multusCNI<span>:</span>
+</span></span><span style=display:flex><span>      enabled<span>:</span> false
+</span></span><span style=display:flex><span>  registry<span>:</span>
+</span></span><span style=display:flex><span>    privateRegistry<span>:</span> <span style=color:#b44>&#34;&#34;</span>
+</span></span><span style=display:flex><span>    namespaceOverride<span>:</span> <span style=color:#b44>&#34;&#34;</span>
+</span></span><span style=display:flex><span>    registryMirrors<span>:</span> []
+</span></span><span style=display:flex><span>    insecureRegistries<span>:</span> []
+</span></span><span style=display:flex><span>  addons<span>:</span> []
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>---
+</span></span><span style=display:flex><span>apiVersion<span>:</span> installer.kubesphere.io/v1alpha1
+</span></span><span style=display:flex><span>kind<span>:</span> ClusterConfiguration
+</span></span><span style=display:flex><span>metadata<span>:</span>
+</span></span><span style=display:flex><span>  name<span>:</span> <span style=color:#a2f>ks-installer</span>
+</span></span><span style=display:flex><span>  namespace<span>:</span> <span style=color:#a2f>kubesphere-system</span>
+</span></span><span style=display:flex><span>  labels<span>:</span>
+</span></span><span style=display:flex><span>    version<span>:</span> v3.3.2
+</span></span><span style=display:flex><span>spec<span>:</span>
+</span></span><span style=display:flex><span>  persistence<span>:</span>
+</span></span><span style=display:flex><span>    storageClass<span>:</span> <span style=color:#b44>&#34;&#34;</span>
+</span></span><span style=display:flex><span>  authentication<span>:</span>
+</span></span><span style=display:flex><span>    jwtSecret<span>:</span> <span style=color:#b44>&#34;&#34;</span>
+</span></span><span style=display:flex><span>  zone<span>:</span> <span style=color:#b44>&#34;&#34;</span>
+</span></span><span style=display:flex><span>  local_registry<span>:</span> <span style=color:#b44>&#34;&#34;</span>
+</span></span><span style=display:flex><span>  namespace_override<span>:</span> <span style=color:#b44>&#34;&#34;</span>
+</span></span><span style=display:flex><span>  <span style=color:#080;font-style:italic># dev_tag: &#34;&#34;</span>
+</span></span><span style=display:flex><span>  etcd<span>:</span>
+</span></span><span style=display:flex><span>    monitoring<span>:</span> false
+</span></span><span style=display:flex><span>    endpointIps<span>:</span> localhost
+</span></span><span style=display:flex><span>    port<span>:</span> 2379
+</span></span><span style=display:flex><span>    tlsEnable<span>:</span> true
+</span></span><span style=display:flex><span>  common<span>:</span>
+</span></span><span style=display:flex><span>    core<span>:</span>
+</span></span><span style=display:flex><span>      console<span>:</span>
+</span></span><span style=display:flex><span>        enableMultiLogin<span>:</span> true
+</span></span><span style=display:flex><span>        port<span>:</span> 30880
+</span></span><span style=display:flex><span>        type<span>:</span> NodePort
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic># apiserver:</span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>#  resources: {}</span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic># controllerManager:</span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>#  resources: {}</span>
+</span></span><span style=display:flex><span>    redis<span>:</span>
+</span></span><span style=display:flex><span>      enabled<span>:</span> false
+</span></span><span style=display:flex><span>      volumeSize<span>:</span> 2Gi
+</span></span><span style=display:flex><span>    openldap<span>:</span>
+</span></span><span style=display:flex><span>      enabled<span>:</span> false
+</span></span><span style=display:flex><span>      volumeSize<span>:</span> 2Gi
+</span></span><span style=display:flex><span>    minio<span>:</span>
+</span></span><span style=display:flex><span>      volumeSize<span>:</span> 20Gi
+</span></span><span style=display:flex><span>    monitoring<span>:</span>
+</span></span><span style=display:flex><span>      <span style=color:#080;font-style:italic># type: external</span>
+</span></span><span style=display:flex><span>      endpoint<span>:</span> http<span>:</span>//<span style=color:#a2f>prometheus-operated</span>.<span style=color:#a2f>kubesphere-monitoring</span>-system.svc<span>:</span>9090
+</span></span><span style=display:flex><span>      GPUMonitoring<span>:</span>
+</span></span><span style=display:flex><span>        enabled<span>:</span> false
+</span></span><span style=display:flex><span>    gpu<span>:</span>
+</span></span><span style=display:flex><span>      kinds<span>:</span>
+</span></span><span style=display:flex><span>      - resourceName<span>:</span> <span style=color:#b44>&#34;nvidia.com/gpu&#34;</span>
+</span></span><span style=display:flex><span>        resourceType<span>:</span> <span style=color:#b44>&#34;GPU&#34;</span>
+</span></span><span style=display:flex><span>        <span style=color:#a2f;font-weight:700>default</span><span>:</span> true
+</span></span><span style=display:flex><span>    es<span>:</span>
+</span></span><span style=display:flex><span>      <span style=color:#080;font-style:italic># master:</span>
+</span></span><span style=display:flex><span>      <span style=color:#080;font-style:italic>#   volumeSize: 4Gi</span>
+</span></span><span style=display:flex><span>      <span style=color:#080;font-style:italic>#   replicas: 1</span>
+</span></span><span style=display:flex><span>      <span style=color:#080;font-style:italic>#   resources: {}</span>
+</span></span><span style=display:flex><span>      <span style=color:#080;font-style:italic># data:</span>
+</span></span><span style=display:flex><span>      <span style=color:#080;font-style:italic>#   volumeSize: 20Gi</span>
+</span></span><span style=display:flex><span>      <span style=color:#080;font-style:italic>#   replicas: 1</span>
+</span></span><span style=display:flex><span>      <span style=color:#080;font-style:italic>#   resources: {}</span>
+</span></span><span style=display:flex><span>      logMaxAge<span>:</span> 7
+</span></span><span style=display:flex><span>      elkPrefix<span>:</span> logstash
+</span></span><span style=display:flex><span>      basicAuth<span>:</span>
+</span></span><span style=display:flex><span>        enabled<span>:</span> false
+</span></span><span style=display:flex><span>        username<span>:</span> <span style=color:#b44>&#34;&#34;</span>
+</span></span><span style=display:flex><span>        password<span>:</span> <span style=color:#b44>&#34;&#34;</span>
+</span></span><span style=display:flex><span>      externalElasticsearchHost<span>:</span> <span style=color:#b44>&#34;&#34;</span>
+</span></span><span style=display:flex><span>      externalElasticsearchPort<span>:</span> <span style=color:#b44>&#34;&#34;</span>
+</span></span><span style=display:flex><span>  alerting<span>:</span>
+</span></span><span style=display:flex><span>    enabled<span>:</span> false
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic># thanosruler:</span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>#   replicas: 1</span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>#   resources: {}</span>
+</span></span><span style=display:flex><span>  auditing<span>:</span>
+</span></span><span style=display:flex><span>    enabled<span>:</span> false
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic># operator:</span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>#   resources: {}</span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic># webhook:</span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>#   resources: {}</span>
+</span></span><span style=display:flex><span>  devops<span>:</span>
+</span></span><span style=display:flex><span>    enabled<span>:</span> false
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic># resources: {}</span>
+</span></span><span style=display:flex><span>    jenkinsMemoryLim<span>:</span> 8Gi
+</span></span><span style=display:flex><span>    jenkinsMemoryReq<span>:</span> 4Gi
+</span></span><span style=display:flex><span>    jenkinsVolumeSize<span>:</span> 8Gi
+</span></span><span style=display:flex><span>  events<span>:</span>
+</span></span><span style=display:flex><span>    enabled<span>:</span> false
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic># operator:</span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>#   resources: {}</span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic># exporter:</span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>#   resources: {}</span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic># ruler:</span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>#   enabled: true</span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>#   replicas: 2</span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>#   resources: {}</span>
+</span></span><span style=display:flex><span>  logging<span>:</span>
+</span></span><span style=display:flex><span>    enabled<span>:</span> false
+</span></span><span style=display:flex><span>    logsidecar<span>:</span>
+</span></span><span style=display:flex><span>      enabled<span>:</span> true
+</span></span><span style=display:flex><span>      replicas<span>:</span> 2
+</span></span><span style=display:flex><span>      <span style=color:#080;font-style:italic># resources: {}</span>
+</span></span><span style=display:flex><span>  metrics_server<span>:</span>
+</span></span><span style=display:flex><span>    enabled<span>:</span> false
+</span></span><span style=display:flex><span>  monitoring<span>:</span>
+</span></span><span style=display:flex><span>    storageClass<span>:</span> <span style=color:#b44>&#34;&#34;</span>
+</span></span><span style=display:flex><span>    node_exporter<span>:</span>
+</span></span><span style=display:flex><span>      port<span>:</span> 9100
+</span></span><span style=display:flex><span>      <span style=color:#080;font-style:italic># resources: {}</span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic># kube_rbac_proxy:</span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>#   resources: {}</span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic># kube_state_metrics:</span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>#   resources: {}</span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic># prometheus:</span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>#   replicas: 1</span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>#   volumeSize: 20Gi</span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>#   resources: {}</span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>#   operator:</span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>#     resources: {}</span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic># alertmanager:</span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>#   replicas: 1</span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>#   resources: {}</span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic># notification_manager:</span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>#   resources: {}</span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>#   operator:</span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>#     resources: {}</span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>#   proxy:</span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>#     resources: {}</span>
+</span></span><span style=display:flex><span>    gpu<span>:</span>
+</span></span><span style=display:flex><span>      nvidia_dcgm_exporter<span>:</span>
+</span></span><span style=display:flex><span>        enabled<span>:</span> false
+</span></span><span style=display:flex><span>        <span style=color:#080;font-style:italic># resources: {}</span>
+</span></span><span style=display:flex><span>  multicluster<span>:</span>
+</span></span><span style=display:flex><span>    clusterRole<span>:</span> none
+</span></span><span style=display:flex><span>  network<span>:</span>
+</span></span><span style=display:flex><span>    networkpolicy<span>:</span>
+</span></span><span style=display:flex><span>      enabled<span>:</span> false
+</span></span><span style=display:flex><span>    ippool<span>:</span>
+</span></span><span style=display:flex><span>      type<span>:</span> none
+</span></span><span style=display:flex><span>    topology<span>:</span>
+</span></span><span style=display:flex><span>      type<span>:</span> none
+</span></span><span style=display:flex><span>  openpitrix<span>:</span>
+</span></span><span style=display:flex><span>    store<span>:</span>
+</span></span><span style=display:flex><span>      enabled<span>:</span> false
+</span></span><span style=display:flex><span>  servicemesh<span>:</span>
+</span></span><span style=display:flex><span>    enabled<span>:</span> false
+</span></span><span style=display:flex><span>    istio<span>:</span>
+</span></span><span style=display:flex><span>      components<span>:</span>
+</span></span><span style=display:flex><span>        ingressGateways<span>:</span>
+</span></span><span style=display:flex><span>        - name<span>:</span> <span style=color:#a2f>istio-ingressgateway</span>
+</span></span><span style=display:flex><span>          enabled<span>:</span> false
+</span></span><span style=display:flex><span>        cni<span>:</span>
+</span></span><span style=display:flex><span>          enabled<span>:</span> false
+</span></span><span style=display:flex><span>  edgeruntime<span>:</span>
+</span></span><span style=display:flex><span>    enabled<span>:</span> false
+</span></span><span style=display:flex><span>    kubeedge<span>:</span>
+</span></span><span style=display:flex><span>      enabled<span>:</span> false
+</span></span><span style=display:flex><span>      cloudCore<span>:</span>
+</span></span><span style=display:flex><span>        cloudHub<span>:</span>
+</span></span><span style=display:flex><span>          advertiseAddress<span>:</span>
+</span></span><span style=display:flex><span>            - <span style=color:#b44>&#34;&#34;</span>
+</span></span><span style=display:flex><span>        service<span>:</span>
+</span></span><span style=display:flex><span>          cloudhubNodePort<span>:</span> <span style=color:#b44>&#34;30000&#34;</span>
+</span></span><span style=display:flex><span>          cloudhubQuicNodePort<span>:</span> <span style=color:#b44>&#34;30001&#34;</span>
+</span></span><span style=display:flex><span>          cloudhubHttpsNodePort<span>:</span> <span style=color:#b44>&#34;30002&#34;</span>
+</span></span><span style=display:flex><span>          cloudstreamNodePort<span>:</span> <span style=color:#b44>&#34;30003&#34;</span>
+</span></span><span style=display:flex><span>          tunnelNodePort<span>:</span> <span style=color:#b44>&#34;30004&#34;</span>
+</span></span><span style=display:flex><span>        <span style=color:#080;font-style:italic># resources: {}</span>
+</span></span><span style=display:flex><span>        <span style=color:#080;font-style:italic># hostNetWork: false</span>
+</span></span><span style=display:flex><span>      <span style=color:#a2f>iptables-manager</span><span>:</span>
+</span></span><span style=display:flex><span>        enabled<span>:</span> true
+</span></span><span style=display:flex><span>        mode<span>:</span> <span style=color:#b44>&#34;external&#34;</span>
+</span></span><span style=display:flex><span>        <span style=color:#080;font-style:italic># resources: {}</span>
+</span></span><span style=display:flex><span>      <span style=color:#080;font-style:italic># edgeService:</span>
+</span></span><span style=display:flex><span>      <span style=color:#080;font-style:italic>#   resources: {}</span>
+</span></span><span style=display:flex><span>  terminal<span>:</span>
+</span></span><span style=display:flex><span>    timeout<span>:</span> 600
+</span></span></code></pre></div></li></ul></li><li><p>安装部署</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell><span style=display:flex><span>./kk create cluster <span style=color:#666>-f</span> <span style=color:#a2f>config-sample</span>.yaml
+</span></span></code></pre></div><ul><li>安装日志</li></ul><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell><span style=display:flex><span>kubectl logs -n <span style=color:#a2f>kubesphere-system</span> $(kubectl get pod -n <span style=color:#a2f>kubesphere-system</span> -l <span style=color:#b44>&#39;app in (ks-install, ks-installer)&#39;</span> -o jsonpath=<span style=color:#b44>&#39;{.items[0].metadata.name}&#39;</span>) <span style=color:#666>-f</span>
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell><span style=display:flex><span><span style=color:#080;font-style:italic>#####################################################</span>
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic>###              Welcome to KubeSphere!           ###</span>
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic>#####################################################</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Console<span>:</span> http<span>:</span>//10.211.1.5<span>:</span>30880
+</span></span><span style=display:flex><span>Account<span>:</span> admin
+</span></span><span style=display:flex><span>Password<span>:</span> P<span style=color:#b8860b>@88w0rd</span>
+</span></span><span style=display:flex><span>NOTES<span>：</span>
+</span></span><span style=display:flex><span>  1. After you log into the console, please check the
+</span></span><span style=display:flex><span>     monitoring status of service components <span style=color:#a2f;font-weight:700>in</span>
+</span></span><span style=display:flex><span>     <span style=color:#b44>&#34;Cluster Management&#34;</span>. <span style=color:#a2f;font-weight:700>If</span> any service is not
+</span></span><span style=display:flex><span>     ready, please wait patiently <span style=color:#a2f;font-weight:700>until</span> all components 
+</span></span><span style=display:flex><span>     are up and running.
+</span></span><span style=display:flex><span>  2. Please change the <span style=color:#a2f;font-weight:700>default</span> password after login.
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic>#####################################################</span>
+</span></span><span style=display:flex><span>https<span>:</span>//kubesphere.io             2023-08-11 03<span>:</span>31<span>:</span>56
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic>#####################################################</span>
+</span></span></code></pre></div></li><li><p>在 LBer 上为 30880端口 配置规则并在 ASG 上 permit</p><p><img src=K8S%20cluster%20with%20multi-masters%20on%20Azure%20VM%20b4da55cf853449c0b7e45a35e2d2c732/Untitled%202.png alt=Untitled></p><p><img src=K8S%20cluster%20with%20multi-masters%20on%20Azure%20VM%20b4da55cf853449c0b7e45a35e2d2c732/Untitled%203.png alt=Untitled></p></li><li><p>http://hostip：30880</p><p><img src=K8S%20cluster%20with%20multi-masters%20on%20Azure%20VM%20b4da55cf853449c0b7e45a35e2d2c732/Untitled%204.png alt=Untitled></p></li></ul></li><li><p>测试</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell><span style=display:flex><span>apiVersion<span>:</span> v1
+</span></span><span style=display:flex><span>kind<span>:</span> Service
+</span></span><span style=display:flex><span>metadata<span>:</span>
+</span></span><span style=display:flex><span>  name<span>:</span> <span style=color:#a2f>hello-kubernetes</span>
+</span></span><span style=display:flex><span>spec<span>:</span>
+</span></span><span style=display:flex><span>  type<span>:</span> NodePort
+</span></span><span style=display:flex><span>  ports<span>:</span>
+</span></span><span style=display:flex><span>  - port<span>:</span> 80
+</span></span><span style=display:flex><span>    targetPort<span>:</span> 8080
+</span></span><span style=display:flex><span>  selector<span>:</span>
+</span></span><span style=display:flex><span>    app<span>:</span> <span style=color:#a2f>hello-kubernetes</span>
+</span></span><span style=display:flex><span>---
+</span></span><span style=display:flex><span>apiVersion<span>:</span> apps/v1
+</span></span><span style=display:flex><span>kind<span>:</span> Deployment
+</span></span><span style=display:flex><span>metadata<span>:</span>
+</span></span><span style=display:flex><span>  name<span>:</span> <span style=color:#a2f>hello-kubernetes</span>
+</span></span><span style=display:flex><span>spec<span>:</span>
+</span></span><span style=display:flex><span>  replicas<span>:</span> 3
+</span></span><span style=display:flex><span>  selector<span>:</span>
+</span></span><span style=display:flex><span>    matchLabels<span>:</span>
+</span></span><span style=display:flex><span>      app<span>:</span> <span style=color:#a2f>hello-kubernetes</span>
+</span></span><span style=display:flex><span>  template<span>:</span>
+</span></span><span style=display:flex><span>    metadata<span>:</span>
+</span></span><span style=display:flex><span>      labels<span>:</span>
+</span></span><span style=display:flex><span>        app<span>:</span> <span style=color:#a2f>hello-kubernetes</span>
+</span></span><span style=display:flex><span>    spec<span>:</span>
+</span></span><span style=display:flex><span>      containers<span>:</span>
+</span></span><span style=display:flex><span>      - name<span>:</span> <span style=color:#a2f>hello-kubernetes</span>
+</span></span><span style=display:flex><span>        image<span>:</span> paulbouwer/<span style=color:#a2f>hello-kubernetes</span><span>:</span>1.5
+</span></span><span style=display:flex><span>        ports<span>:</span>
+</span></span><span style=display:flex><span>        - containerPort<span>:</span> 8080
+</span></span><span style=display:flex><span>        env<span>:</span>
+</span></span><span style=display:flex><span>        - name<span>:</span> MESSAGE
+</span></span><span style=display:flex><span>          value<span>:</span> I just deployed a PodVM on the Azure VM Cluster!!
+</span></span></code></pre></div><ul><li><p>配置外部访问30596 → 80</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell><span style=display:flex><span>kubectl get svc
+</span></span><span style=display:flex><span>NAME               <span style=color:#a2f>TYPE </span>       <span style=color:#a2f>CLUSTER-IP</span>      <span style=color:#a2f>EXTERNAL-IP</span>   PORT(S)        AGE
+</span></span><span style=display:flex><span><span style=color:#a2f>hello-kubernetes</span>   NodePort    10.233.31.158   &lt;none&gt;        80<span>:</span>30596/TCP   167m
+</span></span></code></pre></div></li><li><p>负载均衡上配置</p><p><img src=K8S%20cluster%20with%20multi-masters%20on%20Azure%20VM%20b4da55cf853449c0b7e45a35e2d2c732/Untitled%205.png alt=Untitled></p></li><li><p>访问前端 公网 IP 或 DNS 名称</p><p><img src=K8S%20cluster%20with%20multi-masters%20on%20Azure%20VM%20b4da55cf853449c0b7e45a35e2d2c732/Untitled%206.png alt=Untitled></p><p><img src=K8S%20cluster%20with%20multi-masters%20on%20Azure%20VM%20b4da55cf853449c0b7e45a35e2d2c732/Untitled%207.png alt=Untitled></p></li></ul></li></ul></div><footer class=post-footer><div class=addthis_inline_share_toolbox></div><div class=post-nav><div class=article-copyright><div class=article-copyright-img><img src=/img/qq_qrcode.png width=129px height=129px><div style=text-align:center>QQ扫一扫交流</div></div><div class=article-copyright-info><p><span>声明：</span></p><p><span>链接：</span>https://www.etaon.top/post/k8s-cluster-with-multi-masters-on-azure-vm-b4da55cf853449c0b7e45a35e2d2c732/</p><p><span>作者：</span>Etaon</p><p><span>声明： </span>本博客文章除特别声明外，均采用 <a href=https://creativecommons.org/licenses/by-nc-sa/3.0/ target=_blank style=text-decoration:underline>CC BY-NC-SA 3.0</a>许可协议，转载请注明出处！</p></div></div><div class=clear></div></div><div class=reward-qr-info><div>创作实属不易，如有帮助，那就打赏博主些许茶钱吧 ^_^</div><button id=rewardButton disable=enable onclick='var qr=document.getElementById("QR");qr.style.display==="none"?qr.style.display="block":qr.style.display="none"'>
+<span>赏</span></button><div id=QR style=display:none><div id=wechat style=display:inline-block><img id=wechat_qr src=/img/wechat-pay.png alt="WeChat Pay"><p>微信打赏</p></div><div id=alipay style=display:inline-block><img id=alipay_qr src=/img/ali-pay.png alt=Alipay><p>支付宝打赏</p></div></div></div><div class=post-nav><div class="post-nav-next post-nav-item"><a href=https://www.etaon.top/2021/01/25/horizonavi01.html rel=next title="实现VMware Horizo​​n+负载均衡（AVI）（一）"><i class="fa fa-chevron-left"></i> 实现VMware Horizo​​n+负载均衡（AVI）（一）</a></div><div class="post-nav-prev post-nav-item"></div></div><div id=wcomments></div></footer></article></section></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id=sidebar class=sidebar><div class=sidebar-inner><section class="site-overview sidebar-panel sidebar-panel-active"><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image src=/img/avatar.png alt=Etaon><p class=site-author-name itemprop=name>Etaon</p><p class="site-description motion-element" itemprop=description>Kepp Going!</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=/post/><span class=site-state-item-count>79</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>14</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>43</span>
+<span class=site-state-item-name>标签</span></a></div></nav><div class="links-of-author motion-element"><span class=links-of-author-item><a href=https://github.com/etaon target=_blank title=GitHub><i class="fa fa-fw fa-github"></i>
+GitHub</a></span>
+<span class=links-of-author-item><a href=https://blog.csdn.net/weixin_43394724 target=_blank title=CSDN><i class="fa fa-fw fa-CSDN"></i>
+CSDN</a></span></div><div class="links-of-blogroll motion-element links-of-blogroll-inline"><div class=links-of-blogroll-title><i class="fa fa-fw fa-globe"></i>
+友情链接</div><ul class=links-of-blogroll-list><li class=links-of-blogroll-item><a href=https://kubernetes.io/ title=Kubernetes target=_blank>Kubernetes</a></li><li class=links-of-blogroll-item><a href=https://cisco.com/ title=Cisco target=_blank>Cisco</a></li><li class=links-of-blogroll-item><a href=https://www.w3school.com.cn/ title=W3School target=_blank>W3School</a></li><li class=links-of-blogroll-item><a href=https://www.liaoxuefeng.com/ title=廖雪峰 target=_blank>廖雪峰</a></li></ul></div><div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline"><div class=tagcloud-of-blogroll-title><i class="fa fa-fw fa-tags"></i>
+标签云</div><ul class=tagcloud-of-blogroll-list><li class=tagcloud-of-blogroll-item><a href=/tags/mysql>Mysql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/aws>Aws</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/dql>Dql</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/hadoop>Hadoop</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/nsx-t>Nsx t</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/redis>Redis</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/azure>Azure</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/cicd>Cicd</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/git>Git</a></li><li class=tagcloud-of-blogroll-item><a href=/tags/kubernetes>Kubernetes</a></li></ul></div></section></div></aside></div></main><footer id=footer class=footer><div class=footer-inner><div class=copyright><span class=copyright-year>&copy; 2010 - 2023</span>
+<span class=with-love><i class="fa fa-heart"></i></span>
+<span class=copyright-author>路无止境！</span></div><div class=powered-info><span class=powered-by>Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.101.0</a></span>
+<span class=separator-line>/</span>
+<span class=theme-info>Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank>NexT</a></span></div><div class=vistor-info><script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<span class=site-uv><i class="fa fa-user"></i>
+<span class=busuanzi-value id=busuanzi_value_site_uv></span></span>
+<span class=separator-line>/</span>
+<span class=site-pv><i class="fa fa-eye"></i>
+<span class=busuanzi-value id=busuanzi_value_site_pv></span></span></div><div class=license-info><span class=storage-info>Storage by
+<a href=https://www.azure.com/ style=font-weight:700 target=_blank>Azure static web apps</a></span>
+<span class=separator-line>/</span>
+<span class=license-num><a href target=_blank></a></span></div></div></footer><div class=back-to-top><i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span></div></div><script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
+<script type=text/javascript src=/js/search.js></script>
+<script type=text/javascript src=/js/affix.js></script>
+<script type=text/javascript src=/js/scrollspy.js></script>
+<script type=text/javascript>function detectIE(){var e=window.navigator.userAgent,t=e.indexOf("MSIE "),n=e.indexOf("Trident/"),s=e.indexOf("Edge/");return t>0||n>0||s>0?-1:1}function getCntViewHeight(){var t=$("#content").height(),e=$(window).height(),n=t>e?t-e:$(document).height()-e;return n}function getScrollbarWidth(){var e=$("<div />").addClass("scrollbar-measure").prependTo("body"),t=e[0],n=t.offsetWidth-t.clientWidth;return e.remove(),n}function registerBackTop(){var t=50,e=$(".back-to-top");$(window).on("scroll",function(){e.toggleClass("back-to-top-on",window.pageYOffset>t);var s=$(window).scrollTop(),o=getCntViewHeight(),i=s/o,n=Math.round(i*100),a=n>100?100:n;$("#scrollpercent>span").html(a)}),e.on("click",function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var e=".post-toc",s=$(e),t=".active-current";s.on("activate.bs.scrollspy",function(){var t=$(e+" .active").last();n(),t.addClass("active-current")}).on("clear.bs.scrollspy",n),$("body").scrollspy({target:e});function n(){$(e+" "+t).removeClass(t.substring(1))}}function initAffix(){var e=$(".header-inner").height(),t=parseInt($(".main").css("padding-bottom"),10),n=e+10;$(".sidebar-inner").affix({offset:{top:n,bottom:t}}),$(document).on("affixed.bs.affix",function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){$(window).on("resize",function(){e&&clearTimeout(e),e=setTimeout(function(){var e=document.body.clientHeight-100;updateTOCHeight(e)},0)}),updateTOCHeight(document.body.clientHeight-100);var e,t=getScrollbarWidth();$(".post-toc").css("width","calc(100% + "+t+"px)")}function updateTOCHeight(e){e=e||"auto",$(".post-toc").css("max-height",e)}$(function(){var e,t,n,s,o=$(".header-inner").height()+10;$("#sidebar").css({"margin-top":o}).show(),t=parseInt($("#sidebar").css("margin-top")),n=parseInt($(".sidebar-inner").css("height")),e=t+n,s=$(".content-wrap").height(),s<e&&$(".content-wrap").css("min-height",e),$(".site-nav-toggle").on("click",function(){var e=$(".site-nav"),o=$(".toggle"),t="site-nav-on",i="toggle-close",n=e.hasClass(t),a=n?"slideUp":"slideDown",s=n?"removeClass":"addClass";e.stop()[a]("normal",function(){e[s](t),o[s](i)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$(".sidebar-nav-toc").click(function(){$(this).addClass("sidebar-nav-active"),$(this).next().removeClass("sidebar-nav-active"),$("."+$(this).next().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)}),$(".sidebar-nav-overview").click(function(){$(this).addClass("sidebar-nav-active"),$(this).prev().removeClass("sidebar-nav-active"),$("."+$(this).prev().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)})})</script><script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$(".post-body").viewer()})</script><script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+"//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js",function(){new Waline({el:"#wcomments",visitor:!0,avatar:"wavatar",avatarCDN:"https://sdn.geekzu.org/avatar/",avatarForce:!1,wordLimit:"200",placeholder:" 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ",requiredFields:["nick","mail"],serverURL:"Your WalineSerURL",lang:"zh-cn"})}):$("#wcomments").html("抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。")})</script><script type=text/javascript src="//s7.addthis.com/js/300/addthis_widget.js#pubid=Your%20AddthisId"></script>
+<script>(function(){var t,e=document.createElement("script"),n=window.location.protocol.split(":")[0];n==="https"?e.src="https://zz.bdstatic.com/linksubmit/push.js":e.src="http://push.zhanzhang.baidu.com/push.js",t=document.getElementsByTagName("script")[0],t.parentNode.insertBefore(e,t)})()</script></body></html>
